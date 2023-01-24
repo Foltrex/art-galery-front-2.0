@@ -4,8 +4,8 @@ import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
 import * as React from 'react';
 import MenuIcon from "@mui/icons-material/Menu";
 import {useEffect} from "react";
-import {AuthService} from '../../../services/AuthService';
 import {Cookies} from "react-cookie";
+import { AuthService } from '../../services/AuthService';
 
 const drawerWidth = 240;
 

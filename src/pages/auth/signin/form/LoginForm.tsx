@@ -6,6 +6,8 @@ import AlertNotification from '../../../../components/notifications/AlertNotific
 import LoginFormBottom from "./LoginFormBottom";
 import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
+import {AuthApi} from "../../../../api/AuthApi";
+import {AuthService} from "../../../../services/AuthService";
 
 const LoginForm = () => {
 
@@ -22,6 +24,18 @@ const LoginForm = () => {
         password: yup.string().required('Password cannot be empty').min(1)
     })
 
+    const submit = async (email: string, password: string) => {
+        await AuthApi.login(email, password)
+            .then(response => {
+                AuthService.setToken(response.data.token)
+                navigate("/")
+            })
+            .catch(error => {
+                console.log(error.response.data.message)
+                alertStore.setShow(true, "error", "Login error", error.response.data.message)
+            })
+    }
+
     return (
         <Formik
             validateOnChange={false}
@@ -30,7 +44,7 @@ const LoginForm = () => {
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
-                // await AuthService.login(values.email, values.password)
+                await submit(values.email, values.password)
                 setSubmitting(false)
             }}
         >

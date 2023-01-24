@@ -50,7 +50,7 @@ const RegisterForm = () => {
             validateOnChange={false}
             validateOnBlur={true}
             initialValues={initialValues}
-            // validationSchema={validationSchema}
+            validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
                 await submit(values.email, values.password, values.accountType)
