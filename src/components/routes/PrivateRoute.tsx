@@ -5,7 +5,7 @@ const PrivateRoute: React.FC<PropsWithChildren> = ({children}) => {
     // const [cookies] = useCookies();
     const isAuthorized = true;
 
-    return <>{isAuthorized ? children : <Navigate to='/login' />}</>;
+    return <>{isAuthorized ? children : <Navigate to='/signin' />}</>;
 }
 
 export default PrivateRoute;

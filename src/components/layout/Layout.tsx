@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import React, { PropsWithChildren } from "react";
-import MainContent from "./main-content/MainContent";
-import Sidebar from "./sidebar/Sidebar";
-import Topbar from "./topbar/Topbar";
+import MainContent from "./MainContent";
+import Sidebar from "./Sidebar";
+import Topbar from "./Topbar";
 
 
 const Layout: React.FC<PropsWithChildren> = ({children}) => {
