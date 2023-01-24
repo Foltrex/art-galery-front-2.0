@@ -4,7 +4,7 @@ import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
 import * as React from 'react';
 import MenuIcon from "@mui/icons-material/Menu";
 import {useEffect} from "react";
-import {Cookies} from "react-cookie";
+import {Cookies, useCookies} from "react-cookie";
 import { AuthService } from '../../services/AuthService';
 
 const drawerWidth = 240;
@@ -36,13 +36,12 @@ interface ITopbarProps {
 }
 
 const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
-    const cookies = new Cookies()
+    const [cookies, setCookie] = useCookies(['token']);
+    const [isLogin] = React.useState<boolean | null>(cookies.token);
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = React.useState<boolean | null>(null)
 
-    useEffect(() => {
-        setIsLogin(AuthService.isAuthenticated());
-    }, [cookies])
+    console.log(cookies.token);
+    
 
     const renderButton = () => {
         if (isLogin === null) {
@@ -93,8 +92,8 @@ const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarBu
                 <Typography
                     variant="h6"
                     noWrap
-                    // component={Link}
-                    // to='/'
+                    component={Link}
+                    to='/'
                     color='white'
                     sx={{flexGrow: 1, textDecoration: 'none'}}
                 >
