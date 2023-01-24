@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { styled } from "@mui/material/styles";
+import { Outlet } from 'react-router';
 
 const drawerWidth = 240;
 
@@ -32,16 +33,15 @@ const DrawerHeader = styled("div")(({theme}) => ({
 
 
 interface IMainContent {
-    children?: React.ReactNode;
     sidebarOpen: boolean;
 }
 
-const MainContent: React.FunctionComponent<IMainContent> = ({children, sidebarOpen}) => {
+const MainContent: React.FunctionComponent<IMainContent> = ({sidebarOpen}) => {
     console.log(sidebarOpen);
     return (
         <Main open={sidebarOpen}>
             <DrawerHeader/>
-            {children}
+            <Outlet />
         </Main>
     );
 };

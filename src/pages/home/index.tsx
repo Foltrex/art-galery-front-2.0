@@ -5,7 +5,7 @@ interface IOrganizationProps {
 
 const Organization: React.FunctionComponent<IOrganizationProps> = (props) => {
   return (
-    <div></div>
+    <div>Hello world</div>
   );
 };
 

@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
-import { styled } from "@mui/material/styles";
 import React, { PropsWithChildren } from "react";
 import MainContent from "./main-content/MainContent";
 import Sidebar from "./sidebar/Sidebar";
@@ -13,11 +12,16 @@ const Layout: React.FC<PropsWithChildren> = ({children}) => {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <Topbar sidebarOpen={sidebarOpen} onSidebarButtonClick={() => setSidebarOpen(true)}/> 
-            <Sidebar sidebarOpen={sidebarOpen} onSidebarButtonClick={() => setSidebarOpen(false)} />
-            <MainContent sidebarOpen={sidebarOpen}>
-                {children}
-            </MainContent>
+            <Topbar 
+                sidebarOpen={sidebarOpen} 
+                onSidebarButtonClick={() => setSidebarOpen(true)}
+            /> 
+            <Sidebar 
+                sidebarOpen={sidebarOpen} 
+                onSidebarButtonClick={() => setSidebarOpen(false)} 
+            />
+            
+            <MainContent sidebarOpen={sidebarOpen} />
         </Box>
     );
 };
