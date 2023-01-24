@@ -6,6 +6,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { Link } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -24,6 +25,24 @@ interface ISidebarProps {
 
 const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
     const theme = useTheme();
+
+    const sideBarElements = [
+        {
+            text: 'Organization',
+            icon: <AccountCircleOutlinedIcon/>,
+            link: '/'
+        },
+        {
+            text: 'Representatives',
+            icon: <HomeWorkOutlinedIcon/>,
+            link: '/representatives?page=0&limit=10'
+        },
+        {
+            text: 'Facilities',
+            icon: <PhotoSizeSelectActualOutlinedIcon/>,
+            link: '/facilities?page=0&limit=10'
+        }
+    ];
 
     return (
         <Drawer
@@ -48,43 +67,22 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             </DrawerHeader>
             <Divider/>
             <List>
-                <ListItem key={'Organization'}
-                        //   component={Link}
-                        style={{color: "black"}}
-                        //   to='/'
-                >
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <AccountCircleOutlinedIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary='Organization'/>
-                    </ListItemButton>
-                </ListItem>
-                <ListItem key={'Representatives'}
-                        //   component={Link}
-                        style={{color: "black"}}
-                        //   to={'/representatives?page=0&limit=10'}
-                >
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <HomeWorkOutlinedIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary='Representatives'/>
-                    </ListItemButton>
-                </ListItem>
-                <ListItem key={'Facilities'}
-                        //   component={Link}
-                        style={{color: "black"}}
-                        //   to={'/facilities?page=0&limit=10'}
-                >
-
-                    <ListItemButton>
-                        <ListItemIcon>
-                            <PhotoSizeSelectActualOutlinedIcon/>
-                        </ListItemIcon>
-                        <ListItemText primary='Facilities'/>
-                    </ListItemButton>
-                </ListItem>
+                {sideBarElements.map(sidebarElement => {
+                    return (
+                        <ListItem key={sidebarElement.text}
+                                  component={Link}
+                                  style={{color: "black"}}
+                                  to={sidebarElement.link}
+                        >
+                            <ListItemButton>
+                                <ListItemIcon>
+                                    {sidebarElement.icon}
+                                </ListItemIcon>
+                                <ListItemText primary={sidebarElement.text} />
+                            </ListItemButton>
+                        </ListItem>
+                    );
+                })}
             </List>
         </Drawer>
     );
