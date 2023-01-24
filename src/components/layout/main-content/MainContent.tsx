@@ -37,12 +37,13 @@ interface IMainContent {
 }
 
 const MainContent: React.FunctionComponent<IMainContent> = ({children, sidebarOpen}) => {
-  return (
-    <Main open={sidebarOpen}>
-        <DrawerHeader/>
-        {children}
-    </Main>
-  );
+    console.log(sidebarOpen);
+    return (
+        <Main open={sidebarOpen}>
+            <DrawerHeader/>
+            {children}
+        </Main>
+    );
 };
 
 export default MainContent;

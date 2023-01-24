@@ -15,7 +15,7 @@ const Layout: React.FC<PropsWithChildren> = ({children}) => {
             <CssBaseline/>
             <Topbar sidebarOpen={sidebarOpen} onSidebarButtonClick={() => setSidebarOpen(true)}/> 
             <Sidebar sidebarOpen={sidebarOpen} onSidebarButtonClick={() => setSidebarOpen(false)} />
-            <MainContent sidebarOpen={false}>
+            <MainContent sidebarOpen={sidebarOpen}>
                 {children}
             </MainContent>
         </Box>
