@@ -1,8 +1,6 @@
 import Paper from '@mui/material/Paper';
 import { Column } from 'material-table';
-import * as React from 'react';
 import Table from '../../components/table/Table';
-
 
 interface IFacilityData {
 	id: number;

@@ -1,17 +1,12 @@
-import { TableContainer, TableHead, TableRow, TableCell, TableBody, Table as MuiTable, IconButton } from '@mui/material';
-import EditForm from '../form/EditForm';
-import DeleteModal from '../modal/DeleteModal';
-import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import DeleteOutlined from '@mui/icons-material/DeleteOutlined';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import { default as DeleteOutlined, default as DeleteOutlinedIcon } from '@mui/icons-material/DeleteOutlined';
 import Edit from '@mui/icons-material/Edit';
 import FirstPage from '@mui/icons-material/FirstPage';
 import LastPage from '@mui/icons-material/LastPage';
-import ChevronRight from '@mui/icons-material/ChevronRight';
-import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ModeIcon from '@mui/icons-material/Mode';
-import { forwardRef } from 'react';
 import MaterialTable, { Action, Column, Icons } from 'material-table';
-import { action } from 'mobx';
+import { forwardRef } from 'react';
 
 const tableIcons: Icons = {
     Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),

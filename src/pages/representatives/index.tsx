@@ -1,8 +1,8 @@
 import { Paper } from '@mui/material';
 import { Column } from 'material-table';
 import * as React from 'react';
+import DeleteModal from '../../components/modal/DeleteModal';
 import Table from '../../components/table/Table';
-import RepresentativeTable from './RepresentativeTable';
 
 interface IRepresentativeData {
 	number: number;
@@ -40,10 +40,12 @@ const Representatives = () => {
 				<Table 
 					data={data} 
 					columns={columns} 
-					title={'Facilities'} 
+					title={'Representatives'} 
 					onDelete={() => alert('Deleted representative')} 
 					onEdit={() => alert('Edited representative')} 
 				/>
+				{/* <Repre /> */}
+				<DeleteModal />
 			</Paper>
 		</div>
 	);
