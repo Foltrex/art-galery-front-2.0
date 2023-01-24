@@ -5,6 +5,7 @@ import * as React from 'react';
 import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
 import {Organization as Company} from '../../entities/organization';
 import {PrepareDataUtil} from "../../util/PrepareDataUtil";
+import logo from './logo.png';
 
 const Organization = () => {
     const organization: Company = {
@@ -43,8 +44,11 @@ const Organization = () => {
 					<Grid container>
 						<Grid item sm={4}><strong>Status</strong></Grid>
 						<Grid item sm={8}>
-							<span style={{ color: getStatusColor(organization.status) }}>
-								{organization.status}</span>
+							<span style={{ 
+								color: PrepareDataUtil.getOrganizationStatusColor(organization.status)
+							}}>
+								{organization.status}
+							</span>
 						</Grid>
 					</Grid>
 					<Grid container>
@@ -54,7 +58,7 @@ const Organization = () => {
 					<Grid container>
 						<Grid item sm={4}><strong>Address</strong></Grid>
 						<Grid item sm={8}>
-							{organization.address ? parseAddress(organization.address) : "The address is not set"}
+							{organization.address ? PrepareDataUtil.parseAddress(organization.address) : "The address is not set"}
 						</Grid>
 					</Grid>
 					<iframe
