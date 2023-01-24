@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
 import { createTheme, ThemeProvider } from '@mui/material';
+import { CookiesProvider } from 'react-cookie';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -14,11 +15,13 @@ const defaultMaterialTheme = createTheme();
 
 root.render(
     <React.StrictMode>
-        <RootStoreProvider>
-            <ThemeProvider theme={defaultMaterialTheme}>
-                <App/>
-            </ThemeProvider>
-        </RootStoreProvider>
+        <CookiesProvider>
+            <RootStoreProvider>
+                <ThemeProvider theme={defaultMaterialTheme}>
+                    <App/>
+                </ThemeProvider>
+            </RootStoreProvider>
+        </CookiesProvider>
     </React.StrictMode>
 );
 
