@@ -1,8 +1,11 @@
 import { Toolbar, IconButton, Typography, styled, useTheme, Button, CircularProgress } from '@mui/material';
-import { Link } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
 import * as React from 'react';
 import MenuIcon from "@mui/icons-material/Menu";
+import {useEffect} from "react";
+import {AuthService} from '../../../services/AuthService';
+import {Cookies} from "react-cookie";
 
 const drawerWidth = 240;
 
@@ -33,7 +36,13 @@ interface ITopbarProps {
 }
 
 const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
-    const [isLogin] = React.useState<boolean | null>(null)
+    const cookies = new Cookies()
+    const navigate = useNavigate();
+    const [isLogin, setIsLogin] = React.useState<boolean | null>(null)
+
+    useEffect(() => {
+        setIsLogin(AuthService.isAuthenticated());
+    }, [cookies])
 
     const renderButton = () => {
         if (isLogin === null) {
@@ -46,7 +55,8 @@ const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarBu
                     color="inherit"
                     variant="outlined"
                     onClick={() => {
-                        // AuthService.logout()
+                        AuthService.logout()
+                        navigate("/auth/signin")
                         console.log('Clicked');
                         
                     }}

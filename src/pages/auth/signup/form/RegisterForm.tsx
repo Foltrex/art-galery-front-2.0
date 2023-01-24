@@ -6,8 +6,15 @@ import {AccountEnum} from "../../../../entities/enums/AccountEnum";
 import * as yup from "yup";
 import RegisterFormBottom from './RegisterFormBottom';
 import AlertNotification from '../../../../components/notifications/AlertNotification';
+import {AuthApi} from "../../../../api/AuthApi";
+import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
+import {useNavigate} from "react-router-dom";
+import {AuthService} from "../../../../services/AuthService";
 
 const RegisterForm = () => {
+
+    const {alertStore} = useRootStore();
+    const navigate = useNavigate();
 
     const initialValues = {
         email: '',
@@ -26,15 +33,27 @@ const RegisterForm = () => {
         {label: "Artist", value: AccountEnum.ARTIST},
     ];
 
+    const submit = async (email: string, password: string, accountType: string) => {
+        await AuthApi.register(email, password, accountType)
+            .then(response => {
+                AuthService.setToken(response.data.token)
+                navigate("/")
+            })
+            .catch(error => {
+                console.log(error.response.data.message)
+                alertStore.setShow(true, "error", "Register error", error.response.data.message)
+            })
+    }
+
     return (
         <Formik
             validateOnChange={false}
             validateOnBlur={true}
             initialValues={initialValues}
-            validationSchema={validationSchema}
+            // validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
-                // await AuthService.register(values.email, values.password, values.accountType)
+                await submit(values.email, values.password, values.accountType)
                 setSubmitting(false)
             }}
         >
