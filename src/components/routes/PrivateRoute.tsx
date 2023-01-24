@@ -1,11 +1,11 @@
 import { PropsWithChildren } from "react";
+import { useCookies } from "react-cookie";
 import { Navigate } from "react-router-dom";
 
 const PrivateRoute: React.FC<PropsWithChildren> = ({children}) => {
-    // const [cookies] = useCookies();
-    const isAuthorized = true;
+    const [cookies] = useCookies(['token']);
 
-    return <>{isAuthorized ? children : <Navigate to='/signin' />}</>;
+    return <>{cookies.token ? children : <Navigate to='/auth/signin' />}</>;
 }
 
 export default PrivateRoute;
