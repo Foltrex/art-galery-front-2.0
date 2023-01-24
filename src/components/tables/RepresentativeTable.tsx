@@ -5,21 +5,15 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { Representative } from '../../entities/representative';
-import { TRepresentativePageProps } from "../../pages/representatives";
-import { RepresentativeService } from '../../services/RepresentativeService';
-import RepresentativeForm from '../forms/RepresentativeForm';
-import DeleteModal from '../modals/DeleteModal';
-import rootStore from "../../stores/rootStore";
 
-const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
-    representatives, 
-    pageNumber, 
-    pageSize, 
-    totalElements, 
-    facilities
+const RepresentativeTable: React.FC = ({
+    // representatives, 
+    // pageNumber, 
+    // pageSize, 
+    // totalElements, 
+    // facilities
 }) => {
 
     const columns = [
@@ -31,9 +25,6 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
         {id: 'facility', label: 'Facility info', minWidth: 150, align: "center"},
         {id: 'action', label: 'Action', minWidth: 150, align: "center"}
     ];
-
-    
-    const router = useRouter();
 
     const [currentRepresentative, setCurrentRepresentative] = useState<Representative>();
 
@@ -47,7 +38,7 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
 
     const handleCloseEditRepresentativeModalClick = () => {
         setOpenEditRepresentativeModal(false);
-        router.replace(router.asPath);
+        // router.replace(router.asPath);
     }
 
     const handleOpenDeleteRepresentativeModalClick = (representative: Representative) => {
@@ -57,7 +48,7 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
 
     const handleCloseDeleteRepresentativeModalClick = () => {
         setOpenDeleteRepresentativeModal(false);
-        router.replace(router.asPath);
+        // router.replace(router.asPath);
     }
 
     return (
@@ -77,7 +68,7 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {representatives.map((representative, index) => {
+                    {/* {representatives.map((representative, index) => {
                         const { firstname, lastname, organizationRole, facility } = representative;
                         return (
                             <TableRow hover tabIndex={-1} key={index}>
@@ -109,8 +100,8 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
                                     </div>
                                 </TableCell>
                             </TableRow>
-                    )})}
-                    <RepresentativeForm 
+                    )})} */}
+                    {/* <RepresentativeForm 
                         open={openEditRepresentativeModal} 
                         handleClose={handleCloseEditRepresentativeModalClick}
                         representative={currentRepresentative}
@@ -119,7 +110,7 @@ const RepresentativeTable: React.FC<TRepresentativePageProps> = ({
                         open={openDeleteRepresentativeModal}
                         handleClose={handleCloseDeleteRepresentativeModalClick}
                         id={currentRepresentative?.id!}
-                        deleteById={(id) => RepresentativeService.deleteById(id)} />
+                        deleteById={(id) => RepresentativeService.deleteById(id)} /> */}
                 </TableBody>
             </Table>
         </TableContainer>

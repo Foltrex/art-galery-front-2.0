@@ -1,20 +1,14 @@
 import { Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { observer } from 'mobx-react';
-import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Facility } from '../../entities/facility';
-import { TFacilityPageProps } from '../../pages/facilities';
-import { FacilityService } from '../../services/FacilityService';
-import FacilityForm from '../forms/FacilityForm';
-import DeleteModal from '../modals/DeleteModal';
-import rootStore from "../../stores/rootStore";
 
-const FacilityTable: React.FC<TFacilityPageProps> = observer(({
-    facilities, 
-    pageNumber, 
-    pageSize, 
-    organizations, 
-    cities
+const FacilityTable: React.FC = observer(({
+    // facilities, 
+    // pageNumber, 
+    // pageSize, 
+    // organizations, 
+    // cities
 }) => {
     
     const columns = [
@@ -25,9 +19,6 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
         {id: 'organization', label: 'Organization', minWidth: 150, align: "center"},
         {id: 'action', label: 'Action', minWidth: 150, align: "center"}
     ];
-    
-    
-    const router = useRouter();
 
     const [currentFacility, setCurrentFacility] = useState<Facility>();
 
@@ -41,7 +32,7 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
 
     const handleCloseEditFacilityModalClick = () => {
         setOpenEditFacilityModal(false);
-        router.replace(router.asPath);
+        // router.replace(router.asPath);
     }
 
     const handleOpenDeleteFacilityModalClick = (facility: Facility) => {
@@ -51,10 +42,10 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
 
     const handleCloseDeleteFacilityModalClick = () => {
         setOpenDeleteFacilityModal(false);
-        router.replace(router.asPath);
+        // router.replace(router.asPath);
     }
 
-    const { facilityStore, organizationStore, cityStore } = rootStore;
+    // const { facilityStore, organizationStore, cityStore } = rootStore;
 
 
     return (
@@ -74,7 +65,7 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {facilities.map((facility, index) => {
+                    {/* {facilities.map((facility, index) => {
                         return (
                             <TableRow hover tabIndex={-1} key={index}>
                                 <TableCell key='number' align='center'>
@@ -111,8 +102,8 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
                                 </TableCell>
                             </TableRow>
                         );
-                    })}
-                    <FacilityForm 
+                    })} */}
+                    {/* <FacilityForm 
                         open={openEditFacilityModal} 
                         handleClose={handleCloseEditFacilityModalClick} 
                         facility={currentFacility!}
@@ -122,7 +113,7 @@ const FacilityTable: React.FC<TFacilityPageProps> = observer(({
                         open={openDeleteFacilityModal}
                         handleClose={handleCloseDeleteFacilityModalClick}
                         id={currentFacility?.id!}
-                        deleteById={(id) => FacilityService.deleteById(id)} />
+                        deleteById={(id) => FacilityService.deleteById(id)} /> */}
                 </TableBody>
             </Table>
         </TableContainer>);

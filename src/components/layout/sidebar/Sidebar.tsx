@@ -70,9 +70,9 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
                 {sideBarElements.map(sidebarElement => {
                     return (
                         <ListItem key={sidebarElement.text}
-                                  component={Link}
+                                //   component={Link}
                                   style={{color: "black"}}
-                                  to={sidebarElement.link}
+                                //   to={sidebarElement.link}
                         >
                             <ListItemButton>
                                 <ListItemIcon>
