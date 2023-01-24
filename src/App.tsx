@@ -6,16 +6,18 @@ import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-route
 import Organization from './pages/home';
 import Facilities from './pages/facilities';
 import Representatives from './pages/representatives';
-import Login from './pages/signin';
-import Register from './pages/signup';
+import Login from './pages/auth/signin';
+import Register from './pages/auth/signup';
 import PrivateRoute from './components/routes/PrivateRoute';
+import PasswordRecovery from "./pages/auth/passwordrecovery";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/signin' element={<Login />} />
-        <Route path='/signup' element={<Register />} />
+        <Route path='/auth/signin' element={<Login />} />
+        <Route path='/auth/signup' element={<Register />} />
+        <Route path='/auth/passwordrecovery' element={<PasswordRecovery />} />
 
         <Route path='/' element={
           <PrivateRoute>
