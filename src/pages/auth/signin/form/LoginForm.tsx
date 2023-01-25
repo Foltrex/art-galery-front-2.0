@@ -6,13 +6,10 @@ import AlertNotification from '../../../../components/notifications/AlertNotific
 import LoginFormBottom from "./LoginFormBottom";
 import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
-import { AuthService } from '../../../../services/AuthService';
-import { useCookies } from 'react-cookie';
-import { AuthApi } from '../../../../api/AuthApi';
+import {AuthService} from '../../../../services/AuthService';
+import {AuthApi} from '../../../../api/AuthApi';
 
 const LoginForm = () => {
-    const [cookies, setCookie] = useCookies(['token']);
-
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
 
@@ -45,10 +42,6 @@ const LoginForm = () => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
-                setCookie('token', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbkBhZG1pbi5jb20iLCJuYW1lIjoiSm9obiBEb2UiLCJpYXQiOjE2NzQ3NDA1NzZ9.6inUnNgIeS92ztiedemri7fdBilHhhyi2pfEZBreOlU')
-                navigate('/');
-
-
                 setSubmitting(true)
                 await submit(values.email, values.password)
                 setSubmitting(false)

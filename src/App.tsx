@@ -1,9 +1,8 @@
-import React, { PropsWithChildren, useState } from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 import Layout from './components/layout/Layout';
-import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import Organization from './pages/home';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import OrganizationProfile from './pages/home';
 import Facilities from './pages/facilities';
 import Representatives from './pages/representatives';
 import Login from './pages/auth/signin';
@@ -24,7 +23,7 @@ function App() {
             <Layout />
           </PrivateRoute>
         }>
-          <Route index element={<Organization />} />
+          <Route index element={<OrganizationProfile />} />
           <Route path='facilities' element={<Facilities />} />
           <Route path='representatives' element={<Representatives />} />
         </Route>
