@@ -5,60 +5,48 @@ import Edit from '@mui/icons-material/Edit';
 import FirstPage from '@mui/icons-material/FirstPage';
 import LastPage from '@mui/icons-material/LastPage';
 import ModeIcon from '@mui/icons-material/Mode';
-import MaterialTable, { Action, Column, Icons } from 'material-table';
 import { forwardRef } from 'react';
+import { Button, Table as MuiTable, TableCell, TableContainer, TableRow } from '@mui/material';
+import facilities from '../../pages/facilities';
+import FacilityForm from '../../pages/facilities/FacilityForm';
+import DeleteModal from '../modal/DeleteModal';
+import TableBody from './TableBody';
+import TableHeader from './TableHeader';
 
-const tableIcons: Icons = {
-    Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
-    Delete: forwardRef((props, ref) => <DeleteOutlined {...props} ref={ref} />),
-    FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
-    LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
-    NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
-    PreviousPage: forwardRef((props, ref) => <ChevronLeft {...props} ref={ref} />)
-}
-
-
-interface ITableProps<T extends object> {
+export interface IColumnType<T> {
+    key: string;
     title: string;
-    columns: Column<T>[];
-    data: T[];
-    onDelete: (event?: React.MouseEvent<HTMLElement>, data?: T) => void;
-    onEdit: (event?: React.MouseEvent<HTMLElement>, data?: T) => void;
+    minWidth: number;
+    render?: (column: IColumnType<T>, item: T) => void;
 }
 
-function Table<T extends object>({ 
+interface ITableProps<T> {
+    title: string;
+    columns: IColumnType<T>[];
+    data: T[];
+    onDelete: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
+    onEdit: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
+}
+
+function Table<T>({ 
     title, 
     columns, 
     data, 
     onEdit,
     onDelete 
 }: ITableProps<T>): JSX.Element {
-    
-    const actions: Action<T>[] = [
-        {
-            icon: () => <ModeIcon />,
-            tooltip: `Edit model`,
-            onClick: (event, data) => onEdit(event, data as T)
-        },
-        {
-            icon: () => <DeleteOutlinedIcon />,
-            tooltip: 'Delete model',
-            onClick: (event, data) => onDelete(event, data as T)
-        }
-    ]
 
     return (
-        <MaterialTable
-            title={title}
-            columns={columns}
-            data={data}
-            icons={tableIcons}
-            options={{
-                search: false,
-                actionsColumnIndex: -1
-            }}
-            actions={actions}
-        />
+        <TableContainer>
+            <MuiTable stickyHeader aria-label="sticky table">
+                <TableHeader columns={columns} />
+                <TableBody 
+                    data={data} 
+                    columns={columns}
+                    onEdit={onEdit}
+                    onDelete={onDelete} />
+            </MuiTable>
+        </TableContainer>
     );
 };
 
