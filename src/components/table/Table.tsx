@@ -31,7 +31,7 @@ function Table<T extends object>({
     columns, 
     data, 
     onEdit,
-     onDelete 
+    onDelete 
 }: ITableProps<T>): JSX.Element {
     
     const actions: Action<T>[] = [
