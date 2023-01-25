@@ -40,9 +40,6 @@ const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarBu
     const [isLogin] = React.useState<boolean | null>(cookies.token);
     const navigate = useNavigate();
 
-    console.log(cookies.token);
-    
-
     const renderButton = () => {
         if (isLogin === null) {
             return (
