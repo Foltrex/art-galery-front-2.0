@@ -3,21 +3,23 @@ import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import { Button, Icon, IconButton, TableBody as MuiTableBody, TableCell, TableRow } from '@mui/material';
 import lodash from 'lodash';
 import * as React from 'react';
-import { IColumnType } from './Table';
+import { IColumnType, IdentifiableRecord } from './Table';
 
-interface ITableBodyProps<T> {
-	data: T[];
-	columns: IColumnType<T>[];
-    onDelete: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
-    onEdit: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
+interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
+    columns: IColumnType<T>[];
+    data: S[];
+    onDelete: (data: S) => void;
+    onEdit: (data: S) => void;
+    mapModelToTableRow: (model: S) => T;
 }
 
-function TableBody<T>({ 
-	data, 
+function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({ 
+	data,
 	columns,
 	onEdit, 
-	onDelete
-}: ITableBodyProps<T>): JSX.Element {
+	onDelete,
+	mapModelToTableRow
+}: ITableBodyProps<T, S>): JSX.Element {
 	// TODO: Add pagination
 	return (
 		<MuiTableBody>
@@ -31,8 +33,8 @@ function TableBody<T>({
 					{columns.map((column, columnIndex) => (
 						<TableCell key={`table-row-cell-${columnIndex}`} align='center'>
 							{column.render
-								? column.render(column, item)
-								: lodash.get(item, column.key)
+								? column.render(column, mapModelToTableRow(item))
+								: lodash.get(mapModelToTableRow(item), column.key)
 							}
 						</TableCell>
 					))}
@@ -42,16 +44,14 @@ function TableBody<T>({
 							<IconButton
 								disableRipple
 								aria-label='edit'
-								style={{ minWidth: '100px' }}
-								onClick={(event) => onEdit(event, item)}
+								onClick={() => onEdit(item)}
 							>
 								<ModeOutlinedIcon />
 							</IconButton>
 							<IconButton
 								disableRipple 
 								aria-label='delete'
-								style={{ minWidth: '100px' }}
-								onClick={(event) => onDelete(event, item)}
+								onClick={() => onDelete(item)}
 							>
 								<DeleteOutline />
 							</IconButton>

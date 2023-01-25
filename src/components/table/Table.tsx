@@ -1,50 +1,44 @@
-import ChevronLeft from '@mui/icons-material/ChevronLeft';
-import ChevronRight from '@mui/icons-material/ChevronRight';
-import { default as DeleteOutlined, default as DeleteOutlinedIcon } from '@mui/icons-material/DeleteOutlined';
-import Edit from '@mui/icons-material/Edit';
-import FirstPage from '@mui/icons-material/FirstPage';
-import LastPage from '@mui/icons-material/LastPage';
-import ModeIcon from '@mui/icons-material/Mode';
-import { forwardRef } from 'react';
-import { Button, Table as MuiTable, TableCell, TableContainer, TableRow } from '@mui/material';
-import facilities from '../../pages/facilities';
-import FacilityForm from '../../pages/facilities/FacilityForm';
-import DeleteModal from '../modal/DeleteModal';
+import { Table as MuiTable, TableContainer } from '@mui/material';
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
 
-export interface IColumnType<T> {
+export interface IdentifiableRecord {
+    id: string | number
+};
+
+export interface IColumnType<T extends IdentifiableRecord> {
     key: string;
     title: string;
-    minWidth: number;
+    minWidth?: number;
     render?: (column: IColumnType<T>, item: T) => void;
 }
 
-interface ITableProps<T> {
-    title: string;
+interface ITableProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
     columns: IColumnType<T>[];
-    data: T[];
-    onDelete: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
-    onEdit: (event?: React.MouseEvent<HTMLButtonElement, MouseEvent>, data?: T) => void;
+    data: S[];
+    onDelete: (data: S) => void;
+    onEdit: (data: S) => void;
+    mapModelToTableRow: (model: S) => T;
 }
 
-function Table<T>({ 
-    title, 
+function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
     columns, 
     data, 
     onEdit,
-    onDelete 
-}: ITableProps<T>): JSX.Element {
+    onDelete,
+    mapModelToTableRow 
+}: ITableProps<T, S>): JSX.Element {
 
     return (
         <TableContainer>
             <MuiTable stickyHeader aria-label="sticky table">
                 <TableHeader columns={columns} />
                 <TableBody 
-                    data={data} 
+                    data={data}
                     columns={columns}
                     onEdit={onEdit}
-                    onDelete={onDelete} />
+                    onDelete={onDelete} 
+                    mapModelToTableRow={mapModelToTableRow} />
             </MuiTable>
         </TableContainer>
     );

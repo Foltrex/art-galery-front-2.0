@@ -1,11 +1,11 @@
 import { TableCell, TableHead, TableRow } from '@mui/material';
-import { IColumnType } from './Table';
+import { IColumnType, IdentifiableRecord } from './Table';
 
-interface ITableHeaderProps<T> {
+interface ITableHeaderProps<T extends IdentifiableRecord> {
 	columns: IColumnType<T>[];
 }
 
-function TableHeader<T>({columns}: ITableHeaderProps<T>): JSX.Element {
+function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<T>): JSX.Element {
 	return (
 		<TableHead>
 			<TableRow>
@@ -19,7 +19,7 @@ function TableHeader<T>({columns}: ITableHeaderProps<T>): JSX.Element {
 					<TableCell
 						key={column.key}
 						align='center'
-						style={{minWidth: column.minWidth}}
+						style={{minWidth: column.minWidth || 150}}
 					>
 						<b>{column.title}</b>
 					</TableCell>

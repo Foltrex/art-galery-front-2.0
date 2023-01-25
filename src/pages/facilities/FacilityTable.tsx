@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Table, { IColumnType } from '../../components/table/Table';
+import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
@@ -8,6 +8,7 @@ interface IFacilityTableProps {
 }
 
 interface IFacilityData {
+	id: string;
 	name: string;
 	activity: string;
 	address: string;
@@ -106,38 +107,33 @@ const data: Facility[] = [
 	}
 ];
 
-const mapToFacilityTableData = (facilities: Facility[]): IFacilityData[] => {
-	return facilities.map(facility => {
-		const address: Address = facility.address;
-		const addressString: string = [
-			address.city.name, 
-			address.streetName, 
-			address.streetNumber
-		].join(', ');
 
-		const organizationName = facility.organization.name!;
-		console.log(organizationName);
-		
-		const facilityData: IFacilityData = {
-			name: facility.name,
-			activity: facility.isActive ? 'Active' : 'Inactive',
-			address: addressString,
-			organization: organizationName
-		};
+const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
+	const address: Address = facility.address;
+	const addressString: string = [
+		address.city.name, 
+		address.streetName, 
+		address.streetNumber
+	].join(', ');
 
-		return facilityData;
-	});
+	const organizationName = facility.organization.name!;
+	
+	return {
+		id: facility.id,
+		name: facility.name,
+		activity: facility.isActive ? 'Active' : 'Inactive',
+		address: addressString,
+		organization: organizationName
+	};
 }
-
 
 const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 	return (
-		<Table 
-			title='Facilities' 
-			columns={columns} 
-			data={mapToFacilityTableData(data)} 
-			onDelete={(e, data) => alert(`Deleted facility: ${JSON.stringify(data)}`)} 
-			onEdit={(e, data) => alert(`Edited facility: ${JSON.stringify(data)}`)} />
+		<Table
+			columns={columns}
+			data={data}
+			onDelete={(data) => alert(`Deleted facility: ${JSON.stringify(data)}`)}
+			onEdit={(data) => alert(`Edited facility: ${JSON.stringify(data)}`)} mapModelToTableRow={mapFacilityToTableRow} />
   	);
 };
 
