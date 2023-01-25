@@ -4,7 +4,7 @@ import * as React from 'react';
 interface ITestFieldProps {
 	name: string;
 	onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-	defaultValue: any;
+	defaultValue: unknown;
 }
 
 const TestField: React.FunctionComponent<ITestFieldProps> = ({ name, onChange, defaultValue }) => {
