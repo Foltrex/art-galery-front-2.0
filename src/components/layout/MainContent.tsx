@@ -37,7 +37,6 @@ interface IMainContent {
 }
 
 const MainContent: React.FunctionComponent<IMainContent> = ({sidebarOpen}) => {
-    console.log(sidebarOpen);
     return (
         <Main open={sidebarOpen}>
             <DrawerHeader/>
