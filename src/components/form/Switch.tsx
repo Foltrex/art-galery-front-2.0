@@ -3,11 +3,12 @@ import * as React from 'react';
 
 interface ISwtichProps {
 	name: string;
+	label?: string;
 	onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
 	defaultChecked?: boolean | undefined;
 }
 
-const Switch: React.FunctionComponent<ISwtichProps> = ({name, onChange, defaultChecked}) => {
+const Switch: React.FunctionComponent<ISwtichProps> = ({name, label, onChange, defaultChecked}) => {
 	const nameFirstLetter = name.charAt(0);
 	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
 
@@ -15,7 +16,7 @@ const Switch: React.FunctionComponent<ISwtichProps> = ({name, onChange, defaultC
 		<FormControlLabel 
 		control={
 			<MuiSwitch 
-				name={name}
+				name={label ?? name}
 				onChange={onChange} 
 				defaultChecked={defaultChecked} />
 		} 

@@ -67,6 +67,7 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                 selected={representative?.facility}/>
             <Select 
                 name='organization-role' 
+                label='organizaiton role'
                 fullWidth
                 options={[]} 
                 onChange={handleSelectChange} 

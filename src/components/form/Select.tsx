@@ -5,6 +5,7 @@ type SelectItem = {id: string};
 
 interface ISelectProps<T extends SelectItem> {
 	name: string;
+	label?: string;
 	selected?: T;
 	options: T[];
 	onChange: (event: SelectChangeEvent<string>, data: T) => void;
@@ -15,6 +16,7 @@ interface ISelectProps<T extends SelectItem> {
 
 function Select<T extends SelectItem>({ 
 	name, 
+	label,
 	selected, 
 	options, 
 	onChange, 
@@ -22,8 +24,9 @@ function Select<T extends SelectItem>({
 	sx,
 	fullWidth
 }: ISelectProps<T>) {
-	const nameFirstLetter = name.charAt(0);
-	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
+	const labelString = label ?? name;
+	const nameFirstLetter = (labelString).charAt(0);
+	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + labelString.slice(1);
 
 	const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
 		const selectedId = event.target.value;
