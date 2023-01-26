@@ -93,9 +93,6 @@ const OrganizationProfile = () => {
                     padding: "25px"
                 }}
                 >
-                    <Button variant="outlined" onClick={handleClickOpen}>
-                        Open full-screen dialog
-                    </Button>
                     <Typography component="h1" variant="h5">Edit organization</Typography>
                     <Formik
                         validateOnChange={false}

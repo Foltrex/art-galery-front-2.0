@@ -1,9 +1,10 @@
-import {Divider, List, ListItem, ListItemIcon, ListItemText, OutlinedInput} from "@mui/material";
+import {OutlinedInput} from "@mui/material";
 import React, {useState} from "react";
+import AddressList from "./AddressList";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-interface Item {
+export interface Item {
     place_id: number,
     display_name: string
 }
@@ -34,7 +35,7 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                             fetch(`${NOMINATIM_BASE_URL}${queryString}`)
                                 .then((response) => response.text())
                                 .then((result) => {
-                                    // console.log(JSON.parse(result));
+                                    console.log(JSON.parse(result));
                                     setListPlace(JSON.parse(result));
                                 })
                                 .catch((err) => console.log("err: ", err));
@@ -43,30 +44,7 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                 </div>
             </div>
             <div>
-                <List component="nav" aria-label="main mailbox folders">
-                    {listPlace.map((item) => {
-                        return (
-                            <div key={item?.place_id}>
-                                <ListItem
-                                    button
-                                    onClick={() => {
-                                        setSelectPosition(item);
-                                    }}
-                                >
-                                    <ListItemIcon>
-                                        <img
-                                            src={"/images/placeholder.png"}
-                                            alt="Placeholder"
-                                            style={{width: 38, height: 38}}
-                                        />
-                                    </ListItemIcon>
-                                    <ListItemText primary={item?.display_name}/>
-                                </ListItem>
-                                <Divider/>
-                            </div>
-                        );
-                    })}
-                </List>
+                <AddressList listPlace={listPlace} setSelectPosition={setSelectPosition}/>
             </div>
         </div>
     );
