@@ -33,8 +33,12 @@ function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
             isActive: true,
             address: {
                 id: 'w0qweqw0we',
-                latitude: 12.31,
-                longitude: 41.21,
+                city: {
+                    id: "adasda",
+                    name: "Brest",
+                    latitude: 12.31,
+                    longitude: 41.21,
+                },
                 fullName: 'Bogdanovicha',
             },
             organization: {
@@ -42,8 +46,12 @@ function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
                 name: 'Roga and Kopita',
                 address: {
                     id: 'w0qweqw0we',
-                    latitude: 12.31,
-                    longitude: 41.21,
+                    city: {
+                        id: "adasda",
+                        name: "Brest",
+                        latitude: 12.31,
+                        longitude: 41.21,
+                    },
                     fullName: 'Bogdanovicha',
                 },
                 status: OrganizationStatusEnum.ACTIVE,
@@ -56,8 +64,12 @@ function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
             isActive: false,
             address: {
                 id: 'w0qweqw0we',
-                latitude: 12.31,
-                longitude: 41.21,
+                city: {
+                    id: "adasda",
+                    name: "Brest",
+                    latitude: 12.31,
+                    longitude: 41.21,
+                },
                 fullName: 'Bogdanovicha',
             },
             organization: {
@@ -65,8 +77,12 @@ function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
                 name: 'Roga and Kopita',
                 address: {
                     id: 'w0qweqw0we',
-                    latitude: 12.31,
-                    longitude: 41.21,
+                    city: {
+                        id: "adasda",
+                        name: "Brest",
+                        latitude: 12.31,
+                        longitude: 41.21,
+                    },
                     fullName: 'Bogdanovicha',
                 },
                 status: OrganizationStatusEnum.ACTIVE,

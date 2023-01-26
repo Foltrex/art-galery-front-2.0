@@ -27,8 +27,11 @@ export default function AddressList(props: { listPlace: Item[], setSelectPositio
                             onClick={() => {
                                 const address = {
                                     fullName: item.display_name,
-                                    latitude: item.lat,
-                                    longitude: item.lon,
+                                    city: {
+                                        name: item.address.city,
+                                        latitude: item.lat,
+                                        longitude: item.lon,
+                                    }
                                 } as Address
                                 console.log(address)
                                 props.setSelectPosition(item);

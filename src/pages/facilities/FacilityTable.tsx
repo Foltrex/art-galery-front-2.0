@@ -47,8 +47,12 @@ const data: Facility[] = [
 		isActive: true,
 		address: {
 			id: 'w0qweqw0we',
-			latitude: 12.31,
-			longitude: 41.21,
+			city: {
+				id: "adasda",
+				name: "Brest",
+				latitude: 12.31,
+				longitude: 41.21,
+			},
 			fullName: 'Bogdanovicha',
 		},
 		organization: {
@@ -56,8 +60,12 @@ const data: Facility[] = [
 			name: 'Roga and Kopita',
 			address: {
 				id: 'w0qweqw0we',
-				latitude: 12.31,
-				longitude: 41.21,
+				city: {
+					id: "adasda",
+					name: "Brest",
+					latitude: 12.31,
+					longitude: 41.21,
+				},
 				fullName: 'Bogdanovicha',
 			},
 			status: OrganizationStatusEnum.ACTIVE,
@@ -70,8 +78,12 @@ const data: Facility[] = [
 		isActive: false,
 		address: {
 			id: 'w0qweqw0we',
-			latitude: 12.31,
-			longitude: 41.21,
+			city: {
+				id: "adasda",
+				name: "Brest",
+				latitude: 12.31,
+				longitude: 41.21,
+			},
 			fullName: 'Bogdanovicha',
 		},
 		organization: {
@@ -79,8 +91,12 @@ const data: Facility[] = [
 			name: 'Roga and Kopita',
 			address: {
 				id: 'w0qweqw0we',
-				latitude: 12.31,
-				longitude: 41.21,
+				city: {
+					id: "adasda",
+					name: "Brest",
+					latitude: 12.31,
+					longitude: 41.21,
+				},
 				fullName: 'Bogdanovicha',
 			},
 			status: OrganizationStatusEnum.ACTIVE,

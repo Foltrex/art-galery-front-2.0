@@ -9,6 +9,9 @@ export interface Item {
     display_name: string,
     lat: number,
     lon: number,
+    address: {
+        city: string,
+    }
 }
 
 export default function SearchBox(props: { selectPosition: any; setSelectPosition: any; }) {

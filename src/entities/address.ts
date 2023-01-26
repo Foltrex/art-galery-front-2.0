@@ -1,6 +1,10 @@
+import {City} from "./city";
+
 export interface Address {
     id?: string,
-    latitude?: number,
-    longitude?: number,
+    city?: City,
     fullName?: string,
+    // cityName?: string,
+    // latitude?: number,
+    // longitude?: number,
 }
