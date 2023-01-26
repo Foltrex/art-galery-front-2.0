@@ -1,6 +1,12 @@
+import { SelectChangeEvent } from "@mui/material";
 import React, { useEffect } from "react";
 import Form from "../../components/form/Form";
+import Select from "../../components/form/Select";
 import TextField from "../../components/form/TextField";
+import { OrganizationRoleEnum } from "../../entities/enums/organizationRoleEnum";
+import { Facility } from "../../entities/facility";
+import { Organization } from "../../entities/organization";
+import { OrganizationRole } from "../../entities/organizationRole";
 import { Representative } from "../../entities/representative";
 
 interface IRepresentativeFormProps {
@@ -19,6 +25,10 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
         const { name, value } = e.target;
         setRepresentative({...representativeObj, [name]: value});
     }
+
+    const handleSelectChange = (event: SelectChangeEvent<string>, selected: Facility | OrganizationRole) => {
+		alert(`Changed to: ${JSON.stringify(selected)}`);
+	}
 
     const formTitle = representative
         ? 'Edit Representative'
@@ -48,8 +58,20 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                     defaultValue={representative?.organization?.name} />
                 : <></>
             }
-                {/* Select for facility */}
-                {/* Select for organization role */}
+            <Select 
+                name='facility' 
+                fullWidth
+                options={[]} 
+                onChange={handleSelectChange} 
+                mapToSelectMenuItemElement={item => item.name} 
+                selected={representative?.facility}/>
+            <Select 
+                name='organization-role' 
+                fullWidth
+                options={[]} 
+                onChange={handleSelectChange} 
+                mapToSelectMenuItemElement={item => item.name}
+                selected={representative?.organizationRole} />
 		</Form>
 	);
 };

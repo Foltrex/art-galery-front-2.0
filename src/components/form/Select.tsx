@@ -10,6 +10,7 @@ interface ISelectProps<T extends SelectItem> {
 	onChange: (event: SelectChangeEvent<string>, data: T) => void;
 	mapToSelectMenuItemElement: (item: T) => string;
 	sx?: SxProps<Theme> | undefined;
+	fullWidth?: boolean | undefined;
 }
 
 function Select<T extends SelectItem>({ 
@@ -18,7 +19,8 @@ function Select<T extends SelectItem>({
 	options, 
 	onChange, 
 	mapToSelectMenuItemElement,
-	sx
+	sx,
+	fullWidth
 }: ISelectProps<T>) {
 	const nameFirstLetter = name.charAt(0);
 	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
@@ -30,7 +32,7 @@ function Select<T extends SelectItem>({
 	}
 
 	return (
-		<FormControl sx={sx} size='small'>
+		<FormControl fullWidth={fullWidth} sx={sx} size='small'>
 			<InputLabel id={`${name}-label`}>{capitalizedNameFirstLetter}</InputLabel>
 			<MuiSelect
 				labelId={`${name}-label`}

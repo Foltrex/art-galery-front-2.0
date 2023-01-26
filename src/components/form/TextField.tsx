@@ -1,13 +1,13 @@
 import { BaseTextFieldProps, TextField as MuiTextField } from '@mui/material';
 import * as React from 'react';
 
-interface ITestFieldProps {
+interface ITextFieldProps {
 	name: string;
 	onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
 	defaultValue: unknown;
 }
 
-const TestField: React.FunctionComponent<ITestFieldProps> = ({ name, onChange, defaultValue }) => {
+const TestField: React.FunctionComponent<ITextFieldProps> = ({ name, onChange, defaultValue }) => {
 	const nameFirstLetter = name.charAt(0);
 	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
 

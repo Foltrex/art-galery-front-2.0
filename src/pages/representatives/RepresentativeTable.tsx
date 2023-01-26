@@ -83,7 +83,7 @@ const data: Representative[] = [
             }
         },
         organizationRole: {
-            id: 1,
+            id: '1',
             name: OrganizationRoleEnum.MEMBER
         },
         accountId: 'asdf09w9032f'
@@ -143,7 +143,7 @@ const data: Representative[] = [
             }
         },
         organizationRole: {
-            id: 1,
+            id: '1',
             name: OrganizationRoleEnum.CREATOR
         },
         accountId: '09a0sdfh'

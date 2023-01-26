@@ -2,9 +2,11 @@ import { SelectChangeEvent } from '@mui/material';
 import * as React from 'react';
 import Form from '../../components/form/Form';
 import Select from '../../components/form/Select';
+import Switch from '../../components/form/Switch';
 import TextField from '../../components/form/TextField';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
+import { Organization } from '../../entities/organization';
 
 interface IFacilityFormProps {
 	open: boolean;
@@ -17,7 +19,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value, checked } = e.target;
-		if (name === 'activity') {
+		if (name === 'active') {
 			setFacility({...facilityObj, isActive: checked});
 		} else {
 			setFacility({...facilityObj, [name]: value});
@@ -93,7 +95,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
 		}
 	];
 
-	const handleSelectChange = (event: SelectChangeEvent<string>, selected: Facility) => {
+	const handleSelectChange = (event: SelectChangeEvent<string>, selected: Organization) => {
 		alert(`Changed to: ${JSON.stringify(selected)}`);
 	}
 
@@ -112,15 +114,21 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
 				name='name' 
 				onChange={handleChange} 
 				defaultValue={facility?.name} />
-			<div></div>
-			{/* active/inactive: switch */}
+			<Switch 
+				name='active' 
+				onChange={handleChange} 
+				defaultChecked={facility?.isActive}/>
+			<TextField
+				name='address'
+				onChange={handleChange}
+				defaultValue={facility?.address.streetName} />
 			<Select 
 				name='organization' 
-				selected={facility} 
-				options={data} 
+				selected={facility?.organization} 
+				options={[]} 
 				onChange={handleSelectChange} 
-				mapToSelectMenuItemElement={item => item.name} />
-			{/* city and address: select */}
+				mapToSelectMenuItemElement={item => item.name!}
+				fullWidth />
 		</Form>
 	);
 };
