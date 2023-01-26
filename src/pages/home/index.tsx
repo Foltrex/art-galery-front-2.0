@@ -24,6 +24,7 @@ import Container from "@mui/material/Container";
 import {Form, Formik} from "formik";
 import AlertNotification from "../../components/notifications/AlertNotification";
 import * as yup from "yup";
+import MapDialog from "../../components/map/MapDialog";
 
 const OrganizationProfile = () => {
 
@@ -68,6 +69,15 @@ const OrganizationProfile = () => {
         address: yup.string().required('Address cannot be empty').min(1)
     })
 
+    const [open, setOpen] = useState(false)
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const OrganizationForm = () => {
         return (
@@ -83,6 +93,9 @@ const OrganizationProfile = () => {
                     padding: "25px"
                 }}
                 >
+                    <Button variant="outlined" onClick={handleClickOpen}>
+                        Open full-screen dialog
+                    </Button>
                     <Typography component="h1" variant="h5">Edit organization</Typography>
                     <Formik
                         validateOnChange={false}
@@ -114,7 +127,9 @@ const OrganizationProfile = () => {
                                     required
                                     fullWidth
                                     label="Address"
+                                    InputProps={{readOnly: true, disableUnderline: true}}
                                     defaultValue={formik.values.address}
+                                    onClick={handleClickOpen}
                                     onChange={(event) => {
                                         formik.setFieldValue('address', event.target.value)
                                     }}
@@ -205,6 +220,10 @@ const OrganizationProfile = () => {
 
     return (
         <div>
+            <MapDialog
+                open={open}
+                handleClose={handleClose}
+            />
             <Render/>
         </div>
     );
