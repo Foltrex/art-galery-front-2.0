@@ -6,7 +6,9 @@ const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
 export interface Item {
     place_id: number,
-    display_name: string
+    display_name: string,
+    lat: number,
+    lon: number,
 }
 
 export default function SearchBox(props: { selectPosition: any; setSelectPosition: any; }) {
@@ -35,7 +37,10 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                             fetch(`${NOMINATIM_BASE_URL}${queryString}`)
                                 .then((response) => response.text())
                                 .then((result) => {
-                                    console.log(JSON.parse(result));
+                                    // console.log(JSON.parse(result));
+                                    const json = JSON.parse(result);
+                                    console.log(json);
+
                                     setListPlace(JSON.parse(result));
                                 })
                                 .catch((err) => console.log("err: ", err));

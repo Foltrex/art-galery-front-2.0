@@ -29,8 +29,9 @@ function ResetCenterView(props: { selectPosition: any; }) {
     return null;
 }
 
-export default function Maps(props: { selectPosition: any; }) {
+export default function Map(props: { selectPosition: any; }) {
     const {selectPosition} = props;
+
     const locationSelection = {
         lat: selectPosition?.lat,
         lng: selectPosition?.lon
@@ -50,9 +51,6 @@ export default function Maps(props: { selectPosition: any; }) {
                 <Marker
                     position={locationSelection}
                     icon={icon}>
-                    <Popup>
-                        A pretty CSS3 popup. <br/> Easily customizable.
-                    </Popup>
                 </Marker>
             )}
             <ResetCenterView selectPosition={selectPosition}/>

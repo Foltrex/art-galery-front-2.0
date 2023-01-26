@@ -47,28 +47,18 @@ const data: Facility[] = [
 		isActive: true,
 		address: {
 			id: 'w0qweqw0we',
-			city: {
-				id: '1111asdf',
-				name: 'Homel',
-				latitude: 12.31,
-				longitude: 41.21
-			},
-			streetName: 'Bogdanovicha',
-			streetNumber: 100
+			latitude: 12.31,
+			longitude: 41.21,
+			fullName: 'Bogdanovicha',
 		},
 		organization: {
 			id: 'uasdbif',
 			name: 'Roga and Kopita',
 			address: {
 				id: 'w0qweqw0we',
-				city: {
-					id: '1111asdf',
-					name: 'Homel',
-					latitude: 12.31,
-					longitude: 41.21
-				},
-				streetName: 'Bogdanovicha',
-				streetNumber: 100
+				latitude: 12.31,
+				longitude: 41.21,
+				fullName: 'Bogdanovicha',
 			},
 			status: OrganizationStatusEnum.ACTIVE,
 			facilities: []
@@ -80,28 +70,18 @@ const data: Facility[] = [
 		isActive: false,
 		address: {
 			id: 'w0qweqw0we',
-			city: {
-				id: '1111asdf',
-				name: 'Homel',
-				latitude: 12.31,
-				longitude: 41.21
-			},
-			streetName: 'Bogdanovicha',
-			streetNumber: 100
+			latitude: 12.31,
+			longitude: 41.21,
+			fullName: 'Bogdanovicha',
 		},
 		organization: {
 			id: 'uasdbif',
 			name: 'Roga and Kopita',
 			address: {
 				id: 'w0qweqw0we',
-				city: {
-					id: '1111asdf',
-					name: 'Homel',
-					latitude: 12.31,
-					longitude: 41.21
-				},
-				streetName: 'Bogdanovicha',
-				streetNumber: 100
+				latitude: 12.31,
+				longitude: 41.21,
+				fullName: 'Bogdanovicha',
 			},
 			status: OrganizationStatusEnum.ACTIVE,
 			facilities: []
@@ -110,12 +90,11 @@ const data: Facility[] = [
 ];
 
 
+
 const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
 	const address: Address = facility.address;
 	const addressString: string = [
-		address.city.name, 
-		address.streetName, 
-		address.streetNumber
+		address.fullName
 	].join(', ');
 
 	const organizationName = facility.organization.name!;

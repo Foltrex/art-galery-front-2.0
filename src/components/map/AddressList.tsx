@@ -4,6 +4,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import {Divider, ListItemIcon} from "@mui/material";
 import {Item} from "./SearchBox";
+import {Address} from "../../entities/address";
 
 export default function AddressList(props: { listPlace: Item[], setSelectPosition: any }) {
     return (
@@ -24,6 +25,12 @@ export default function AddressList(props: { listPlace: Item[], setSelectPositio
                         <ListItem
                             button
                             onClick={() => {
+                                const address = {
+                                    fullName: item.display_name,
+                                    latitude: item.lat,
+                                    longitude: item.lon,
+                                } as Address
+                                console.log(address)
                                 props.setSelectPosition(item);
                             }}
                         >

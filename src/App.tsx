@@ -9,7 +9,6 @@ import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
-import MapTest from "./components/map/MapTest";
 
 function App() {
   return (
@@ -18,7 +17,6 @@ function App() {
         <Route path='/auth/signin' element={<Login />} />
         <Route path='/auth/signup' element={<Register />} />
         <Route path='/auth/passwordrecovery' element={<PasswordRecovery />} />
-        <Route path='/map' element={<MapTest />} />
 
         <Route path='/' element={
           <PrivateRoute>

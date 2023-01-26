@@ -14,8 +14,8 @@ export class PrepareDataUtil {
         }
     }
 
-    static parseAddress = (address: Address) => {
-        return address.city.name + ", " + address.streetName + " " + address.streetNumber;
-    }
+    // static parseAddress = (address: Address) => {
+    //     return address.city.name + ", " + address.streetName + " " + address.streetNumber;
+    // }
 
 }
