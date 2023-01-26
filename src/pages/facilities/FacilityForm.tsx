@@ -1,6 +1,9 @@
+import { SelectChangeEvent } from '@mui/material';
 import * as React from 'react';
 import Form from '../../components/form/Form';
+import Select from '../../components/form/Select';
 import TextField from '../../components/form/TextField';
+import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
 
 interface IFacilityFormProps {
@@ -10,7 +13,7 @@ interface IFacilityFormProps {
 }
 
 function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
-	const [facilityObj, setFacility] = React.useState(facility || {} as Facility);
+	const [facilityObj, setFacility] = React.useState(facility ?? {} as Facility);
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value, checked } = e.target;
@@ -21,19 +24,102 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
 		}
 	}
 
+	const data: Facility[] = [
+		{
+			id: 'asdfo-121234',
+			name: 'Lidbeer',
+			isActive: true,
+			address: {
+				id: 'w0qweqw0we',
+				city: {
+					id: '1111asdf',
+					name: 'Homel',
+					latitude: 12.31,
+					longitude: 41.21
+				},
+				streetName: 'Bogdanovicha',
+				streetNumber: 100
+			},
+			organization: {
+				id: 'uasdbif',
+				name: 'Roga and Kopita',
+				address: {
+					id: 'w0qweqw0we',
+					city: {
+						id: '1111asdf',
+						name: 'Homel',
+						latitude: 12.31,
+						longitude: 41.21
+					},
+					streetName: 'Bogdanovicha',
+					streetNumber: 100
+				},
+				status: OrganizationStatusEnum.ACTIVE,
+				facilities: []
+			}
+		},
+		{
+			id: 'q0w8h9asdf',
+			name: 'Pinta',
+			isActive: false,
+			address: {
+				id: 'w0qweqw0we',
+				city: {
+					id: '1111asdf',
+					name: 'Homel',
+					latitude: 12.31,
+					longitude: 41.21
+				},
+				streetName: 'Bogdanovicha',
+				streetNumber: 100
+			},
+			organization: {
+				id: 'uasdbif',
+				name: 'Roga and Kopita',
+				address: {
+					id: 'w0qweqw0we',
+					city: {
+						id: '1111asdf',
+						name: 'Homel',
+						latitude: 12.31,
+						longitude: 41.21
+					},
+					streetName: 'Bogdanovicha',
+					streetNumber: 100
+				},
+				status: OrganizationStatusEnum.ACTIVE,
+				facilities: []
+			}
+		}
+	];
+
+	const handleSelectChange = (event: SelectChangeEvent<string>, selected: Facility) => {
+		alert(`Changed to: ${JSON.stringify(selected)}`);
+	}
+
+	const formTitle = facility
+		? 'Edit Facility'
+		: 'Create Facility';
+
 	return (
 		<Form
-			title={facility ? 'Edit' : 'Create' + ' Facility'}
-			open={false}
+			title={formTitle}
+			open={open}
 			onClose={onClose}
 			onSubmit={() => alert('Submit facility')}>
 
 			<TextField
 				name='name' 
 				onChange={handleChange} 
-				defaultValue={facilityObj?.name} />
+				defaultValue={facility?.name} />
 			<div></div>
 			{/* active/inactive: switch */}
+			<Select 
+				name='organization' 
+				selected={facility} 
+				options={data} 
+				onChange={handleSelectChange} 
+				mapToSelectMenuItemElement={item => item.name} />
 			{/* city and address: select */}
 		</Form>
 	);

@@ -3,7 +3,7 @@ import TableBody from './TableBody';
 import TableHeader from './TableHeader';
 
 export interface IdentifiableRecord {
-    id: string | number
+    id: string;
 };
 
 export interface IColumnType<T extends IdentifiableRecord> {
@@ -16,7 +16,7 @@ export interface IColumnType<T extends IdentifiableRecord> {
 interface ITableProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
     columns: IColumnType<T>[];
     data: S[];
-    onDelete: (data: S) => void;
+    onDelete: (id: S) => void;
     onEdit: (data: S) => void;
     mapModelToTableRow: (model: S) => T;
 }

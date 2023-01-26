@@ -8,7 +8,7 @@ import { IColumnType, IdentifiableRecord } from './Table';
 interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
     columns: IColumnType<T>[];
     data: S[];
-    onDelete: (data: S) => void;
+    onDelete: (id: S) => void;
     onEdit: (data: S) => void;
     mapModelToTableRow: (model: S) => T;
 }

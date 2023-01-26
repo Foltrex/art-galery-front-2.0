@@ -1,19 +1,33 @@
 import { FormControl, InputLabel, MenuItem, Select as MuiSelect, SelectChangeEvent, SxProps, Theme } from '@mui/material';
 import * as React from 'react';
 
-type SelectItem = {id: string; name: string};
+type SelectItem = {id: string};
 
 interface ISelectProps<T extends SelectItem> {
 	name: string;
-	selected: T;
+	selected?: T;
 	options: T[];
-	onChange: ((event: SelectChangeEvent<any>, child: React.ReactNode) => void);
+	onChange: (event: SelectChangeEvent<string>, data: T) => void;
+	mapToSelectMenuItemElement: (item: T) => string;
 	sx?: SxProps<Theme> | undefined;
 }
 
-function Select<T extends SelectItem>({ name, selected, options, onChange, sx }: ISelectProps<T>) {
+function Select<T extends SelectItem>({ 
+	name, 
+	selected, 
+	options, 
+	onChange, 
+	mapToSelectMenuItemElement,
+	sx
+}: ISelectProps<T>) {
 	const nameFirstLetter = name.charAt(0);
 	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
+
+	const handleChange = (event: SelectChangeEvent<string>, child: React.ReactNode) => {
+		const selectedId = event.target.value;
+		const selected = options.find(option => option.id === selectedId);
+		onChange(event, selected!);
+	}
 
 	return (
 		<FormControl sx={sx} size='small'>
@@ -23,13 +37,13 @@ function Select<T extends SelectItem>({ name, selected, options, onChange, sx }:
 				id={name}
 				name={name}
 				label={capitalizedNameFirstLetter}
-				defaultValue={selected.id}
+				defaultValue={selected?.id}
 				required
-				onChange={onChange}
+				onChange={handleChange}
 			>
 				{options?.map(option => (
 					<MenuItem key={option.id} value={option.id}>
-						{option.name}
+						{mapToSelectMenuItemElement(option)}
 					</MenuItem>
 				))}
 			</MuiSelect>

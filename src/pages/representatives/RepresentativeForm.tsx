@@ -17,7 +17,7 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setRepresentative({...representativeObj!, [name]: value});
+        setRepresentative({...representativeObj, [name]: value});
     }
 
     const formTitle = representative
@@ -29,7 +29,7 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
 			title={formTitle}
 			open={open}
 			onClose={onClose}
-			onSubmit={() => alert('Submit facility')}>
+			onSubmit={() => alert('Submit representative')}>
 
 			<TextField
 				name='firstname' 

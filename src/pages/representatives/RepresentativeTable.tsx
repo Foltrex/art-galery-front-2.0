@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
+import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
@@ -165,10 +166,12 @@ const mapRepresentativeToTableRow = (representative: Representative): IRepresent
 
 const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = (props) => {
     const [openEditForm, setOpenEditForm] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [representative, setRepresentative] = useState<Representative>();
 
     const handleDelete = (data: Representative) => {
-        alert(`Deleted representative id: ${data.id}`)
+        setRepresentative(data);
+        setOpenDeleteModal(true);
     }
 
     const handleEdit = (data: Representative) => {
@@ -189,6 +192,10 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
                 open={openEditForm} 
                 onClose={() => setOpenEditForm(false)}
                 representative={representative} />    
+            <DeleteModal 
+                open={openDeleteModal} 
+                onClose={() => setOpenDeleteModal(false)} 
+                onDelete={() => alert(`Delete modal with id: ${representative?.id}`)} />
         </>
   	);
 };

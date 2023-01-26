@@ -1,8 +1,10 @@
 import * as React from 'react';
+import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
+import FacilityForm from './FacilityForm';
 
 interface IFacilityTableProps {
 }
@@ -128,12 +130,37 @@ const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
 }
 
 const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
+	const [openEditForm, setOpenEditForm] = React.useState(false);
+	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+	const [facility, setFacility] = React.useState<Facility>();
+
+	const handleDelete = (data: Facility) => {
+		setFacility(data);
+		setOpenDeleteModal(true);
+	}
+
+    const handleEdit = (data: Facility) => {
+        setFacility(data);
+        setOpenEditForm(true);
+    }
+
 	return (
-		<Table
-			columns={columns}
-			data={data}
-			onDelete={(data) => alert(`Deleted facility: ${JSON.stringify(data)}`)}
-			onEdit={(data) => alert(`Edited facility: ${JSON.stringify(data)}`)} mapModelToTableRow={mapFacilityToTableRow} />
+		<>
+			<Table
+				columns={columns}
+				data={data}
+				onDelete={handleDelete}
+				onEdit={handleEdit} 
+				mapModelToTableRow={mapFacilityToTableRow} />
+			<FacilityForm 
+				open={openEditForm} 
+				onClose={() => setOpenEditForm(false)}
+				facility={facility} />
+            <DeleteModal 
+                open={openDeleteModal} 
+                onClose={() => setOpenDeleteModal(false)} 
+                onDelete={() => alert(`Delete modal with id: ${facility?.id}`)} />
+		</>
   	);
 };
 
