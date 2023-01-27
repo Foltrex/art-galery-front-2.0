@@ -10,7 +10,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import {TransitionProps} from '@mui/material/transitions';
 import Map from "./Map";
-import SearchBox from "./SearchBox";
+import SearchBox, {Item} from "./SearchBox";
+import {Address} from "../../entities/address";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -23,7 +24,7 @@ const Transition = React.forwardRef(function Transition(
 
 export default function MapDialog(props: any) {
 
-    const [selectPosition, setSelectPosition] = useState(null);
+    const [selectPosition, setSelectPosition] = useState<Item | null>(null);
 
     return (
         <Dialog
@@ -45,7 +46,23 @@ export default function MapDialog(props: any) {
                     <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
                         Search address
                     </Typography>
-                    <Button autoFocus color="inherit" onClick={props.handleClose}>
+                    <Button autoFocus color="inherit"
+                            onClick={() => {
+                                const address = {
+                                    fullName: selectPosition?.display_name,
+                                    city: {
+                                        name: selectPosition?.address.city,
+                                        latitude: selectPosition?.lat,
+                                        longitude: selectPosition?.lon,
+                                    }
+                                } as Address
+                                if (address.city?.name !== undefined) {
+                                    props.setFieldValue('address', address);
+                                    props.handleClose()
+                                } else {
+                                    alert("error")
+                                }
+                            }}>
                         Save and close
                     </Button>
                 </Toolbar>

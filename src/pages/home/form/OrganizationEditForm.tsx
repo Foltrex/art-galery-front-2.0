@@ -7,12 +7,18 @@ import AlertNotification from "../../../components/notifications/AlertNotificati
 import Container from "@mui/material/Container";
 import * as yup from "yup";
 import MapDialog from "../../../components/map/MapDialog";
+import {Address} from "../../../entities/address";
+
+interface InterfaceInitialValues {
+    name: string,
+    address: Address | string,
+}
 
 const OrganizationEditForm = () => {
 
-    const initialValues = {
+    const initialValues: InterfaceInitialValues = {
         name: '',
-        address: null
+        address: {} as Address,
     }
 
     const validationSchema = yup.object().shape({
@@ -31,6 +37,7 @@ const OrganizationEditForm = () => {
         setOpen(false);
     };
 
+    // @ts-ignore
     return (
         <div>
             <Container component="main" maxWidth="sm">
@@ -59,7 +66,12 @@ const OrganizationEditForm = () => {
                     >
                         {formik => (
                             <Form noValidate>
-                                <MapDialog open={open} handleClose={handleClose}/>
+                                <MapDialog
+                                    open={open}
+                                    handleClose={handleClose}
+                                    setFieldValue={formik.setFieldValue}
+                                />
+                                <h1>{typeof formik.values.address === "object"}</h1>
                                 <AlertNotification/>
                                 <TextField
                                     margin="normal"
@@ -67,6 +79,7 @@ const OrganizationEditForm = () => {
                                     fullWidth
                                     label="Name"
                                     defaultValue={formik.values.name}
+                                    value={formik.values.name}
                                     onChange={(event) => {
                                         formik.setFieldValue('name', event.target.value)
                                     }}
@@ -78,7 +91,10 @@ const OrganizationEditForm = () => {
                                     fullWidth
                                     label="Address"
                                     InputProps={{readOnly: true, disableUnderline: true}}
-                                    defaultValue={formik.values.address}
+                                    InputLabelProps={{shrink: true}}
+                                    value={typeof formik.values.address === "object" ?
+                                        formik.values.address?.fullName : formik.values.address
+                                    }
                                     onClick={handleClickOpen}
                                     onChange={(event) => {
                                         formik.setFieldValue('address', event.target.value)

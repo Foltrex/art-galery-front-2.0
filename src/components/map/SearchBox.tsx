@@ -1,5 +1,5 @@
 import {OutlinedInput} from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import AddressList from "./AddressList";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
@@ -19,6 +19,38 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const [searchText, setSearchText] = useState("");
     const [listPlace, setListPlace] = useState<Item[]>([]);
 
+
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            // Send Axios request here
+            console.log(searchText)
+            const params = {
+                q: searchText,
+                format: "json",
+                addressdetails: "1",
+                polygon_geojson: "0",
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+
+            fetch(`${NOMINATIM_BASE_URL}${queryString}`)
+                .then((response) => response.text())
+                .then((result) => {
+                    const json = JSON.parse(result);
+                    console.log(json);
+                    if (!json.error) {
+                        setListPlace(json);
+                    }
+                })
+                .catch((err) => {
+                    console.log("err: ", err)
+                    setListPlace([])
+                });
+        }, 1000)
+
+        return () => clearTimeout(delayDebounceFn)
+    }, [searchText])
+
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
             <div style={{display: "flex"}}>
@@ -28,25 +60,6 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                         value={searchText}
                         onChange={(event) => {
                             setSearchText(event.target.value);
-                            const params = {
-                                q: event.target.value,
-                                format: "json",
-                                addressdetails: "1",
-                                polygon_geojson: "0",
-                            };
-
-                            const queryString = new URLSearchParams(params).toString();
-
-                            fetch(`${NOMINATIM_BASE_URL}${queryString}`)
-                                .then((response) => response.text())
-                                .then((result) => {
-                                    // console.log(JSON.parse(result));
-                                    const json = JSON.parse(result);
-                                    console.log(json);
-
-                                    setListPlace(JSON.parse(result));
-                                })
-                                .catch((err) => console.log("err: ", err));
                         }}
                     />
                 </div>
