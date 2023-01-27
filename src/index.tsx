@@ -6,21 +6,25 @@ import reportWebVitals from './reportWebVitals';
 import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
 import { createTheme, ThemeProvider } from '@mui/material';
 import { CookiesProvider } from 'react-cookie';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
 const defaultMaterialTheme = createTheme();
+const queryClient = new QueryClient();
 
 root.render(
     <React.StrictMode>
         <CookiesProvider>
-            <RootStoreProvider>
-                <ThemeProvider theme={defaultMaterialTheme}>
-                    <App/>
-                </ThemeProvider>
-            </RootStoreProvider>
+            <QueryClientProvider client={queryClient}>
+                <RootStoreProvider>
+                    <ThemeProvider theme={defaultMaterialTheme}>
+                        <App/>
+                    </ThemeProvider>
+                </RootStoreProvider>
+            </QueryClientProvider>
         </CookiesProvider>
     </React.StrictMode>
 );
