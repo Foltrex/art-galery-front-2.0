@@ -57,7 +57,7 @@ export default function MapDialog(props: any) {
                                     }
                                 } as Address
                                 if (address.city?.name !== undefined) {
-                                    props.setFieldValue('address', address);
+                                    props.setFieldValue(address);
                                     props.handleClose()
                                 } else {
                                     alert("error")
