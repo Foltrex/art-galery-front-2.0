@@ -1,6 +1,7 @@
 import { Box, Button, Typography } from '@mui/material';
 import Paper from '@mui/material/Paper';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useGetFacilitiesList } from '../../api/FacilityApi';
 import Table from '../../components/table/Table';
 import FacilityForm from './FacilityForm';
 import FacilityTable from './FacilityTable';

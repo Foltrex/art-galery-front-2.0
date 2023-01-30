@@ -1,9 +1,11 @@
 import * as React from 'react';
+import { useAddFacility, useGetFacilitiesList } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
+import { useFetch } from '../../hooks/react-query';
 import FacilityForm from './FacilityForm';
 
 interface IFacilityTableProps {
@@ -40,72 +42,6 @@ const columns: IColumnType<IFacilityData>[] = [
 	},
 ];
 
-const data: Facility[] = [
-	{
-		id: 'asdfo-121234',
-		name: 'Lidbeer',
-		isActive: true,
-		address: {
-			id: 'w0qweqw0we',
-			city: {
-				id: "adasda",
-				name: "Brest",
-				latitude: 12.31,
-				longitude: 41.21,
-			},
-			fullName: 'Bogdanovicha',
-		},
-		organization: {
-			id: 'uasdbif',
-			name: 'Roga and Kopita',
-			address: {
-				id: 'w0qweqw0we',
-				city: {
-					id: "adasda",
-					name: "Brest",
-					latitude: 12.31,
-					longitude: 41.21,
-				},
-				fullName: 'Bogdanovicha',
-			},
-			status: OrganizationStatusEnum.ACTIVE,
-			facilities: []
-		}
-	},
-	{
-		id: 'q0w8h9asdf',
-		name: 'Pinta',
-		isActive: false,
-		address: {
-			id: 'w0qweqw0we',
-			city: {
-				id: "adasda",
-				name: "Brest",
-				latitude: 12.31,
-				longitude: 41.21,
-			},
-			fullName: 'Bogdanovicha',
-		},
-		organization: {
-			id: 'uasdbif',
-			name: 'Roga and Kopita',
-			address: {
-				id: 'w0qweqw0we',
-				city: {
-					id: "adasda",
-					name: "Brest",
-					latitude: 12.31,
-					longitude: 41.21,
-				},
-				fullName: 'Bogdanovicha',
-			},
-			status: OrganizationStatusEnum.ACTIVE,
-			facilities: []
-		}
-	}
-];
-
-
 
 const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
 	const address: Address = facility.address;
@@ -129,6 +65,8 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [facility, setFacility] = React.useState<Facility>();
 
+	const { data } = useGetFacilitiesList();
+
 	const handleDelete = (data: Facility) => {
 		setFacility(data);
 		setOpenDeleteModal(true);
@@ -143,7 +81,7 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 		<>
 			<Table
 				columns={columns}
-				data={data}
+				data={data ?? []}
 				onDelete={handleDelete}
 				onEdit={handleEdit} 
 				mapModelToTableRow={mapFacilityToTableRow} />

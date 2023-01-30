@@ -1,22 +1,34 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { QueryFunctionContext, useInfiniteQuery, useQueryClient, UseQueryOptions, useQuery, useMutation } from "react-query";
+import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
 // TODO: maybe delete latter
-interface IPage<T> {
-    next?: number;
-    previous: number;
-    data: T;
-    count: number;
+export interface IPageable {
+    offset: number;
+    pageNumber: number;
+    pageSize: number;
+}
+
+export interface IPage<T> {
+    content: T[];
+    totalElements: number;
+    totalPages: number;
+    numberOfElements: number;
+    number: number;
+    first: boolean;
+    last: boolean;
+    empty: boolean;
+    pageable: IPageable;
 }
 
 export const fetch = <T>({
     queryKey,
-    pageParam = 1,
+    pageParam,
 }: QueryFunctionContext<QueryKeyT>): Promise<T> => {
     const [url, params] = queryKey;
-    return axios
+    return axiosApi
         .get<T>(url, { params: { ...params, pageParam } })
         .then(response => response.data);
 };
@@ -24,10 +36,10 @@ export const fetch = <T>({
 export const useLoadMore = <T>(url: string | null, params?: object) => {
     return useInfiniteQuery<IPage<T>, Error, IPage<T>, QueryKeyT>(
         [url!, params],
-        context => fetch(context),
+        context => fetch({...context, pageParam: context.pageParam ?? 1 }),
         {
-            getPreviousPageParam: (firstPage) => firstPage.previous ?? false,
-            getNextPageParam: (lastPage) => lastPage.next ?? false,
+            getPreviousPageParam: (firstPage) => !firstPage.first,
+            getNextPageParam: (lastPage) => !lastPage.last,
         }
     );
 }
@@ -102,7 +114,7 @@ export const useDelete = <T>(
     updater?: (oldData: T, id: string | number) => T
 ) => {
     return useGenericMutation<T, string | number>(
-        id => axios.delete(`${url}/${id}`),
+        id => axiosApi.delete(`${url}/${id}`),
         url,
         params,
         updater
@@ -115,7 +127,7 @@ export const usePost = <T, S>(
     updater?: (oldData: T, newData: S) => T
 ) => {
     return useGenericMutation<T, S>(
-        data => axios.post<S>(url, data),
+        data => axiosApi.post<S>(url, data),
         url,
         params,
         updater
@@ -128,7 +140,7 @@ export const useUpdate = <T, S>(
     updater?: (oldData: T, newData: S) => T
 ) => {
     return useGenericMutation<T, S>(
-        data => axios.put<S>(url, data),
+        data => axiosApi.put<S>(url, data),
         url,
         params,
         updater
