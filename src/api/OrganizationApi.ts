@@ -19,7 +19,8 @@ export class OrganizationApi {
     }
 
     static updateOrganizationById(organization: Organization, organizationId: string) {
-        return axiosApi.put<Organization>(`${API}/${organizationId}`, {organization},
+        console.log(organization)
+        return axiosApi.put<Organization>(`${API}/${organizationId}`, organization,
             {
                 // headers: {
                 //     'Authorization': `Bearer ${token}`,

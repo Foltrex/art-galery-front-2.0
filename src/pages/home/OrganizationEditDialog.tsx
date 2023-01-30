@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Button,
     CircularProgress,
@@ -17,26 +17,30 @@ import MapDialog from "../../components/map/MapDialog";
 import {Address} from "../../entities/address";
 import AlertNotification from "../../components/notifications/AlertNotification";
 import * as yup from "yup";
+import {OrganizationApi} from "../../api/OrganizationApi";
+import {Organization} from "../../entities/organization";
+import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
 
 interface IFormProps {
     open: boolean;
     onClose: () => void;
+    organization: Organization,
     // onSubmit: () => void;
 }
 
 interface InterfaceInitialValues {
-    name: string,
+    name: string | null,
     address: Address | null | string,
     isActive: boolean
 }
 
 
-function OrganizationEditDialog({open, onClose}: IFormProps) {
+function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
 
     const initialValues: InterfaceInitialValues = {
-        name: '',
-        address: null,
-        isActive: false,
+        name: organization.name,
+        address: organization.address,
+        isActive: organization.status === OrganizationStatusEnum.ACTIVE,
     }
 
     const validationSchema = yup.object().shape({
@@ -50,11 +54,27 @@ function OrganizationEditDialog({open, onClose}: IFormProps) {
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting}) => {
             setSubmitting(true)
-            // await submit(values.email, values.password)
+            await submit(values)
             setSubmitting(false)
         },
     });
 
+    const submit = async (values: InterfaceInitialValues) => {
+        const updatedOrganization = {
+            id: organization.id,
+            name: values.name,
+            address: values.address,
+            status: values.isActive ? OrganizationStatusEnum.ACTIVE : OrganizationStatusEnum.INACTIVE,
+        } as Organization
+
+        await OrganizationApi.updateOrganizationById(updatedOrganization, updatedOrganization.id)
+            .then(() => {
+                organization.name = updatedOrganization.name;
+                organization.address = updatedOrganization.address;
+                organization.status = updatedOrganization.status;
+                onClose()
+            })
+    }
 
     const [openMap, setOpenMap] = useState(false)
 
@@ -70,7 +90,7 @@ function OrganizationEditDialog({open, onClose}: IFormProps) {
         <Dialog open={open} onClose={onClose} maxWidth='xs'>
             <DialogTitle>Edit organization</DialogTitle>
             <Divider/>
-            <DialogContent>
+            <DialogContent style={{paddingTop: "0px"}}>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}
@@ -108,7 +128,13 @@ function OrganizationEditDialog({open, onClose}: IFormProps) {
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />
                     <FormGroup>
-                        <FormControlLabel control={<Switch checked={formik.values.isActive}/>} label="isActive"/>
+                        <FormControlLabel control={
+                            <Switch
+                                name={"isActive"}
+                                checked={formik.values.isActive}
+                                onChange={formik.handleChange}
+                            />
+                        } label="isActive"/>
                     </FormGroup>
                 </form>
             </DialogContent>

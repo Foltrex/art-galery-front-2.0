@@ -1,5 +1,6 @@
 import {Cookies} from "react-cookie"
 import {TokenService} from "./TokenService";
+import {TDecodedToken} from "../entities/types/TDecodedToken";
 
 const cookies = new Cookies()
 
@@ -22,6 +23,11 @@ export class AuthService {
         const decoded = TokenService.decode(token)
 
         return decoded.id
+    }
+
+    static getCurrentDecodedToken(): TDecodedToken {
+        const token = this.getToken();
+        return TokenService.decode(token);
     }
 
     static setToken(token: string) {
