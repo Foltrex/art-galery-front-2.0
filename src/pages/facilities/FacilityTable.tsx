@@ -1,12 +1,16 @@
 import * as React from 'react';
-import { useAddFacility, useGetFacilitiesList } from '../../api/FacilityApi';
+import { useAddFacility, useGetFacilitiesList, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';
 import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
-import { useFetch } from '../../hooks/react-query';
+import { IPage, useFetch } from '../../hooks/react-query';
 import FacilityForm from './FacilityForm';
+import { AuthService } from '../../services/AuthService';
+import { TokenService } from '../../services/TokenService';
+import { TablePagination } from '@mui/material';
+import SkeletonTable from '../../components/table/SkeletonTable';
 
 interface IFacilityTableProps {
 }
@@ -65,8 +69,26 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [facility, setFacility] = React.useState<Facility>();
 
-	const { data } = useGetFacilitiesList();
+	// const { data } = useGetFacilitiesList();
 
+	const token = TokenService.decode(AuthService.getToken());
+	const { 
+		data,
+		isFetched
+	} = useGetFacilitiesPageByAccountId(token.id);
+	
+	
+	
+	// const { 
+	// 	isFetching,
+	// 	data,
+	// 	fetchNextPage,
+	// 	fetchPreviousPage,
+	// 	hasNextPage,
+	// 	hasPreviousPage,
+	// } = useGetFacilitiesPageByAccountId(token.id);
+	
+	
 	const handleDelete = (data: Facility) => {
 		setFacility(data);
 		setOpenDeleteModal(true);
@@ -77,14 +99,20 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
         setOpenEditForm(true);
     }
 
+
 	return (
 		<>
-			<Table
-				columns={columns}
-				data={data ?? []}
-				onDelete={handleDelete}
-				onEdit={handleEdit} 
-				mapModelToTableRow={mapFacilityToTableRow} />
+			{data
+				? 	<Table
+						columns={columns}
+						onDelete={handleDelete}
+						onEdit={handleEdit}
+						mapModelToTableRow={mapFacilityToTableRow} 
+						page={data}
+				  />
+				: 	<SkeletonTable columns={columns} />
+			}
+
 			<FacilityForm 
 				open={openEditForm} 
 				onClose={() => setOpenEditForm(false)}

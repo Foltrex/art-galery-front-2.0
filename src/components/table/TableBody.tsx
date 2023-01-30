@@ -1,9 +1,10 @@
 import { DeleteOutline } from '@mui/icons-material';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-import { Button, Icon, IconButton, TableBody as MuiTableBody, TableCell, TableRow } from '@mui/material';
+import { Button, Icon, IconButton, TableBody as MuiTableBody } from '@mui/material';
 import lodash from 'lodash';
 import * as React from 'react';
 import { IColumnType, IdentifiableRecord } from './Table';
+import TableRow from './TableRow';
 
 interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
     columns: IColumnType<T>[];
@@ -16,49 +17,21 @@ interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRe
 function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({ 
 	data,
 	columns,
-	onEdit, 
+	onEdit,
 	onDelete,
 	mapModelToTableRow
 }: ITableBodyProps<T, S>): JSX.Element {
-	// TODO: Add pagination
 	return (
 		<MuiTableBody>
 			{data.map((item, itemIndex) => (
-				<TableRow key={`table-body-${itemIndex}`} hover>
-					<TableCell align='center'>
-						{itemIndex + 1}
-						{/* {index + 1 + pageSize * pageNumber} */}
-					</TableCell>
-
-					{columns.map((column, columnIndex) => (
-						<TableCell key={`table-row-cell-${columnIndex}`} align='center'>
-							{column.render
-								? column.render(column, mapModelToTableRow(item))
-								: lodash.get(mapModelToTableRow(item), column.key)
-							}
-						</TableCell>
-					))}
-
-					<TableCell key='action' align='center'>
-						<div>
-							<IconButton
-								disableRipple
-								aria-label='edit'
-								onClick={() => onEdit(item)}
-							>
-								<ModeOutlinedIcon />
-							</IconButton>
-							<IconButton
-								disableRipple 
-								aria-label='delete'
-								onClick={() => onDelete(item)}
-							>
-								<DeleteOutline />
-							</IconButton>
-							{' '}
-						</div>
-					</TableCell>
-				</TableRow>
+				<TableRow 
+					key={`table-row-${itemIndex}`} 
+					number={itemIndex} 
+					columns={columns} 
+					item={item} 
+					onDelete={onDelete} 
+					onEdit={onEdit} 
+					mapModelToTableRow={mapModelToTableRow} />
 			))}
 		</MuiTableBody>
 	);

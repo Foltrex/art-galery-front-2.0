@@ -182,12 +182,12 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
 
 	return (
         <>
-            <Table
+            {/* <Table
                 columns={columns}
-                data={data}
+                pages={data}
                 onDelete={handleDelete}
                 onEdit={handleEdit} 
-                mapModelToTableRow={mapRepresentativeToTableRow} />
+                mapModelToTableRow={mapRepresentativeToTableRow} /> */}
 
             <RepresentativeForm 
                 open={openEditForm} 

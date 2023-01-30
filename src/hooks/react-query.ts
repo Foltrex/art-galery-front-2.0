@@ -33,17 +33,6 @@ export const fetch = <T>({
         .then(response => response.data);
 };
 
-export const useLoadMore = <T>(url: string | null, params?: object) => {
-    return useInfiniteQuery<IPage<T>, Error, IPage<T>, QueryKeyT>(
-        [url!, params],
-        context => fetch({...context, pageParam: context.pageParam ?? 1 }),
-        {
-            getPreviousPageParam: (firstPage) => !firstPage.first,
-            getNextPageParam: (lastPage) => !lastPage.last,
-        }
-    );
-}
-
 // TODO: use for addresses and organizaitons in forms
 export const usePrefetch = <T>(url: string | null, params?: object) => {
     const queryClient = useQueryClient();
