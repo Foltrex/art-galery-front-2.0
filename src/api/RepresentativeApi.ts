@@ -1,9 +1,17 @@
 import {ART_SERVICE, axiosApi, USER_SERVICE} from "../http/axios";
 import {Representative} from "../entities/representative";
+import { IPage, useFetch } from "../hooks/react-query";
 
 interface TPageableResponse {
     content: Representative[];
 
+}
+
+export const useGetRepresentativesPageByAccountId = (accountId: string, page?: number, size?: number) => {
+    return useFetch<IPage<Representative>>(`${ART_SERVICE}/representatives/account/${accountId}`, {
+        page: page,
+        size: size
+    })
 }
 
 export class RepresentativeApi {

@@ -16,6 +16,7 @@ export interface IPage<T> {
     totalElements: number;
     totalPages: number;
     numberOfElements: number;
+    size: number;
     number: number;
     first: boolean;
     last: boolean;

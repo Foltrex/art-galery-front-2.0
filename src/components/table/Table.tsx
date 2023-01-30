@@ -21,6 +21,8 @@ interface ITableProps<T extends IdentifiableRecord, S extends IdentifiableRecord
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
     mapModelToTableRow: (model: S) => T;
+    onPageChange: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
+    onRowsPerPageChange:  (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
@@ -28,32 +30,10 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
     page, 
     onEdit,
     onDelete,
-    mapModelToTableRow
+    mapModelToTableRow,
+    onPageChange,
+    onRowsPerPageChange
 }: ITableProps<T, S>): JSX.Element {
-	const [rowsPerPage, setRowsPerPage] = React.useState(-1);
-	const [pageNumber, setPageNumber] = React.useState(0);
-
-    // const {
-    //     content,
-    //     totalElements,
-    //     totalPages,
-    //     numberOfElements,
-    //     number,
-    //     first,
-    //     last,
-    //     empty,
-    //     pageable,
-    // } = page;
-
-	const handleRowsPerPageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const rowsPerPage = +event.target.value;
-		setRowsPerPage(rowsPerPage);
-	}
-
-	const handlePageChange = (event: any, page: number) => {
-		setPageNumber(page);	
-	}
-
 
     const rowsPerPageOptions = [
 		{ value: 1, label: '1' },
@@ -78,10 +58,10 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
                 rowsPerPageOptions={rowsPerPageOptions}
                 component='div'
                 count={page.totalElements}
-                rowsPerPage={rowsPerPage}
-                page={pageNumber}
-                onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}
+                rowsPerPage={page.size}
+                page={page.number}
+                onPageChange={onPageChange}
+                onRowsPerPageChange={onRowsPerPageChange}
             />
         </>
     );

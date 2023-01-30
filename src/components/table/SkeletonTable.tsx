@@ -6,20 +6,19 @@ import TableHeader from './TableHeader';
 
 interface ISkeletonTableBodyProps<T extends IdentifiableRecord> {
     columns: IColumnType<T>[];
+    rowsPerPage: number;
 }
 
 const SkeletonTableBody = <T extends IdentifiableRecord>({
-    columns
+    columns,
+    rowsPerPage
 }: ISkeletonTableBodyProps<T>) => {
-    
-    const skeletonRowsAmount = 5;
-
     return (
         <TableContainer>
             <Table stickyHeader aria-label="sticky table">
                 <TableHeader columns={columns} />
                 <TableBody>
-                    {lodash.range(skeletonRowsAmount).map(number => (
+                    {lodash.range(rowsPerPage).map(number => (
                         <TableRow key={`table-row-${number}`}>
                             <TableCell>
                                 <Skeleton variant='rounded' />

@@ -69,25 +69,12 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [facility, setFacility] = React.useState<Facility>();
 
-	// const { data } = useGetFacilitiesList();
+	const [rowsPerPage, setRowsPerPage] = React.useState(5);
+	const [pageNumber, setPageNumber] = React.useState(0);
 
 	const token = TokenService.decode(AuthService.getToken());
-	const { 
-		data,
-		isFetched
-	} = useGetFacilitiesPageByAccountId(token.id);
-	
-	
-	
-	// const { 
-	// 	isFetching,
-	// 	data,
-	// 	fetchNextPage,
-	// 	fetchPreviousPage,
-	// 	hasNextPage,
-	// 	hasPreviousPage,
-	// } = useGetFacilitiesPageByAccountId(token.id);
-	
+	const { data } = useGetFacilitiesPageByAccountId(token.id, pageNumber, rowsPerPage);
+
 	
 	const handleDelete = (data: Facility) => {
 		setFacility(data);
@@ -99,7 +86,6 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
         setOpenEditForm(true);
     }
 
-
 	return (
 		<>
 			{data
@@ -107,10 +93,13 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 						columns={columns}
 						onDelete={handleDelete}
 						onEdit={handleEdit}
-						mapModelToTableRow={mapFacilityToTableRow} 
-						page={data}
-				  />
-				: 	<SkeletonTable columns={columns} />
+						mapModelToTableRow={mapFacilityToTableRow}
+						page={data} 
+						onPageChange={(_, page) => setPageNumber(page)} 
+						onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
+				: 	<SkeletonTable 
+						columns={columns} 
+						rowsPerPage={rowsPerPage} />
 			}
 
 			<FacilityForm 

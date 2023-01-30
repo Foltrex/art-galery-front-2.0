@@ -1,10 +1,12 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useGetRepresentativesPageByAccountId } from '../../api/RepresentativeApi';
 import DeleteModal from '../../components/modal/DeleteModal';
-import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
-import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
-import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
+import SkeletonTable from '../../components/table/SkeletonTable';
+import Table, { IColumnType } from '../../components/table/Table';
 import { Representative } from '../../entities/representative';
+import { AuthService } from '../../services/AuthService';
+import { TokenService } from '../../services/TokenService';
 import RepresentativeForm from './RepresentativeForm';
 
 interface IRepresentativeTableProps {
@@ -27,131 +29,6 @@ const columns: IColumnType<IRepresentativeData>[] = [
     {key: 'facility', title: 'Facility'}
 ];
 
-const data: Representative[] = []
-// const data: Representative[] = [
-//     {
-//         id: 'qw9h9asdf',
-//         firstname: 'Dmitriy',
-//         lastname: 'Reznov',
-//         organization: {
-//             id: 'uasdbif',
-//             name: 'Roga and Kopita',
-//             address: {
-//                 id: 'w0qweqw0we',
-//                 city: {
-//                     id: '1111asdf',
-//                     name: 'Homel',
-//                     latitude: 12.31,
-//                     longitude: 41.21
-//                 },
-//                 streetName: 'Bogdanovicha',
-//                 streetNumber: 100
-//             },
-//             status: OrganizationStatusEnum.ACTIVE,
-//             facilities: []
-//         },
-//         facility: {
-//             id: '0asdufbi',
-//             name: 'Lidbeer',
-//             isActive: true,
-//             address: {
-//                 id: 'sdf09123',
-//                 city: {
-//                     id: '182039',
-//                     name: 'Homel',
-//                     latitude: 12.314,
-//                     longitude: 31.124
-//                 },
-//                 streetName: 'Kulman',
-//                 streetNumber: 123
-//             },
-//             organization: {
-//                 id: 'uasdbif',
-//                 name: 'Roga and Kopita',
-//                 address: {
-//                     id: 'w0qweqw0we',
-//                     city: {
-//                         id: '1111asdf',
-//                         name: 'Homel',
-//                         latitude: 12.31,
-//                         longitude: 41.21
-//                     },
-//                     streetName: 'Bogdanovicha',
-//                     streetNumber: 100
-//                 },
-//                 status: OrganizationStatusEnum.ACTIVE,
-//                 facilities: []
-//             }
-//         },
-//         organizationRole: {
-//             id: '1',
-//             name: OrganizationRoleEnum.MEMBER
-//         },
-//         accountId: 'asdf09w9032f'
-//     },
-//     {
-//         id: '08asdf',
-//         firstname: 'Alex',
-//         lastname: 'Mayson',
-//         organization: {
-//             id: 'uasdbif',
-//             name: 'Roga and Kopita',
-//             address: {
-//                 id: 'w0qweqw0we',
-//                 city: {
-//                     id: '1111asdf',
-//                     name: 'Homel',
-//                     latitude: 12.31,
-//                     longitude: 41.21
-//                 },
-//                 streetName: 'Bogdanovicha',
-//                 streetNumber: 100
-//             },
-//             status: OrganizationStatusEnum.ACTIVE,
-//             facilities: []
-//         },
-//         facility: {
-//             id: '0asdufbi',
-//             name: 'Lidbeer',
-//             isActive: true,
-//             address: {
-//                 id: 'sdf09123',
-//                 city: {
-//                     id: '182039',
-//                     name: 'Homel',
-//                     latitude: 12.314,
-//                     longitude: 31.124
-//                 },
-//                 streetName: 'Kulman',
-//                 streetNumber: 123
-//             },
-//             organization: {
-//                 id: 'uasdbif',
-//                 name: 'Roga and Kopita',
-//                 address: {
-//                     id: 'w0qweqw0we',
-//                     city: {
-//                         id: '1111asdf',
-//                         name: 'Homel',
-//                         latitude: 12.31,
-//                         longitude: 41.21
-//                     },
-//                     streetName: 'Bogdanovicha',
-//                     streetNumber: 100
-//                 },
-//                 status: OrganizationStatusEnum.ACTIVE,
-//                 facilities: []
-//             }
-//         },
-//         organizationRole: {
-//             id: '1',
-//             name: OrganizationRoleEnum.CREATOR
-//         },
-//         accountId: '09a0sdfh'
-//     }
-// ];
-
-
 const mapRepresentativeToTableRow = (representative: Representative): IRepresentativeData => {
     const { facility, organizationRole } = representative;
         
@@ -170,6 +47,12 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [representative, setRepresentative] = useState<Representative>();
 
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [pageNumber, setPageNumber] = useState(0);
+
+    const token = TokenService.decode(AuthService.getToken());
+    const { data } = useGetRepresentativesPageByAccountId(token.id, pageNumber, rowsPerPage);
+
     const handleDelete = (data: Representative) => {
         setRepresentative(data);
         setOpenDeleteModal(true);
@@ -182,12 +65,19 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
 
 	return (
         <>
-            {/* <Table
-                columns={columns}
-                pages={data}
-                onDelete={handleDelete}
-                onEdit={handleEdit} 
-                mapModelToTableRow={mapRepresentativeToTableRow} /> */}
+            {data
+                ?    <Table
+                        columns={columns}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                        mapModelToTableRow={mapRepresentativeToTableRow}
+                        page={data} 
+                        onPageChange={(_, page) => setPageNumber(page)} 
+                        onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
+                :   <SkeletonTable 
+                        columns={columns} 
+                        rowsPerPage={rowsPerPage} />
+            }
 
             <RepresentativeForm 
                 open={openEditForm} 
