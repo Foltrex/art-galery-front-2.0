@@ -5,7 +5,7 @@ import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 import {Organization} from "../../entities/organization";
 import OrganizationEditDialog from "./OrganizationEditDialog";
 import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
-import { AuthService } from '../../services/AuthService';
+import {AuthService} from '../../services/AuthService';
 
 const OrganizationInfo = (props: { organization: Organization }) => {
     const organization = props.organization;

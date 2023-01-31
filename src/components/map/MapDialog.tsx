@@ -12,6 +12,8 @@ import {TransitionProps} from '@mui/material/transitions';
 import Map from "./Map";
 import SearchBox, {Item} from "./SearchBox";
 import {Address} from "../../entities/address";
+import AlertNotification from "../notifications/AlertNotification";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -25,6 +27,26 @@ const Transition = React.forwardRef(function Transition(
 export default function MapDialog(props: any) {
 
     const [selectPosition, setSelectPosition] = useState<Item | null>(null);
+    const {alertStore} = useRootStore();
+
+    const save = () => {
+        const address = {
+            fullName: selectPosition?.display_name,
+            city: {
+                name: selectPosition?.address.city,
+                latitude: selectPosition?.lat,
+                longitude: selectPosition?.lon,
+            }
+        } as Address
+        if (address.city?.name !== undefined) {
+            props.setFieldValue(address);
+            alertStore.setShow(false)
+            props.handleClose()
+        } else {
+            alertStore.setShow(true, "error", "Adress error",
+                "Please, select such address that it will contains city or more info")
+        }
+    }
 
     return (
         <Dialog
@@ -47,26 +69,12 @@ export default function MapDialog(props: any) {
                         Search address
                     </Typography>
                     <Button autoFocus color="inherit"
-                            onClick={() => {
-                                const address = {
-                                    fullName: selectPosition?.display_name,
-                                    city: {
-                                        name: selectPosition?.address.city,
-                                        latitude: selectPosition?.lat,
-                                        longitude: selectPosition?.lon,
-                                    }
-                                } as Address
-                                if (address.city?.name !== undefined) {
-                                    props.setFieldValue(address);
-                                    props.handleClose()
-                                } else {
-                                    alert("error")
-                                }
-                            }}>
+                            onClick={() => save()}>
                         Save and close
                     </Button>
                 </Toolbar>
             </AppBar>
+            <AlertNotification/>
             <div
                 style={{
                     display: "flex",

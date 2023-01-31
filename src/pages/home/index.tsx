@@ -15,6 +15,7 @@ const OrganizationProfile = () => {
         const accountId = AuthService.getCurrentAccountId()
         OrganizationApi.getOrganizationByAccountId(accountId)
             .then(response => {
+                console.log(response)
                 setOrganization(response.data)
             })
             .finally(() => setLoading(false))

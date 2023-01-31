@@ -10,7 +10,7 @@ export class OrganizationApi {
     }
 
     static getOrganizationByAccountId(accountId: string) {
-        console.log(accountId)
+        console.log("getOrganizationByAccountId")
         return axiosApi.get<Organization>(`${API}/accounts/${accountId}`, {
             // headers: {
             //     'Authorization': `Bearer ${token}`,
