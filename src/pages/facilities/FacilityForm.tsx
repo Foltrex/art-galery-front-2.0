@@ -1,14 +1,15 @@
-import {SelectChangeEvent} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Grid, SelectChangeEvent, Switch, TextField } from '@mui/material';
+import { useFormik } from 'formik';
 import * as React from 'react';
-import Form from '../../components/form/Form';
-import Select from '../../components/form/Select';
-import Switch from '../../components/form/Switch';
-import TextField from '../../components/form/TextField';
-import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
-import {Facility} from '../../entities/facility';
-import {Organization} from '../../entities/organization';
+import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
+import MapDialog from '../../components/map/MapDialog';
+import { Address } from '../../entities/address';
+import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
+import { Facility } from '../../entities/facility';
+import { Organization } from '../../entities/organization';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
+import * as yup from 'yup';
 
 interface IFacilityFormProps {
     open: boolean;
@@ -16,56 +17,120 @@ interface IFacilityFormProps {
     facility?: Facility;
 }
 
-function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
+interface FormValues {
+    name: string;
+    isActive: boolean;
+    address: Address | string;
+}
+
+function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     const token = TokenService.decode(AuthService.getToken());
-    // const { data } = useGetFacilitiesByAccountId(token.id);
+    const { data } = useGetOrganizationByAccountId(token.id);
+    const [facilityObj, setFacility] = React.useState(facility ?? { organization: data } as Facility);
 
-    const [facilityObj, setFacility] = React.useState(facility ?? {} as Facility);
+    const [openMap, setOpenMap] = React.useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, value, checked} = e.target;
-        if (name === 'active') {
-            setFacility({...facilityObj, isActive: checked});
-        } else {
-            setFacility({...facilityObj, [name]: value});
+    React.useEffect(() => {
+        if (facility) {
+            setFacility(facility);
         }
-    }
+    }, [facility])
 
-    const handleSelectChange = (event: SelectChangeEvent<string>, selected: Organization) => {
-        alert(`Changed to: ${JSON.stringify(selected)}`);
-    }
+    const initialValues: FormValues = {
+        name: facilityObj.name,
+        isActive: facilityObj.isActive,
+        address: facilityObj.address
+    };
 
-    const formTitle = facility
-        ? 'Edit Facility'
-        : 'Create Facility';
+    const validationSchema = yup.object({
+        name: yup.string()
+            .min(1)
+            .required('Name cannot be empty')
+    });
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values))
+        },
+        enableReinitialize: true
+    });
 
     return (
-        <Form
-            title={formTitle}
+        <Dialog
             open={open}
             onClose={onClose}
-            onSubmit={() => alert('Submit facility')}>
+            maxWidth='xs'
+        >
+            <DialogTitle>
+                {facility ? 'Edit' : 'Create'} Facility
+            </DialogTitle>
+            <Divider />
 
-            <TextField
-                name='name'
-                onChange={handleChange}
-                defaultValue={facility?.name}/>
-            <Switch
-                name='active'
-                onChange={handleChange}
-                defaultChecked={facility?.isActive}/>
-            <TextField
-                name='address'
-                onChange={handleChange}
-                defaultValue={facility?.address.fullName}/>
-            <Select
-                name='organization'
-                selected={facility?.organization}
-                options={[]}
-                onChange={handleSelectChange}
-                mapToSelectMenuItemElement={item => item.name!}
-                fullWidth/>
-        </Form>
+            <DialogContent>
+                <form onSubmit={formik.handleSubmit}>
+                    <MapDialog
+                        open={openMap}
+                        handleClose={() => setOpenMap(false)}
+                        setFieldValue={(value: Address) => {
+                            formik.setFieldValue('address', value)
+                        }}
+                    />
+                    <h1>{typeof formik.values.address === "object"}</h1>
+
+                    <Grid container rowSpacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                name='name'
+                                label='Name'
+                                onChange={formik.handleChange}
+                                type="name"
+                                fullWidth
+                                required
+                                value={formik.values.name}
+                                variant="standard"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        name='isActive'
+                                        onChange={formik.handleChange}
+                                        checked={formik.values.isActive}
+                                    />
+                                }
+                                label='Activity'
+                                sx={{ mt: 1 }} />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                label="Address"
+                                name={"address"}
+                                InputProps={{ readOnly: true, disableUnderline: true }}
+                                InputLabelProps={{ shrink: true }}
+                                value={typeof formik.values.address === "object" ?
+                                    formik.values.address?.fullName : formik.values.address
+                                }
+                                onClick={() => setOpenMap(true)}
+                                onChange={formik.handleChange}
+                                error={!!formik.errors.address} 
+                                helperText={formik.errors.address}
+                            />
+                        </Grid>
+                    </Grid>
+                </form>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} form='form' variant='text'>Cancel</Button>
+                <Button type='submit' variant='contained'>Save</Button>
+            </DialogActions>
+        </Dialog>
     );
 };
 

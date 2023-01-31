@@ -1,19 +1,13 @@
-import axios from "axios";
-import { number } from "yup";
 import { Facility } from "../entities/facility";
-import { IPage, useFetch, usePost, useUpdate } from "../hooks/react-query";
+import { IPage, useFetch, usePost } from "../hooks/react-query";
 import { ART_SERVICE, axiosApi } from "../http/axios";
 
 
 export const useGetFacilitiesPageByAccountId = (accountId: string, page?: number, size?: number) => {
-    return useFetch<IPage<Facility>>(`${ART_SERVICE}/facilities/account/${accountId}`, {
+    return useFetch<IPage<Facility>>(`${ART_SERVICE}/facilities/accounts/${accountId}`, {
         page: page,
         size: size
     })
-}
-
-export const useGetFacilityByAccountId = (accountId: string) => {
-    return useFetch<Facility>(`${ART_SERVICE}/facilities/one/account/${accountId}`);
 }
 
 export const useAddFacility = (

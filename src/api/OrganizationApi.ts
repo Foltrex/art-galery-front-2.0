@@ -1,7 +1,12 @@
 import {Organization} from "../entities/organization";
+import { useFetch } from "../hooks/react-query";
 import {ART_SERVICE, axiosApi} from "../http/axios";
 
 const API = `${ART_SERVICE}/organizations`;
+
+export const useGetOrganizationByAccountId = (accountId: string) => {
+    return useFetch<Organization>(`${API}/accounts/${accountId}`);
+}
 
 export class OrganizationApi {
 
