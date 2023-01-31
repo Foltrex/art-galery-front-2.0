@@ -35,12 +35,6 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
     onRowsPerPageChange
 }: ITableProps<T, S>): JSX.Element {
 
-    const rowsPerPageOptions = [
-		{ value: 1, label: '1' },
-		{ value: 5, label: '5'},
-		{ value: 10, label: '10'},
-	];
-
     return (
         <>
             <TableContainer>
@@ -55,7 +49,7 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
                 </MuiTable>
             </TableContainer>
             <TablePagination 
-                rowsPerPageOptions={rowsPerPageOptions}
+                rowsPerPageOptions={[5, 10, 15]}
                 component='div'
                 count={page.totalElements}
                 rowsPerPage={page.size}
