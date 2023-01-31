@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAddFacility, useGetFacilitiesList, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
+import { useAddFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';

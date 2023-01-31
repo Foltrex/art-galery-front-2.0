@@ -41,7 +41,7 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
                 <MuiTable stickyHeader aria-label="sticky table">
                     <TableHeader columns={columns} />
                     <TableBody 
-                        data={page.content}
+                        page={page}
                         columns={columns}
                         onEdit={onEdit}
                         onDelete={onDelete} 

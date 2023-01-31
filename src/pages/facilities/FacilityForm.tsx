@@ -7,6 +7,8 @@ import TextField from '../../components/form/TextField';
 import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
 import {Facility} from '../../entities/facility';
 import {Organization} from '../../entities/organization';
+import { AuthService } from '../../services/AuthService';
+import { TokenService } from '../../services/TokenService';
 
 interface IFacilityFormProps {
     open: boolean;
@@ -15,6 +17,9 @@ interface IFacilityFormProps {
 }
 
 function FacilityForm({open, onClose, facility}: IFacilityFormProps) {
+    const token = TokenService.decode(AuthService.getToken());
+    // const { data } = useGetFacilitiesByAccountId(token.id);
+
     const [facilityObj, setFacility] = React.useState(facility ?? {} as Facility);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

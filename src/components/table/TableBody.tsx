@@ -1,32 +1,31 @@
-import { DeleteOutline } from '@mui/icons-material';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-import { Button, Icon, IconButton, TableBody as MuiTableBody } from '@mui/material';
-import lodash from 'lodash';
-import * as React from 'react';
+import { TableBody as MuiTableBody } from '@mui/material';
+import { IPage } from '../../hooks/react-query';
 import { IColumnType, IdentifiableRecord } from './Table';
 import TableRow from './TableRow';
 
 interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
     columns: IColumnType<T>[];
-    data: S[];
+    page: IPage<S>;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
     mapModelToTableRow: (model: S) => T;
 }
 
 function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({ 
-	data,
+	page,
 	columns,
 	onEdit,
 	onDelete,
 	mapModelToTableRow
 }: ITableBodyProps<T, S>): JSX.Element {
+	const { content, number, size } = page;
+
 	return (
 		<MuiTableBody>
-			{data.map((item, itemIndex) => (
+			{content.map((item, itemIndex) => (
 				<TableRow 
 					key={`table-row-${itemIndex}`} 
-					number={itemIndex} 
+					number={itemIndex + 1 + number * size} 
 					columns={columns} 
 					item={item} 
 					onDelete={onDelete} 

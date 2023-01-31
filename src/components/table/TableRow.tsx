@@ -26,7 +26,7 @@ const TableRow = <T extends IdentifiableRecord, S extends IdentifiableRecord>({
     return (
         <MuiTableRow hover>
             <TableCell align='center'>
-                {number + 1}
+                {number}
             </TableCell>
 
             {columns.map((column, columnIndex) => (
