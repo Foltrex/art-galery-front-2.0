@@ -3,22 +3,18 @@ import {Alert, Button, Divider, Grid, Typography} from "@mui/material";
 import {Stack} from "@mui/system";
 import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 import {Organization} from "../../entities/organization";
-import OrganizationEditDialog from "./OrganizationEditDialog";
+import OrganizationEditDialog from "./edit/OrganizationEditDialog";
 import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
 import {AuthService} from '../../services/AuthService';
+import {TokenService} from "../../services/TokenService";
 
 const OrganizationInfo = (props: { organization: Organization }) => {
-    const organization = props.organization;
+    const organization = props.organization
     const [openEditForm, setOpenEditForm] = useState(false)
 
-    return (
-        <div>
-            <OrganizationEditDialog open={openEditForm}
-                                    onClose={() => setOpenEditForm(false)}
-                                    organization={organization}
-            />
-            {
-                organization.status === OrganizationStatusEnum.NEW &&
+    const AlertWarning = () => {
+        if (organization.status === OrganizationStatusEnum.NEW) {
+            return (
                 <Alert severity="warning">
                     Please, {' '}
                     <span style={{cursor: "pointer"}} onClick={() => setOpenEditForm(true)}>
@@ -26,7 +22,20 @@ const OrganizationInfo = (props: { organization: Organization }) => {
                 </span>{' '}
                     the data about your organization!
                 </Alert>
-            }
+            )
+        } else {
+            return null
+        }
+    }
+
+    return (
+        <div>
+            <OrganizationEditDialog
+                open={openEditForm}
+                onClose={() => setOpenEditForm(false)}
+                organization={organization}
+            />
+            <AlertWarning/>
             <Grid container
                   spacing={0}
                   sx={{marginTop: "4%"}}
@@ -37,7 +46,7 @@ const OrganizationInfo = (props: { organization: Organization }) => {
                 </Grid>
                 <Grid item sm={5}>
                     <Typography variant='h4'>
-                        {organization.name ? organization.name : 'The name is not set'} {' '}
+                        {organization.name ? organization.name : 'The name is empty'} {' '}
                         <Button onClick={() => setOpenEditForm(true)}>Edit</Button>
                     </Typography>
                     <Divider/>
@@ -53,21 +62,13 @@ const OrganizationInfo = (props: { organization: Organization }) => {
                         <Grid container>
                             <Grid item sm={4}><strong>Address</strong></Grid>
                             <Grid item sm={8}>
-                                {organization.address ? (organization.address.fullName) : "The address is not set"}
+                                {organization.address ? (organization.address.fullName) : "The address is empty"}
                             </Grid>
                         </Grid>
                         <Grid container>
                             <Grid item sm={4}><strong>Email</strong></Grid>
-                            <Grid item sm={8}>{AuthService.getCurrentDecodedToken().sub}</Grid>
+                            <Grid item sm={8}>{TokenService.getCurrentDecodedToken().sub}</Grid>
                         </Grid>
-                        {/*<iframe*/}
-                        {/*    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2327.1556905573466!2d26.873946816081872!3d54.31887890911977!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46dc742535316e4f%3A0xc55af1e363a4e804!2sUlitsa%20M.bogdanovicha%2C%20Maladzie%C4%8Dna!5e0!3m2!1sen!2sby!4v1673598101285!5m2!1sen!2sby"*/}
-                        {/*    width="600"*/}
-                        {/*    height="350"*/}
-                        {/*    style={{border: '0'}}*/}
-                        {/*    allowFullScreen={false}*/}
-                        {/*    loading="lazy"*/}
-                        {/*    referrerPolicy="no-referrer-when-downgrade"/>*/}
                     </Stack>
                 </Grid>
             </Grid>

@@ -18,18 +18,6 @@ export class AuthService {
         return cookies.get("token")
     }
 
-    static getCurrentAccountId(): string {
-        const token = this.getToken();
-        const decoded = TokenService.decode(token)
-
-        return decoded.id
-    }
-
-    static getCurrentDecodedToken(): TDecodedToken {
-        const token = this.getToken();
-        return TokenService.decode(token);
-    }
-
     static setToken(token: string) {
         const decoded = TokenService.decode(token)
         cookies.set("token", token, {

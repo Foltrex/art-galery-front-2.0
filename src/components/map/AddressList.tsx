@@ -3,10 +3,10 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import {Divider, ListItemIcon} from "@mui/material";
-import {Item} from "./SearchBox";
+import {GeoPosition} from "./SearchBox";
 import {Address} from "../../entities/address";
 
-export default function AddressList(props: { listPlace: Item[], setSelectPosition: any }) {
+export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any }) {
     return (
         <List
             component="nav"
@@ -33,7 +33,6 @@ export default function AddressList(props: { listPlace: Item[], setSelectPositio
                                         longitude: item.lon,
                                     }
                                 } as Address
-                                console.log(address)
                                 props.setSelectPosition(item);
                             }}
                         >

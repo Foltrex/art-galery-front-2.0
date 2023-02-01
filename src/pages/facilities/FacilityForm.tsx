@@ -72,7 +72,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                 <form onSubmit={formik.handleSubmit}>
                     <MapDialog
                         open={openMap}
-                        handleClose={() => setOpenMap(false)}
+                        onClose={() => setOpenMap(false)}
                         setFieldValue={(value: Address) => {
                             formik.setFieldValue('address', value)
                         }}

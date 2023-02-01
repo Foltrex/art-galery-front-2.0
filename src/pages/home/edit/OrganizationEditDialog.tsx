@@ -13,31 +13,30 @@ import {
     TextField
 } from "@mui/material";
 import {useFormik} from "formik";
-import MapDialog from "../../components/map/MapDialog";
-import {Address} from "../../entities/address";
-import AlertNotification from "../../components/notifications/AlertNotification";
+import MapDialog from "../../../components/map/MapDialog";
+import {Address} from "../../../entities/address";
+import AlertNotification from "../../../components/notifications/AlertNotification";
 import * as yup from "yup";
-import {OrganizationApi} from "../../api/OrganizationApi";
-import {Organization} from "../../entities/organization";
-import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
+import {OrganizationApi} from "../../../api/OrganizationApi";
+import {Organization} from "../../../entities/organization";
+import {OrganizationStatusEnum} from "../../../entities/enums/organizationStatusEnum";
 
-interface IFormProps {
+interface IOrganizationEditDialogProps {
     open: boolean;
     onClose: () => void;
     organization: Organization,
-    // onSubmit: () => void;
 }
 
-interface InterfaceInitialValues {
+interface IFormValues {
     name: string | null,
     address: Address | null | string,
     isActive: boolean
 }
 
+function OrganizationEditDialog({open, onClose, organization}: IOrganizationEditDialogProps) {
+    const [openMap, setOpenMap] = useState(false)
 
-function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
-
-    const initialValues: InterfaceInitialValues = {
+    const initialValues: IFormValues = {
         name: organization.name,
         address: organization.address,
         isActive: organization.status === OrganizationStatusEnum.ACTIVE,
@@ -59,7 +58,7 @@ function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
         },
     });
 
-    const submit = async (values: InterfaceInitialValues) => {
+    const submit = async (values: IFormValues) => {
         const updatedOrganization = {
             id: organization.id,
             name: values.name,
@@ -72,19 +71,9 @@ function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
                 organization.name = updatedOrganization.name;
                 organization.address = updatedOrganization.address;
                 organization.status = updatedOrganization.status;
-                onClose()
+                onClose();
             })
     }
-
-    const [openMap, setOpenMap] = useState(false)
-
-    const handleClickOpen = () => {
-        setOpenMap(true);
-    };
-
-    const handleClose = () => {
-        setOpenMap(false);
-    };
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth='xs'>
@@ -94,10 +83,11 @@ function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}
-                        handleClose={handleClose}
+                        onClose={() => setOpenMap(false)}
                         setFieldValue={(value: Address) => {
                             formik.setFieldValue('address', value)
                         }}
+                        address={organization.address}
                     />
                     <h1>{typeof formik.values.address === "object"}</h1>
                     <AlertNotification/>
@@ -123,7 +113,7 @@ function OrganizationEditDialog({open, onClose, organization}: IFormProps) {
                         value={typeof formik.values.address === "object" ?
                             formik.values.address?.fullName : formik.values.address
                         }
-                        onClick={handleClickOpen}
+                        onClick={() => setOpenMap(true)}
                         onChange={formik.handleChange}
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />

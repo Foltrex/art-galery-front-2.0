@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
@@ -10,7 +10,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import {TransitionProps} from '@mui/material/transitions';
 import Map from "./Map";
-import SearchBox, {Item} from "./SearchBox";
+import SearchBox, {GeoPosition} from "./SearchBox";
 import {Address} from "../../entities/address";
 import AlertNotification from "../notifications/AlertNotification";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
@@ -24,10 +24,32 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function MapDialog(props: any) {
+interface IMapDialogProps {
+    open: boolean;
+    onClose: () => void;
+    address?: Address | null,
+    setFieldValue: (value: Address) => void;
+}
 
-    const [selectPosition, setSelectPosition] = useState<Item | null>(null);
+export default function MapDialog(props: IMapDialogProps) {
     const {alertStore} = useRootStore();
+    const [selectPosition, setSelectPosition] = useState<GeoPosition | null>(null);
+
+    useEffect(() => {
+        if (props.address !== undefined && props.address !== null) {
+            const position = {
+                place_id: 1,
+                display_name: props.address.fullName,
+                lat: props.address.city.latitude,
+                lon: props.address.city.longitude,
+                address: {
+                    city: props.address.city.name,
+                }
+            } as GeoPosition
+            setSelectPosition(position)
+        }
+    }, [])
+
 
     const save = () => {
         const address = {
@@ -41,9 +63,9 @@ export default function MapDialog(props: any) {
         if (address.city?.name !== undefined) {
             props.setFieldValue(address);
             alertStore.setShow(false)
-            props.handleClose()
+            props.onClose()
         } else {
-            alertStore.setShow(true, "error", "Adress error",
+            alertStore.setShow(true, "error", "Address error",
                 "Please, select such address that it will contains city or more info")
         }
     }
@@ -52,7 +74,7 @@ export default function MapDialog(props: any) {
         <Dialog
             fullScreen
             open={props.open}
-            onClose={props.handleClose}
+            onClose={props.onClose}
             TransitionComponent={Transition}
         >
             <AppBar sx={{position: 'relative'}}>
@@ -60,7 +82,7 @@ export default function MapDialog(props: any) {
                     <IconButton
                         edge="start"
                         color="inherit"
-                        onClick={props.handleClose}
+                        onClick={props.onClose}
                         aria-label="close"
                     >
                         <CloseIcon/>

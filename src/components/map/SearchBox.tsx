@@ -4,7 +4,7 @@ import AddressList from "./AddressList";
 
 const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
 
-export interface Item {
+export interface GeoPosition {
     place_id: number,
     display_name: string,
     lat: number,
@@ -17,7 +17,7 @@ export interface Item {
 export default function SearchBox(props: { selectPosition: any; setSelectPosition: any; }) {
     const {selectPosition, setSelectPosition} = props;
     const [searchText, setSearchText] = useState("");
-    const [listPlace, setListPlace] = useState<Item[]>([]);
+    const [listPlace, setListPlace] = useState<GeoPosition[]>([]);
 
 
     useEffect(() => {
@@ -58,6 +58,7 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                     <OutlinedInput
                         style={{width: "100%"}}
                         value={searchText}
+                        placeholder={"Type anything for search..."}
                         onChange={(event) => {
                             setSearchText(event.target.value);
                         }}

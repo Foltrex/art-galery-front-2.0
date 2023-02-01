@@ -8,7 +8,7 @@ const icon = L.icon({
     iconSize: [38, 38],
 });
 
-const position = {lat: 51.505, lng: -0.09};
+const position = {lat: 39, lng: 34};
 
 function ResetCenterView(props: { selectPosition: any; }) {
     const {selectPosition} = props;
@@ -18,7 +18,7 @@ function ResetCenterView(props: { selectPosition: any; }) {
         if (selectPosition) {
             map.setView(
                 L.latLng(selectPosition?.lat, selectPosition?.lon),
-                map.getZoom(),
+                10,
                 {
                     animate: true
                 }
@@ -40,7 +40,7 @@ export default function Map(props: { selectPosition: any; }) {
     return (
         <MapContainer
             center={position}
-            zoom={8}
+            zoom={2}
             style={{width: "100%", height: "100%"}}
         >
             <TileLayer
