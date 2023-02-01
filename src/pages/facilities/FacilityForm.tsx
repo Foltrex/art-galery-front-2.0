@@ -25,8 +25,10 @@ interface FormValues {
 
 function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     const token = TokenService.decode(AuthService.getToken());
-    const { data } = useGetOrganizationByAccountId(token.id);
-    const [facilityObj, setFacility] = React.useState(facility ?? { organization: data } as Facility);
+    const { data: organization } = useGetOrganizationByAccountId(token.id);
+    const [facilityObj, setFacility] = React.useState(
+        facility ?? { organization: organization } as Facility
+    );
 
     const [openMap, setOpenMap] = React.useState(false);
 
@@ -58,10 +60,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     });
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth='xs'
+        <Dialog open={open} onClose={onClose} maxWidth='xs'
         >
             <DialogTitle>
                 {facility ? 'Edit' : 'Create'} Facility

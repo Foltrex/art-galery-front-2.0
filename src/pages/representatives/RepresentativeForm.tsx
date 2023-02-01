@@ -1,80 +1,196 @@
-import { SelectChangeEvent } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Skeleton, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import { title } from "process";
 import React, { useEffect } from "react";
-import Form from "../../components/form/Form";
-import Select from "../../components/form/Select";
-import TextField from "../../components/form/TextField";
+import * as yup from 'yup';
+import { useGetFacilitiesByAccountId } from "../../api/FacilityApi";
+import { useGetOrganizationByAccountId } from "../../api/OrganizationApi";
+import { useGetOrganizationRoles } from "../../api/OrganizationRoleApi";
 import { OrganizationRoleEnum } from "../../entities/enums/organizationRoleEnum";
 import { Facility } from "../../entities/facility";
-import { Organization } from "../../entities/organization";
 import { OrganizationRole } from "../../entities/organizationRole";
 import { Representative } from "../../entities/representative";
+import { AuthService } from "../../services/AuthService";
+import { TokenService } from "../../services/TokenService";
 
 interface IRepresentativeFormProps {
-	open: boolean;
-	onClose: () => void;
-	representative?: Representative;
+    open: boolean;
+    onClose: () => void;
+    representative?: Representative;
+}
+
+interface FormValues {
+    firstname: string;
+    lastname: string;
+    facility: Facility;
+    organizationRole: OrganizationRole;
 }
 
 function RepresentativeForm({ open, onClose, representative }: IRepresentativeFormProps) {
-	const [representativeObj, setRepresentative] = React.useState(
+    const token = TokenService.decode(AuthService.getToken());
+    const { data: facilities } = useGetFacilitiesByAccountId(token.id);
+    const { data: organizationRoles } = useGetOrganizationRoles();
+
+    const [representativeObj, setRepresentative] = React.useState(
         representative ?? {} as Representative
     );
 
+    useEffect(() => {
+        if (representative) {
+            setRepresentative(representative);
+        }
+    }, [representative]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setRepresentative({...representativeObj, [name]: value});
-    }
+    const initialValues: FormValues = {
+        firstname: representativeObj.firstname,
+        lastname: representativeObj.lastname,
+        facility: representativeObj.facility,
+        organizationRole: representativeObj.organizationRole
+    };
 
-    const handleSelectChange = (event: SelectChangeEvent<string>, selected: Facility | OrganizationRole) => {
-		alert(`Changed to: ${JSON.stringify(selected)}`);
-	}
+    const validationSchema = yup.object({
+        firstname: yup.string()
+            .min(1)
+            .required(),
+        lastname: yup.string()
+            .min(1)
+            .required(),
+        facility: yup.object()
+            .required(),
+    });
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        onSubmit: values => {
+            alert(JSON.stringify(values));
+        },
+        enableReinitialize: true
+    });
 
     const formTitle = representative
         ? 'Edit Representative'
         : 'Create Representative';
 
-	return (
-		<Form
-			title={formTitle}
-			open={open}
-			onClose={onClose}
-			onSubmit={() => alert('Submit representative')}>
 
-			<TextField
-				name='firstname' 
-				onChange={handleChange} 
-				defaultValue={representative?.firstname} 
-            />
-            <TextField 
-                name='lastname' 
-                onChange={handleChange} 
-                defaultValue={representative?.lastname} 
-            />
-            {representative
-                ? <TextField 
-                    name='organization' 
-                    onChange={handleChange} 
-                    defaultValue={representative?.organization?.name} />
-                : <></>
-            }
-            <Select 
-                name='facility' 
-                fullWidth
-                options={[]} 
-                onChange={handleSelectChange} 
-                mapToSelectMenuItemElement={item => item.name} 
-                selected={representative?.facility}/>
-            <Select 
-                name='organization-role' 
-                label='organizaiton role'
-                fullWidth
-                options={[]} 
-                onChange={handleSelectChange} 
-                mapToSelectMenuItemElement={item => item.name}
-                selected={representative?.organizationRole} />
-		</Form>
-	);
+    return (
+        <Dialog open={open} onClose={onClose} maxWidth='xs'>
+            <DialogTitle>{formTitle}</DialogTitle>
+            <Divider />
+            <DialogContent>
+
+                <form onSubmit={formik.handleSubmit}>
+                    <Grid container rowSpacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                name='firstname'
+                                label='Firstname'
+                                onChange={formik.handleChange}
+                                type="name"
+                                fullWidth
+                                required
+                                value={formik.values.firstname}
+                                variant="standard"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                name='lastname'
+                                label='Lastname'
+                                onChange={formik.handleChange}
+                                type="name"
+                                fullWidth
+                                required
+                                value={formik.values.lastname}
+                                variant="standard"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            {formik.values?.facility?.id
+                                ?   <FormControl fullWidth size='small'>
+                                        <InputLabel id='facility-label'>Facility</InputLabel>
+                                        <Select
+                                            labelId='facility-label'
+                                            name='facility'
+                                            label='Facility'
+                                            value={formik.values.facility.id}
+                                            required
+                                            onChange={formik.handleChange}
+                                        >
+                                            {facilities?.map(facility => (
+                                                <MenuItem key={facility.id} value={facility.id}>
+                                                    {facility.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                :   <FormControl fullWidth size='small'>
+                                        <InputLabel id='facility-label'>Facility</InputLabel>
+                                        <Select
+                                            labelId='facility-label'
+                                            name='facility'
+                                            label='Facility'
+                                            required
+                                            onChange={formik.handleChange}
+                                        >
+                                            {facilities?.map(facility => (
+                                                <MenuItem key={facility.id} value={facility.id}>
+                                                    {facility.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                            }
+
+                        </Grid>
+                        <Grid item xs={12}>
+                            {formik.values?.organizationRole?.id
+                                ?   <FormControl fullWidth size='small'>
+                                        <InputLabel id='organization-role-label'>Organization Role</InputLabel>
+                                        <Select
+                                            labelId='organization-role-label'
+                                            name='organizationRole'
+                                            label='Organization Role'
+                                            value={formik.values.organizationRole.id}
+                                            required
+                                            onChange={formik.handleChange}
+                                        >
+                                            {organizationRoles?.map(role => (
+                                                <MenuItem key={role.id} value={role.id}>
+                                                    {role.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                :   <FormControl fullWidth size='small'>
+                                        <InputLabel id='organization-role-label'>Organization Role</InputLabel>
+                                        <Select
+                                            labelId='organization-role-label'
+                                            name='organizationRole'
+                                            label='Organization Role'
+                                            required
+                                            onChange={formik.handleChange}
+                                        >
+                                            {organizationRoles?.map(role => (
+                                                <MenuItem key={role.id} value={role.id}>
+                                                    {role.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                            }
+                        </Grid>
+                    </Grid>
+                </form>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} variant='text'>Cancel</Button>
+                <Button type='submit' form='form' variant='contained'>Save</Button>
+            </DialogActions>
+        </Dialog>
+    );
 };
 
 export default RepresentativeForm;

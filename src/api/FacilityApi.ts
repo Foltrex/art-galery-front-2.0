@@ -10,6 +10,10 @@ export const useGetFacilitiesPageByAccountId = (accountId: string, page?: number
     })
 }
 
+export const useGetFacilitiesByAccountId = (accountId: string) => {
+    return useFetch<Facility[]>(`${ART_SERVICE}/facilities/list/accounts/${accountId}`);
+}
+
 export const useAddFacility = (
     updater: (oldData: Facility[], newData: Facility) => Facility[]
 ) => {

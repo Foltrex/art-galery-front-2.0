@@ -4,10 +4,10 @@ import * as React from 'react';
 interface ITextFieldProps {
 	name: string;
 	onChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-	defaultValue: unknown;
+	value: unknown;
 }
 
-const TestField: React.FunctionComponent<ITextFieldProps> = ({ name, onChange, defaultValue }) => {
+const TestField: React.FunctionComponent<ITextFieldProps> = ({ name, onChange, value }) => {
 	const nameFirstLetter = name.charAt(0);
 	const capitalizedNameFirstLetter = nameFirstLetter.toUpperCase() + name.slice(1);
 
@@ -21,7 +21,7 @@ const TestField: React.FunctionComponent<ITextFieldProps> = ({ name, onChange, d
 			type="name"
 			fullWidth
 			required
-			defaultValue={defaultValue}
+			value={value}
 			variant="standard"
 		/>
 	);

@@ -42,7 +42,7 @@ function Select<T extends SelectItem>({
 				id={name}
 				name={name}
 				label={capitalizedNameFirstLetter}
-				defaultValue={selected?.id}
+				value={selected?.id}
 				required
 				onChange={handleChange}
 			>

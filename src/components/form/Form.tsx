@@ -21,23 +21,25 @@ function Form({
 }: IFormProps) {
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth='xs'>
-            <DialogTitle>{title}</DialogTitle>
-            <Divider />
-            <DialogContent>
-                <Grid container rowSpacing={2}>
-                    {children.map((child, index) => (
-                        <Grid key={index} item xs={12}>
-                            {child}
-                        </Grid>
-                    ))}
-                </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} variant='text'>Cancel</Button>
-                <Button onClick={onSubmit} variant='contained'>Save</Button>
-            </DialogActions>
-        </Dialog>
+        <form onSubmit={onSubmit}>
+            <Dialog open={open} onClose={onClose} maxWidth='xs'>
+                <DialogTitle>{title}</DialogTitle>
+                <Divider />
+                <DialogContent>
+                    <Grid container rowSpacing={2}>
+                        {children.map((child, index) => (
+                            <Grid key={index} item xs={12}>
+                                {child}
+                            </Grid>
+                        ))}
+                    </Grid>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onClose} variant='text'>Cancel</Button>
+                    <Button type='submit' variant='contained'>Save</Button>
+                </DialogActions>
+            </Dialog>
+        </form>
     );
 };
 
