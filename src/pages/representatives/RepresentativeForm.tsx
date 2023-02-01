@@ -74,12 +74,12 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
 
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth='xs'>
-            <DialogTitle>{formTitle}</DialogTitle>
-            <Divider />
-            <DialogContent>
 
-                <form onSubmit={formik.handleSubmit}>
+        <Dialog open={open} onClose={onClose} maxWidth='xs'>
+            <form onSubmit={formik.handleSubmit}>
+                <DialogTitle>{formTitle}</DialogTitle>
+                <Divider />
+                <DialogContent>
                     <Grid container rowSpacing={2}>
                         <Grid item xs={12}>
                             <TextField
@@ -147,12 +147,12 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                             </FormControl>
                         </Grid>
                     </Grid>
-                </form>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} variant='text'>Cancel</Button>
-                <Button type='submit' form='form' variant='contained'>Save</Button>
-            </DialogActions>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onClose} variant='text'>Cancel</Button>
+                    <Button type='submit' variant='contained'>Save</Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 };

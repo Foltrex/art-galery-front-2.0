@@ -60,15 +60,14 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     });
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth='xs'
-        >
-            <DialogTitle>
-                {facility ? 'Edit' : 'Create'} Facility
-            </DialogTitle>
-            <Divider />
+        <Dialog open={open} onClose={onClose} maxWidth='xs'>
+            <form onSubmit={formik.handleSubmit}>
+                <DialogTitle>
+                    {facility ? 'Edit' : 'Create'} Facility
+                </DialogTitle>
+                <Divider />
 
-            <DialogContent>
-                <form onSubmit={formik.handleSubmit}>
+                <DialogContent>
                     <MapDialog
                         open={openMap}
                         onClose={() => setOpenMap(false)}
@@ -118,17 +117,17 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 }
                                 onClick={() => setOpenMap(true)}
                                 onChange={formik.handleChange}
-                                error={!!formik.errors.address} 
+                                error={!!formik.errors.address}
                                 helperText={formik.errors.address}
                             />
                         </Grid>
                     </Grid>
-                </form>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} form='form' variant='text'>Cancel</Button>
-                <Button type='submit' variant='contained'>Save</Button>
-            </DialogActions>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onClose} variant='text'>Cancel</Button>
+                    <Button type='submit' variant='contained'>Save</Button>
+                </DialogActions>
+            </form>
         </Dialog>
     );
 };
