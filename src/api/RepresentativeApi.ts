@@ -39,8 +39,4 @@ export class RepresentativeApi {
         return axiosApi.delete<any>(`${ART_SERVICE}/representatives/${id}`);
     }
 
-    static test2() {
-        return axiosApi.post<string>(`${ART_SERVICE}/representatives/post`)
-    }
-
 }
