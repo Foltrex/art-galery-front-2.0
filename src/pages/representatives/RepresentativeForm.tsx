@@ -108,79 +108,43 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                             />
                         </Grid>
                         <Grid item xs={12}>
-                            {formik.values?.facility?.id
-                                ?   <FormControl fullWidth size='small'>
-                                        <InputLabel id='facility-label'>Facility</InputLabel>
-                                        <Select
-                                            labelId='facility-label'
-                                            name='facility'
-                                            label='Facility'
-                                            value={formik.values.facility.id}
-                                            required
-                                            onChange={formik.handleChange}
-                                        >
-                                            {facilities?.map(facility => (
-                                                <MenuItem key={facility.id} value={facility.id}>
-                                                    {facility.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                :   <FormControl fullWidth size='small'>
-                                        <InputLabel id='facility-label'>Facility</InputLabel>
-                                        <Select
-                                            labelId='facility-label'
-                                            name='facility'
-                                            label='Facility'
-                                            required
-                                            onChange={formik.handleChange}
-                                        >
-                                            {facilities?.map(facility => (
-                                                <MenuItem key={facility.id} value={facility.id}>
-                                                    {facility.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                            }
+                            <FormControl fullWidth size='small'>
+                                <InputLabel id='facility-label'>Facility</InputLabel>
+                                <Select
+                                    labelId='facility-label'
+                                    name='facility'
+                                    label='Facility'
+                                    value={formik.values?.facility?.id ?? ''}
+                                    required
+                                    onChange={formik.handleChange}
+                                >
+                                    {facilities?.map(facility => (
+                                        <MenuItem key={facility.id} value={facility.id}>
+                                            {facility.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
 
                         </Grid>
                         <Grid item xs={12}>
-                            {formik.values?.organizationRole?.id
-                                ?   <FormControl fullWidth size='small'>
-                                        <InputLabel id='organization-role-label'>Organization Role</InputLabel>
-                                        <Select
-                                            labelId='organization-role-label'
-                                            name='organizationRole'
-                                            label='Organization Role'
-                                            value={formik.values.organizationRole.id}
-                                            required
-                                            onChange={formik.handleChange}
-                                        >
-                                            {organizationRoles?.map(role => (
-                                                <MenuItem key={role.id} value={role.id}>
-                                                    {role.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                                :   <FormControl fullWidth size='small'>
-                                        <InputLabel id='organization-role-label'>Organization Role</InputLabel>
-                                        <Select
-                                            labelId='organization-role-label'
-                                            name='organizationRole'
-                                            label='Organization Role'
-                                            required
-                                            onChange={formik.handleChange}
-                                        >
-                                            {organizationRoles?.map(role => (
-                                                <MenuItem key={role.id} value={role.id}>
-                                                    {role.name}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
-                                    </FormControl>
-                            }
+                            <FormControl fullWidth size='small'>
+                                <InputLabel id='organization-role-label'>Organization Role</InputLabel>
+                                <Select
+                                    labelId='organization-role-label'
+                                    name='organizationRole'
+                                    label='Organization Role'
+                                    value={formik.values?.organizationRole?.id ?? ''}
+                                    required
+                                    onChange={formik.handleChange}
+                                >
+                                    {organizationRoles?.map(role => (
+                                        <MenuItem key={role.id} value={role.id}>
+                                            {role.name}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Grid>
                     </Grid>
                 </form>
