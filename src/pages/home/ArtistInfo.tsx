@@ -21,7 +21,6 @@ const ArtistInfo = (props: { artist: Artist }) => {
             />
             <Box display="flex" justifyContent="center">
                 <Grid
-                    spacing={0}
                     sx={{marginTop: "4%", width: "50vw"}}
                     justifyContent="center"
                 >
@@ -39,13 +38,13 @@ const ArtistInfo = (props: { artist: Artist }) => {
                             <Grid container>
                                 <Grid item sm={4}><strong>Description</strong></Grid>
                                 <Grid item sm={8}>
-                                    {artist.description ? artist.description : "The description is empty"}
+                                    {artist.description ? artist.description : "empty"}
                                 </Grid>
                             </Grid>
                             <Grid container>
                                 <Grid item sm={4}><strong>Address</strong></Grid>
                                 <Grid item sm={8}>
-                                    {artist.address ? artist.address.fullName : "The address is empty"}
+                                    {artist.address ? artist.address.fullName : "empty"}
                                 </Grid>
                             </Grid>
                         </Stack>

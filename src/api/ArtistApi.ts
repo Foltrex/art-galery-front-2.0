@@ -8,4 +8,8 @@ export class ArtistApi {
         return axiosApi.get<Artist>(`${ART_SERVICE}/artists/accounts/${accountId}`);
     }
 
+    static updateArtistById(artist: Artist, artistId: string) {
+        return axiosApi.put<Artist>(`${ART_SERVICE}/artists/${artistId}`, artist);
+    }
+
 }

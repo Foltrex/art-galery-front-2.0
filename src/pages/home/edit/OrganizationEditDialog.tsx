@@ -43,8 +43,13 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
     }
 
     const validationSchema = yup.object().shape({
-        name: yup.string().required('Name cannot be empty').min(1),
-        address: yup.object().required('Address cannot be empty').nullable()
+        name: yup.string()
+            .required('Name cannot be empty')
+            .min(2)
+            .max(255),
+        address: yup.object()
+            .required('Address cannot be empty')
+            .nullable()
     })
 
     const formik = useFormik({
@@ -87,9 +92,8 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
                         setFieldValue={(value: Address) => {
                             formik.setFieldValue('address', value)
                         }}
-                        address={organization.address}
+                        address={formik.values.address as Address}
                     />
-                    <h1>{typeof formik.values.address === "object"}</h1>
                     <AlertNotification/>
                     <TextField
                         margin="normal"
@@ -108,8 +112,8 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
                         fullWidth
                         label="Address"
                         name={"address"}
-                        InputProps={{readOnly: true, disableUnderline: true}}
-                        InputLabelProps={{shrink: true}}
+                        InputProps={{readOnly: true}}
+                        InputLabelProps={formik.values.address === null ? undefined : {shrink: true}}
                         value={typeof formik.values.address === "object" ?
                             formik.values.address?.fullName : formik.values.address
                         }

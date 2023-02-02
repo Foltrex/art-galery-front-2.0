@@ -13,7 +13,7 @@ export class OrganizationStore {
         makeAutoObservable(this);
     }
 
-    setOrganizaitons(organizations: Organization[]) {
+    setOrganizations(organizations: Organization[]) {
         this.organizations = organizations;
     }
 
