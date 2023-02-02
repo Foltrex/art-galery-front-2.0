@@ -1,12 +1,15 @@
-import { Drawer, IconButton, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import {Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import {styled, useTheme} from '@mui/material/styles';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Link } from 'react-router-dom';
+import SettingsIcon from '@mui/icons-material/Settings';
+import {Link} from 'react-router-dom';
+import {TokenService} from "../../services/TokenService";
+import {AccountEnum} from "../../entities/enums/AccountEnum";
 
 const drawerWidth = 240;
 
@@ -25,8 +28,9 @@ interface ISidebarProps {
 
 const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
     const theme = useTheme();
+    const accountType = TokenService.getCurrentAccountType();
 
-    const sideBarElements = [
+    const sideBarElementsOrganization = [
         {
             text: 'Organization',
             icon: <AccountCircleOutlinedIcon/>,
@@ -41,6 +45,24 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             text: 'Facilities',
             icon: <PhotoSizeSelectActualOutlinedIcon/>,
             link: '/facilities?page=0&limit=10'
+        },
+        {
+            text: 'Settings',
+            icon: <SettingsIcon/>,
+            link: '/settings'
+        }
+    ];
+
+    const sideBarElementsArtist = [
+        {
+            text: 'Artist',
+            icon: <AccountCircleOutlinedIcon/>,
+            link: '/'
+        },
+        {
+            text: 'Settings',
+            icon: <SettingsIcon/>,
+            link: '/settings'
         }
     ];
 
@@ -60,14 +82,15 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
         >
             <DrawerHeader>
                 <IconButton onClick={onSidebarButtonClick}>
-                    {theme.direction === 'ltr' 
-                        ? <ChevronLeftIcon/> 
+                    {theme.direction === 'ltr'
+                        ? <ChevronLeftIcon/>
                         : <ChevronRightIcon/>}
                 </IconButton>
             </DrawerHeader>
             <Divider/>
             <List>
-                {sideBarElements.map(sidebarElement => {
+                {(accountType === AccountEnum.REPRESENTATIVE ?
+                    sideBarElementsOrganization : sideBarElementsArtist).map(sidebarElement => {
                     return (
                         <ListItem key={sidebarElement.text}
                                   component={Link}
@@ -78,7 +101,7 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
                                 <ListItemIcon>
                                     {sidebarElement.icon}
                                 </ListItemIcon>
-                                <ListItemText primary={sidebarElement.text} />
+                                <ListItemText primary={sidebarElement.text}/>
                             </ListItemButton>
                         </ListItem>
                     );
