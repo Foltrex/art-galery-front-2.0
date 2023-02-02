@@ -1,12 +1,11 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, Select, Skeleton, TextField } from "@mui/material";
-import { useFormik } from "formik";
-import { title } from "process";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { FormikHelpers, useFormik } from "formik";
 import React, { useEffect } from "react";
 import * as yup from 'yup';
 import { useGetFacilitiesByAccountId } from "../../api/FacilityApi";
 import { useGetOrganizationByAccountId } from "../../api/OrganizationApi";
 import { useGetOrganizationRoles } from "../../api/OrganizationRoleApi";
-import { OrganizationRoleEnum } from "../../entities/enums/organizationRoleEnum";
+import { useAddRepresentative } from "../../api/RepresentativeApi";
 import { Facility } from "../../entities/facility";
 import { OrganizationRole } from "../../entities/organizationRole";
 import { Representative } from "../../entities/representative";
@@ -30,16 +29,22 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
     const token = TokenService.decode(AuthService.getToken());
     const { data: facilities } = useGetFacilitiesByAccountId(token.id);
     const { data: organizationRoles } = useGetOrganizationRoles();
+    const { data: organization } = useGetOrganizationByAccountId(token.id);
 
     const [representativeObj, setRepresentative] = React.useState(
-        representative ?? {} as Representative
+        representative ?? { 
+            accountId: token.id,
+            organization: organization
+        } as Representative
     );
 
     useEffect(() => {
         if (representative) {
             setRepresentative(representative);
+        } else if (organization) {
+            setRepresentative({...representativeObj, organization: organization});
         }
-    }, [representative]);
+    }, [representative, organization]);
 
     const initialValues: FormValues = {
         firstname: representativeObj.firstname,
@@ -59,25 +64,44 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
             .required(),
     });
 
+    const mutationAdd = useAddRepresentative();
+
+    const onAdd = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
+        setSubmitting(true);
+        try {
+            const representative: Representative = {
+                id: representativeObj.id,
+                firstname: values.firstname,
+                lastname: values.lastname,
+                organization: representativeObj.organization,
+                facility: values.facility,
+                organizationRole: values.organizationRole,
+                accountId: representativeObj.accountId
+            }
+
+            await mutationAdd.mutateAsync(representative);
+        } catch (e) {
+            // Add push notification
+            console.log(e);
+        } finally {
+            setSubmitting(false);
+            onClose();
+        }
+    }
+
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        onSubmit: values => {
-            alert(JSON.stringify(values));
-        },
+        onSubmit: onAdd,
         enableReinitialize: true
     });
 
-    const formTitle = representative
-        ? 'Edit Representative'
-        : 'Create Representative';
-
-
     return (
-
         <Dialog open={open} onClose={onClose} maxWidth='xs'>
             <form onSubmit={formik.handleSubmit}>
-                <DialogTitle>{formTitle}</DialogTitle>
+                <DialogTitle>
+                    {representative ? 'Edit' : 'Create'} Representative
+                </DialogTitle>
                 <Divider />
                 <DialogContent>
                     <Grid container rowSpacing={2}>
@@ -116,7 +140,10 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                                     label='Facility'
                                     value={formik.values?.facility?.id ?? ''}
                                     required
-                                    onChange={formik.handleChange}
+                                    onChange={e => {
+                                        const selectedFacility = facilities?.find(f => f.id === e.target.value);
+                                        formik.setFieldValue('facility', selectedFacility);
+                                    }}
                                 >
                                     {facilities?.map(facility => (
                                         <MenuItem key={facility.id} value={facility.id}>
@@ -136,7 +163,10 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                                     label='Organization Role'
                                     value={formik.values?.organizationRole?.id ?? ''}
                                     required
-                                    onChange={formik.handleChange}
+                                    onChange={e => {
+                                        const selectedRole = organizationRoles?.find(r => r.id === e.target.value);
+                                        formik.setFieldValue('organizationRole', selectedRole);
+                                    }}
                                 >
                                     {organizationRoles?.map(role => (
                                         <MenuItem key={role.id} value={role.id}>
@@ -150,7 +180,13 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} variant='text'>Cancel</Button>
-                    <Button type='submit' variant='contained'>Save</Button>
+                    <Button 
+                        type='submit' 
+                        variant='contained'
+                        disabled={formik.isSubmitting}
+                    >
+                        Save
+                    </Button>
                 </DialogActions>
             </form>
         </Dialog>

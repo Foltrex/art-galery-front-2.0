@@ -74,11 +74,7 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 		setOpenDeleteModal(true);
 	}
 
-    const mutationDelete = useDeleteFacility((oldFacilitiesPage, deletedFacilityId) => {
-		let { content: oldFacilities } = oldFacilitiesPage;
-        oldFacilities = oldFacilities.filter(facility => facility.id !== deletedFacilityId)
-		return oldFacilitiesPage;
-    })
+    const mutationDelete = useDeleteFacility();
 
 	const onDelete = async () => {
 		try {

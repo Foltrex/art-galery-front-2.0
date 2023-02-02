@@ -3,10 +3,11 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
+import { RootStoreProvider } from "./stores/provider/RootStoreProvider";
 import { createTheme, ThemeProvider } from '@mui/material';
 import { CookiesProvider } from 'react-cookie';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -21,9 +22,10 @@ root.render(
             <QueryClientProvider client={queryClient}>
                 <RootStoreProvider>
                     <ThemeProvider theme={defaultMaterialTheme}>
-                        <App/>
+                        <App />
                     </ThemeProvider>
                 </RootStoreProvider>
+                <ReactQueryDevtools />
             </QueryClientProvider>
         </CookiesProvider>
     </React.StrictMode>

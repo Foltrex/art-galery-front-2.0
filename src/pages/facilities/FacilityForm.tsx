@@ -27,6 +27,7 @@ interface FormValues {
 function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     const token = TokenService.decode(AuthService.getToken());
     const { data: organization } = useGetOrganizationByAccountId(token.id);
+    
     const [facilityObj, setFacility] = React.useState(
         facility ?? { organization: organization } as Facility
     );
@@ -36,8 +37,10 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     React.useEffect(() => {
         if (facility) {
             setFacility(facility);
+        } else if (organization) {
+            setFacility({...facilityObj, organization: organization})
         }
-    }, [facility])
+    }, [facility, organization])
 
     const initialValues: FormValues = {
         name: facilityObj.name,
@@ -51,18 +54,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
             .required('Name cannot be empty')
     });
 
-    const mutationAdd = useAddFacility((oldFacilitiesPage, facility) => {
-        let { content: oldFacilities } = oldFacilitiesPage;
-        if (facility) {
-            oldFacilities = oldFacilities.map(oldFacility => {
-                return oldFacility.id === facility.id ? facility : oldFacility
-            })
-        } else {
-            oldFacilities = [...oldFacilities, facility];
-        }
-        
-        return oldFacilitiesPage;
-    });
+    const mutationAdd = useAddFacility();
 
     const onAdd = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
         // Check with address
@@ -75,6 +67,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                 address: values.address as Address,
                 organization: facilityObj.organization
             }
+            
 
             await mutationAdd.mutateAsync(facility);
         } catch (e) {
@@ -131,7 +124,10 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 control={
                                     <Switch
                                         name='isActive'
-                                        onChange={formik.handleChange}
+                                        onChange={event => {
+                                            const checked = !!event.target.value
+                                            formik.setFieldValue('isActive', checked);
+                                        }}
                                         checked={formik.values.isActive}
                                     />
                                 }

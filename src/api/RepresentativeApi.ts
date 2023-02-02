@@ -1,6 +1,6 @@
-import { ART_SERVICE, axiosApi, USER_SERVICE } from "../http/axios";
 import { Representative } from "../entities/representative";
-import { IPage, useFetch } from "../hooks/react-query";
+import { IPage, useDelete, useFetch, usePost } from "../hooks/react-query";
+import { ART_SERVICE, axiosApi } from "../http/axios";
 
 interface TPageableResponse {
     content: Representative[];
@@ -13,6 +13,14 @@ export const useGetRepresentativesPageByAccountId = (accountId: string, page?: n
             page: page,
             size: size
         })
+}
+
+export const useDeleteRepresentative = () => {
+    return useDelete<IPage<Representative>>(`${ART_SERVICE}/representatives`);
+}
+
+export const useAddRepresentative = () => {
+    return usePost<IPage<Representative>, Representative>(`${ART_SERVICE}/representatives`);
 }
 
 export class RepresentativeApi {

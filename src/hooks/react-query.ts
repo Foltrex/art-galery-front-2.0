@@ -1,5 +1,5 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { QueryFunctionContext, useInfiniteQuery, useQueryClient, UseQueryOptions, useQuery, useMutation, Query } from "react-query";
+import { AxiosError, AxiosResponse } from "axios";
+import { QueryFunctionContext, useMutation, useQuery, useQueryClient, UseQueryOptions } from "react-query";
 import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
@@ -71,7 +71,6 @@ const useGenericMutation = <T, S>(
     func: (data: T | S) => Promise<AxiosResponse<S>>,
     url: string,
     params?: object,
-    updater?: ((oldData: T, newData: S) => T) | undefined
 ) => {
     const queryClient = useQueryClient();
 
@@ -89,38 +88,32 @@ const useGenericMutation = <T, S>(
 export const useDelete = <T>(
     url: string,
     params?: object,
-    updater?: (oldData: T, id: string | number) => T
 ) => {
     return useGenericMutation<T, string | number>(
         id => axiosApi.delete(`${url}/${id}`),
         url,
-        params,
-        updater
+        params
     );
 };
 
 export const usePost = <T, S>(
     url: string,
-    params?: object,
-    updater?: (oldData: T, newData: S) => T
+    params?: object
 ) => {
     return useGenericMutation<T, S>(
         data => axiosApi.post<S>(url, data),
         url,
-        params,
-        updater
+        params
     );
 };
 
 export const useUpdate = <T, S>(
     url: string,
-    params?: object,
-    updater?: (oldData: T, newData: S) => T
+    params?: object
 ) => {
     return useGenericMutation<T, S>(
         data => axiosApi.put<S>(url, data),
         url,
-        params,
-        updater
+        params
     );
 };

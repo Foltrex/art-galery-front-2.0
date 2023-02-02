@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { useGetRepresentativesPageByAccountId } from '../../api/RepresentativeApi';
+import { useDeleteRepresentative, useGetRepresentativesPageByAccountId } from '../../api/RepresentativeApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, { IColumnType } from '../../components/table/Table';
@@ -58,6 +58,17 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
         setOpenDeleteModal(true);
     }
 
+    const mutationDelete = useDeleteRepresentative();
+
+    const onDelete = async () => {
+        try {
+            await mutationDelete.mutateAsync(representative!.id);
+        } catch (e) {
+            // add push notification
+            console.log(e);
+        }
+    }
+
     const handleEdit = (data: Representative) => {
         setRepresentative(data);
         setOpenEditForm(true);
@@ -86,7 +97,7 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
             <DeleteModal 
                 open={openDeleteModal} 
                 onClose={() => setOpenDeleteModal(false)} 
-                onDelete={() => alert(`Delete modal with id: ${representative?.id}`)} />
+                onDelete={onDelete} />
         </>
   	);
 };
