@@ -1,17 +1,17 @@
 import * as React from 'react';
-import {AuthService} from "../../services/AuthService";
+import {useEffect, useState} from 'react';
 import OrganizationInfo from "./OrganizationInfo";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import ArtistInfo from "./ArtistInfo";
-import {useEffect, useState} from "react";
 import {Organization} from "../../entities/organization";
 import {OrganizationApi} from "../../api/OrganizationApi";
-import {Box, CircularProgress} from "@mui/material";
-import { Artist } from '../../entities/artist';
+import {Artist} from '../../entities/artist';
 import {ArtistApi} from "../../api/ArtistApi";
 import {TokenService} from "../../services/TokenService";
+import Loading from "../../components/ui/Loading";
 
-const OrganizationProfile = () => {
+const Profile = () => {
+    const accountType = TokenService.getCurrentAccountType();
     const [organization, setOrganization] = useState<Organization>({} as Organization)
     const [artist, setArtist] = useState<Artist>({} as Artist)
     const [loading, setLoading] = useState(true)
@@ -21,7 +21,6 @@ const OrganizationProfile = () => {
         if (accountType === AccountEnum.REPRESENTATIVE) {
             OrganizationApi.getOrganizationByAccountId(accountId)
                 .then(response => {
-                    console.log(response)
                     setOrganization(response.data)
                 })
                 .finally(() => setLoading(false))
@@ -34,15 +33,10 @@ const OrganizationProfile = () => {
         }
     }, [])
 
-    const accountType = TokenService.getCurrentAccountType();
 
     const Render = () => {
         if (loading) {
-            return (
-                <Box display="flex" justifyContent="center">
-                    <CircularProgress/>
-                </Box>
-            )
+            return (<Loading/>)
         }
 
         if (accountType === AccountEnum.REPRESENTATIVE) {
@@ -60,4 +54,4 @@ const OrganizationProfile = () => {
     );
 };
 
-export default OrganizationProfile;
+export default Profile;
