@@ -48,19 +48,12 @@ const columns: IColumnType<IFacilityData>[] = [
 
 
 const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
-	const address: Address = facility.address;
-	const addressString: string = [
-		address.fullName
-	].join(', ');
-
-	const organizationName = facility.organization.name!;
-	
 	return {
 		id: facility.id,
 		name: facility.name,
 		activity: facility.isActive ? 'Active' : 'Inactive',
-		address: addressString,
-		organization: organizationName
+		address: facility.address?.fullName,
+		organization: facility.organization.name!
 	};
 }
 
@@ -81,9 +74,10 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 		setOpenDeleteModal(true);
 	}
 
-    const mutationDelete = useDeleteFacility((oldFacilities, deletedFacilityId) => {
-		console.log(oldFacilities);
-        return oldFacilities.filter(facility => facility.id !== deletedFacilityId)
+    const mutationDelete = useDeleteFacility((oldFacilitiesPage, deletedFacilityId) => {
+		let { content: oldFacilities } = oldFacilitiesPage;
+        oldFacilities = oldFacilities.filter(facility => facility.id !== deletedFacilityId)
+		return oldFacilitiesPage;
     })
 
 	const onDelete = async () => {
@@ -102,7 +96,7 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 
 	return (
 		<>
-			{data
+			{data && data.content
 				? 	<Table
 						columns={columns}
 						onDelete={handleDelete}

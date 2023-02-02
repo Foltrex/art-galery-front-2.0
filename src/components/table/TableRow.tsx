@@ -30,7 +30,12 @@ const TableRow = <T extends IdentifiableRecord, S extends IdentifiableRecord>({
             </TableCell>
 
             {columns.map((column, columnIndex) => (
-                <TableCell key={`table-cell-${columnIndex}`} align='center'>
+                <TableCell key={`table-cell-${columnIndex}`} align='center' sx={{
+                    whiteSpace: 'nowrap', 
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    maxWidth: '150px'
+                }}>
                     {column.render
                         ? column.render(column, mapModelToTableRow(item))
                         : lodash.get(mapModelToTableRow(item), column.key)

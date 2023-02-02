@@ -19,7 +19,7 @@ function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({
 	mapModelToTableRow
 }: ITableBodyProps<T, S>): JSX.Element {
 	const { content, number, size } = page;
-
+	
 	return (
 		<MuiTableBody>
 			{content.map((item, itemIndex) => (

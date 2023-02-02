@@ -8,6 +8,11 @@ interface IDeleteModalProps {
 }
 
 const DeleteModal: React.FunctionComponent<IDeleteModalProps> = ({ open, onClose, onDelete }) => {
+	const handleDelete = () => {
+		onDelete();
+		onClose();
+	}
+
 	return (
 		<Dialog open={open}>
 			<DialogTitle>
@@ -21,7 +26,7 @@ const DeleteModal: React.FunctionComponent<IDeleteModalProps> = ({ open, onClose
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={onClose}>Cancel</Button>
-				<Button onClick={onDelete} variant='contained'>Delete</Button>
+				<Button onClick={handleDelete} variant='contained'>Delete</Button>
 			</DialogActions>
 		</Dialog>
 	);

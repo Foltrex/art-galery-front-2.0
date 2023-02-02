@@ -6,12 +6,8 @@ interface TPageableResponse {
     content: Representative[];
 }
 
-const REPRESENTATIVE_KEY = `${ART_SERVICE}/representatives`;
-
-
 export const useGetRepresentativesPageByAccountId = (accountId: string, page?: number, size?: number) => {
     return useFetch<IPage<Representative>>(
-        REPRESENTATIVE_KEY,
         `${ART_SERVICE}/representatives/account/${accountId}`,
         {
             page: page,

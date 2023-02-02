@@ -1,5 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Grid, SelectChangeEvent, Switch, TextField } from '@mui/material';
-import { useFormik } from 'formik';
+import { FormikBag, FormikHelpers, useFormik } from 'formik';
 import * as React from 'react';
 import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
 import MapDialog from '../../components/map/MapDialog';
@@ -51,10 +51,22 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
             .required('Name cannot be empty')
     });
 
-    const mutationAdd = useAddFacility((oldFacilities, newFacility) => [...oldFacilities, newFacility]);
+    const mutationAdd = useAddFacility((oldFacilitiesPage, facility) => {
+        let { content: oldFacilities } = oldFacilitiesPage;
+        if (facility) {
+            oldFacilities = oldFacilities.map(oldFacility => {
+                return oldFacility.id === facility.id ? facility : oldFacility
+            })
+        } else {
+            oldFacilities = [...oldFacilities, facility];
+        }
+        
+        return oldFacilitiesPage;
+    });
 
-    const onAdd = async (values: FormValues) => {
+    const onAdd = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
         // Check with address
+        setSubmitting(true);
         try {
             const facility: Facility = {
                 id: facilityObj.id,
@@ -68,6 +80,9 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
         } catch (e) {
             // Add push notification
             console.log(e);
+        } finally {
+            setSubmitting(false);
+            onClose();
         }
     }
     
@@ -130,7 +145,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 fullWidth
                                 label="Address"
                                 name={"address"}
-                                InputProps={{ readOnly: true, disableUnderline: true }}
+                                InputProps={{ readOnly: true }}
                                 InputLabelProps={{ shrink: true }}
                                 value={typeof formik.values.address === "object" ?
                                     formik.values.address?.fullName : formik.values.address
@@ -145,7 +160,13 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onClose} variant='text'>Cancel</Button>
-                    <Button type='submit' variant='contained'>Save</Button>
+                    <Button 
+                        type='submit' 
+                        variant='contained'
+                        disabled={formik.isSubmitting}
+                    >
+                        Save
+                    </Button>
                 </DialogActions>
             </form>
         </Dialog>
