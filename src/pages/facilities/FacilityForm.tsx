@@ -10,6 +10,7 @@ import { Organization } from '../../entities/organization';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
 import * as yup from 'yup';
+import { useAddFacility, useDeleteFacility } from '../../api/FacilityApi';
 
 interface IFacilityFormProps {
     open: boolean;
@@ -50,14 +51,33 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
             .required('Name cannot be empty')
     });
 
+    const mutationAdd = useAddFacility((oldFacilities, newFacility) => [...oldFacilities, newFacility]);
+
+    const onAdd = async (values: FormValues) => {
+        // Check with address
+        try {
+            const facility: Facility = {
+                id: facilityObj.id,
+                name: values.name,
+                isActive: values.isActive,
+                address: values.address as Address,
+                organization: facilityObj.organization
+            }
+
+            await mutationAdd.mutateAsync(facility);
+        } catch (e) {
+            // Add push notification
+            console.log(e);
+        }
+    }
+    
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        onSubmit: values => {
-            alert(JSON.stringify(values))
-        },
+        onSubmit: onAdd,
         enableReinitialize: true
     });
+
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth='xs'>

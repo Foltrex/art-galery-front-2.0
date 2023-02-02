@@ -4,8 +4,10 @@ import {ART_SERVICE, axiosApi} from "../http/axios";
 
 const API = `${ART_SERVICE}/organizations`;
 
+const ORGANIZATION_KEY = `${ART_SERVICE}/organizations`;
+
 export const useGetOrganizationByAccountId = (accountId: string) => {
-    return useFetch<Organization>(`${API}/accounts/${accountId}`);
+    return useFetch<Organization>(ORGANIZATION_KEY, `${API}/accounts/${accountId}`);
 }
 
 export class OrganizationApi {

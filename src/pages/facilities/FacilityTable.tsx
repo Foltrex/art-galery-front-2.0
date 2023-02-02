@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useAddFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
+import { useAddFacility, useDeleteFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
 import { Address } from '../../entities/address';
@@ -76,9 +76,23 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
 	const { data } = useGetFacilitiesPageByAccountId(token.id, pageNumber, rowsPerPage);
 
 	
-	const handleDelete = (data: Facility) => {
+	const handleDelete = async (data: Facility) => {
 		setFacility(data);
 		setOpenDeleteModal(true);
+	}
+
+    const mutationDelete = useDeleteFacility((oldFacilities, deletedFacilityId) => {
+		console.log(oldFacilities);
+        return oldFacilities.filter(facility => facility.id !== deletedFacilityId)
+    })
+
+	const onDelete = async () => {
+		try {
+			await mutationDelete.mutateAsync(facility!.id);
+		} catch (e) {
+			// add push notification
+			console.log(e);
+		}
 	}
 
     const handleEdit = (data: Facility) => {
@@ -109,7 +123,7 @@ const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
             <DeleteModal 
                 open={openDeleteModal} 
                 onClose={() => setOpenDeleteModal(false)} 
-                onDelete={() => alert(`Delete modal with id: ${facility?.id}`)} />
+                onDelete={onDelete} />
 		</>
   	);
 };
