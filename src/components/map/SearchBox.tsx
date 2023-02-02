@@ -1,8 +1,8 @@
 import {OutlinedInput} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AddressList from "./AddressList";
-
-const NOMINATIM_BASE_URL = "https://nominatim.openstreetmap.org/search?";
+import {OpenStreetMapApi} from "../../api/OpenStreetMapApi";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 export interface GeoPosition {
     place_id: number,
@@ -15,40 +15,27 @@ export interface GeoPosition {
 }
 
 export default function SearchBox(props: { selectPosition: any; setSelectPosition: any; }) {
-    const {selectPosition, setSelectPosition} = props;
+    const {setSelectPosition} = props;
     const [searchText, setSearchText] = useState("");
     const [listPlace, setListPlace] = useState<GeoPosition[]>([]);
-
+    const {alertStore} = useRootStore();
 
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            // Send Axios request here
-            console.log(searchText)
-            const params = {
-                q: searchText,
-                format: "json",
-                addressdetails: "1",
-                polygon_geojson: "0",
-            };
-
-            const queryString = new URLSearchParams(params).toString();
-
-            fetch(`${NOMINATIM_BASE_URL}${queryString}`)
-                .then((response) => response.text())
+        const delayFetch = setTimeout(() => {
+            OpenStreetMapApi.search(searchText)
                 .then((result) => {
-                    const json = JSON.parse(result);
-                    console.log(json);
+                    const json = result.data
                     if (!json.error) {
                         setListPlace(json);
                     }
                 })
-                .catch((err) => {
-                    console.log("err: ", err)
+                .catch((error) => {
+                    alertStore.setShow(true, "error", "Search error", "something went wrong")
                     setListPlace([])
                 });
         }, 1000)
 
-        return () => clearTimeout(delayDebounceFn)
+        return () => clearTimeout(delayFetch)
     }, [searchText])
 
     return (
