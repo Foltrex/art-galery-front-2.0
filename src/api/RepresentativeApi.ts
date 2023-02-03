@@ -8,7 +8,8 @@ export const useGetRepresentativesPageByAccountId = (accountId: string, page?: n
         {
             page: page,
             size: size
-        })
+        }
+    )
 }
 
 export const useDeleteRepresentative = () => {

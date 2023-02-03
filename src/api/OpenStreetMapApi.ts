@@ -1,5 +1,4 @@
 import { useFetch } from "../hooks/react-query";
-import {axiosApi} from "../http/axios";
 
 const BASE_URL = "https://nominatim.openstreetmap.org/search?";
 

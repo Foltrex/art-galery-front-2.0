@@ -14,7 +14,7 @@ import {Artist} from "../../../entities/artist";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import MapDialog from "../../../components/map/MapDialog";
-import {ArtistApi} from "../../../api/ArtistApi";
+import { useUpdateArtistById } from '../../../api/ArtistApi';
 
 interface IArtistEditDialogProps {
     open: boolean;
@@ -66,6 +66,8 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
         },
     });
 
+    const mutationUpdateArtist = useUpdateArtistById(artist.id);
+
     const submit = async (values: IFormValues) => {
         const updatedArtist = {
             id: artist.id,
@@ -75,14 +77,14 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
             address: values.address,
         } as Artist
 
-        await ArtistApi.updateArtistById(updatedArtist, updatedArtist.id)
+        await mutationUpdateArtist.mutateAsync(updatedArtist)
             .then(() => {
                 artist.firstname = updatedArtist.firstname;
                 artist.lastname = updatedArtist.lastname;
                 artist.description = updatedArtist.description;
                 artist.address = updatedArtist.address;
                 onClose();
-            })
+            });
     }
 
     return (

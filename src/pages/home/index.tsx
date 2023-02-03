@@ -4,34 +4,34 @@ import OrganizationInfo from "./OrganizationInfo";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import ArtistInfo from "./ArtistInfo";
 import {Organization} from "../../entities/organization";
-import {OrganizationApi} from "../../api/OrganizationApi";
 import {Artist} from '../../entities/artist';
-import {ArtistApi} from "../../api/ArtistApi";
 import {TokenService} from "../../services/TokenService";
 import Loading from "../../components/ui/Loading";
+import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
+import { useGetArtistByAccountId } from '../../api/ArtistApi';
 
 const Profile = () => {
     const accountType = TokenService.getCurrentAccountType();
+    const accountId = TokenService.getCurrentAccountId();
+
+    const { data: fetchedOrganization } = useGetOrganizationByAccountId(accountId);
+    const { data: fetchedArtist } = useGetArtistByAccountId(accountId);
+
     const [organization, setOrganization] = useState<Organization>({} as Organization)
     const [artist, setArtist] = useState<Artist>({} as Artist)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
-        const accountId = TokenService.getCurrentAccountId()
-        if (accountType === AccountEnum.REPRESENTATIVE) {
-            OrganizationApi.getOrganizationByAccountId(accountId)
-                .then(response => {
-                    setOrganization(response.data)
-                })
-                .finally(() => setLoading(false))
-        } else {
-            ArtistApi.getArtistByAccountId(accountId)
-                .then(response => {
-                    setArtist(response.data);
-                })
-                .finally(() => setLoading(false))
+        if (fetchedOrganization) {
+            setOrganization(fetchedOrganization);
+        } else if (fetchedArtist) {
+            setArtist(fetchedArtist);
         }
-    }, [])
+
+        setLoading(false);
+
+    }, [fetchedArtist, fetchedOrganization])
 
 
     const Render = () => {

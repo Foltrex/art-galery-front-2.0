@@ -17,9 +17,9 @@ import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
 import AlertNotification from "../../../components/notifications/AlertNotification";
 import * as yup from "yup";
-import {OrganizationApi} from "../../../api/OrganizationApi";
 import {Organization} from "../../../entities/organization";
 import {OrganizationStatusEnum} from "../../../entities/enums/organizationStatusEnum";
+import { useUpdateOrganizationById } from '../../../api/OrganizationApi';
 
 interface IOrganizationEditDialogProps {
     open: boolean;
@@ -63,21 +63,23 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
         },
     });
 
+    const mutationUpdateOrganization = useUpdateOrganizationById(organization.id);
+
     const submit = async (values: IFormValues) => {
         const updatedOrganization = {
             id: organization.id,
             name: values.name,
             address: values.address,
             status: values.isActive ? OrganizationStatusEnum.ACTIVE : OrganizationStatusEnum.INACTIVE,
-        } as Organization
+        } as Organization;
 
-        await OrganizationApi.updateOrganizationById(updatedOrganization, updatedOrganization.id)
+        await mutationUpdateOrganization.mutateAsync(updatedOrganization)
             .then(() => {
                 organization.name = updatedOrganization.name;
                 organization.address = updatedOrganization.address;
                 organization.status = updatedOrganization.status;
                 onClose();
-            })
+            });
     }
 
     return (

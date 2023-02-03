@@ -10,15 +10,3 @@ export const useGetArtistByAccountId = (accountId: string) => {
 export const useUpdateArtistById = (artistId: string) => {
     return useUpdate<Artist>(`${ART_SERVICE}/artists/${artistId}`);
 }
-
-export class ArtistApi {
-
-    static getArtistByAccountId(accountId: string) {
-        return axiosApi.get<Artist>(`${ART_SERVICE}/artists/accounts/${accountId}`);
-    }
-
-    static updateArtistById(artist: Artist, artistId: string) {
-        return axiosApi.put<Artist>(`${ART_SERVICE}/artists/${artistId}`, artist);
-    }
-
-}
