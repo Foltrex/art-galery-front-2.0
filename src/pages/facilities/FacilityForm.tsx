@@ -124,10 +124,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 control={
                                     <Switch
                                         name='isActive'
-                                        onChange={event => {
-                                            const checked = !!event.target.value
-                                            formik.setFieldValue('isActive', checked);
-                                        }}
+                                        onChange={(event, checked) => formik.setFieldValue('isActive', checked)}
                                         checked={formik.values.isActive}
                                     />
                                 }
