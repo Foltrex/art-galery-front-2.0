@@ -16,11 +16,11 @@ export const useGetRepresentativesPageByAccountId = (accountId: string, page?: n
 }
 
 export const useDeleteRepresentative = () => {
-    return useDelete<IPage<Representative>>(`${ART_SERVICE}/representatives`);
+    return useDelete(`${ART_SERVICE}/representatives`);
 }
 
-export const useAddRepresentative = () => {
-    return usePost<IPage<Representative>, Representative>(`${ART_SERVICE}/representatives`);
+export const useSaveRepresentative = () => {
+    return usePost<Representative>(`${ART_SERVICE}/representatives`);
 }
 
 export class RepresentativeApi {

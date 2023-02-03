@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { useGetFacilitiesByAccountId } from "../../api/FacilityApi";
 import { useGetOrganizationByAccountId } from "../../api/OrganizationApi";
 import { useGetOrganizationRoles } from "../../api/OrganizationRoleApi";
-import { useAddRepresentative } from "../../api/RepresentativeApi";
+import { useSaveRepresentative } from "../../api/RepresentativeApi";
 import { Facility } from "../../entities/facility";
 import { OrganizationRole } from "../../entities/organizationRole";
 import { Representative } from "../../entities/representative";
@@ -64,9 +64,9 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
             .required(),
     });
 
-    const mutationAdd = useAddRepresentative();
+    const mutationAdd = useSaveRepresentative();
 
-    const onAdd = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
+    const onSaveRepresentative = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
         setSubmitting(true);
         try {
             const representative: Representative = {
@@ -92,7 +92,7 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        onSubmit: onAdd,
+        onSubmit: onSaveRepresentative,
         enableReinitialize: true
     });
 

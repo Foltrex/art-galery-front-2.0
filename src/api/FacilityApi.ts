@@ -14,13 +14,13 @@ export const useGetFacilitiesByAccountId = (accountId: string) => {
     return useFetch<Facility[]>(`${ART_SERVICE}/facilities/list/accounts/${accountId}`);
 }
 
-export const useAddFacility = () => {
-    return usePost<IPage<Facility>, Facility>(`${ART_SERVICE}/facilities`);
+export const useSaveFacility = () => {
+    return usePost<Facility>(`${ART_SERVICE}/facilities`);
 }
 
 
 export const useDeleteFacility = () => {
-    return useDelete<IPage<Facility>>(`${ART_SERVICE}/facilities`);
+    return useDelete(`${ART_SERVICE}/facilities`);
 }
 
 export class FacilityApi {

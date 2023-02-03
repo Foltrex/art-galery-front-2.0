@@ -67,14 +67,14 @@ export const useFetch = <T>(
 };
 
 
-const useGenericMutation = <T, S>(
-    func: (data: T | S) => Promise<AxiosResponse<S>>,
+const useGenericMutation = <T>(
+    func: (data: T) => Promise<AxiosResponse<T>>,
     url: string,
     params?: object,
 ) => {
     const queryClient = useQueryClient();
 
-    return useMutation<AxiosResponse, AxiosError, T | S>(func, {
+    return useMutation<AxiosResponse, AxiosError, T>(func, {
         onMutate: async () => await queryClient.cancelQueries([url!, params]),
         onError: (err, _, context) => {
             queryClient.setQueryData([url!, params], context);
@@ -85,34 +85,34 @@ const useGenericMutation = <T, S>(
 
 
 
-export const useDelete = <T>(
+export const useDelete = (
     url: string,
     params?: object,
 ) => {
-    return useGenericMutation<T, string | number>(
+    return useGenericMutation<string | number>(
         id => axiosApi.delete(`${url}/${id}`),
         url,
         params
     );
 };
 
-export const usePost = <T, S>(
+export const usePost = <T>(
     url: string,
     params?: object
 ) => {
-    return useGenericMutation<T, S>(
-        data => axiosApi.post<S>(url, data),
+    return useGenericMutation<T>(
+        data => axiosApi.post<T>(url, data),
         url,
         params
     );
 };
 
-export const useUpdate = <T, S>(
+export const useUpdate = <T>(
     url: string,
     params?: object
 ) => {
-    return useGenericMutation<T, S>(
-        data => axiosApi.put<S>(url, data),
+    return useGenericMutation<T>(
+        data => axiosApi.put<T>(url, data),
         url,
         params
     );

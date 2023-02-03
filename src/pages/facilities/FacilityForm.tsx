@@ -1,16 +1,14 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Grid, SelectChangeEvent, Switch, TextField } from '@mui/material';
-import { FormikBag, FormikHelpers, useFormik } from 'formik';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Grid, Switch, TextField } from '@mui/material';
+import { FormikHelpers, useFormik } from 'formik';
 import * as React from 'react';
+import * as yup from 'yup';
+import { useSaveFacility } from '../../api/FacilityApi';
 import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
 import MapDialog from '../../components/map/MapDialog';
 import { Address } from '../../entities/address';
-import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
 import { Facility } from '../../entities/facility';
-import { Organization } from '../../entities/organization';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import * as yup from 'yup';
-import { useAddFacility, useDeleteFacility } from '../../api/FacilityApi';
 
 interface IFacilityFormProps {
     open: boolean;
@@ -54,9 +52,9 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
             .required('Name cannot be empty')
     });
 
-    const mutationAdd = useAddFacility();
+    const mutationAdd = useSaveFacility();
 
-    const onAdd = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+    const onSaveFacility = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
         // Check with address
         setSubmitting(true);
         try {
@@ -82,7 +80,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     const formik = useFormik({
         initialValues: initialValues,
         validationSchema: validationSchema,
-        onSubmit: onAdd,
+        onSubmit: onSaveFacility,
         enableReinitialize: true
     });
 
@@ -124,7 +122,9 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 control={
                                     <Switch
                                         name='isActive'
-                                        onChange={(event, checked) => formik.setFieldValue('isActive', checked)}
+                                        onChange={(_, checked) => {
+                                            formik.setFieldValue('isActive', checked)
+                                        }}
                                         checked={formik.values.isActive}
                                     />
                                 }
