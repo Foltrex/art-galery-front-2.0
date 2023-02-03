@@ -1,7 +1,7 @@
 import {OutlinedInput} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AddressList from "./AddressList";
-import {OpenStreetMapApi} from "../../api/OpenStreetMapApi";
+import { useSearch } from "../../api/OpenStreetMapApi";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 export interface GeoPosition {
@@ -20,23 +20,20 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const [listPlace, setListPlace] = useState<GeoPosition[]>([]);
     const {alertStore} = useRootStore();
 
+    const { data } = useSearch(searchText);
+
     useEffect(() => {
         const delayFetch = setTimeout(() => {
-            OpenStreetMapApi.search(searchText)
-                .then((result) => {
-                    const json = result.data
-                    if (!json.error) {
-                        setListPlace(json);
-                    }
-                })
-                .catch((error) => {
-                    alertStore.setShow(true, "error", "Search error", "something went wrong")
-                    setListPlace([])
-                });
-        }, 1000)
+            if (data) {
+                setListPlace(data)
+            } else {
+                alertStore.setShow(true, "error", "Search error", "something went wrong")
+                setListPlace([])
+            }
+        }, 1500)
 
         return () => clearTimeout(delayFetch)
-    }, [searchText])
+    }, [searchText, data])
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
