@@ -1,19 +1,12 @@
 import * as React from 'react';
-import { useAddFacility, useDeleteFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
+import { useDeleteFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
-import Table, { IColumnType, IdentifiableRecord } from '../../components/table/Table';
-import { Address } from '../../entities/address';
-import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
+import SkeletonTable from '../../components/table/SkeletonTable';
+import Table, { IColumnType } from '../../components/table/Table';
 import { Facility } from '../../entities/facility';
-import { IPage, useFetch } from '../../hooks/react-query';
-import FacilityForm from './FacilityForm';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import { TablePagination } from '@mui/material';
-import SkeletonTable from '../../components/table/SkeletonTable';
-
-interface IFacilityTableProps {
-}
+import FacilityForm from './FacilityForm';
 
 interface IFacilityData {
 	id: string;
@@ -57,7 +50,7 @@ const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
 	};
 }
 
-const FacilityTable: React.FunctionComponent<IFacilityTableProps> = (props) => {
+const FacilityTable = () => {
 	const [openEditForm, setOpenEditForm] = React.useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [facility, setFacility] = React.useState<Facility>();
