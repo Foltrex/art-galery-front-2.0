@@ -13,15 +13,3 @@ export const useRegisterRepresentative = (email: string, password: string, organ
         }
     );
 }
-
-export class AccountApi {
-
-    static registerRepresentative(email: string, password: string, organizationId: string, facilityId: string) {
-        return axiosApi.post<Representative>(`${USER_SERVICE}/accounts/register-representative`, {
-            email: email,
-            password: password,
-            organizationId: organizationId,
-            facilityId: facilityId,
-        })
-    }
-}
