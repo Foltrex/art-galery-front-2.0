@@ -7,7 +7,7 @@ import LoginFormBottom from "./LoginFormBottom";
 import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
-import {AuthApi} from '../../../../api/AuthApi';
+import { useLogin } from '../../../../api/AuthApi';
 
 const LoginForm = () => {
     const {alertStore} = useRootStore();
@@ -23,16 +23,22 @@ const LoginForm = () => {
         password: yup.string().required('Password cannot be empty').min(1)
     })
 
+    const mutationLogin = useLogin();
+
     const submit = async (email: string, password: string) => {
-        await AuthApi.login(email, password)
-            .then(response => {
-                AuthService.setToken(response.data.token)
-                navigate("/")
-            })
-            .catch(error => {
-                console.log(error.response.data.message)
-                alertStore.setShow(true, "error", "Login error", error.response.data.message)
-            })
+        try {
+            const loginRequestDto = {
+                email: email,
+                password: password
+            };
+
+            const response = await mutationLogin.mutateAsync(loginRequestDto);
+            AuthService.setToken(response.data.token);
+            navigate('/');
+        } catch (error: any) {
+            console.log(error.response.data.message)
+            alertStore.setShow(true, "error", "Login error", error.response.data.message)
+        }
     }
 
     return (

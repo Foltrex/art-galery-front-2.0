@@ -67,14 +67,14 @@ export const useFetch = <T>(
 };
 
 
-const useGenericMutation = <T>(
-    func: (data: T) => Promise<AxiosResponse<T>>,
+const useGenericMutation = <T, S = T | undefined>(
+    func: (data: T | S) => Promise<AxiosResponse<S>>,
     url: string,
     params?: object,
 ) => {
     const queryClient = useQueryClient();
 
-    return useMutation<AxiosResponse, AxiosError, T>(func, {
+    return useMutation<AxiosResponse<S>, AxiosError, T | S>(func, {
         onMutate: async () => await queryClient.cancelQueries([url!, params]),
         onError: (err, _, context) => {
             queryClient.setQueryData([url!, params], context);
@@ -96,23 +96,23 @@ export const useDelete = (
     );
 };
 
-export const usePost = <T>(
+export const usePost = <T, S = T>(
     url: string,
     params?: object
 ) => {
-    return useGenericMutation<T>(
-        data => axiosApi.post<T>(url, data),
+    return useGenericMutation<T, S>(
+        data => axiosApi.post<S>(url, data),
         url,
         params
     );
 };
 
-export const useUpdate = <T>(
+export const useUpdate = <T, S = T>(
     url: string,
     params?: object
 ) => {
-    return useGenericMutation<T>(
-        data => axiosApi.put<T>(url, data),
+    return useGenericMutation<T, S>(
+        data => axiosApi.put<S>(url, data),
         url,
         params
     );

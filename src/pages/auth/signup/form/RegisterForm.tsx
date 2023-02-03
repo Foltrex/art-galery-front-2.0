@@ -1,19 +1,18 @@
-import React from 'react';
-import {Form, Formik} from "formik";
+import { Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField } from "@mui/material";
 import Box from "@mui/material/Box";
-import {Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField} from "@mui/material";
-import {AccountEnum} from "../../../../entities/enums/AccountEnum";
+import { Form, Formik } from "formik";
 import * as yup from "yup";
-import RegisterFormBottom from './RegisterFormBottom';
 import AlertNotification from '../../../../components/notifications/AlertNotification';
-import {AuthApi} from "../../../../api/AuthApi";
-import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
-import {useNavigate} from "react-router-dom";
-import {AuthService} from "../../../../services/AuthService";
+import { AccountEnum } from "../../../../entities/enums/AccountEnum";
+import RegisterFormBottom from './RegisterFormBottom';
+import { useNavigate } from "react-router-dom";
+import { useRegister } from '../../../../api/AuthApi';
+import { AuthService } from "../../../../services/AuthService";
+import { useRootStore } from "../../../../stores/provider/RootStoreProvider";
 
 const RegisterForm = () => {
 
-    const {alertStore} = useRootStore();
+    const { alertStore } = useRootStore();
     const navigate = useNavigate();
 
     const initialValues = {
@@ -29,20 +28,27 @@ const RegisterForm = () => {
     })
 
     const options = [
-        {label: "Organization", value: AccountEnum.REPRESENTATIVE},
-        {label: "Artist", value: AccountEnum.ARTIST},
+        { label: "Organization", value: AccountEnum.REPRESENTATIVE },
+        { label: "Artist", value: AccountEnum.ARTIST },
     ];
 
+    const mutationRegister = useRegister();
+
     const submit = async (email: string, password: string, accountType: string) => {
-        await AuthApi.register(email, password, accountType)
-            .then(response => {
-                AuthService.setToken(response.data.token)
-                navigate("/")
-            })
-            .catch(error => {
-                console.log(error.response.data.message)
-                alertStore.setShow(true, "error", "Register error", error.response.data.message)
-            })
+        try {
+            const registeringRequestDto = {
+                email: email,
+                password: password,
+                accountType: accountType
+            }
+
+            const response = await mutationRegister.mutateAsync(registeringRequestDto)
+            AuthService.setToken(response.data.token);
+            navigate('/')
+        } catch (error: any) {
+            console.log(error.response.data.message)
+            alertStore.setShow(true, 'error', "Register error", error.response.data.message);        
+        }
     }
 
     return (
@@ -51,7 +57,7 @@ const RegisterForm = () => {
             validateOnBlur={true}
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={async (values, {setSubmitting}) => {
+            onSubmit={async (values, { setSubmitting }) => {
                 setSubmitting(true)
                 await submit(values.email, values.password, values.accountType)
                 setSubmitting(false)
@@ -59,7 +65,7 @@ const RegisterForm = () => {
         >
             {formik => (
                 <Form noValidate>
-                    <AlertNotification/>
+                    <AlertNotification />
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -86,7 +92,7 @@ const RegisterForm = () => {
                             }
                         </Stack>
                         {formik.errors.accountType &&
-                            <FormHelperText style={{color: "red"}}>{formik.errors.accountType}</FormHelperText>}
+                            <FormHelperText style={{ color: "red" }}>{formik.errors.accountType}</FormHelperText>}
                     </Box>
                     <TextField
                         margin="normal"
@@ -117,11 +123,11 @@ const RegisterForm = () => {
                         fullWidth
                         variant="contained"
                         disabled={formik.isSubmitting}
-                        sx={{mt: 3, mb: 2}}
+                        sx={{ mt: 3, mb: 2 }}
                     >
-                        {formik.isSubmitting ? <CircularProgress/> : "Sign Up"}
+                        {formik.isSubmitting ? <CircularProgress /> : "Sign Up"}
                     </Button>
-                    <RegisterFormBottom/>
+                    <RegisterFormBottom />
                 </Form>
             )}
         </Formik>
