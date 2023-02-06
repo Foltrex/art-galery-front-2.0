@@ -14,12 +14,19 @@ import si from './images/6.jpeg';
 import se from './images/7.webp';
 import SearchBar from '../../components/ui/SearchBar';
 import { useRef } from 'react';
+import { useGetAllArtsByAccountId } from '../../api/ArtApi';
+import { AuthService } from '../../services/AuthService';
+import { TokenService } from '../../services/TokenService';
 
 interface IArtsProps {
 }
 
 const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 	const artUploadingInput = useRef<HTMLInputElement>(null);
+
+	const token = TokenService.decode(AuthService.getToken());
+	const { data } = useGetAllArtsByAccountId(token.id);
+	console.log(data)
 
 	const arts: Art[] = [
 		{

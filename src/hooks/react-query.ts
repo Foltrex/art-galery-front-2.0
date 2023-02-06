@@ -1,6 +1,6 @@
-import {AxiosError, AxiosResponse} from "axios";
-import {QueryFunctionContext, useMutation, useQuery, useQueryClient, UseQueryOptions} from "react-query";
-import {axiosApi} from "../http/axios";
+import { AxiosError, AxiosResponse } from "axios";
+import { QueryFunctionContext, useInfiniteQuery, useMutation, useQuery, useQueryClient, UseQueryOptions } from "react-query";
+import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
@@ -24,13 +24,20 @@ export interface IPage<T> {
     pageable: IPageable;
 }
 
+export interface InfinitePagesInterface<T> {
+    nextId?: number;
+    previousId?: number;
+    data: T;
+    count: number;
+}
+
 export const fetch = <T>({
-                             queryKey,
-                             pageParam,
-                         }: QueryFunctionContext<QueryKeyT>): Promise<T> => {
+    queryKey,
+    pageParam,
+}: QueryFunctionContext<QueryKeyT>): Promise<T> => {
     const [url, params] = queryKey;
     return axiosApi
-        .get<T>(url, {params: {...params, pageParam}})
+        .get<T>(url, { params: { ...params, pageParam } })
         .then(response => response.data);
 };
 
@@ -66,6 +73,23 @@ export const useFetch = <T>(
     return context;
 };
 
+export const useLoadMore = <T>(url: string | null, params?: object) => {
+    const context = useInfiniteQuery<
+        InfinitePagesInterface<T>,
+        Error,
+        InfinitePagesInterface<T>,
+        QueryKeyT
+    >(
+        [url!, params],
+        context => fetch({ ...context, pageParam: context.pageParam ?? 1 }),
+        {
+            getPreviousPageParam: (firstPage) => firstPage.previousId ?? false,
+            getNextPageParam: (lastPage) => lastPage.nextId ?? false,
+        }
+    );
+
+    return context;
+};
 
 const useGenericMutation = <T, S = T | undefined>(
     func: (data: T | S) => Promise<AxiosResponse<S>>,
