@@ -13,11 +13,13 @@ import fi from './images/5.jpg';
 import si from './images/6.jpeg';
 import se from './images/7.webp';
 import SearchBar from '../../components/ui/SearchBar';
+import { useRef } from 'react';
 
 interface IArtsProps {
 }
 
 const Arts: React.FunctionComponent<IArtsProps> = (props) => {
+	const artUploadingInput = useRef<HTMLInputElement>(null);
 
 	const arts: Art[] = [
 		{
@@ -71,6 +73,7 @@ const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 		}
 	];
 
+
 	return (
 		<Container>
 			<Paper elevation={1} sx={{ padding: '10px' }}>
@@ -82,9 +85,11 @@ const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 						variant='outlined'
 						aria-label='Add art to collection' 
 						startIcon={<AddPhotoAlternateIcon />}
+						onClick={() => artUploadingInput.current?.click()}
 					>
 						Upload
 					</Button>
+					<input type='file' ref={artUploadingInput} style={{display: 'none'}} />
 				</Box>
 				<Divider sx={{my: 3}} />
 				<ImageList
