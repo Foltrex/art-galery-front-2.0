@@ -34,6 +34,7 @@ const LoginForm = () => {
             };
 
             const response = await mutationLogin.mutateAsync(loginRequestDto);
+
             AuthService.setToken(response.data.token);
             navigate('/');
         } catch (error: any) {

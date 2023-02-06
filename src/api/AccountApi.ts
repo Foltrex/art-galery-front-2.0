@@ -1,14 +1,11 @@
-import {axiosApi, USER_SERVICE} from "../http/axios";
-import {Representative} from "../entities/representative";
-import { usePost } from "../hooks/react-query";
+import {USER_SERVICE} from "../http/axios";
+import {useDelete} from "../hooks/react-query";
+import {AuthService} from "../services/AuthService";
 
-// tood: mutate {
-//     email: email,
-//     password: password,
-//     organizationId: organizationId,
-//     facilityId: facilityId
-// }
-
-export const useRegisterRepresentative = () => {
-    return usePost<object, Representative>(`${USER_SERVICE}/accounts/register-representative`);
+export const useDeleteAccountById = () => {
+    return useDelete(`${USER_SERVICE}/accounts`, undefined, {
+        headers: {
+            'Authorization': `Bearer ${AuthService.getToken()}`,
+        }
+    });
 }
