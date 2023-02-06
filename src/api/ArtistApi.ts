@@ -6,7 +6,6 @@ export const useGetArtistByAccountId = (accountId: string) => {
     return useFetch<Artist>(`${ART_SERVICE}/artists/accounts/${accountId}`);
 }
 
-// mutateAsync(artist)
 export const useUpdateArtistById = (artistId: string) => {
     return useUpdate<Artist>(`${ART_SERVICE}/artists/${artistId}`);
 }
