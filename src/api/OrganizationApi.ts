@@ -1,6 +1,6 @@
 import {Organization} from "../entities/organization";
-import { useFetch, useUpdate } from "../hooks/react-query";
-import {ART_SERVICE, axiosApi} from "../http/axios";
+import {useFetch, useUpdate} from "../hooks/react-query";
+import {ART_SERVICE} from "../http/axios";
 
 const API = `${ART_SERVICE}/organizations`;
 

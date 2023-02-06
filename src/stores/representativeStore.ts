@@ -1,6 +1,6 @@
 import {makeAutoObservable} from "mobx";
 import {Representative} from "../entities/representative";
-import { RootStore } from "./rootStore";
+import {RootStore} from "./rootStore";
 
 export class RepresentativeStore {
     rootStore: RootStore;

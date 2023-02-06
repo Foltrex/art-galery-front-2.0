@@ -1,6 +1,6 @@
-import { Facility } from "../entities/facility";
-import { IPage, useDelete, useFetch, usePost } from "../hooks/react-query";
-import { ART_SERVICE, axiosApi } from "../http/axios";
+import {Facility} from "../entities/facility";
+import {IPage, useDelete, useFetch, usePost} from "../hooks/react-query";
+import {ART_SERVICE} from "../http/axios";
 
 
 export const useGetFacilitiesPageByAccountId = (accountId: string, page?: number, size?: number) => {

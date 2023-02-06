@@ -1,6 +1,6 @@
-import { makeAutoObservable } from "mobx";
-import { City } from "../entities/city";
-import { RootStore } from "./rootStore";
+import {makeAutoObservable} from "mobx";
+import {City} from "../entities/city";
+import {RootStore} from "./rootStore";
 
 export class CityStore {
     rootStore: RootStore;

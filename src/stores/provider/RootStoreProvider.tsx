@@ -1,5 +1,5 @@
-import React, { createContext, ReactNode, useContext } from "react";
-import { RootStore } from "../rootStore";
+import React, {createContext, ReactNode, useContext} from "react";
+import {RootStore} from "../rootStore";
 
 let store: RootStore;
 const StoreContext = createContext<RootStore | undefined>(undefined);
@@ -14,7 +14,7 @@ export function useRootStore() {
     return context;
 }
 
-export function RootStoreProvider({ children }: { children: ReactNode }) {
+export function RootStoreProvider({children}: { children: ReactNode }) {
     // only create root store once (store is a singleton)
     const root = store ?? new RootStore();
 

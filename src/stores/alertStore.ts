@@ -23,22 +23,22 @@ export class AlertStore {
         this.text = ''
     }
 
-    setShow(show: boolean, severity? : AlertColor, title? : string, text? : string) {
+    setShow(show: boolean, severity?: AlertColor, title?: string, text?: string) {
         this.show = show;
         this.severity = severity || this.severity;
         this.title = title || this.title;
         this.text = text || this.text;
     }
 
-    setSeverity(severity : AlertColor) {
+    setSeverity(severity: AlertColor) {
         this.severity = severity;
     }
 
-    setTitle(title : string) {
+    setTitle(title: string) {
         this.title = title;
     }
 
-    setText(text : string) {
+    setText(text: string) {
         this.text = text;
     }
 

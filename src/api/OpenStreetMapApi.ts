@@ -1,4 +1,4 @@
-import { useFetch } from "../hooks/react-query";
+import {useFetch} from "../hooks/react-query";
 
 const BASE_URL = "https://nominatim.openstreetmap.org/search?";
 

@@ -1,6 +1,6 @@
-import { axiosApi, USER_SERVICE } from "../http/axios";
-import { TAuthToken } from "../entities/types/TAuthToken";
-import { usePost } from "../hooks/react-query";
+import {USER_SERVICE} from "../http/axios";
+import {TAuthToken} from "../entities/types/TAuthToken";
+import {usePost} from "../hooks/react-query";
 import {Representative} from "../entities/representative";
 
 export const useRegister = () => {

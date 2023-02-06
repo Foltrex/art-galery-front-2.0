@@ -1,6 +1,5 @@
 import {Cookies} from "react-cookie"
 import {TokenService} from "./TokenService";
-import {TDecodedToken} from "../entities/types/TDecodedToken";
 
 const cookies = new Cookies()
 
