@@ -10,6 +10,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import {Link} from 'react-router-dom';
 import {TokenService} from "../../services/TokenService";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
+import ArtTrackIcon from '@mui/icons-material/ArtTrack';
+import PeopleIcon from '@mui/icons-material/People';
 
 const drawerWidth = 240;
 
@@ -38,12 +40,12 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
         },
         {
             text: 'Representatives',
-            icon: <HomeWorkOutlinedIcon/>,
+            icon: <PeopleIcon />,
             link: '/representatives?page=0&limit=10'
         },
         {
             text: 'Facilities',
-            icon: <PhotoSizeSelectActualOutlinedIcon/>,
+            icon: <HomeWorkOutlinedIcon/>,
             link: '/facilities?page=0&limit=10'
         },
         {
@@ -58,6 +60,11 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             text: 'Artist',
             icon: <AccountCircleOutlinedIcon/>,
             link: '/'
+        },
+        {
+            text: 'Arts',
+            icon: <PhotoSizeSelectActualOutlinedIcon />,
+            link: '/arts'
         },
         {
             text: 'Settings',
