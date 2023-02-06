@@ -35,24 +35,25 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
     const initialValues: IFormValues = {
         firstname: artist.firstname,
         lastname: artist.lastname,
+        address: artist.address,
         description: artist.description,
-        address: artist.address
     }
 
     const validationSchema = yup.object().shape({
-        firstname: yup.string().required('Firstname cannot be empty')
+        firstname: yup.string()
+            .required('Firstname cannot be empty')
             .min(2)
             .max(255),
         lastname: yup.string()
             .required('Lastname cannot be empty')
             .min(2)
             .max(255),
+        address: yup.object()
+            .required('Address cannot be empty')
+            .nullable(),
         description: yup.string().required('Description cannot be empty')
             .min(2)
             .max(1024),
-        address: yup.object()
-            .required('Address cannot be empty')
-            .nullable()
     })
 
     const formik = useFormik({
@@ -73,16 +74,16 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
             id: artist.id,
             firstname: values.firstname,
             lastname: values.lastname,
-            description: values.description,
             address: values.address,
+            description: values.description,
         } as Artist
 
         await mutationUpdateArtist.mutateAsync(updatedArtist)
             .then(() => {
                 artist.firstname = updatedArtist.firstname;
                 artist.lastname = updatedArtist.lastname;
-                artist.description = updatedArtist.description;
                 artist.address = updatedArtist.address;
+                artist.description = updatedArtist.description;
                 onClose();
             });
     }
@@ -127,19 +128,6 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
                         margin="normal"
                         required
                         fullWidth
-                        label="Description"
-                        name={"description"}
-                        type="text"
-                        multiline
-                        rows={5}
-                        onChange={formik.handleChange}
-                        value={formik.values.description}
-                        error={!!formik.errors.description} helperText={formik.errors.description}
-                    />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
                         label="Address"
                         name={"address"}
                         InputProps={{readOnly: true}}
@@ -150,6 +138,19 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
                         onClick={() => setOpenMap(true)}
                         onChange={formik.handleChange}
                         error={!!formik.errors.address} helperText={formik.errors.address}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Description"
+                        name={"description"}
+                        type="text"
+                        multiline
+                        rows={5}
+                        onChange={formik.handleChange}
+                        value={formik.values.description}
+                        error={!!formik.errors.description} helperText={formik.errors.description}
                     />
                 </form>
             </DialogContent>

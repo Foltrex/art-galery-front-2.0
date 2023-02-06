@@ -26,6 +26,7 @@ const LoginForm = () => {
     const mutationLogin = useLogin();
 
     const submit = async (email: string, password: string) => {
+        alertStore.setShow(false)
         try {
             const loginRequestDto = {
                 email: email,

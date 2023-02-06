@@ -35,6 +35,7 @@ const RegisterForm = () => {
     const mutationRegister = useRegister();
 
     const submit = async (email: string, password: string, accountType: string) => {
+        alertStore.setShow(false)
         try {
             const registeringRequestDto = {
                 email: email,
