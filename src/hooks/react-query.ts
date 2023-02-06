@@ -1,6 +1,6 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { QueryFunctionContext, useMutation, useQuery, useQueryClient, UseQueryOptions } from "react-query";
-import { axiosApi } from "../http/axios";
+import {AxiosError, AxiosResponse} from "axios";
+import {QueryFunctionContext, useMutation, useQuery, useQueryClient, UseQueryOptions} from "react-query";
+import {axiosApi} from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
@@ -25,12 +25,12 @@ export interface IPage<T> {
 }
 
 export const fetch = <T>({
-    queryKey,
-    pageParam,
-}: QueryFunctionContext<QueryKeyT>): Promise<T> => {
+                             queryKey,
+                             pageParam,
+                         }: QueryFunctionContext<QueryKeyT>): Promise<T> => {
     const [url, params] = queryKey;
     return axiosApi
-        .get<T>(url, { params: { ...params, pageParam } })
+        .get<T>(url, {params: {...params, pageParam}})
         .then(response => response.data);
 };
 
@@ -84,13 +84,13 @@ const useGenericMutation = <T, S = T | undefined>(
 };
 
 
-
 export const useDelete = (
     url: string,
     params?: object,
+    config?: object
 ) => {
     return useGenericMutation<string | number>(
-        id => axiosApi.delete(`${url}/${id}`),
+        id => axiosApi.delete(`${url}/${id}`, config),
         url,
         params
     );
@@ -98,10 +98,11 @@ export const useDelete = (
 
 export const usePost = <T, S = T>(
     url: string,
-    params?: object
+    params?: object,
+    config?: object
 ) => {
     return useGenericMutation<T, S>(
-        data => axiosApi.post<S>(url, data),
+        data => axiosApi.post<S>(url, data, config),
         url,
         params
     );
@@ -109,10 +110,11 @@ export const usePost = <T, S = T>(
 
 export const useUpdate = <T, S = T>(
     url: string,
-    params?: object
+    params?: object,
+    config?: object
 ) => {
     return useGenericMutation<T, S>(
-        data => axiosApi.put<S>(url, data),
+        data => axiosApi.put<S>(url, data, config),
         url,
         params
     );
