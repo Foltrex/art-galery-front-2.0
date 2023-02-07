@@ -32,49 +32,49 @@ const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 		{
 			id: '1',
 			name: 'First',
-			data: f,
+			data: [f, s, t],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '2',
 			name: 'Second',
-			data: s,
+			data: [s, t, fo],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '3',
 			name: 'Third',
-			data: t,
+			data: [t, fo, fi],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '4',
 			name: 'Fourth',
-			data: fo,
+			data: [fo, fi, si],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '5',
 			name: 'Fifth',
-			data: fi,
+			data: [fi, si, se],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '6',
 			name: 'Sixth',
-			data: si,
+			data: [si, se, f],
 			// add latter
 			description: 'asdf'
 		},
 		{
 			id: '7',
 			name: 'Seventh',
-			data: se,
+			data: [se, f, s],
 			// add latter
 			description: 'asdf'
 		}
