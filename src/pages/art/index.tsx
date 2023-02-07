@@ -36,8 +36,8 @@ const Art = () => {
 		>
 			<Grid item sm={6}>
 				<div style={{
-					width: '500px',
-					height: '280px',
+					width: '550px',
+					height: '380px',
 					margin: '0 auto', 
 				}}>
 					<ImageSlider slides={slides} />
