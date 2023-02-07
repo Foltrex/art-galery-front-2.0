@@ -12,7 +12,7 @@ const LeftArrowButton = styled('div')({
 	top: '50%',
 	transform: 'translate(0, -50%)',
 	left: '22px',
-	fontSize: '45px',
+	fontSize: '55px',
 	color: '#fff',
 	zIndex: 1,
 	cursor: 'pointer'
@@ -23,7 +23,7 @@ const RightArrowButton = styled('div')({
 	top: '50%',
 	transform: 'translate(0, -50%)',
 	right: '22px',
-	fontSize: '45px',
+	fontSize: '55px',
 	color: '#fff',
 	zIndex: 1,
 	cursor: 'pointer'

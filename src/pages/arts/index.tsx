@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Art } from '../../entities/art';
 import ArtItem from './ArtItem';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import AddIcon from '@mui/icons-material/Add';
 
 import f from './images/1.jpg';
 import s from './images/2.jpg';
@@ -17,16 +18,16 @@ import { useRef } from 'react';
 import { useGetAllArtsByAccountId } from '../../api/ArtApi';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
+import { useNavigate } from 'react-router-dom';
 
 interface IArtsProps {
 }
 
 const Arts: React.FunctionComponent<IArtsProps> = (props) => {
-	const artUploadingInput = useRef<HTMLInputElement>(null);
+	const navigate = useNavigate();
 
 	const token = TokenService.decode(AuthService.getToken());
 	const { data } = useGetAllArtsByAccountId(token.id);
-	console.log(data)
 
 	const arts: Art[] = [
 		{
@@ -88,15 +89,9 @@ const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 					sx={{display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
 				>
 					<SearchBar sx={{ flexGrow: 1, width: 300 }}/>
-					<Button 
-						variant='outlined'
-						aria-label='Add art to collection' 
-						startIcon={<AddPhotoAlternateIcon />}
-						onClick={() => artUploadingInput.current?.click()}
-					>
-						Upload
-					</Button>
-					<input type='file' ref={artUploadingInput} style={{display: 'none'}} />
+					<IconButton onClick={() => navigate('/arts/-1')}>
+						<AddIcon fontSize='large'/>
+					</IconButton>
 				</Box>
 				<Divider sx={{my: 3}} />
 				<ImageList
