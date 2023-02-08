@@ -23,9 +23,9 @@ interface IArtistEditDialogProps {
 }
 
 interface IFormValues {
-    firstname: string | null,
-    lastname: string | null,
-    description: string | null,
+    firstname: string,
+    lastname: string,
+    description: string,
     address: Address | null | string,
 }
 
@@ -42,16 +42,19 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
     const validationSchema = yup.object().shape({
         firstname: yup.string()
             .required('Firstname cannot be empty')
+            .nullable()
             .min(2)
             .max(255),
         lastname: yup.string()
             .required('Lastname cannot be empty')
+            .nullable()
             .min(2)
             .max(255),
         address: yup.object()
             .required('Address cannot be empty')
             .nullable(),
         description: yup.string().required('Description cannot be empty')
+            .nullable()
             .min(2)
             .max(1024),
     })

@@ -4,7 +4,7 @@ import {Facility} from "./facility";
 
 export interface Organization {
     id: string,
-    name: string | null,
+    name: string,
     address: Address | null,
     status: OrganizationStatusEnum,
     facilities: Facility[]

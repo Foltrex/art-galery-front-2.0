@@ -28,7 +28,7 @@ interface IOrganizationEditDialogProps {
 }
 
 interface IFormValues {
-    name: string | null,
+    name: string,
     address: Address | null | string,
     isActive: boolean
 }
