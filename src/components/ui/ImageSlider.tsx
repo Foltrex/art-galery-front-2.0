@@ -4,7 +4,7 @@ import { Container, fontSize, styled } from "@mui/system";
 import { useState } from "react";
 
 interface IImageSliderProps {
-	slides: string[]
+	slides?: string[]
 }
 
 const LeftArrowButton = styled('div')({
@@ -51,12 +51,12 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides }) => 
 
 	const handleLeftArrowClick = () => {
 		const isFirstSlide = currentIndex === 0;
-		const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
+		const newIndex = isFirstSlide ? slides!.length - 1 : currentIndex - 1;
 		setCurrentIndex(newIndex);
 	}
 
 	const handleRightArrowClick = () => {
-		const isLastSlide = currentIndex === slides.length - 1;
+		const isLastSlide = currentIndex === slides!.length - 1;
 		const newIndex = isLastSlide ? 0 : currentIndex + 1;
 		setCurrentIndex(newIndex);
 	}
@@ -74,40 +74,42 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides }) => 
 			height: '100%',
 			position: 'relative'
 		}}>
-			<LeftArrowButton onClick={handleLeftArrowClick}>
-				&#8249;
-			</LeftArrowButton>
+			{slides && 	<LeftArrowButton onClick={handleLeftArrowClick}>
+							&#8249;
+						</LeftArrowButton>
+			}
+			{slides &&	<RightArrowButton onClick={handleRightArrowClick}>
+							&#8250;
+						</RightArrowButton>
+			}
 
-			<RightArrowButton onClick={handleRightArrowClick}>
-				&#8250;
-			</RightArrowButton>
-
-			<div style={{background: '#E8EDF0', width: '100%', height: '100%'}}>
-				<SliderImage src={slides[currentIndex]} onClick={handleImageClick} />
+			<div style={{ background: '#E8EDF0', width: '100%', height: '100%' }}>
+				{slides && <SliderImage src={slides[currentIndex]} onClick={handleImageClick} />}
 			</div>
 
+			{slides && <div style={{ display: 'flex', justifyContent: 'center' }}>
+							{slides.map((_, index) => (
+								<div
+									key={index}
+									style={{ margin: '0 3px', cursor: 'pointer', fontSize: '20px ' }}
+									onClick={() => handleDotClick(index)}
+								>
+									&#x25CF;
+								</div>
+							))}
+						</div>
+			}
 
-			<div style={{display: 'flex', justifyContent: 'center'}}>
-				{slides.map((_, index) => (
-					<div 
-						key={index} 
-						style={{margin: '0 3px', cursor: 'pointer', fontSize: '20px '}}
-						onClick={() => handleDotClick(index)}
-					>
-						&#x25CF;
-					</div>
-				))}
-			</div>
-
-			<Modal
-				open={showModal}
-				onClose={() => setShowModal(false)}
-				style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
-			>
-				<img 
-					style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }} 
-					src={slides[currentIndex]} />
-			</Modal>
+			{slides && <Modal
+							open={showModal}
+							onClose={() => setShowModal(false)}
+							style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+						>
+							<img
+								style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }}
+								src={slides[currentIndex]} />
+					</Modal>
+			}
 		</div>
 	);
 };

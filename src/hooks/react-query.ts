@@ -24,12 +24,6 @@ export interface IPage<T> {
     pageable: IPageable;
 }
 
-export interface InfinitePagesInterface<T> {
-    nextId?: number;
-    previousId?: number;
-    data: T;
-    count: number;
-}
 
 export const fetch = <T>({
     queryKey,
@@ -75,16 +69,15 @@ export const useFetch = <T>(
 
 export const useLoadMore = <T>(url: string | null, params?: object) => {
     const context = useInfiniteQuery<
-        InfinitePagesInterface<T>,
+        IPage<T>,
         Error,
-        InfinitePagesInterface<T>,
+        IPage<T>,
         QueryKeyT
     >(
         [url!, params],
         context => fetch({ ...context, pageParam: context.pageParam ?? 1 }),
         {
-            getPreviousPageParam: (firstPage) => firstPage.previousId ?? false,
-            getNextPageParam: (lastPage) => lastPage.nextId ?? false,
+            getNextPageParam: (lastPage) => !lastPage.last,
         }
     );
 

@@ -16,8 +16,10 @@ import se from '../arts/images/7.webp';
 
 import { Art as ArtEntity } from '../../entities/art';
 import { PrepareDataUtil } from "../../util/PrepareDataUtil";
-import { useRef, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import DeleteModal from "../../components/modal/DeleteModal";
+import { FileService } from "../../services/FileService";
+import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useSaveFile } from "../../api/FileApi";
 
 // description
 // artist
@@ -27,14 +29,34 @@ import DeleteModal from "../../components/modal/DeleteModal";
 
 const Art = () => {
 	const fileInput = useRef<HTMLInputElement>(null);
+
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
 	const { id: artId } = useParams();
-	const { data: art, isLoading } = useGetArtById(artId!);
+	console.log(artId);
+	// const { data: art, isLoading } = useGetArtById(artId!);
 
-	const slides = [
-		f, s, t, fo, fi, si, se
-	]
+	// const slides = [
+	// 	f, s, t, fo, fi, si, se
+	// ]
+	// const useSaveImage()
+	const { data: files } = useGetAllFileInfosByArtId(artId!);
+	const { data: images } = useGetAllFileStreamByIds((files ?? []).map(file => file.id!));
+	console.log(images);
+
+	const mutationSaveImage = useSaveFile();
+
+	// const onSaveImage = async ()
+	const handleFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
+		try {
+			const files = event.target.files!;
+			const file = await FileService.toFile(artId!, files[0]);
+			await mutationSaveImage.mutateAsync(file)
+		} catch (e) {
+			// TODO: add push events
+			console.log(e);
+		}
+	}
 
 	return (
 		<Grid container
@@ -48,7 +70,7 @@ const Art = () => {
 					height: '380px',
 					margin: '0 auto',
 				}}>
-					<ImageSlider slides={slides} />
+					<ImageSlider slides={undefined} />
 				</div>
 			</Grid>
 			<Grid item sm={6}>
@@ -61,14 +83,14 @@ const Art = () => {
 							<Box>
 								<IconButton onClick={() => fileInput.current?.click()}>
 									<AddPhotoAlternateIcon color='primary' />
-									<input type='file' style={{ display: 'none' }} ref={fileInput} />
+									<input 
+										type='file' 
+										style={{ display: 'none' }} 
+										ref={fileInput}
+										onChange={handleFileInputChange} />
 								</IconButton>
 								<IconButton onClick={() => setOpenDeleteModal(true)}>
 									<DeleteIcon color='error' />
-									<DeleteModal
-										open={openDeleteModal}
-										onClose={() => setOpenDeleteModal(false)}
-										onDelete={() => alert('Entity deleted')} />
 								</IconButton>
 							</Box>
 						</Box>
@@ -79,6 +101,11 @@ const Art = () => {
 								<Grid item sm={8}>tonasdf@gmail.com</Grid>
 							</Grid>
 						</Stack>
+
+						<DeleteModal
+							open={openDeleteModal}
+							onClose={() => setOpenDeleteModal(false)}
+							onDelete={() => console.log('Entity deleted')} />
 					</>
 					: <>
 						<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -96,9 +123,9 @@ const Art = () => {
 								</Grid>
 							</Grid>
 							<Grid container>
-								<Grid item sm={4}><strong>Art Description</strong></Grid>
+								<Grid item sm={4}><strong>Description</strong></Grid>
 								<Grid item sm={8}>
-									<InputBase multiline fullWidth placeholder='Enter art description' sx={{borderRadius: 1, borderColor: "black"}} />
+									<InputBase multiline fullWidth placeholder='Enter art description' sx={{ borderRadius: 1, borderColor: "black" }} />
 								</Grid>
 							</Grid>
 						</Stack>

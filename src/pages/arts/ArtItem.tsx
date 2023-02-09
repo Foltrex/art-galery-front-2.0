@@ -2,6 +2,7 @@ import { Card, ImageListItem, ImageListItemBar, SxProps, Theme } from "@mui/mate
 import { useNavigate } from "react-router-dom";
 import ImageSlider from "../../components/ui/ImageSlider";
 import { Art } from "../../entities/art";
+import ErrorImage from '../../assets/images/error-image.png';
 
 interface IArtItemProps {
     art: Art;
@@ -19,14 +20,22 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     }}
                     title={'Available'}
                     position='top' />
-                
+
+                    <img
+                        src={ErrorImage}
+                        alt='Fail to download art image'
+                        loading="lazy"
+                        style={{ height: '100%', cursor: 'pointer' }}
+                        onClick={() => navigate(`/arts/${art.id}`)}
+                    />
+{/*                 
                 <img
                     src={art.data[0]}
                     alt={art.name}
                     loading='lazy'
                     style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/arts/${art.id}`)}
-                />
+                /> */}
                 <ImageListItemBar
                     title={art.name}
                 />
