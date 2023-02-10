@@ -22,6 +22,7 @@ const Art = () => {
 	const { data: art } = useGetArtById(artId!);
 
 	const { data: files } = useGetAllFileInfosByArtId(artId!);
+	console.log(files)
 
 	let fileIds: string[] = [];
 	if (files) {
@@ -33,6 +34,7 @@ const Art = () => {
 	}
 
 	const { data: images } = useGetAllFileStreamByIds(fileIds);
+	console.log(images)
 
 	const mutationSaveImage = useSaveFile();
 

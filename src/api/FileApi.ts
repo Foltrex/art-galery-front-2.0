@@ -7,7 +7,7 @@ export const useGetAllFileStreamByIds = (ids?: string[]) => {
     return useFetch<string[]>(
         `${FILE_SERVICE}/files/data`, 
         { ids: idString },
-        !!idString
+        { enabled: !!idString }
     );
 }
 
@@ -15,7 +15,7 @@ export const useGetAllFileInfosByArtId = (artId?: string) => {
     return useFetch<File[]>(
         `${FILE_SERVICE}/files/arts/${artId}`,
         undefined,
-        !!artId
+        { enabled: !!artId }
     );
 }
 
@@ -24,7 +24,7 @@ export const useGetAllFirstFileInfosByArtIds = (artIds?: string[]) => {
     return useFetch<File[]>(
         `${FILE_SERVICE}/files/arts/first`, 
         { artId: artIdString },
-        !!artIdString
+        { enabled: !!artIdString }
     );
 }
 

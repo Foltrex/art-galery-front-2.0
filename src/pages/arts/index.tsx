@@ -8,9 +8,6 @@ import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
 
-interface IArtsProps {
-}
-
 const Arts = () => {
 	const navigate = useNavigate();
 
@@ -49,7 +46,6 @@ const Arts = () => {
 				>
 					{isSuccess && artPages.pages.map((page, i) => (
 						page.content.map((art, j) => {
-							console.log(art);
 							return <ArtItem key={10 * i + j} art={art} />
 						})
 					))}
