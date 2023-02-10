@@ -8,7 +8,7 @@ export const useGetArtById = (id?: string) => {
     return useFetch<Art>(
         `${ART_SERVICE}/arts/${id}`,
         undefined,
-        !!id
+        { enabled: !!id }
     );
 }
 
