@@ -1,13 +1,40 @@
 import { useFetch, usePost } from "../hooks/react-query"
 import { File } from '../entities/file';
-import { FILE_SERVICE } from "../http/axios";
+import { axiosApi, FILE_SERVICE } from "../http/axios";
+import { QueryFunctionContext, useQuery } from "react-query";
+
+// export const useFetch = <T>(
+//     url: string | null,
+//     params?: object,
+//     config?: UseQueryOptions<T, Error, T, QueryKeyT>
+// ) => {
+//     const context = useQuery<T, Error, T, QueryKeyT>(
+//         [url!, params],
+//         context => fetch(context),
+//         {
+//             enabled: !!url,
+//             ...config,
+//         }
+//     );
+
+//     return context;
+// };
+type QueryKeyT = [string, object | undefined];
+
+export const fetchImage = (ids?: string[]) => {
+    let images: string[] = [];
+    ids?.forEach(async (id) => {
+        const { data: image } = await axiosApi.get<string>(`${FILE_SERVICE}/files/${id}/data`);
+        images.push(image);
+    })
+    
+    return images;
+};
 
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
-    const idString = ids?.join(', ');
-    return useFetch<string[]>(
-        `${FILE_SERVICE}/files/data`, 
-        { ids: idString },
-        { enabled: !!idString }
+    return useQuery<string[]>(
+        [`${FILE_SERVICE}/files/data`, { ids: ids }],
+        context => fetchImage(ids),
     );
 }
 

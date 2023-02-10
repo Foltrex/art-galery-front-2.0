@@ -34,7 +34,6 @@ const Art = () => {
 	}
 
 	const { data: images } = useGetAllFileStreamByIds(fileIds);
-	console.log(images)
 
 	const mutationSaveImage = useSaveFile();
 
@@ -63,7 +62,7 @@ const Art = () => {
 					height: '380px',
 					margin: '0 15px',
 				}}>
-					<ImageSlider slides={undefined} />
+					<ImageSlider slides={images} />
 				</div>
 			</Grid>
 			<Grid item sm={6}>
