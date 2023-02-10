@@ -4,8 +4,12 @@ import { ART_SERVICE } from "../http/axios";
 
 const ART_PAGE_SIZE = 9;
 
-export const useGetArtById = (id: string) => {
-    return useFetch<Art>(`${ART_SERVICE}/arts/${id}`);
+export const useGetArtById = (id?: string) => {
+    return useFetch<Art>(
+        `${ART_SERVICE}/arts/${id}`,
+        undefined,
+        !!id
+    );
 }
 
 export const useGetAllArtsByAccountId = (accountId: string, page: number = 0) => {

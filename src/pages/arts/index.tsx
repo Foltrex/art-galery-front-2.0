@@ -1,31 +1,17 @@
-import { Box, Button, Container, Divider, IconButton, ImageList, Paper } from '@mui/material';
-import { Stack } from '@mui/system';
-import * as React from 'react';
-import { Art } from '../../entities/art';
-import ArtItem from './ArtItem';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import AddIcon from '@mui/icons-material/Add';
+import { Box, Container, Divider, IconButton, ImageList, Paper } from '@mui/material';
+import ArtItem from './ArtItem';
 
-import f from './images/1.jpg';
-import s from './images/2.jpg';
-import t from './images/3.jpg';
-import fo from './images/4.jpg';
-import fi from './images/5.jpg';
-import si from './images/6.jpeg';
-import se from './images/7.webp';
-import SearchBar from '../../components/ui/SearchBar';
-import { useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useGetAllArtsByAccountId } from '../../api/ArtApi';
+import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import { useNavigate } from 'react-router-dom';
-import { useGetAllFirstFileInfosByArtIds } from '../../api/FileApi';
-import { IPage } from '../../hooks/react-query';
 
 interface IArtsProps {
 }
 
-const Arts: React.FunctionComponent<IArtsProps> = (props) => {
+const Arts = () => {
 	const navigate = useNavigate();
 
 	const token = TokenService.decode(AuthService.getToken());
@@ -51,7 +37,7 @@ const Arts: React.FunctionComponent<IArtsProps> = (props) => {
 					sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
 				>
 					<SearchBar sx={{ flexGrow: 1, width: 300 }} />
-					<IconButton onClick={() => navigate('/arts/-1')}>
+					<IconButton onClick={() => navigate('/arts/new')}>
 						<AddIcon fontSize='large' />
 					</IconButton>
 				</Box>

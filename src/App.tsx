@@ -12,6 +12,7 @@ import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Settings from "./pages/settings";
 import Arts from './pages/arts';
 import Art from './pages/art';
+import ArtCreation from './pages/art/creation';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
                     <Route path='representatives' element={<Representatives />} />
                     <Route path='arts'>
                         <Route index element={<Arts />} />
+                        <Route path='new' element={<ArtCreation />} />
                         <Route path=':id' element={<Art />} />
                     </Route>
                     <Route path='settings' element={<Settings />} />
