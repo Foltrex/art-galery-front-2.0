@@ -13,7 +13,6 @@ interface ILoginProps {
 
 const Login: React.FunctionComponent<ILoginProps> = () => {
     return (
-        // <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
             <CssBaseline/>
             <Box sx={{
@@ -29,7 +28,6 @@ const Login: React.FunctionComponent<ILoginProps> = () => {
             </Box>
             <Copyright sx={{mt: 4, mb: 4}}/>
         </Container>
-        // </ThemeProvider>
     );
 };
 

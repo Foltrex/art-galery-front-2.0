@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Form, Formik} from "formik";
 import {Button, Checkbox, CircularProgress, FormControlLabel, TextField} from "@mui/material";
 import * as yup from "yup";
@@ -12,6 +12,10 @@ import { useLogin } from '../../../../api/AuthApi';
 const LoginForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        alertStore.setShow(false)
+    }, [])
 
     const initialValues = {
         email: '',
