@@ -22,7 +22,7 @@ const Art = () => {
 	const { data: art } = useGetArtById(artId!);
 
 	const { data: files } = useGetAllFileInfosByArtId(artId!);
-	console.log(files)
+	// console.log(files)
 
 	let fileIds: string[] = [];
 	if (files) {
@@ -33,7 +33,14 @@ const Art = () => {
 		})
 	}
 
-	const { data: images } = useGetAllFileStreamByIds(fileIds);
+	const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
+	const images = imagesData?.map((data, index) => {
+		return FileService.toImage(data, files![index]);
+	})
+	// console.log(images);
+
+	// console.log('The last after fetching')
+	// console.log(images?.at(-1));
 
 	const mutationSaveImage = useSaveFile();
 
@@ -41,8 +48,11 @@ const Art = () => {
 	const handleFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
 		try {
 			const files = event.target.files!;
-			const file = await FileService.toFile(artId!, files[0]);
-			await mutationSaveImage.mutateAsync(file)
+			console.log('The last uploaded');
+			const base64 = await FileService.toBase64fromBlob(files[0])
+			console.log(base64);
+			// const file = await FileService.toFile(artId!, files[0]);
+			// await mutationSaveImage.mutateAsync(file);
 		} catch (e) {
 			// TODO: add push events
 			console.log(e);

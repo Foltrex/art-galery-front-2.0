@@ -3,38 +3,36 @@ import { File } from '../entities/file';
 import { axiosApi, FILE_SERVICE } from "../http/axios";
 import { QueryFunctionContext, useQuery } from "react-query";
 
-// export const useFetch = <T>(
-//     url: string | null,
-//     params?: object,
-//     config?: UseQueryOptions<T, Error, T, QueryKeyT>
-// ) => {
-//     const context = useQuery<T, Error, T, QueryKeyT>(
-//         [url!, params],
-//         context => fetch(context),
-//         {
-//             enabled: !!url,
-//             ...config,
-//         }
-//     );
-
-//     return context;
-// };
-type QueryKeyT = [string, object | undefined];
-
 export const fetchImage = (ids?: string[]) => {
-    let images: string[] = [];
+
+    let images: ArrayBuffer[] = [];
     ids?.forEach(async (id) => {
-        const { data: image } = await axiosApi.get<string>(`${FILE_SERVICE}/files/${id}/data`);
+        const { data: image } = await axiosApi.get<ArrayBuffer>(
+            `${FILE_SERVICE}/files/${id}/data`,
+            { responseType: 'arraybuffer' }
+        );
+
         images.push(image);
     })
     
     return images;
 };
 
+
+export const fetchImages = (ids: string[] = []) => {
+    const requests = ids.map(id => {
+        const url = `${FILE_SERVICE}/files/${id}/data`;
+        return axiosApi.get<ArrayBuffer>(url);
+    })
+
+    return Promise.all(requests)
+        .then(responses => responses.map(response => response.data));
+};
+
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
-    return useQuery<string[]>(
+    return useQuery<ArrayBuffer[]>(
         [`${FILE_SERVICE}/files/data`, { ids: ids }],
-        context => fetchImage(ids),
+        context => fetchImages(ids),
     );
 }
 

@@ -14,4 +14,22 @@ export class FileService {
 
         return fileEnity;
     }
+
+
+    static toBase64(binaryData: ArrayBuffer) {
+        return Buffer.from(binaryData).toString('base64');
+    }
+
+    static toImage(binaryData: ArrayBuffer, file: FileEntity) {
+        return `data:${file.mimeType};base64,` + this.toBase64(binaryData);
+    }
+
+    static toBase64fromBlob(blob: Blob) {
+        return new Promise((resolve, reject) => {
+            const reader: FileReader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+    }
 }
