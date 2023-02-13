@@ -1,8 +1,8 @@
-import { Card, ImageListItem, ImageListItemBar, SxProps, Theme } from "@mui/material";
+import { Card, ImageListItem, ImageListItemBar } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import ImageSlider from "../../components/ui/ImageSlider";
+import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
-import ErrorImage from '../../assets/images/error-image.png';
+import { FileService } from "../../services/FileService";
 
 interface IArtItemProps {
     art: Art;
@@ -10,6 +10,21 @@ interface IArtItemProps {
 
 const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const navigate = useNavigate();
+
+
+    const { data: files } = useGetAllFileInfosByArtId(art.id)
+
+    let fileIds: string[] = [];
+    if (files) {
+        files.forEach(file => {
+            if (file.id) {
+                fileIds.push(file.id);
+            }
+        })
+    }
+
+    const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
+    const images = imagesData?.map(data => FileService.toImage(data));
 
     return (
         <Card>
@@ -21,21 +36,15 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     title={'Available'}
                     position='top' />
 
-                    <img
-                        src={ErrorImage}
-                        alt='Fail to download art image'
-                        loading="lazy"
-                        style={{ height: '100%', cursor: 'pointer' }}
-                        onClick={() => navigate(`/arts/${art.id}`)}
-                    />
-{/*                 
+
+
                 <img
-                    src={art.data[0]}
+                    src={images?.at(0)}
                     alt={art.name}
                     loading='lazy'
                     style={{ cursor: 'pointer' }}
                     onClick={() => navigate(`/arts/${art.id}`)}
-                /> */}
+                />
                 <ImageListItemBar
                     title={art.name}
                 />

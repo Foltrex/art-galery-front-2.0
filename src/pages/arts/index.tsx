@@ -16,17 +16,6 @@ const Arts = () => {
 
 	const pages = artPages?.pages;
 
-	let artIds: string[] = [];
-	if (pages) {
-		artIds = pages.flatMap(page => (
-			page.content.map(art => art.id!)
-		));
-	}
-	// const { data: files } = useGetAllFirstFileInfosByArtIds(artIds);
-	// console.log(files);
-
-	// const { data } = useGetAllFirstFileInfosByArtIds();
-
 	return (
 		<Container>
 			<Paper elevation={1} sx={{ padding: '10px' }}>

@@ -1,8 +1,8 @@
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Divider, Grid, IconButton, Stack, Typography } from "@mui/material";
-import { useParams } from "react-router-dom";
-import { useGetArtById } from "../../api/ArtApi";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDeleteArt, useGetArtById } from "../../api/ArtApi";
 import ImageSlider from "../../components/ui/ImageSlider";
 
 
@@ -13,6 +13,8 @@ import { FileService } from "../../services/FileService";
 
 
 const Art = () => {
+	const navigate = useNavigate();
+
 	const fileInput = useRef<HTMLInputElement>(null);
 
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -37,7 +39,6 @@ const Art = () => {
 
 	const mutationSaveImage = useSaveFile();
 
-	// const onSaveImage = async ()
 	const handleFileInputChange = async (event: ChangeEvent<HTMLInputElement>) => {
 		try {
 			const files = event.target.files!;
@@ -45,6 +46,18 @@ const Art = () => {
 			await mutationSaveImage.mutateAsync(file);
 		} catch (e) {
 			// TODO: add push events
+			console.log(e);
+		}
+	}
+
+	const mutationDeleteArt = useDeleteArt();
+
+	const onDelete = async () => {
+		try {
+			// !!! navigate have to be first becouse of artId absence param
+			navigate('/arts')
+			await mutationDeleteArt.mutateAsync(art?.id);
+		} catch (e) {
 			console.log(e);
 		}
 	}
@@ -97,7 +110,7 @@ const Art = () => {
 				<DeleteModal
 					open={openDeleteModal}
 					onClose={() => setOpenDeleteModal(false)}
-					onDelete={() => console.log('Entity deleted')} />
+					onDelete={onDelete} />
 			</Grid>
 		</Grid>
 

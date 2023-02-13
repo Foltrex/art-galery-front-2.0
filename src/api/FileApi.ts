@@ -44,15 +44,6 @@ export const useGetAllFileInfosByArtId = (artId?: string) => {
     );
 }
 
-export const useGetAllFirstFileInfosByArtIds = (artIds?: string[]) => {
-    const artIdString = artIds?.join(', ');
-    return useFetch<File[]>(
-        `${FILE_SERVICE}/files/arts/first`, 
-        { artId: artIdString },
-        { enabled: !!artIdString }
-    );
-}
-
 export const useSaveFile = () => {
     return usePost<File>(`${FILE_SERVICE}/files`);
 }

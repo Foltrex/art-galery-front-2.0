@@ -1,5 +1,5 @@
 import { Art } from "../entities/art"
-import { useFetch, useLoadMore, usePost } from "../hooks/react-query"
+import { useDelete, useFetch, useLoadMore, usePost } from "../hooks/react-query"
 import { ART_SERVICE } from "../http/axios";
 
 const ART_PAGE_SIZE = 9;
@@ -21,4 +21,8 @@ export const useGetAllArtsByAccountId = (accountId: string, page: number = 0) =>
 
 export const useSaveArt = () => {
     return usePost<Art>(`${ART_SERVICE}/arts`);
+}
+
+export const useDeleteArt = () => {
+    return useDelete(`${ART_SERVICE}/arts`);
 }
