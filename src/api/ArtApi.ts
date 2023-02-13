@@ -12,9 +12,8 @@ export const useGetArtById = (id?: string) => {
     );
 }
 
-export const useGetAllArtsByAccountId = (accountId: string, page: number = 0) => {
+export const useGetAllArtsByAccountId = (accountId: string) => {
     return useLoadMore<Art>(`${ART_SERVICE}/arts/accounts/${accountId}`, {
-        page: page,
         size: ART_PAGE_SIZE
     });
 }

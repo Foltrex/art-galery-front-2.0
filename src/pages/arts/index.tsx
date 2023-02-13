@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Container, Divider, IconButton, ImageList, Paper } from '@mui/material';
+import { Box, Button, Container, Divider, IconButton, ImageList, Paper } from '@mui/material';
 import ArtItem from './ArtItem';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useNavigate } from 'react-router-dom';
 import { useGetAllArtsByAccountId } from '../../api/ArtApi';
@@ -12,12 +13,13 @@ const Arts = () => {
 	const navigate = useNavigate();
 
 	const token = TokenService.decode(AuthService.getToken());
-	const { data: artPages, isSuccess } = useGetAllArtsByAccountId(token.id);
+	const { data: artPages, isSuccess, fetchNextPage } = useGetAllArtsByAccountId(token.id);
 
-	const pages = artPages?.pages;
+	const lastPage = artPages?.pages.at(-1);
+	const isNotLast = lastPage && !lastPage.last;
 
 	return (
-		<Container>
+		<Container sx={{position: 'relative'}}>
 			<Paper elevation={1} sx={{ padding: '10px' }}>
 				<Box
 					sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
@@ -31,7 +33,7 @@ const Arts = () => {
 				<ImageList
 					gap={12}
 					cols={3}
-					sx={{ width: 'auto', height: 850, objectFit: 'cover' }}
+					sx={{ width: 'auto', objectFit: 'cover' }}
 				>
 					{isSuccess && artPages.pages.map((page, i) => (
 						page.content.map((art, j) => {
@@ -39,7 +41,24 @@ const Arts = () => {
 						})
 					))}
 				</ImageList>
+
 			</Paper>
+			
+			{isNotLast &&
+				<Button
+					startIcon={<ArrowDownwardIcon />}
+					variant='contained'
+					sx={{ 
+						position: 'absolute',
+						bottom: '0', 
+						left: '50%',
+						transform: 'translate(-50%, -50%)' 
+					}}
+					onClick={() => fetchNextPage()}
+				>
+					Load More
+				</Button>
+			}
 		</Container>
 	);
 };

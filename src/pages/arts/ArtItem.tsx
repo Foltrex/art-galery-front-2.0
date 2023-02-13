@@ -42,7 +42,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     src={images?.at(0)}
                     alt={art.name}
                     loading='lazy'
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: 'pointer'}}
                     onClick={() => navigate(`/arts/${art.id}`)}
                 />
                 <ImageListItemBar

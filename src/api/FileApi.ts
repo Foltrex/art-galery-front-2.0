@@ -3,21 +3,6 @@ import { File } from '../entities/file';
 import { axiosApi, FILE_SERVICE } from "../http/axios";
 import { QueryFunctionContext, useQuery } from "react-query";
 
-export const fetchImage = (ids?: string[]) => {
-
-    let images: ArrayBuffer[] = [];
-    ids?.forEach(async (id) => {
-        const { data: image } = await axiosApi.get<ArrayBuffer>(
-            `${FILE_SERVICE}/files/${id}/data`,
-            { responseType: 'arraybuffer' }
-        );
-
-        images.push(image);
-    })
-    
-    return images;
-};
-
 
 export const fetchImages = (ids: string[] = []) => {
     const requests = ids.map(id => {
