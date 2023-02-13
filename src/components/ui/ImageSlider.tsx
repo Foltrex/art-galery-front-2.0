@@ -118,7 +118,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDel
 						src={slides[currentIndex]} />
 
 					<Button
-						sx={{position: 'absolute', bottom: '10%'}}
+						sx={{position: 'absolute', bottom: '10%', borderRadius: 8}}
 						color='error'
 						variant='contained'
 						startIcon={<Delete />}

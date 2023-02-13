@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
 import { FileService } from "../../services/FileService";
+import EmptyArt from './empty-art.svg';
 
 interface IArtItemProps {
     art: Art;
@@ -37,14 +38,22 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     position='top' />
 
 
-
-                <img
-                    src={images?.at(0)}
-                    alt={art.name}
-                    loading='lazy'
-                    style={{ cursor: 'pointer'}}
-                    onClick={() => navigate(`/arts/${art.id}`)}
-                />
+                {images && images.at(0) 
+                    ?   <img
+                            src={images?.at(0)}
+                            alt={art.name}
+                            loading='lazy'
+                            style={{ cursor: 'pointer'}}
+                            onClick={() => navigate(`/arts/${art.id}`)}
+                        />
+                    :   <img 
+                            src={EmptyArt}
+                            alt={art.name}
+                            loading='lazy'
+                            style={{ cursor: 'pointer', objectFit: 'scale-down'}}
+                            onClick={() => navigate(`/arts/${art.id}`)}
+                        />
+                }
                 <ImageListItemBar
                     title={art.name}
                 />

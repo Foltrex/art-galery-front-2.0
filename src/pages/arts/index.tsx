@@ -18,13 +18,18 @@ const Arts = () => {
 	const lastPage = artPages?.pages.at(-1);
 	const isNotLast = lastPage && !lastPage.last;
 
+	const handleSearch = (text: string) => {
+
+	}
+	
+
 	return (
 		<Container sx={{position: 'relative'}}>
 			<Paper elevation={1} sx={{ padding: '10px' }}>
 				<Box
 					sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
 				>
-					<SearchBar sx={{ flexGrow: 1, width: 300 }} />
+					<SearchBar onSearch={handleSearch} sx={{ flexGrow: 1, width: 300 }} />
 					<IconButton onClick={() => navigate('/arts/new')}>
 						<AddIcon fontSize='large' />
 					</IconButton>
@@ -52,7 +57,8 @@ const Arts = () => {
 						position: 'absolute',
 						bottom: '0', 
 						left: '50%',
-						transform: 'translate(-50%, -50%)' 
+						transform: 'translate(-50%, -50%)',
+						borderRadius: 8
 					}}
 					onClick={() => fetchNextPage()}
 				>
