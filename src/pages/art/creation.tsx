@@ -78,7 +78,8 @@ const ArtCreation = () => {
 					height: '380px',
 					margin: '0 15px',
 				}}>
-					<ImageSlider />
+					
+					<div style={{ background: '#E8EDF0', width: '100%', height: '100%' }} />
 				</div>
 			</Grid>
 			<Grid item sm={6}>

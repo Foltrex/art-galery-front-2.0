@@ -1,4 +1,4 @@
-import { useFetch, usePost } from "../hooks/react-query"
+import { useDelete, useFetch, usePost } from "../hooks/react-query"
 import { File } from '../entities/file';
 import { axiosApi, FILE_SERVICE } from "../http/axios";
 import { QueryFunctionContext, useQuery } from "react-query";
@@ -46,4 +46,8 @@ export const useGetAllFileInfosByArtId = (artId?: string) => {
 
 export const useSaveFile = () => {
     return usePost<File>(`${FILE_SERVICE}/files`);
+}
+
+export const useDeleteFile = () => {
+    return useDelete(`${FILE_SERVICE}/files`);
 }

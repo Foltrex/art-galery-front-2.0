@@ -1,10 +1,12 @@
 
-import { Modal } from "@mui/material";
+import { Button, Modal } from "@mui/material";
 import { Container, fontSize, styled } from "@mui/system";
+import Delete from "@mui/icons-material/Delete";
 import { useState } from "react";
 
 interface IImageSliderProps {
-	slides?: string[]
+	slides?: string[];
+	onDelete: (index: number) => void;
 }
 
 const LeftArrowButton = styled('div')({
@@ -45,7 +47,7 @@ const SliderImage = styled('div', {
 	backgroundRepeat: 'no-repeat'
 }));
 
-const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides }) => {
+const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDelete }) => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 
@@ -69,18 +71,23 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides }) => 
 		setCurrentIndex(slideIndex);
 	}
 
+	const handleDeleteImageClick = () => {		
+		onDelete(currentIndex);
+		setShowModal(false)
+	}
+
 	return (
 		<div style={{
 			height: '100%',
 			position: 'relative'
 		}}>
-			{slides && 	<LeftArrowButton onClick={handleLeftArrowClick}>
-							&#8249;
-						</LeftArrowButton>
+			{slides && <LeftArrowButton onClick={handleLeftArrowClick}>
+				&#8249;
+			</LeftArrowButton>
 			}
-			{slides &&	<RightArrowButton onClick={handleRightArrowClick}>
-							&#8250;
-						</RightArrowButton>
+			{slides && <RightArrowButton onClick={handleRightArrowClick}>
+				&#8250;
+			</RightArrowButton>
 			}
 
 			<div style={{ background: '#E8EDF0', width: '100%', height: '100%' }}>
@@ -88,27 +95,38 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides }) => 
 			</div>
 
 			{slides && <div style={{ display: 'flex', justifyContent: 'center' }}>
-							{slides.map((_, index) => (
-								<div
-									key={index}
-									style={{ margin: '0 3px', cursor: 'pointer', fontSize: '20px ' }}
-									onClick={() => handleDotClick(index)}
-								>
-									&#x25CF;
-								</div>
-							))}
-						</div>
+				{slides.map((_, index) => (
+					<div
+						key={index}
+						style={{ margin: '0 3px', cursor: 'pointer', fontSize: '20px ' }}
+						onClick={() => handleDotClick(index)}
+					>
+						&#x25CF;
+					</div>
+				))}
+			</div>
 			}
 
 			{slides && <Modal
-							open={showModal}
-							onClose={() => setShowModal(false)}
-							style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-						>
-							<img
-								style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }}
-								src={slides[currentIndex]} />
-					</Modal>
+				open={showModal}
+				onClose={() => setShowModal(false)}
+				style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+			>
+				<>
+					<img
+						style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }}
+						src={slides[currentIndex]} />
+
+					<Button
+						sx={{position: 'absolute', bottom: '10%'}}
+						color='error'
+						variant='contained'
+						startIcon={<Delete />}
+						onClick={handleDeleteImageClick}>
+						Delete
+					</Button>
+				</>
+			</Modal>
 			}
 		</div>
 	);

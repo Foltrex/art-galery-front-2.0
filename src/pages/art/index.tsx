@@ -7,7 +7,7 @@ import ImageSlider from "../../components/ui/ImageSlider";
 
 
 import { ChangeEvent, useRef, useState } from "react";
-import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useSaveFile } from "../../api/FileApi";
+import { useDeleteFile, useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useSaveFile } from "../../api/FileApi";
 import DeleteModal from "../../components/modal/DeleteModal";
 import { FileService } from "../../services/FileService";
 
@@ -62,6 +62,17 @@ const Art = () => {
 		}
 	}
 
+	const mutationDeleteFile = useDeleteFile();
+
+	const onDeleteFile = async (index: number) => {
+		try {
+			const file = files?.at(index);
+			await mutationDeleteFile.mutateAsync(file?.id);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 
 	return (
 		<Grid container
@@ -75,7 +86,7 @@ const Art = () => {
 					height: '380px',
 					margin: '0 15px',
 				}}>
-					<ImageSlider slides={images} />
+					<ImageSlider slides={images} onDelete={onDeleteFile} />
 				</div>
 			</Grid>
 			<Grid item sm={6}>
