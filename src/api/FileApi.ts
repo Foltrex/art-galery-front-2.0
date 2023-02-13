@@ -22,7 +22,7 @@ export const fetchImage = (ids?: string[]) => {
 export const fetchImages = (ids: string[] = []) => {
     const requests = ids.map(id => {
         const url = `${FILE_SERVICE}/files/${id}/data`;
-        return axiosApi.get<ArrayBuffer>(url);
+        return axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer'});
     })
 
     return Promise.all(requests)
