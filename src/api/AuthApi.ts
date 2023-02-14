@@ -14,3 +14,11 @@ export const useLogin = () => {
 export const useRegisterRepresentative = () => {
     return usePost<object, Representative>(`${USER_SERVICE}/auth/register-representative`);
 }
+
+export const useSendPasswordRecoveryCode = () => {
+    return usePost(`${USER_SERVICE}/auth/password-recovery-code`);
+}
+
+export const usePasswordRecovery = () => {
+    return usePost(`${USER_SERVICE}/auth/password-recovery`);
+}

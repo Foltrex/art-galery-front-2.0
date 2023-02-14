@@ -12,6 +12,7 @@ import { useLogin } from '../../../../api/AuthApi';
 const LoginForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
+    const mutationLogin = useLogin();
 
     useEffect(() => {
         alertStore.setShow(false)
@@ -27,10 +28,8 @@ const LoginForm = () => {
         password: yup.string().required('Password cannot be empty').min(1)
     })
 
-    const mutationLogin = useLogin();
 
     const submit = async (email: string, password: string) => {
-        alertStore.setShow(false)
         try {
             const loginRequestDto = {
                 email: email,
@@ -38,8 +37,8 @@ const LoginForm = () => {
             };
 
             const response = await mutationLogin.mutateAsync(loginRequestDto);
-
             AuthService.setToken(response.data.token);
+            alertStore.setShow(false)
             navigate('/');
         } catch (error: any) {
             console.log(error.response.data.message)
@@ -97,7 +96,7 @@ const LoginForm = () => {
                         disabled={formik.isSubmitting}
                         sx={{mt: 3, mb: 2}}
                     >
-                        {formik.isSubmitting ? <CircularProgress/> : "Sign In"}
+                        {formik.isSubmitting ? <CircularProgress size={"2em"}/> : "Sign In"}
                     </Button>
                     <LoginFormBottom/>
                 </Form>
