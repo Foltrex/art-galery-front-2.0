@@ -68,7 +68,7 @@ export const useFetch = <T>(
 };
 
 export const useLoadMore = <T>(url: string | null, params?: object) => {
-    const context = useInfiniteQuery<
+    return useInfiniteQuery<
         IPage<T>,
         Error,
         IPage<T>,
@@ -82,8 +82,6 @@ export const useLoadMore = <T>(url: string | null, params?: object) => {
                 : page.number
         }
     );
-
-    return context;
 };
 
 const useGenericMutation = <T, S = T | undefined>(

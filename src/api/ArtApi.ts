@@ -12,9 +12,10 @@ export const useGetArtById = (id?: string) => {
     );
 }
 
-export const useGetAllArtsByAccountId = (accountId: string) => {
+export const useGetAllArtsByAccountIdAndSearchText = (accountId: string, params?: object) => {
     return useLoadMore<Art>(`${ART_SERVICE}/arts/accounts/${accountId}`, {
-        size: ART_PAGE_SIZE
+        size: ART_PAGE_SIZE,
+        ...params
     });
 }
 

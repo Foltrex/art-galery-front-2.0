@@ -4,28 +4,33 @@ import ArtItem from './ArtItem';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 import { useNavigate } from 'react-router-dom';
-import { useGetAllArtsByAccountId } from '../../api/ArtApi';
 import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
+import { useState } from 'react';
+import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
 
 const Arts = () => {
 	const navigate = useNavigate();
 
+	const [searchText, setSearchText] = useState<string>();
+
 	const token = TokenService.decode(AuthService.getToken());
-	const { data: artPages, isSuccess, fetchNextPage } = useGetAllArtsByAccountId(token.id);
+	const { data: artPages, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
+		name: searchText
+	});
 
 	const lastPage = artPages?.pages.at(-1);
 	const isNotLast = lastPage && !lastPage.last;
 
-	const handleSearch = (text: string) => {
-
+	const handleSearch = (searchText: string) => {
+		setSearchText(searchText);
 	}
 	
 
 	return (
 		<Container sx={{position: 'relative'}}>
-			<Paper elevation={1} sx={{ padding: '10px' }}>
+			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<Box
 					sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
 				>
