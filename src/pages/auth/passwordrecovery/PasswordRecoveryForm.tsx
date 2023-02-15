@@ -1,16 +1,16 @@
 import React, {useState} from 'react';
-import {createSearchParams, Link, useLocation, useNavigate} from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {Button, CircularProgress, TextField} from "@mui/material";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import AlertNotification from "../../../components/notifications/AlertNotification";
-import {usePasswordRecovery, useSendPasswordRecoveryCode} from "../../../api/AuthApi";
+import {usePasswordRecovery} from "../../../api/AuthApi";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 
 
 interface IPasswordRecoveryFormValues {
     email: string,
-    code:  string,
+    code: string,
     password: string,
 }
 
@@ -57,10 +57,7 @@ const PasswordRecoveryForm = () => {
             .then(() => {
                 setIsDisableButtons(true)
                 alertStore.setShow(true, "success", " ", "Your password recovered successfully!")
-                setTimeout(function () {
-                    alertStore.setShow(false)
-                    navigate('/auth/signin');
-                }, 3000);
+                navigate('/auth/signin');
             })
             .catch(error => {
                 console.log(error.response.data.message)

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {Form, Formik} from "formik";
 import {Button, Checkbox, CircularProgress, FormControlLabel, TextField} from "@mui/material";
 import * as yup from "yup";
@@ -7,16 +7,12 @@ import LoginFormBottom from "./LoginFormBottom";
 import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
-import { useLogin } from '../../../../api/AuthApi';
+import {useLogin} from '../../../../api/AuthApi';
 
 const LoginForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationLogin = useLogin();
-
-    useEffect(() => {
-        alertStore.setShow(false)
-    }, [])
 
     const initialValues = {
         email: '',
@@ -24,8 +20,13 @@ const LoginForm = () => {
     }
 
     const validationSchema = yup.object().shape({
-        email: yup.string().required('Email cannot be empty').min(1).email("Email not valid"),
-        password: yup.string().required('Password cannot be empty').min(1)
+        email: yup.string()
+            .required()
+            .min(3)
+            .email(),
+        password: yup.string()
+            .required()
+            .min(6)
     })
 
 

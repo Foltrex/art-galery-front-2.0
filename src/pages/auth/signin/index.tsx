@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
@@ -7,11 +8,20 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import LoginForm from "./form/LoginForm";
 import Copyright from "../../../components/ui/Copyright";
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 
 interface ILoginProps {
 }
 
 const Login: React.FunctionComponent<ILoginProps> = () => {
+    const {alertStore} = useRootStore();
+
+    useEffect(() => {
+        if (alertStore.severity === "error") {
+            alertStore.setShow(false)
+        }
+    }, [])
+
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline/>

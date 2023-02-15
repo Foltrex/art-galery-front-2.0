@@ -1,18 +1,17 @@
-import { Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField } from "@mui/material";
+import {Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField} from "@mui/material";
 import Box from "@mui/material/Box";
-import { Form, Formik } from "formik";
+import {Form, Formik} from "formik";
 import * as yup from "yup";
 import AlertNotification from '../../../../components/notifications/AlertNotification';
-import { AccountEnum } from "../../../../entities/enums/AccountEnum";
+import {AccountEnum} from "../../../../entities/enums/AccountEnum";
 import RegisterFormBottom from './RegisterFormBottom';
-import { useNavigate } from "react-router-dom";
-import { useRegister } from '../../../../api/AuthApi';
-import { AuthService } from "../../../../services/AuthService";
-import { useRootStore } from "../../../../stores/provider/RootStoreProvider";
+import {useNavigate} from "react-router-dom";
+import {useRegister} from '../../../../api/AuthApi';
+import {AuthService} from "../../../../services/AuthService";
+import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 
 const RegisterForm = () => {
-
-    const { alertStore } = useRootStore();
+    const {alertStore} = useRootStore();
     const navigate = useNavigate();
 
     const initialValues = {
@@ -22,14 +21,19 @@ const RegisterForm = () => {
     }
 
     const validationSchema = yup.object().shape({
-        email: yup.string().required('Email cannot be empty').min(1).email("Email not valid"),
-        password: yup.string().required('Password cannot be empty').min(6),
-        accountType: yup.string().required('Account type cannot be empty')
+        email: yup.string().required()
+            .min(3)
+            .email(),
+        password: yup.string()
+            .required()
+            .min(6),
+        accountType: yup.string()
+            .required('account type is a required field')
     })
 
     const options = [
-        { label: "Organization", value: AccountEnum.REPRESENTATIVE },
-        { label: "Artist", value: AccountEnum.ARTIST },
+        {label: "Organization", value: AccountEnum.REPRESENTATIVE},
+        {label: "Artist", value: AccountEnum.ARTIST},
     ];
 
     const mutationRegister = useRegister();
@@ -48,7 +52,7 @@ const RegisterForm = () => {
             navigate('/')
         } catch (error: any) {
             console.log(error.response.data.message)
-            alertStore.setShow(true, 'error', "Register error", error.response.data.message);        
+            alertStore.setShow(true, 'error', "Register error", error.response.data.message);
         }
     }
 
@@ -58,7 +62,7 @@ const RegisterForm = () => {
             validateOnBlur={true}
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={async (values, { setSubmitting }) => {
+            onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
                 await submit(values.email, values.password, values.accountType)
                 setSubmitting(false)
@@ -66,7 +70,7 @@ const RegisterForm = () => {
         >
             {formik => (
                 <Form noValidate>
-                    <AlertNotification />
+                    <AlertNotification/>
                     <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -93,7 +97,7 @@ const RegisterForm = () => {
                             }
                         </Stack>
                         {formik.errors.accountType &&
-                            <FormHelperText style={{ color: "red" }}>{formik.errors.accountType}</FormHelperText>}
+                            <FormHelperText style={{color: "red"}}>{formik.errors.accountType}</FormHelperText>}
                     </Box>
                     <TextField
                         margin="normal"
@@ -124,11 +128,11 @@ const RegisterForm = () => {
                         fullWidth
                         variant="contained"
                         disabled={formik.isSubmitting}
-                        sx={{ mt: 3, mb: 2 }}
+                        sx={{mt: 3, mb: 2}}
                     >
-                        {formik.isSubmitting ? <CircularProgress /> : "Sign Up"}
+                        {formik.isSubmitting ? <CircularProgress/> : "Sign Up"}
                     </Button>
-                    <RegisterFormBottom />
+                    <RegisterFormBottom/>
                 </Form>
             )}
         </Formik>

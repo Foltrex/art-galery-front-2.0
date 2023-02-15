@@ -44,11 +44,11 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
 
     const validationSchema = yup.object().shape({
         name: yup.string()
-            .required('Name cannot be empty')
+            .required()
             .min(2)
             .max(255),
         address: yup.object()
-            .required('Address cannot be empty')
+            .required()
             .nullable()
     })
 

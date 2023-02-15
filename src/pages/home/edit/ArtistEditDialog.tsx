@@ -41,19 +41,19 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
 
     const validationSchema = yup.object().shape({
         firstname: yup.string()
-            .required('Firstname cannot be empty')
+            .required()
             .nullable()
             .min(2)
             .max(255),
         lastname: yup.string()
-            .required('Lastname cannot be empty')
+            .required()
             .nullable()
             .min(2)
             .max(255),
         address: yup.object()
-            .required('Address cannot be empty')
+            .required()
             .nullable(),
-        description: yup.string().required('Description cannot be empty')
+        description: yup.string().required()
             .nullable()
             .min(2)
             .max(1024),
