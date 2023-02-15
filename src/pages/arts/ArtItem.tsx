@@ -1,4 +1,5 @@
 import { Card, ImageListItem, ImageListItemBar } from "@mui/material";
+import { width } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
@@ -37,20 +38,28 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     title={'Available'}
                     position='top' />
 
-
                 {images && images.at(0) 
                     ?   <img
                             src={images?.at(0)}
                             alt={art.name}
                             loading='lazy'
-                            style={{ cursor: 'pointer'}}
+                            style={{ 
+                                cursor: 'pointer',
+                                height: '100%',
+                                width: 'auto'
+                            }}
                             onClick={() => navigate(`/arts/${art.id}`)}
                         />
                     :   <img 
                             src={EmptyArt}
                             alt={art.name}
                             loading='lazy'
-                            style={{ cursor: 'pointer', objectFit: 'scale-down'}}
+                            style={{ 
+                                cursor: 'pointer', 
+                                objectFit: 'scale-down',
+                                height: '100%',
+                                width: 'auto'
+                            }}
                             onClick={() => navigate(`/arts/${art.id}`)}
                         />
                 }

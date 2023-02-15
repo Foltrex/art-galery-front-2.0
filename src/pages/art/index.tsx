@@ -108,7 +108,7 @@ const Art = () => {
 						onSubmit={handleSubmit}  />
 					: 	<>
 							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-								<Typography variant='h4'>
+								<Typography sx={{fontSize: '2em'}}>
 									{art?.name}
 								</Typography>
 								<Box>
