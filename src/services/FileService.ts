@@ -7,9 +7,6 @@ export class FileService {
         const arrayBufferFile = await this.toArrayBufferFromBlob(file);
         const binaryFile = new Uint8Array(arrayBufferFile);
         const encodedBase64Image =  naclUtil.encodeBase64(binaryFile);
-
-        console.log('bytes before saving: ')
-        console.log(binaryFile);
         
         const fileEnity: FileEntity = {
             artId: artId,
