@@ -8,6 +8,7 @@ import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
+import PasswordTextField from "../../../../components/form/PasswordTextField";
 
 const LoginForm = () => {
     const {alertStore} = useRootStore();
@@ -73,18 +74,13 @@ const LoginForm = () => {
                         }}
                         error={!!formik.errors.email} helperText={formik.errors.email}
                     />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Password"
-                        type="password"
-                        id="password"
-                        defaultValue={formik.values.password}
-                        onChange={(event) => {
-                            formik.setFieldValue('password', event.target.value)
-                        }}
-                        error={!!formik.errors.password} helperText={formik.errors.password}
+                    <PasswordTextField
+                        id={"password"}
+                        label={"Password"}
+                        name={"password"}
+                        value={formik.values.password}
+                        onChange={formik.handleChange}
+                        error={formik.errors.password}
                     />
                     <FormControlLabel
                         control={<Checkbox value="remember" color="primary"/>}

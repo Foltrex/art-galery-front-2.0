@@ -1,14 +1,16 @@
 import React from "react";
-import {Alert, AlertColor, AlertTitle, Collapse} from "@mui/material";
+import {Alert, AlertColor, AlertTitle, Collapse, Theme} from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import {observer} from "mobx-react-lite";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {SxProps} from "@mui/system";
 
 interface IRepresentativeTableItemProps {
     severity?: AlertColor,
     title?: string,
     text?: string,
+    sx?: SxProps<Theme>;
 }
 
 const AlertNotification: React.FC<IRepresentativeTableItemProps> = observer((props) => {

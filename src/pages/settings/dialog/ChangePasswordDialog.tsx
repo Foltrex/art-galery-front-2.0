@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    TextField
-} from "@mui/material";
+import {Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Divider} from "@mui/material";
 import * as yup from "yup";
 import {useFormik} from "formik";
+import {useUpdateAccountPasswordById} from "../../../api/AccountApi";
+import {TokenService} from "../../../services/TokenService";
+import PasswordTextField from "../../../components/form/PasswordTextField";
+import AlertNotification from '../../../components/notifications/AlertNotification';
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 
 interface IChangePasswordDialogProps {
     open: boolean;
@@ -23,6 +19,8 @@ interface IFormValues {
 }
 
 const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
+    const {alertStore} = useRootStore();
+    const mutationUpdateAccountPassword = useUpdateAccountPasswordById(TokenService.getCurrentAccountId());
 
     const initialValues: IFormValues = {
         oldPassword: '',
@@ -33,13 +31,14 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
         oldPassword: yup.string()
             .required('old password is a required field')
             .nullable()
-            .min(6)
-            .max(255),
+            .min(6, 'old password must be at least 6 characters')
+            .max(255, 'old password must be at most 255 characters'),
         newPassword: yup.string()
             .required('new password is a required field')
             .nullable()
-            .min(6)
-            .max(255),
+            .min(6, 'new password must be at least 6 characters')
+            .max(255, 'new password must be at most 255 characters'),
+
     })
 
     const formik = useFormik({
@@ -54,51 +53,38 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
     });
 
     const submit = async (values: IFormValues) => {
-        // const updatedArtist = {
-        //     id: artist.id,
-        //     firstname: values.firstname,
-        //     lastname: values.lastname,
-        //     address: values.address,
-        //     description: values.description,
-        // } as Artist
-        //
-        // await mutationUpdateArtist.mutateAsync(updatedArtist)
-        //     .then(() => {
-        //         artist.firstname = updatedArtist.firstname;
-        //         artist.lastname = updatedArtist.lastname;
-        //         artist.address = updatedArtist.address;
-        //         artist.description = updatedArtist.description;
-        //         onClose();
-        //     });
+        mutationUpdateAccountPassword.mutateAsync(values)
+            .then(() => {
+                onClose();
+            })
+            .catch(error => {
+                alertStore.setShow(true, "error", " ", error.response.data.message)
+                console.log(error.response.data.message)
+            })
     }
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth='xs'>
             <DialogTitle>Edit password</DialogTitle>
             <Divider/>
-            <DialogContent style={{paddingTop: "0px"}}>
+            <DialogContent>
+                <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="Old password"
+                    <PasswordTextField
+                        id={"old-password"}
+                        label={"Old password"}
                         name={"oldPassword"}
-                        defaultValue={formik.values.oldPassword}
                         value={formik.values.oldPassword}
                         onChange={formik.handleChange}
-                        error={!!formik.errors.oldPassword} helperText={formik.errors.oldPassword}
+                        error={formik.errors.oldPassword}
                     />
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        label="New password"
+                    <PasswordTextField
+                        id={"new-password"}
+                        label={"New password"}
                         name={"newPassword"}
-                        defaultValue={formik.values.newPassword}
                         value={formik.values.newPassword}
                         onChange={formik.handleChange}
-                        error={!!formik.errors.newPassword} helperText={formik.errors.newPassword}
+                        error={formik.errors.newPassword}
                     />
                 </form>
             </DialogContent>
