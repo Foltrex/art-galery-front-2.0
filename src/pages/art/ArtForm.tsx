@@ -63,13 +63,14 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
-			<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 				<InputBase
 					placeholder='Enter art name'
 					name='name'
 					value={formik.values.name}
 					onChange={formik.handleChange}
-					fullWidth />
+					fullWidth
+					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 				<IconButton type='submit' disabled={formik.isSubmitting}>
 					<SaveIcon />
 				</IconButton>
@@ -85,7 +86,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 							placeholder='Enter art description'
 							sx={{
 								borderRadius: 1,
-								borderColor: "black"
+								borderColor: "black",
 							}}
 							name='description'
 							onChange={formik.handleChange}
