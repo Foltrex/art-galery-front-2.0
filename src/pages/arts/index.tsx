@@ -43,7 +43,8 @@ const Arts = () => {
 				<ImageList
 					gap={12}
 					cols={3}
-					sx={{ width: 'auto', objectFit: 'cover' }}
+					rowHeight={300}
+					sx={{ width: 'auto'}}
 				>
 					{isSuccess && artPages.pages.map((page, i) => (
 						page.content.map((art, j) => {

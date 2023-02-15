@@ -29,7 +29,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
 
     return (
         <Card>
-            <ImageListItem sx={{ height: '100% !important' }}>
+            <ImageListItem>
                 <ImageListItemBar
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'
