@@ -7,8 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
+import ScrollTop from '../../components/ui/ScrollTop';
 
 const Arts = () => {
 	const navigate = useNavigate();
@@ -26,7 +27,6 @@ const Arts = () => {
 	const handleSearch = (searchText: string) => {
 		setSearchText(searchText);
 	}
-	
 
 	return (
 		<Container sx={{position: 'relative'}}>
@@ -71,6 +71,8 @@ const Arts = () => {
 					Load More
 				</Button>
 			}
+
+			<ScrollTop />
 		</Container>
 	);
 };
