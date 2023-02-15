@@ -1,15 +1,17 @@
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Divider, Grid, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Divider, Grid, IconButton, InputBase, Stack, Typography } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDeleteArt, useGetArtById } from "../../api/ArtApi";
+import { useDeleteArt, useGetArtById, useSaveArt } from "../../api/ArtApi";
 import ImageSlider from "../../components/ui/ImageSlider";
-
+import EditIcon from '@mui/icons-material/Edit';
 
 import { ChangeEvent, useRef, useState } from "react";
 import { useDeleteFile, useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useSaveFile } from "../../api/FileApi";
 import DeleteModal from "../../components/modal/DeleteModal";
 import { FileService } from "../../services/FileService";
+import ArtForm from './ArtForm';
+import { Art as ArtEntity } from '../../entities/art';
 
 
 const Art = () => {
@@ -18,7 +20,8 @@ const Art = () => {
 	const fileInput = useRef<HTMLInputElement>(null);
 
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
-
+	const [isEditing, setIsEditing] = useState(false);
+ 
 	const { id: artId } = useParams();
 
 	const { data: art } = useGetArtById(artId!);
@@ -73,6 +76,12 @@ const Art = () => {
 		}
 	}
 
+	const mutationSaveArt = useSaveArt();
+
+	const handleSubmit = async (art: ArtEntity) => {
+		await mutationSaveArt.mutateAsync(art);
+		setIsEditing(false);
+	}
 
 	return (
 		<Grid container
@@ -86,42 +95,55 @@ const Art = () => {
 					height: '380px',
 					margin: '0 15px',
 				}}>
-					<ImageSlider slides={images} onDelete={onDeleteFile} />
+					{images && images.at(0)
+						?	<ImageSlider slides={images} onDelete={onDeleteFile} />
+						:	<div style={{ background: '#E8EDF0', width: '100%', height: '100%' }} />
+					}
 				</div>
 			</Grid>
 			<Grid item sm={6}>
-				<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-					<Typography variant='h4'>
-						{art?.name}
-					</Typography>
-					<Box>
-						<IconButton onClick={() => fileInput.current?.click()}>
-							<AddPhotoAlternateIcon color='primary' />
-							<input
-								type='file'
-								style={{ display: 'none' }}
-								ref={fileInput}
-								onChange={handleFileInputChange} />
-						</IconButton>
-						<IconButton onClick={() => setOpenDeleteModal(true)}>
-							<DeleteIcon color='error' />
-						</IconButton>
-					</Box>
-				</Box>
-				<Divider sx={{ my: 1 }} />
-				<Stack spacing={2} sx={{ marginTop: 4 }}>
-					<Grid container>
-						<Grid item sm={4}><strong>Description</strong></Grid>
-						<Grid item sm={8}>
-							{art?.description}
-						</Grid>
-					</Grid>
-				</Stack>
-
-				<DeleteModal
-					open={openDeleteModal}
-					onClose={() => setOpenDeleteModal(false)}
-					onDelete={onDelete} />
+				{isEditing
+					?  	<ArtForm 
+						art={art!} 
+						onSubmit={handleSubmit}  />
+					: 	<>
+							<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+								<Typography variant='h4'>
+									{art?.name}
+								</Typography>
+								<Box>
+									<IconButton onClick={() => setIsEditing(true)}>
+										<EditIcon />
+									</IconButton>
+									<IconButton onClick={() => fileInput.current?.click()}>
+										<AddPhotoAlternateIcon color='primary' />
+										<input
+											type='file'
+											style={{ display: 'none' }}
+											ref={fileInput}
+											onChange={handleFileInputChange} />
+									</IconButton>
+									<IconButton onClick={() => setOpenDeleteModal(true)}>
+										<DeleteIcon color='error' />
+									</IconButton>
+								</Box>
+							</Box>
+							<Divider sx={{ my: 1 }} />
+							<Stack spacing={2} sx={{ marginTop: 4 }}>
+								<Grid container>
+									<Grid item sm={4}><strong>Description</strong></Grid>
+									<Grid item sm={8}>
+										{art?.description}
+									</Grid>
+								</Grid>
+							</Stack>
+			
+							<DeleteModal
+								open={openDeleteModal}
+								onClose={() => setOpenDeleteModal(false)}
+								onDelete={onDelete} />
+						</>
+				}
 			</Grid>
 		</Grid>
 
