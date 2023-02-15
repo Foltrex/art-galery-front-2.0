@@ -136,3 +136,15 @@ export const useUpdate = <T, S = T>(
         params
     );
 };
+
+export const usePatch = <T, S = T>(
+    url: string,
+    params?: object,
+    config?: object
+) => {
+    return useGenericMutation<T, S>(
+        data => axiosApi.patch<S>(url, data, config),
+        url,
+        params
+    );
+};
