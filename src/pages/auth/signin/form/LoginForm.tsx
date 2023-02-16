@@ -10,12 +10,17 @@ import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 
+interface ILoginFormValues {
+    email: string,
+    password: string,
+}
+
 const LoginForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationLogin = useLogin();
 
-    const initialValues = {
+    const initialValues: ILoginFormValues = {
         email: '',
         password: ''
     }
@@ -31,14 +36,9 @@ const LoginForm = () => {
     })
 
 
-    const submit = async (email: string, password: string) => {
+    const submit = async (values: ILoginFormValues) => {
         try {
-            const loginRequestDto = {
-                email: email,
-                password: password
-            };
-
-            const response = await mutationLogin.mutateAsync(loginRequestDto);
+            const response = await mutationLogin.mutateAsync(values);
             AuthService.setToken(response.data.token);
             alertStore.setShow(false)
             navigate('/');
@@ -56,7 +56,7 @@ const LoginForm = () => {
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
-                await submit(values.email, values.password)
+                await submit(values)
                 setSubmitting(false)
             }}
         >
@@ -68,10 +68,9 @@ const LoginForm = () => {
                         required
                         fullWidth
                         label="Email"
+                        name={"email"}
                         defaultValue={formik.values.email}
-                        onChange={(event) => {
-                            formik.setFieldValue('email', event.target.value)
-                        }}
+                        onChange={formik.handleChange}
                         error={!!formik.errors.email} helperText={formik.errors.email}
                     />
                     <PasswordTextField
@@ -93,7 +92,7 @@ const LoginForm = () => {
                         disabled={formik.isSubmitting}
                         sx={{mt: 3, mb: 2}}
                     >
-                        {formik.isSubmitting ? <CircularProgress size={"2em"}/> : "Sign In"}
+                        {formik.isSubmitting ? <CircularProgress size={24}/> : "Sign In"}
                     </Button>
                     <LoginFormBottom/>
                 </Form>

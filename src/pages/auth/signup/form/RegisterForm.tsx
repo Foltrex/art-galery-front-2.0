@@ -12,18 +12,26 @@ import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import React from "react";
 
+interface IRegisterFormValues {
+    email: string,
+    password: string,
+    accountType: AccountEnum | string,
+}
+
 const RegisterForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
+    const mutationRegister = useRegister();
 
-    const initialValues = {
+    const initialValues: IRegisterFormValues = {
         email: '',
         password: '',
         accountType: AccountEnum.REPRESENTATIVE
     }
 
     const validationSchema = yup.object().shape({
-        email: yup.string().required()
+        email: yup.string()
+            .required()
             .min(3)
             .email(),
         password: yup.string()
@@ -38,19 +46,11 @@ const RegisterForm = () => {
         {label: "Artist", value: AccountEnum.ARTIST},
     ];
 
-    const mutationRegister = useRegister();
-
-    const submit = async (email: string, password: string, accountType: string) => {
-        alertStore.setShow(false)
+    const submit = async (values: IRegisterFormValues) => {
         try {
-            const registeringRequestDto = {
-                email: email,
-                password: password,
-                accountType: accountType
-            }
-
-            const response = await mutationRegister.mutateAsync(registeringRequestDto)
+            const response = await mutationRegister.mutateAsync(values)
             AuthService.setToken(response.data.token);
+            alertStore.setShow(false)
             navigate('/')
         } catch (error: any) {
             console.log(error.response.data.message)
@@ -66,7 +66,7 @@ const RegisterForm = () => {
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
-                await submit(values.email, values.password, values.accountType)
+                await submit(values)
                 setSubmitting(false)
             }}
         >
@@ -106,10 +106,9 @@ const RegisterForm = () => {
                         required
                         fullWidth
                         label="Email"
+                        name={"email"}
                         defaultValue={formik.values.email}
-                        onChange={(event) => {
-                            formik.setFieldValue('email', event.target.value)
-                        }}
+                        onChange={formik.handleChange}
                         error={!!formik.errors.email} helperText={formik.errors.email}
                     />
                     <PasswordTextField
@@ -127,7 +126,7 @@ const RegisterForm = () => {
                         disabled={formik.isSubmitting}
                         sx={{mt: 3, mb: 2}}
                     >
-                        {formik.isSubmitting ? <CircularProgress/> : "Sign Up"}
+                        {formik.isSubmitting ? <CircularProgress size={24}/> : "Sign Up"}
                     </Button>
                     <RegisterFormBottom/>
                 </Form>

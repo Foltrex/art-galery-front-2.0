@@ -53,14 +53,13 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
     });
 
     const submit = async (values: IFormValues) => {
-        mutationUpdateAccountPassword.mutateAsync(values)
-            .then(() => {
-                onClose();
-            })
-            .catch(error => {
-                alertStore.setShow(true, "error", " ", error.response.data.message)
-                console.log(error.response.data.message)
-            })
+        try {
+            await mutationUpdateAccountPassword.mutateAsync(values)
+            alertStore.setShow(true, "success", " ", "Password changed successfully!")
+        } catch (error: any) {
+            console.log(error.response.data.message)
+            alertStore.setShow(true, "error", " ", error.response.data.message)
+        }
     }
 
     return (
@@ -91,7 +90,7 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
             <DialogActions>
                 <Button onClick={onClose} variant='text'>Cancel</Button>
                 <Button variant='contained' type="submit" form={"form"} disabled={formik.isSubmitting}>
-                    {formik.isSubmitting ? <CircularProgress/> : "Save"}
+                    {formik.isSubmitting ? <CircularProgress size={"2em"}/> : "Change"}
                 </Button>
             </DialogActions>
 

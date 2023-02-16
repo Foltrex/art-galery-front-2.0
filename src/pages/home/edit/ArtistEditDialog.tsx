@@ -14,7 +14,7 @@ import {Artist} from "../../../entities/artist";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import MapDialog from "../../../components/map/MapDialog";
-import { useUpdateArtistById } from '../../../api/ArtistApi';
+import {useUpdateArtistById} from '../../../api/ArtistApi';
 
 interface IArtistEditDialogProps {
     open: boolean;
@@ -81,7 +81,7 @@ const ArtistEditDialog = ({open, onClose, artist}: IArtistEditDialogProps) => {
             description: values.description,
         } as Artist
 
-        await mutationUpdateArtist.mutateAsync(updatedArtist)
+        await mutationUpdateArtist.mutateAsync(values as Artist)
             .then(() => {
                 artist.firstname = updatedArtist.firstname;
                 artist.lastname = updatedArtist.lastname;

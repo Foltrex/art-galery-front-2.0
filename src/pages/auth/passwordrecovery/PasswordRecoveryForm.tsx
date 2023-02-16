@@ -6,6 +6,7 @@ import {useFormik} from "formik";
 import AlertNotification from "../../../components/notifications/AlertNotification";
 import {usePasswordRecovery} from "../../../api/AuthApi";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import PasswordTextField from "../../../components/form/PasswordTextField";
 
 
 interface IPasswordRecoveryFormValues {
@@ -17,16 +18,13 @@ interface IPasswordRecoveryFormValues {
 const PasswordRecoveryForm = () => {
     const navigate = useNavigate();
     const {alertStore} = useRootStore();
-
+    const mutationPasswordRecovery = usePasswordRecovery();
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
     const value = queryParams.get("email")!;
-    const email = value !== null ? value : ""
-    const mutationPasswordRecovery = usePasswordRecovery();
-    const [isDisableButtons, setIsDisableButtons] = useState(false)
 
     const initialValues: IPasswordRecoveryFormValues = {
-        email: email,
+        email: value !== null ? value : "",
         code: "",
         password: "",
     }
@@ -55,7 +53,6 @@ const PasswordRecoveryForm = () => {
         console.log()
         mutationPasswordRecovery.mutateAsync(values)
             .then(() => {
-                setIsDisableButtons(true)
                 alertStore.setShow(true, "success", " ", "Your password recovered successfully!")
                 navigate('/auth/signin');
             })
@@ -79,31 +76,28 @@ const PasswordRecoveryForm = () => {
                 onChange={formik.handleChange}
                 error={!!formik.errors.code} helperText={formik.errors.code}
             />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="New password"
+            <PasswordTextField
+                id={"password"}
+                label={"Password"}
                 name={"password"}
                 value={formik.values.password}
                 onChange={formik.handleChange}
-                error={!!formik.errors.password} helperText={formik.errors.password}
+                error={formik.errors.password}
             />
             <Button
                 type="submit"
                 fullWidth
                 variant="contained"
-                disabled={formik.isSubmitting || isDisableButtons}
+                disabled={formik.isSubmitting}
                 sx={{mt: 3, mb: 2}}
             >
-                {formik.isSubmitting ? <CircularProgress/> : "Recovery password"}
+                {formik.isSubmitting ? <CircularProgress size={24}/> : "Recovery password"}
             </Button>
             <Link to={"/auth/passwordrecovery"} style={{textDecoration: "none"}}>
                 <Button
                     type="submit"
                     fullWidth
                     variant="contained"
-                    disabled={isDisableButtons}
                 >
                     Back
                 </Button>
