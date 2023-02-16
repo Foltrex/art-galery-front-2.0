@@ -26,8 +26,21 @@ export class AuthService {
         })
     }
 
+    static setRememberMe(isRemember: boolean) {
+        localStorage.setItem("remember_me", String(isRemember))
+    }
+
+    static getRememberMe(): boolean {
+        if (!this.isAuthenticated()) {
+            throw new Error("User is not authenticated")
+        }
+
+        return localStorage.getItem("remember_me") === "true";
+    }
+
     static logout() {
         cookies.remove("token", {path: "/"})
+        localStorage.removeItem("remember_me")
     }
 
 }

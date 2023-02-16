@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Form, Formik} from "formik";
 import {Button, Checkbox, CircularProgress, FormControlLabel, TextField} from "@mui/material";
 import * as yup from "yup";
@@ -19,6 +19,7 @@ const LoginForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationLogin = useLogin();
+    const [rememberMe, setRememberMe] = useState<boolean>(true)
 
     const initialValues: ILoginFormValues = {
         email: '',
@@ -40,6 +41,7 @@ const LoginForm = () => {
         try {
             const response = await mutationLogin.mutateAsync(values);
             AuthService.setToken(response.data.token);
+            AuthService.setRememberMe(rememberMe)
             alertStore.setShow(false)
             navigate('/');
         } catch (error: any) {
@@ -82,7 +84,16 @@ const LoginForm = () => {
                         error={formik.errors.password}
                     />
                     <FormControlLabel
-                        control={<Checkbox value="remember" color="primary"/>}
+                        control={
+                            <Checkbox
+                                color="primary"
+                                value={rememberMe}
+                                onChange={(event) => {
+                                    setRememberMe(event.target.checked)
+                                }}
+                                checked={rememberMe}
+                            />
+                        }
                         label="Remember me"
                     />
                     <Button
