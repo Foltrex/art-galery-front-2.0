@@ -52,11 +52,6 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             text: 'Facilities',
             icon: <HomeWorkOutlinedIcon/>,
             link: '/facilities?page=0&limit=10'
-        },
-        {
-            text: 'Settings',
-            icon: <SettingsIcon/>,
-            link: '/settings'
         }
     ];
 
@@ -70,11 +65,6 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             text: 'Arts',
             icon: <PhotoSizeSelectActualOutlinedIcon />,
             link: '/arts/artist'
-        },
-        {
-            text: 'Settings',
-            icon: <SettingsIcon/>,
-            link: '/settings'
         }
     ];
 

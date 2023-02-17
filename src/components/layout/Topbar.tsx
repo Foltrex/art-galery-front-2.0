@@ -6,6 +6,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import {useEffect} from "react";
 import {Cookies, useCookies} from "react-cookie";
 import { AuthService } from '../../services/AuthService';
+import AccountMenu from './AccountMenu';
 
 const drawerWidth = 240;
 
@@ -36,44 +37,6 @@ interface ITopbarProps {
 }
 
 const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
-    const [cookies, setCookie] = useCookies(['token']);
-    const [isLogin] = React.useState<boolean | null>(cookies.token);
-    const navigate = useNavigate();
-
-    const renderButton = () => {
-        if (isLogin === null) {
-            return (
-                <CircularProgress color="success"/>
-            )
-        } else if (isLogin) {
-            return (
-                <Button
-                    color="inherit"
-                    variant="outlined"
-                    onClick={() => {
-                        AuthService.logout()
-                        navigate("/auth/signin")
-                        console.log('Clicked');
-                        
-                    }}
-                >
-                    Logout
-                </Button>
-            )
-        } else {
-            return (
-                <Button
-                    color="inherit"
-                    variant="outlined"
-                    component={Link}
-                    to={'/auth/signin'}
-                >
-                    Login
-                </Button>
-            )
-        }
-    }
-
     return (
         <AppBar position="fixed" open={sidebarOpen}>
             <Toolbar>
@@ -96,7 +59,9 @@ const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarBu
                 >
                     Admin
                 </Typography>
-                {renderButton()}
+
+                <AccountMenu />
+                
             </Toolbar>
         </AppBar>
     );
