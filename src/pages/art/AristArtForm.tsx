@@ -8,7 +8,7 @@ import { Art } from '../../entities/art';
 import { TokenService } from '../../services/TokenService';
 
 interface IArtFormProps {
-	art: Art;
+	art?: Art;
 	onSubmit: (art: Art) => Promise<void>
 }
 
@@ -32,16 +32,17 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 			.required()
 	});
 
+
 	const initialValues: FormValues = {
-		name: art.name,
-		description: art.description
+		name: art?.name ?? '',
+		description: art?.description ?? ''
 	}
 
 	const onSaveArt = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);
 		try {
 			const artEntity: Art = {
-				id: art.id,
+				id: art?.id,
 				name: values.name,
 				description: values.description,
 				artist: artist!

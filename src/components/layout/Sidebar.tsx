@@ -39,6 +39,11 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             link: '/'
         },
         {
+            text: 'Catalog',
+            icon: <PhotoSizeSelectActualOutlinedIcon />,
+            link: '/arts/representative'
+        },
+        {
             text: 'Representatives',
             icon: <PeopleIcon />,
             link: '/representatives?page=0&limit=10'
@@ -64,7 +69,7 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
         {
             text: 'Arts',
             icon: <PhotoSizeSelectActualOutlinedIcon />,
-            link: '/arts'
+            link: '/arts/artist'
         },
         {
             text: 'Settings',

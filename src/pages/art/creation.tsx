@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useSaveArt } from '../../api/ArtApi';
 import { Art } from '../../entities/art';
-import ArtForm from './ArtForm';
+import ArtForm from './AristArtForm';
 
 const ArtCreation = () => {
 	const navigate = useNavigate();;

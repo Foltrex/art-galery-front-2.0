@@ -10,6 +10,8 @@ import { TokenService } from '../../services/TokenService';
 import { useRef, useState } from 'react';
 import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
+import InfiniteArtList from './InfiniteArtList';
+import LoadMoreButton from './LoadMoreButton';
 
 const Arts = () => {
 	const navigate = useNavigate();
@@ -17,11 +19,11 @@ const Arts = () => {
 	const [searchText, setSearchText] = useState<string>();
 
 	const token = TokenService.decode(AuthService.getToken());
-	const { data: artPages, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
+	const { data: infinteData, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
 		name: searchText
 	});
 
-	const lastPage = artPages?.pages.at(-1);
+	const lastPage = infinteData?.pages.at(-1);
 	const isNotLast = lastPage && !lastPage.last;
 
 	const handleSearch = (searchText: string) => {
@@ -40,38 +42,11 @@ const Arts = () => {
 					</IconButton>
 				</Box>
 				<Divider sx={{ my: 3 }} />
-				<ImageList
-					gap={12}
-					cols={3}
-					rowHeight={300}
-					sx={{ width: 'auto'}}
-				>
-					{isSuccess && artPages.pages.map((page, i) => (
-						page.content.map((art, j) => {
-							return <ArtItem key={10 * i + j} art={art} />
-						})
-					))}
-				</ImageList>
 
+				{ isSuccess && <InfiniteArtList infinteData={infinteData} /> }
 			</Paper>
-			
-			{isNotLast &&
-				<Button
-					startIcon={<ArrowDownwardIcon />}
-					variant='contained'
-					sx={{ 
-						position: 'absolute',
-						bottom: '0', 
-						left: '50%',
-						transform: 'translate(-50%, -50%)',
-						borderRadius: 8
-					}}
-					onClick={() => fetchNextPage()}
-				>
-					Load More
-				</Button>
-			}
 
+			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} />  }
 			<ScrollTop />
 		</Container>
 	);

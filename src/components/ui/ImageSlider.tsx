@@ -6,7 +6,7 @@ import { useState } from "react";
 
 interface IImageSliderProps {
 	slides?: string[];
-	onDelete: (index: number) => void;
+	onDelete?: (index: number) => void;
 }
 
 const LeftArrowButton = styled('div')({
@@ -71,8 +71,11 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDel
 		setCurrentIndex(slideIndex);
 	}
 
-	const handleDeleteImageClick = () => {		
-		onDelete(currentIndex);
+	const handleDeleteImageClick = () => {
+		if (onDelete) {
+			onDelete(currentIndex);
+		}		
+		
 		setShowModal(false)
 	}
 

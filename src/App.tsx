@@ -10,10 +10,12 @@ import Register from './pages/auth/signup';
 import PrivateRoute from './components/routes/PrivateRoute';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Settings from "./pages/settings";
-import Arts from './pages/arts';
-import Art from './pages/art';
+import Arts from './pages/arts/ArtistArts';
 import ArtCreation from './pages/art/creation';
 import {AuthService} from "./services/AuthService";
+import ArtistArt from './pages/art/ArtistArt';
+import RepresentativeArts from './pages/arts/RepresentativeArts';
+import RepresentativeArt from './pages/art/RepresentativeArt';
 
 function App() {
 
@@ -39,9 +41,16 @@ function App() {
                     <Route path='facilities' element={<Facilities/>}/>
                     <Route path='representatives' element={<Representatives/>}/>
                     <Route path='arts'>
-                        <Route index element={<Arts/>}/>
-                        <Route path='new' element={<ArtCreation/>}/>
-                        <Route path=':id' element={<Art/>}/>
+                        <Route path='artist'>
+                            <Route index element={<Arts />} />
+                            <Route path='new' element={<ArtCreation />} />
+                            <Route path=':id' element={<ArtistArt />} />
+                        </Route>
+
+                        <Route path='representative'>
+                            <Route index element={<RepresentativeArts />} />
+                            <Route path=':id' element={<RepresentativeArt />} />
+                        </Route>
                     </Route>
                     <Route path='settings' element={<Settings/>}/>
                 </Route>

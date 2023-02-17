@@ -3,7 +3,9 @@ import { width } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
+import { AccountEnum } from "../../entities/enums/AccountEnum";
 import { FileService } from "../../services/FileService";
+import { TokenService } from "../../services/TokenService";
 import EmptyArt from './empty-art.svg';
 
 interface IArtItemProps {
@@ -13,6 +15,7 @@ interface IArtItemProps {
 const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const navigate = useNavigate();
 
+    const accountType = TokenService.getCurrentAccountType();
 
     const { data: files } = useGetAllFileInfosByArtId(art.id)
 
@@ -27,6 +30,21 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
 
     const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
     const images = imagesData?.map(data => FileService.toImage(data));
+
+    let artLink = '';
+    switch (accountType) {
+        case AccountEnum.REPRESENTATIVE: {
+            artLink = `/arts/representative/${art.id}`;
+            break;
+        }
+        case AccountEnum.ARTIST: {
+            artLink = `/arts/artist/${art.id}`;
+            break;
+        }
+        default: {
+            throw new Error('Unknown account enum');
+        }
+    }
 
     return (
         <Card>
@@ -60,7 +78,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                                 height: '100%',
                                 width: 'auto'
                             }}
-                            onClick={() => navigate(`/arts/${art.id}`)}
+                            onClick={() => navigate(artLink)}
                         />
                 }
                 <ImageListItemBar
