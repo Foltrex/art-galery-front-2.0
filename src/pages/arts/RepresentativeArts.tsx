@@ -27,9 +27,9 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 	}
 
 	return (
-		<Container sx={{ position: 'relative' }}>
+		<Container>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
-				<SearchBar onSearch={handleSearch} sx={{ width: 300 }} />
+				<SearchBar onSearch={handleSearch} />
 				<Divider sx={{ my: 3 }} />
 
 				{isSuccess && <InfiniteArtList infinteData={infinteData} />}

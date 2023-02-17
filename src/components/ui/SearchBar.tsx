@@ -2,9 +2,10 @@ import { Autocomplete, Box, IconButton, InputBase, Paper, SxProps, TextField, Th
 
 import SearchIcon from '@mui/icons-material/Search';
 import { ChangeEvent, useState } from "react";
+import { Container } from "@mui/system";
 
 interface ISearchBarProps {
-    sx: SxProps<Theme>;
+    sx?: SxProps<Theme>;
     onSearch: (text: string) => void;
 }
 
@@ -17,17 +18,19 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch }) => {
     }
 
     return (
-        <Paper sx={{...sx, display: 'flex', alignItems: 'center'}}>
-            <InputBase 
-                sx={{ flexGrow: 1, pl: 2 }} 
-                placeholder='Search Paintings' 
-                inputProps={{ 'aria-label': 'search paintings' }}
-                onChange={handleChange} 
-            />
-            <IconButton aria-label='search' onClick={() => onSearch(searcingText)}>
-                <SearchIcon />
-            </IconButton>
-        </Paper>
+        <Container>
+            <Paper sx={{...sx, display: 'flex', alignItems: 'center'}}>
+                <InputBase 
+                    sx={{ flexGrow: 1, pl: 2 }} 
+                    placeholder='Search Paintings' 
+                    inputProps={{ 'aria-label': 'search paintings' }}
+                    onChange={handleChange} 
+                />
+                <IconButton aria-label='search' onClick={() => onSearch(searcingText)}>
+                    <SearchIcon />
+                </IconButton>
+            </Paper>
+        </Container>
     );
 }
 
