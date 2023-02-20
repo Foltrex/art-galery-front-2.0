@@ -18,8 +18,6 @@ interface FormValues {
 }
 
 const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
-	const navigate = useNavigate();
-
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: artist } = useGetArtistByAccountId(accountId);
 

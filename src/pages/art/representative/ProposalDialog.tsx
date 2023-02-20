@@ -1,47 +1,174 @@
 
-import { Dialog, DialogContent, DialogContentText, DialogTitle, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputAdornment, TextField } from '@mui/material';
+import { Box } from '@mui/system';
 import Big from 'big.js';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
+import lodash from 'lodash';
 import * as React from 'react';
+import { useState } from 'react';
+import * as yup from 'yup';
+import { useGetArtistByAccountId, useGetArtistByArtId } from '../../../api/ArtistApi';
+import { useGetAllCurrencies } from '../../../api/CurrencyApi';
+import { useGetFacilityByAccountId } from '../../../api/FacilityApi';
+import { useSaveProposal } from '../../../api/ProposalApi';
+import { Art } from '../../../entities/art';
+import { Artist } from '../../../entities/artist';
+import { Currency } from '../../../entities/currency';
+import { Proposal } from '../../../entities/proposal';
+import { TokenService } from '../../../services/TokenService';
 
 interface FormValues {
-	money: Big;
+	money: string;
+	commission: number;
 }
 
 interface IProposalDialogProps {
+	art: Art;
 	open: boolean;
 	onClose: () => void;
 }
 
-const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ open, onClose }) => {
+const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, open, onClose }) => {
+	const accountId = TokenService.getCurrentAccountId();
+	const { data: facility } = useGetFacilityByAccountId(accountId);
+	const { data: currencies } = useGetAllCurrencies();
+	const { data: artist } = useGetArtistByArtId(art.id);
+
+	const [proposalObj, setProposal] = useState({ facility } as Proposal);
+	const [currenciesList, setCurrenciesList] = useState<Currency[]>([]);
+
+	React.useEffect(() => {
+		if (facility) {
+			setProposal({ ...proposalObj, facility });
+		}
+		if (currencies) {
+			setCurrenciesList(lodash.union(currenciesList, currencies));
+
+		}
+	}, [facility, currencies, artist])
+
+	const [currentCurrency, setCurrentCurrency] = useState(currenciesList.at(0) ?? {
+		value: 'USD',
+		label: '$'
+	} as Currency);
+
 	const initialValues: FormValues = {
-		money: new Big('0.0')
+		money: '0.0',
+		commission: 0
+	};
+
+	const validationSchema = yup.object({
+		commission: yup.number()
+			.min(0, '< 0%')
+			.max(100, '> 100%')
+			.required(),
+		money: yup.number()
+			.positive()
+			.required()
+	})
+	
+	// const { data: artist } = useGetArtistByArtId(art.id);
+	const mutationSaveProposal = useSaveProposal();
+	
+	const onSaveProposal = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+		setSubmitting(true);
+		try {
+			// todo: change latter
+			const proposal: Proposal = {
+				art: art,
+				price: values.money,
+				comission: values.commission,
+				currency: currentCurrency,
+				artist: artist!,
+				organization: proposalObj.facility.organization,
+				facility: proposalObj.facility,
+				artistConfirmation: false,
+				organizationConfirmation: true
+			};
+			
+			console.log(proposal)
+			// await mutationSaveProposal.mutateAsync(proposal);
+		} catch (e) {
+			console.log(e);
+		} finally {
+			setSubmitting(false);
+			onClose();
+		}
 	}
 
 	const formik = useFormik({
 		initialValues: initialValues,
-		onSubmit: () => alert('Proposal submitted')
+		validationSchema: validationSchema,
+		onSubmit: onSaveProposal
 	});
+	
+	const handleCurrencyButtonClick = (currency: Currency) => {
+		formik.setFieldValue('currency', currency);
+		setCurrentCurrency(currency);
+	}
 
 	return (
 		<Dialog
 			open={open}
 			onClose={onClose}
+			maxWidth='xs'
 		>
-			<DialogTitle>
+			<form onSubmit={formik.handleSubmit}>
+				<DialogTitle>
+					Art Proposal
+				</DialogTitle>
+				<Divider />
+				<DialogContent>
+					<Box component='div' sx={{ overflowX: 'scroll', whiteSpace: 'nowrap' }}>
 
-			</DialogTitle>
-			<DialogContent>
-				<DialogContentText>
-					How mush are you ready pay for?
-				</DialogContentText>
-				<TextField
-					name='money'
-					fullWidth
-					value={formik.values.money}
-					onChange={formik.handleChange}
-				/>
-			</DialogContent>
+						{currenciesList.map(currency => (
+							<Button
+								variant='outlined'
+								onClick={() => handleCurrencyButtonClick(currency)}
+								sx={{ m: 1 }}
+								size='small'
+							>
+								{currency.value}
+							</Button>
+						))}
+					</Box>
+					<TextField
+						name='money'
+						fullWidth
+						variant='standard'
+						label='Art Price'
+						sx={{ my: 1 }}
+						InputProps={{
+							startAdornment: <InputAdornment position='start'>{currentCurrency?.label}</InputAdornment>
+						}}
+						value={formik.values.money}
+						onChange={formik.handleChange}
+						error={formik.touched.money && !!formik.errors.money}
+						helperText={formik.touched.money && formik.errors.money && formik.errors.money}
+					/>
+					<TextField
+						name='commission'
+						variant='standard'
+						label='Commission'
+						sx={{ my: 1, width: 70 }}
+						InputProps={{
+							endAdornment: <InputAdornment position='end'>%</InputAdornment>
+						}}
+						value={formik.values.commission}
+						onChange={formik.handleChange}
+						error={formik.touched.commission && !!formik.errors.commission}
+						helperText={formik.touched.commission && formik.errors.commission}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={onClose}>
+						Cancel
+					</Button>
+					<Button variant='contained' type='submit'>
+						Propose
+					</Button>
+				</DialogActions>
+			</form>
 		</Dialog>
 	);
 };

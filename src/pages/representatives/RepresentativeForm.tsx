@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, For
 import { FormikHelpers, useFormik } from "formik";
 import React, { useEffect } from "react";
 import * as yup from 'yup';
-import { useGetFacilitiesByAccountId } from "../../api/FacilityApi";
+import { useGetAllFacilitiesByAccountId, useGetFacilitiesPageByAccountId } from "../../api/FacilityApi";
 import { useGetOrganizationByAccountId } from "../../api/OrganizationApi";
 import { useGetOrganizationRoles } from "../../api/OrganizationRoleApi";
 import { useSaveRepresentative } from "../../api/RepresentativeApi";
@@ -27,7 +27,7 @@ interface FormValues {
 
 function RepresentativeForm({ open, onClose, representative }: IRepresentativeFormProps) {
     const token = TokenService.decode(AuthService.getToken());
-    const { data: facilities } = useGetFacilitiesByAccountId(token.id);
+    const { data: facilities } = useGetAllFacilitiesByAccountId(token.id);
     const { data: organizationRoles } = useGetOrganizationRoles();
     const { data: organization } = useGetOrganizationByAccountId(token.id);
 

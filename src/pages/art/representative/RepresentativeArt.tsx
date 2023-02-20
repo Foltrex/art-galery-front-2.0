@@ -67,9 +67,10 @@ const RepresentativeArt: React.FunctionComponent<IRepresentativeArtProps> = (pro
 				</Button>
 			</Grid>
 
-			<ProposalDialog 
+			{art && <ProposalDialog 
+				art={art}
 				open={openProposalDialog} 
-				onClose={() => setOpenProposalDialog(false)} />
+				onClose={() => setOpenProposalDialog(false)} />}
 		</Grid>
 	);
 };
