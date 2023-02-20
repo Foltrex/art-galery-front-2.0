@@ -34,10 +34,17 @@ const Arts = () => {
 		<Container sx={{position: 'relative'}}>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<Box
-					sx={{ display: 'flex', gap: '20px', justifyContent: 'space-between', px: 2, pt: 2 }}
+					sx={{ 
+						display: 'flex', 
+						gap: '20px', 
+						justifyContent: 'space-between', 
+						alignItems: 'center',
+						px: 2,
+						pt: 2 
+					}}
 				>
-					<SearchBar onSearch={handleSearch} sx={{ flexGrow: 1, width: 300 }} />
-					<IconButton onClick={() => navigate('/arts/new')}>
+					<SearchBar onSearch={handleSearch} sx={{ flexGrow: 1 }} />
+					<IconButton onClick={() => navigate('/arts/artist/new')}>
 						<AddIcon fontSize='large' />
 					</IconButton>
 				</Box>

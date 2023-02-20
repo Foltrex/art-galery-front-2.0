@@ -3,9 +3,9 @@ import { Box, Divider, Grid, IconButton, InputBase, Stack, Typography } from '@m
 import { FormikHelpers, useFormik } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { useGetArtistByAccountId } from '../../api/ArtistApi';
-import { Art } from '../../entities/art';
-import { TokenService } from '../../services/TokenService';
+import { useGetArtistByAccountId } from '../../../api/ArtistApi';
+import { Art } from '../../../entities/art';
+import { TokenService } from '../../../services/TokenService';
 
 interface IArtFormProps {
 	art?: Art;

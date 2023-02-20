@@ -66,7 +66,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                                 height: '100%',
                                 width: 'auto'
                             }}
-                            onClick={() => navigate(`/arts/${art.id}`)}
+                            onClick={() => navigate(`/arts/representative/${art.id}`)}
                         />
                     :   <img 
                             src={EmptyArt}

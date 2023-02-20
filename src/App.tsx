@@ -1,21 +1,20 @@
-import React from 'react';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Layout from './components/layout/Layout';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
-import Profile from './pages/home';
-import Facilities from './pages/facilities';
-import Representatives from './pages/representatives';
+import PrivateRoute from './components/routes/PrivateRoute';
+import ArtCreation from './pages/art/artist/ArtCreation';
+import ArtistArt from './pages/art/artist/ArtistArt';
+import RepresentativeArt from './pages/art/representative/RepresentativeArt';
+import Arts from './pages/arts/ArtistArts';
+import RepresentativeArts from './pages/arts/RepresentativeArts';
+import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
-import PrivateRoute from './components/routes/PrivateRoute';
-import PasswordRecovery from "./pages/auth/passwordrecovery";
+import Facilities from './pages/facilities';
+import Profile from './pages/home';
+import Representatives from './pages/representatives';
 import Settings from "./pages/settings";
-import Arts from './pages/arts/ArtistArts';
-import ArtCreation from './pages/art/creation';
-import {AuthService} from "./services/AuthService";
-import ArtistArt from './pages/art/ArtistArt';
-import RepresentativeArts from './pages/arts/RepresentativeArts';
-import RepresentativeArt from './pages/art/RepresentativeArt';
+import { AuthService } from "./services/AuthService";
 
 function App() {
 

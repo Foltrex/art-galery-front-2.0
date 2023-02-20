@@ -1,15 +1,15 @@
 import { Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDeleteArt, useGetArtById, useSaveArt } from "../../api/ArtApi";
-import ImageSlider from "../../components/ui/ImageSlider";
 
 import { useState } from "react";
-import { useDeleteFile, useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
-import DeleteModal from "../../components/modal/DeleteModal";
-import { Art as ArtEntity } from '../../entities/art';
-import { FileService } from "../../services/FileService";
 import ArtistArtForm from './AristArtForm';
 import ArtistArtInfo from './ArtistArtInfo';
+import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useDeleteFile } from "../../../api/FileApi";
+import DeleteModal from "../../../components/modal/DeleteModal";
+import ImageSlider from "../../../components/ui/ImageSlider";
+import { FileService } from "../../../services/FileService";
+import { useGetArtById, useDeleteArt, useSaveArt } from "../../../api/ArtApi";
+import { Art as ArtEntity } from '../../../entities/art';
 
 
 const Art = () => {

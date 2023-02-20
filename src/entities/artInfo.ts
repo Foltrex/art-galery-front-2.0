@@ -1,4 +1,5 @@
-import { BigDecimal } from "@graphprotocol/graph-ts";
+
+import Big from "big.js";
 import { Art } from "./art";
 import { Facility } from "./facility";
 import { Organization } from "./organization";
@@ -8,7 +9,7 @@ export interface ArtInfo {
     art: Art;
     organization: Organization;
     facility: Facility;
-    price: BigDecimal;
+    price: Big;
     comission: number;
     creationDate: Date;
     expositionDateStart: Date;

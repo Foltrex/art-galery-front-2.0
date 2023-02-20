@@ -1,7 +1,7 @@
 import { Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useSaveArt } from '../../api/ArtApi';
-import { Art } from '../../entities/art';
+import { useSaveArt } from '../../../api/ArtApi';
+import { Art } from '../../../entities/art';
 import ArtForm from './AristArtForm';
 
 const ArtCreation = () => {
@@ -13,7 +13,7 @@ const ArtCreation = () => {
 		const response = await mutationSaveArt.mutateAsync(art);
 		const { data: persistedArt } = response;
 		const { id } = persistedArt;
-		navigate(`/arts/${id}`);
+		navigate(`/arts/artist/${id}`);
 	}
 
 

@@ -27,7 +27,7 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 	}
 
 	return (
-		<Container>
+		<Container sx={{ position: 'relative' }}>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<SearchBar onSearch={handleSearch} />
 				<Divider sx={{ my: 3 }} />

@@ -3,9 +3,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
-import { useSaveFile } from '../../api/FileApi';
-import { Art as ArtEntity } from '../../entities/art';
-import { FileService } from '../../services/FileService';
+import { useSaveFile } from '../../../api/FileApi';
+import { FileService } from '../../../services/FileService';
+import { Art as ArtEntity } from '../../../entities/art';
 
 interface IArtInfoProps {
 	art: ArtEntity;

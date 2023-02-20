@@ -1,7 +1,6 @@
 import { Box, Typography, IconButton, Divider, Stack, Grid } from '@mui/material';
 import * as React from 'react';
-import art from './ArtistArt';
-import { Art } from '../../entities/art';
+import { Art } from '../../../entities/art';
 
 interface IRepresentativeArtInfoProps {
 	art: Art;

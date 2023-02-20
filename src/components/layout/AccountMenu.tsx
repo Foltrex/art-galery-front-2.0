@@ -1,5 +1,5 @@
-import { Login, Logout, Settings } from '@mui/icons-material';
-import { Avatar, Button, CircularProgress, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Login, Logout, Mail, Settings } from '@mui/icons-material';
+import { Avatar, Badge, Button, CircularProgress, Divider, IconButton, ListItem, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
 import { Link, useNavigate } from 'react-router-dom';
@@ -18,6 +18,8 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 
 	const token = TokenService.getCurrentDecodedToken();
 	const email = token.sub;
+	const accountType = TokenService.getCurrentAccountType();
+
 	const navigate = useNavigate();
 
 	const handleAccountButtonClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -114,6 +116,15 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				</MenuItem>
 				<Divider />
 
+				<MenuItem>
+					<ListItemIcon>
+						<Badge badgeContent={1} color='error'>
+							<Mail fontSize='small' />
+						</Badge>
+					</ListItemIcon>
+
+					Proposals
+				</MenuItem>
 				<MenuItem onClick={() => navigate('/settings')}>
 					<ListItemIcon>
 						<Settings fontSize='small' />
