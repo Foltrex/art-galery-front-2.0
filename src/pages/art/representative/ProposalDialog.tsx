@@ -6,9 +6,10 @@ import { FormikHelpers, useFormik } from 'formik';
 import lodash from 'lodash';
 import * as React from 'react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 import { useGetArtistByAccountId, useGetArtistByArtId } from '../../../api/ArtistApi';
-import { useGetAllCurrencies } from '../../../api/CurrencyApi';
+import { useGetAllCurrencies, useSaveCurrency } from '../../../api/CurrencyApi';
 import { useGetFacilityByAccountId } from '../../../api/FacilityApi';
 import { useSaveProposal } from '../../../api/ProposalApi';
 import { Art } from '../../../entities/art';
@@ -29,28 +30,25 @@ interface IProposalDialogProps {
 }
 
 const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, open, onClose }) => {
+	const navigate = useNavigate();
+
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: facility } = useGetFacilityByAccountId(accountId);
 	const { data: currencies } = useGetAllCurrencies();
 	const { data: artist } = useGetArtistByArtId(art.id);
 
 	const [proposalObj, setProposal] = useState({ facility } as Proposal);
-	const [currenciesList, setCurrenciesList] = useState<Currency[]>([]);
+	const [currentCurrency, setCurrentCurrency] = useState<Currency>();
 
 	React.useEffect(() => {
 		if (facility) {
 			setProposal({ ...proposalObj, facility });
 		}
 		if (currencies) {
-			setCurrenciesList(lodash.union(currenciesList, currencies));
-
+			setCurrentCurrency(currencies[0]);
 		}
 	}, [facility, currencies, artist])
 
-	const [currentCurrency, setCurrentCurrency] = useState(currenciesList.at(0) ?? {
-		value: 'USD',
-		label: '$'
-	} as Currency);
 
 	const initialValues: FormValues = {
 		money: '0.0',
@@ -69,6 +67,8 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	
 	// const { data: artist } = useGetArtistByArtId(art.id);
 	const mutationSaveProposal = useSaveProposal();
+
+	const mutationSaveCurrency = useSaveCurrency();
 	
 	const onSaveProposal = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);
@@ -78,7 +78,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 				art: art,
 				price: values.money,
 				comission: values.commission,
-				currency: currentCurrency,
+				currency: currentCurrency!,
 				artist: artist!,
 				organization: proposalObj.facility.organization,
 				facility: proposalObj.facility,
@@ -86,8 +86,8 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 				organizationConfirmation: true
 			};
 			
-			console.log(proposal)
-			// await mutationSaveProposal.mutateAsync(proposal);
+			await mutationSaveProposal.mutateAsync(proposal);
+			navigate('/arts/representative');
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -112,6 +112,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 			open={open}
 			onClose={onClose}
 			maxWidth='xs'
+			fullWidth
 		>
 			<form onSubmit={formik.handleSubmit}>
 				<DialogTitle>
@@ -121,11 +122,11 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 				<DialogContent>
 					<Box component='div' sx={{ overflowX: 'scroll', whiteSpace: 'nowrap' }}>
 
-						{currenciesList.map(currency => (
+						{currencies?.map(currency => (
 							<Button
 								variant='outlined'
 								onClick={() => handleCurrencyButtonClick(currency)}
-								sx={{ m: 1 }}
+								sx={{ my: 1, mr: 1 }}
 								size='small'
 							>
 								{currency.value}

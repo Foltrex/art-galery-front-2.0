@@ -1,4 +1,5 @@
 import { Avatar, SxProps, Theme } from '@mui/material';
+import { bgcolor } from '@mui/system';
 import * as React from 'react';
 
 interface ILetterAvatarProps {
@@ -21,20 +22,16 @@ const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({name, sx}) =
 			const value = (hash >> (i * 8)) & 0xff;
 			color += `00${value.toString(16)}`.slice(-2);
 		}
-
+		
 		return color;
 	}
 
-	const stringAvatar = (name: string) => {
-		return {
-			sx: {
-				bgcolor: stringToColor(name),
-			},
-			children: name[0].toUpperCase(),
-		};
-	}
-
-	return <Avatar {...stringAvatar(name)} sx={sx} />;
+	return (
+		<Avatar 
+			children={name[0].toUpperCase()} 
+			sx={{...sx, bgcolor: stringToColor(name)}} 
+		/>
+	);
 };
 
 export default LetterAvatar;
