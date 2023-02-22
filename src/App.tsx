@@ -15,6 +15,7 @@ import Profile from './pages/home';
 import Representatives from './pages/representatives';
 import Settings from "./pages/settings";
 import { AuthService } from "./services/AuthService";
+import Proposals from './pages/proposals';
 
 function App() {
 
@@ -39,6 +40,8 @@ function App() {
                     <Route index element={<Profile/>}/>
                     <Route path='facilities' element={<Facilities/>}/>
                     <Route path='representatives' element={<Representatives/>}/>
+                    <Route path='proposals' element={<Proposals />}/>
+
                     <Route path='arts'>
                         <Route path='artist'>
                             <Route index element={<Arts />} />
