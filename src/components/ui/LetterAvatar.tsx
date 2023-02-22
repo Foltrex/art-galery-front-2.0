@@ -8,7 +8,11 @@ interface ILetterAvatarProps {
 }
 
 const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({name, sx}) => {
-	const stringToColor = (string: string) => {
+	const stringToColor = (string?: string) => {
+		if (!string) {
+			return '#e0e0e0';
+		}
+
 		let hash = 0;
 		let i;
 
@@ -27,10 +31,14 @@ const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({name, sx}) =
 	}
 
 	return (
-		<Avatar 
-			children={name[0].toUpperCase()} 
+		<Avatar
 			sx={{...sx, bgcolor: stringToColor(name)}} 
-		/>
+		>
+			{name && name.at(0)
+				? name[0].toUpperCase()
+				: '?'
+			}
+		</Avatar>
 	);
 };
 
