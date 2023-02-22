@@ -4,6 +4,8 @@ import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
+const X_TOTAL_COUNT_HEADER: string = "X-Total-Count";
+
 // TODO: maybe delete latter
 export interface IPageable {
     offset: number;
@@ -35,6 +37,28 @@ export const fetch = <T>({
         .then(response => response.data);
 };
 
+export const count = (url: string): Promise<number> => {
+    return axiosApi
+        .head(url)
+        .then(response => response.headers)
+        .then(headers => headers[X_TOTAL_COUNT_HEADER])
+        .then(value => new Promise((resolve, reject) => {
+            if (value && Number.isInteger(value)) {
+                resolve(+value);
+            } else {
+                reject(`${X_TOTAL_COUNT_HEADER} isn't represented in header`);
+            }
+        }));
+}
+
+export const useCount = (url: string | null) => {
+    return useQuery<number, Error, number, string>(
+        url!,
+        () => count(url!),
+        { retry: 5 }
+    );
+}
+
 // TODO: use for addresses and organizaitons in forms
 export const usePrefetch = <T>(url: string | null, params?: object) => {
     const queryClient = useQueryClient();
@@ -43,28 +67,27 @@ export const usePrefetch = <T>(url: string | null, params?: object) => {
         if (url) {
             queryClient.prefetchQuery<T, Error, T, QueryKeyT>(
                 [url!, params],
-                context => fetch(context)
+                context => fetch(context),
+                { retry: 3 }
             );
         }
     };
 };
-
 
 export const useFetch = <T>(
     url: string | null,
     params?: object,
     config?: UseQueryOptions<T, Error, T, QueryKeyT>
 ) => {
-    const context = useQuery<T, Error, T, QueryKeyT>(
+    return useQuery<T, Error, T, QueryKeyT>(
         [url!, params],
         context => fetch(context),
         {
             enabled: !!url,
+            retry: 3,
             ...config,
         }
     );
-
-    return context;
 };
 
 export const useLoadMore = <T>(url: string | null, params?: object) => {
@@ -77,6 +100,7 @@ export const useLoadMore = <T>(url: string | null, params?: object) => {
         [url!, params],
         context => fetch({ ...context, pageParam: context.pageParam ?? 0 }),
         {
+            retry: 4,
             getNextPageParam: (page) => !page.last
                 ? page.number + 1
                 : page.number
