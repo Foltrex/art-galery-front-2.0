@@ -77,7 +77,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 			const proposal: Proposal = {
 				art: art,
 				price: values.money,
-				comission: values.commission,
+				commission: values.commission,
 				currency: currentCurrency!,
 				artist: artist!,
 				organization: proposalObj.facility.organization,

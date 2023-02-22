@@ -54,6 +54,7 @@ const Arts = () => {
 			</Paper>
 
 			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} />  }
+			
 			<ScrollTop />
 		</Container>
 	);
