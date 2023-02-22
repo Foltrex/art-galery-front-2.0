@@ -8,7 +8,7 @@ export interface Proposal {
     id?: string;
     art: Art;
     price: string;
-    comission: number;
+    commission: number;
     currency: Currency;
     artist: Artist;
     organization: Organization;
