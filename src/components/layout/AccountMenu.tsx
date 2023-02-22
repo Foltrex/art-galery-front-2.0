@@ -3,9 +3,11 @@ import { Avatar, Badge, Button, CircularProgress, Divider, IconButton, ListItem,
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
 import { Link, useNavigate } from 'react-router-dom';
+import { useCountProposalsByAccountId } from '../../api/ProposalApi';
+import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import LetterAvatar from './LetterAvatar';
+import LetterAvatar from '../ui/LetterAvatar';
 
 interface IAccountMenuProps {
 }
@@ -18,7 +20,9 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 
 	const token = TokenService.getCurrentDecodedToken();
 	const email = token.sub;
-	const accountType = TokenService.getCurrentAccountType();
+    const accountId = TokenService.getCurrentAccountId();
+    const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
+	console.log(proposalsCount);
 
 	const navigate = useNavigate();
 
@@ -116,9 +120,12 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				</MenuItem>
 				<Divider />
 
-				<MenuItem>
+				<MenuItem onClick={() => navigate('/proposals')}>
 					<ListItemIcon>
-						<Badge badgeContent={1} color='error'>
+						<Badge 
+							badgeContent={proposalsCount} 
+							color='error'
+						>
 							<Mail fontSize='small' />
 						</Badge>
 					</ListItemIcon>
