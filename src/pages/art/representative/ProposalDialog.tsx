@@ -82,7 +82,6 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 				artist: artist!,
 				organization: proposalObj.facility.organization,
 				facility: proposalObj.facility,
-				artistConfirmation: false,
 				organizationConfirmation: true
 			};
 			

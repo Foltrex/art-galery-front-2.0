@@ -1,6 +1,7 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import * as React from 'react';
-import { useGetProposalPageByAccountId } from '../../api/ProposalApi';
+import { useDeleteProposal, useGetProposalPageByAccountId } from '../../api/ProposalApi';
+import DeleteModal from '../../components/modal/DeleteModal';
 import ScrollTop from '../../components/ui/ScrollTop';
 import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { Proposal } from '../../entities/proposal';
@@ -18,6 +19,7 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 	const accountType = TokenService.getCurrentAccountType();
 
 	const [openProposalInfoModal, setOpenProposalInfoModal] = React.useState(false);
+	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [proposal, setProposal] = React.useState<Proposal>();
 
 	const token = TokenService.decode(AuthService.getToken());
@@ -26,9 +28,24 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 	const lastPage = data?.pages.at(-1);
 	const isNotLast = lastPage && !lastPage.last;
 
+	const mutationDeleteProposal = useDeleteProposal();
+
+	const onDeleteProposal = async (proposal: Proposal) => {
+		try {
+			await mutationDeleteProposal.mutateAsync(proposal.id);
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
 	const handleViewDetailsClick = (proposal: Proposal) => {
 		setProposal(proposal);
 		setOpenProposalInfoModal(true);
+	}
+
+	const handleDeleteButtonClick = (proposal: Proposal) => {
+		setProposal(proposal);
+		setOpenDeleteModal(true);
 	}
 
 	const renderTableItem = (proposal: Proposal) => {
@@ -37,7 +54,8 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 				return (
 					<RepresentativeProposalTableItem 
 						proposal={proposal} 
-						onViewDetailsClick={handleViewDetailsClick} />
+						onViewDetailsClick={handleViewDetailsClick}
+						onDeleteButtonClick={handleDeleteButtonClick} />
 				);
 			}
 			case AccountEnum.ARTIST: {
@@ -56,7 +74,7 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 				<Table>
 					<TableHead>
 						<TableRow>
-							<TableCell colSpan={4} align='left'>
+							<TableCell colSpan={5} align='left'>
 								<Typography variant='h5'>
 									Proposals
 								</Typography>
@@ -83,6 +101,11 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 				proposal={proposal!}
 				open={openProposalInfoModal} 
 				onClose={() => setOpenProposalInfoModal(false)} />
+
+			<DeleteModal 
+				open={openDeleteModal} 
+				onClose={() => setOpenDeleteModal(false)} 
+				onDelete={() => onDeleteProposal(proposal!)} />
 		</Paper>
 	);
 };

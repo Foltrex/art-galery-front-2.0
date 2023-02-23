@@ -7,8 +7,6 @@ interface IRepresentativeArtInfoProps {
 }
 
 const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps> = ({art}) => {
-	console.log(art)
-
 	return (
 		<>
 			<Typography sx={{ fontSize: '2em' }}>

@@ -5,7 +5,7 @@ import { ART_SERVICE } from "../http/axios"
 const PROPOSAL_PAGE_SIZE = 5;
 
 export const useSaveProposal = () => {
-    return usePost(`${ART_SERVICE}/proposals`);
+    return usePost<Proposal>(`${ART_SERVICE}/proposals`);
 }
 
 export const useDeleteProposal = () => {

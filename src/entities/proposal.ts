@@ -13,6 +13,6 @@ export interface Proposal {
     artist: Artist;
     organization: Organization;
     facility: Facility;
-    artistConfirmation: boolean;
-    organizationConfirmation: boolean;
+    artistConfirmation?: boolean;
+    organizationConfirmation?: boolean;
 }
