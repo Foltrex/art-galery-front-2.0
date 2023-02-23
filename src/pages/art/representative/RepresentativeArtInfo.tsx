@@ -7,6 +7,8 @@ interface IRepresentativeArtInfoProps {
 }
 
 const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps> = ({art}) => {
+	console.log(art)
+
 	return (
 		<>
 			<Typography sx={{ fontSize: '2em' }}>
@@ -16,12 +18,21 @@ const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps
 			<Stack spacing={2} sx={{ marginTop: 4 }}>
 				<Grid container>
 					<Grid item sm={4}>
-						<strong>
-							Description
-						</strong>
+						<strong>Description</strong>
 					</Grid>
 					<Grid item sm={8}>
 						{art.description}
+					</Grid>
+				</Grid>
+				<Grid container>
+					<Grid item sm={4}>
+						<strong>Arist</strong>
+					</Grid>
+					<Grid item sm={8}>
+						{art.artist.firstname
+							? `${art.artist.firstname} ${art.artist.lastname}`
+							: 'Unknown'
+						}
 					</Grid>
 				</Grid>
 			</Stack>

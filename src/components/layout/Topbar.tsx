@@ -7,7 +7,6 @@ import {useEffect} from "react";
 import {Cookies, useCookies} from "react-cookie";
 import { AuthService } from '../../services/AuthService';
 import AccountMenu from './AccountMenu';
-import { useCountProposalsByAccountId } from '../../api/ProposalApi';
 import { TokenService } from '../../services/TokenService';
 
 const drawerWidth = 240;

@@ -37,27 +37,27 @@ export const fetch = <T>({
         .then(response => response.data);
 };
 
-export const count = (url: string): Promise<number> => {
-    return axiosApi
-        .head(url)
-        .then(response => response.headers)
-        .then(headers => headers[X_TOTAL_COUNT_HEADER])
-        .then(value => new Promise((resolve, reject) => {
-            if (value && Number.isInteger(value)) {
-                resolve(+value);
-            } else {
-                reject(`${X_TOTAL_COUNT_HEADER} isn't represented in header`);
-            }
-        }));
-}
+// export const count = (url: string): Promise<number> => {
+//     return axiosApi
+//         .head(url)
+//         .then(response => response.headers)
+//         .then(headers => headers[X_TOTAL_COUNT_HEADER])
+//         .then(value => {
+//             if (value && Number.isInteger(value)) {
+//                 return +value;
+//             } else {
+//                 throw new Error('value isn\'t integer');
+//             }
+//         });
+// }
 
-export const useCount = (url: string | null) => {
-    return useQuery<number, Error, number, string>(
-        url!,
-        () => count(url!),
-        { retry: 5 }
-    );
-}
+// export const useCount = (url: string | null) => {
+//     return useQuery<number, Error, number, string>(
+//         url!,
+//         () => count(url!),
+//         { retry: 10 }
+//     );
+// }
 
 // TODO: use for addresses and organizaitons in forms
 export const usePrefetch = <T>(url: string | null, params?: object) => {
@@ -68,7 +68,7 @@ export const usePrefetch = <T>(url: string | null, params?: object) => {
             queryClient.prefetchQuery<T, Error, T, QueryKeyT>(
                 [url!, params],
                 context => fetch(context),
-                { retry: 3 }
+                { retry: 10 }
             );
         }
     };
@@ -84,7 +84,7 @@ export const useFetch = <T>(
         context => fetch(context),
         {
             enabled: !!url,
-            retry: 3,
+            retry: 10,
             ...config,
         }
     );
@@ -100,7 +100,7 @@ export const useLoadMore = <T>(url: string | null, params?: object) => {
         [url!, params],
         context => fetch({ ...context, pageParam: context.pageParam ?? 0 }),
         {
-            retry: 4,
+            retry: 10,
             getNextPageParam: (page) => !page.last
                 ? page.number + 1
                 : page.number
@@ -118,6 +118,7 @@ const useGenericMutation = <T, S = T | undefined>(
     return useMutation<AxiosResponse<S>, AxiosError, T | S>(func, {
         onMutate: async () => await queryClient.cancelQueries([url!, params]),
         onError: (err, _, context) => {
+            console.log(err);
             queryClient.setQueryData([url!, params], context);
         },
         onSettled: () => queryClient.invalidateQueries()

@@ -3,7 +3,7 @@ import { Avatar, Badge, Button, CircularProgress, Divider, IconButton, ListItem,
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
 import { Link, useNavigate } from 'react-router-dom';
-import { useCountProposalsByAccountId } from '../../api/ProposalApi';
+// import { useCountProposalsByAccountId } from '../../api/ProposalApi';
 import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
@@ -21,13 +21,17 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 	const token = TokenService.getCurrentDecodedToken();
 	const email = token.sub;
     const accountId = TokenService.getCurrentAccountId();
-    const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
-	console.log(proposalsCount);
+    // const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
 
 	const navigate = useNavigate();
 
 	const handleAccountButtonClick = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorEl(event.currentTarget);
+	}
+
+	const handleProfileClick = () => {
+		handleClose();
+		navigate('/');
 	}
 
 	const handleClose = () => {
@@ -115,7 +119,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				transformOrigin={{ horizontal: 'right', vertical: 'top' }}
 				anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
 			>
-				<MenuItem onClick={handleClose}>
+				<MenuItem onClick={handleProfileClick}>
 					<Avatar /> Profile
 				</MenuItem>
 				<Divider />
@@ -123,7 +127,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				<MenuItem onClick={() => navigate('/proposals')}>
 					<ListItemIcon>
 						<Badge 
-							badgeContent={proposalsCount} 
+							badgeContent={0} 
 							color='error'
 						>
 							<Mail fontSize='small' />
