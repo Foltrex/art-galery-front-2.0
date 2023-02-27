@@ -1,6 +1,6 @@
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
 import * as React from 'react';
-import { useDeleteProposal, useGetProposalPageByAccountId } from '../../api/ProposalApi';
+import { useDeleteProposal, useGetProposalPageByAccountId, useSaveProposal } from '../../api/ProposalApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import ScrollTop from '../../components/ui/ScrollTop';
 import { AccountEnum } from '../../entities/enums/AccountEnum';
@@ -48,6 +48,20 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 		setOpenDeleteModal(true);
 	}
 
+	const handleEditButtonClick = (proposal: Proposal) => {
+		onSaveProposal(proposal);
+	}
+	
+	const mutationSaveProposal = useSaveProposal();
+
+	const onSaveProposal = async (proposal: Proposal) => {
+		try {
+			await mutationSaveProposal.mutateAsync(proposal!);
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	const renderTableItem = (proposal: Proposal) => {
 		switch (accountType) {
 			case AccountEnum.REPRESENTATIVE: {
@@ -62,7 +76,8 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 				return (
 					<ArtistProposalTableItem
 						proposal={proposal}
-						onViewDetailsClick={handleViewDetailsClick} />
+						onViewDetailsClick={handleViewDetailsClick}
+						onEditButtonClick={handleEditButtonClick} />
 				);
 			}
 		}

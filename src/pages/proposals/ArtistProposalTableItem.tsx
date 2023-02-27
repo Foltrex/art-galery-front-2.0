@@ -7,33 +7,16 @@ import { Proposal } from '../../entities/proposal';
 interface IArtistTableItemProps {
 	proposal: Proposal;
 	onViewDetailsClick: (proposal: Proposal) => void;
+	onEditButtonClick: (proposal: Proposal) => void;
 }
 
-const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({ proposal, onViewDetailsClick }) => {
-	console.log(proposal)
-	const [proposalObj, setProposal] = React.useState(proposal);
+const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({ 
+	proposal, 
+	onViewDetailsClick, 
+	onEditButtonClick 
+}) => {
 
 	const { price, currency, art, organization, artistConfirmation } = proposal;
-
-	const mutationSaveProposal = useSaveProposal();
-
-	const onSaveProposal = async (proposal: Proposal) => {
-		try {
-			const { data } = await mutationSaveProposal.mutateAsync(proposal);
-			setProposal(data);
-		} catch (e) {
-			console.log(e);
-		}
-	}
-
-	// TODO: add art info creation based on this proposal
-	const handleApproveClick = () => {
-		onSaveProposal({...proposalObj, artistConfirmation: true});
-	}
-
-	const handleRejectClick = () => {
-		onSaveProposal({...proposalObj, artistConfirmation: false});
-	}
 
 	if (artistConfirmation !== null) {
 
@@ -96,14 +79,14 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({ propo
 						<Button
 							variant='contained'
 							sx={{ borderRadius: 8 }}
-							onClick={handleApproveClick}
+							onClick={() => onEditButtonClick({...proposal, artistConfirmation: true})}
 						>
 							Approve
 						</Button>
 						<Button
 							variant='outlined'
 							sx={{ borderRadius: 8 }}
-							onClick={handleRejectClick}
+							onClick={() => onEditButtonClick({...proposal, artistConfirmation: false})}
 						>
 							Reject
 						</Button>

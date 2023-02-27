@@ -23,11 +23,11 @@ function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({
 	return (
 		<MuiTableBody>
 			{content.map((item, itemIndex) => (
-				<TableRow 
+				<TableRow
 					key={`table-row-${itemIndex}`} 
 					number={itemIndex + 1 + number * size} 
-					columns={columns} 
-					item={item} 
+					columns={columns}
+					item={item}
 					onDelete={onDelete} 
 					onEdit={onEdit} 
 					mapModelToTableRow={mapModelToTableRow} />

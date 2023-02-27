@@ -127,7 +127,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				<MenuItem onClick={() => navigate('/proposals')}>
 					<ListItemIcon>
 						<Badge 
-							badgeContent={0} 
+							badgeContent={2} 
 							color='error'
 						>
 							<Mail fontSize='small' />

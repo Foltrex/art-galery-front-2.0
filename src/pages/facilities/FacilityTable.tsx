@@ -91,7 +91,7 @@ const FacilityTable = () => {
 						onDelete={handleDelete}
 						onEdit={handleEdit}
 						mapModelToTableRow={mapFacilityToTableRow}
-						page={data} 
+						page={data}
 						onPageChange={(_, page) => setPageNumber(page)} 
 						onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
 				: 	<SkeletonTable 
