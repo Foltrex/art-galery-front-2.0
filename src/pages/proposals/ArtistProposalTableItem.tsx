@@ -31,23 +31,23 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 						{organization.name} propose you {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
+				<TableCell align='left'>
+					<Button size='small' onClick={() => onViewDetailsClick(proposal)}>
+						View details
+					</Button>
+				</TableCell>
 				<TableCell align='center'>
 						{artistConfirmation
 							? (
-								<Typography color='success' fontSize={15}>
+								<Typography color='green' fontSize={15}>
 									✓ Approved
 								</Typography>
 							) : (
-								<Typography color='error' fontSize={15}>
+								<Typography color='red' fontSize={15}>
 									✕ Rejected
 								</Typography>
 							)
 						}
-				</TableCell>
-				<TableCell align='center'>
-					<Button size='small' onClick={() => onViewDetailsClick(proposal)}>
-						View details
-					</Button>
 				</TableCell>
 			</TableRow>
 		);

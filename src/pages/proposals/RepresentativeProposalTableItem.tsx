@@ -24,17 +24,19 @@ const RepresentativeTableItem: React.FunctionComponent<IRepresentativeTableItemP
 				<TableCell align='left'>
 						{artistConfirmation
 							? (
-								<Typography color='success' fontSize={15}>
+								<Typography color='green' fontSize={15}>
 									✓ Approved
 								</Typography>
 							) : (
-								<Typography color='error' fontSize={15}>
+								<Typography color='red' fontSize={15}>
 									✕ Rejected
 								</Typography>
 							)
 						}
 				</TableCell>
 			);
+		} else {
+			return <TableCell />
 		}
 	}
 

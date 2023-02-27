@@ -1,21 +1,20 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button, Container, Divider, IconButton, ImageList, Paper } from '@mui/material';
-import ArtItem from './ArtItem';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { Box, Checkbox, Container, Divider, FormControlLabel, FormGroup, IconButton, Paper } from '@mui/material';
 
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
+import ScrollTop from '../../components/ui/ScrollTop';
 import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import { useRef, useState } from 'react';
-import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
-import ScrollTop from '../../components/ui/ScrollTop';
 import InfiniteArtList from './InfiniteArtList';
 import LoadMoreButton from './LoadMoreButton';
 
 const Arts = () => {
 	const navigate = useNavigate();
 
+	const [isBusy, setIsBusy] = useState(false);
 	const [searchText, setSearchText] = useState<string>();
 
 	const token = TokenService.decode(AuthService.getToken());
@@ -48,6 +47,7 @@ const Arts = () => {
 						<AddIcon fontSize='large' />
 					</IconButton>
 				</Box>
+
 				<Divider sx={{ my: 3 }} />
 
 				{ isSuccess && <InfiniteArtList infinteData={infinteData} /> }

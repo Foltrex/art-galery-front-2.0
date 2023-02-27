@@ -1,4 +1,4 @@
-import { Container, Paper, Box, IconButton, Divider } from '@mui/material';
+import { Checkbox, Container, Divider, FormControlLabel, FormGroup, Paper } from '@mui/material';
 import * as React from 'react';
 import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
@@ -13,6 +13,7 @@ interface IRepresentativeArtsProps {
 
 const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = () => {
 	const [searchText, setSearchText] = React.useState<string>();
+	const [isBusy, setIsBusy] = React.useState(false);
 
 	const token = TokenService.decode(AuthService.getToken());
 	const { data: infinteData, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
@@ -27,10 +28,23 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 	}
 
 	return (
-		<Container sx={{ position: 'relative' }}>
+		<Container sx={{ position: 'relat ive' }}>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<SearchBar onSearch={handleSearch} />
-				<Divider sx={{ my: 3 }} />
+
+				<FormGroup sx={{ ml: 3, my: 1 }}>
+					<FormControlLabel 
+						control={
+							<Checkbox 
+								checked={isBusy}
+								onChange={() => setIsBusy(!isBusy)}
+							/>
+						} 
+						label='Exhibited'
+					/>
+				</FormGroup>
+				
+				<Divider sx={{ my: 1 }} />
 
 				{isSuccess && <InfiniteArtList infinteData={infinteData} />}
 			</Paper>

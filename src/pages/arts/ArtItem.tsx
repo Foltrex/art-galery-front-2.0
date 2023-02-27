@@ -1,6 +1,7 @@
 import { Card, ImageListItem, ImageListItemBar } from "@mui/material";
 import { width } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import { useGetArtInfosByAccountId } from "../../api/ArtInfoApi";
 import { useGetFacilityByAccountId } from "../../api/FacilityApi";
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
@@ -33,7 +34,8 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
     const images = imagesData?.map(data => FileService.toImage(data));
 
-    const { data: facility } = useGetFacilityByAccountId(accountId);
+    const { data: artInfos } = useGetArtInfosByAccountId(accountId);
+    // const { facility } = artInfo!;
 
     let artLink = '';
     switch (accountType) {
@@ -57,10 +59,10 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'
                     }}
-                    title={facility
-                        ? facility.name
-                        : 'Available'
-                    }
+                    // title={facility
+                    //     ? facility.name
+                    //     : 'Available'
+                    // }
                     position='top' />
 
                 {images && images.at(0) 
