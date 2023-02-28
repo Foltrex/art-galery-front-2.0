@@ -17,7 +17,7 @@ export const fetchImages = (ids: string[] = []) => {
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
     return useQuery<ArrayBuffer[]>(
         [`${FILE_SERVICE}/files/data`, { ids: ids }],
-        context => fetchImages(ids),
+        () => fetchImages(ids),
     );
 }
 

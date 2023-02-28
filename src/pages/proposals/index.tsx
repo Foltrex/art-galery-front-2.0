@@ -98,12 +98,12 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 					</TableHead>
 					<TableBody>
 						{data?.pages.map((page, i) => (
-							page.content.map((proposal, j) => 
+							page.content.map((proposal, j) => (
 								<React.Fragment key={10 * i + j}>
 									{renderTableItem(proposal)}
 								</React.Fragment>
 							)
-						))}
+						)))}
 					</TableBody>
 				</Table>
 			</TableContainer>

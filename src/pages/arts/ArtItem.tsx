@@ -34,8 +34,15 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
     const images = imagesData?.map(data => FileService.toImage(data));
 
-    const { data: artInfos } = useGetArtInfosByAccountId(accountId);
-    // const { facility } = artInfo!;
+    const { data: artInfo } = useGetArtInfosByAccountId(art.id);
+    console.log(artInfo)
+    let facilityName = ''
+    if (artInfo?.facility) {
+        const { name } = artInfo.facility;
+        facilityName = name ?? 'Exhibited';
+    } else {
+        facilityName = 'Avalable';
+    }
 
     let artLink = '';
     switch (accountType) {
@@ -59,10 +66,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'
                     }}
-                    // title={facility
-                    //     ? facility.name
-                    //     : 'Available'
-                    // }
+                    title={facilityName}
                     position='top' />
 
                 {images && images.at(0) 

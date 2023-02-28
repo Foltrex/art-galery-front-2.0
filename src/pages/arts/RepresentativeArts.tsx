@@ -28,7 +28,7 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 	}
 
 	return (
-		<Container sx={{ position: 'relat ive' }}>
+		<Container sx={{ position: 'relative' }}>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<SearchBar onSearch={handleSearch} />
 
