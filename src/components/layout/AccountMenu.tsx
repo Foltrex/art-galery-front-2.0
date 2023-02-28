@@ -1,10 +1,9 @@
 import { Login, Logout, Mail, Settings } from '@mui/icons-material';
-import { Avatar, Badge, Button, CircularProgress, Divider, IconButton, ListItem, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Avatar, Badge, CircularProgress, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
 import * as React from 'react';
 import { useCookies } from 'react-cookie';
-import { Link, useNavigate } from 'react-router-dom';
-// import { useCountProposalsByAccountId } from '../../api/ProposalApi';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
+import { useNavigate } from 'react-router-dom';
+import { useCountProposalsByAccountId } from '../../api/ProposalApi';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
 import LetterAvatar from '../ui/LetterAvatar';
@@ -12,7 +11,7 @@ import LetterAvatar from '../ui/LetterAvatar';
 interface IAccountMenuProps {
 }
 
-const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
+const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 	const [cookies, setCookie] = useCookies(['token']);
 	const [isLogin] = React.useState<boolean | null>(cookies.token);
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -21,7 +20,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 	const token = TokenService.getCurrentDecodedToken();
 	const email = token.sub;
     const accountId = TokenService.getCurrentAccountId();
-    // const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
+    const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
 
 	const navigate = useNavigate();
 
@@ -127,7 +126,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = (props) => {
 				<MenuItem onClick={() => navigate('/proposals')}>
 					<ListItemIcon>
 						<Badge 
-							badgeContent={2} 
+							badgeContent={proposalsCount} 
 							color='error'
 						>
 							<Mail fontSize='small' />

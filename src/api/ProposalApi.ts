@@ -1,5 +1,5 @@
 import { Proposal } from "../entities/proposal";
-import { useDelete, useLoadMore, usePost } from "../hooks/react-query"
+import { useCount, useDelete, useLoadMore, usePost } from "../hooks/react-query"
 import { ART_SERVICE } from "../http/axios"
 
 const PROPOSAL_PAGE_SIZE = 5;
@@ -12,9 +12,9 @@ export const useDeleteProposal = () => {
     return useDelete(`${ART_SERVICE}/proposals`)
 }
 
-// export const useCountProposalsByAccountId = (accountId: string) => {
-//     return useCount(`${ART_SERVICE}/proposals/accounts/${accountId}`);
-// }
+export const useCountProposalsByAccountId = (accountId: string) => {
+    return useCount(`${ART_SERVICE}/proposals/accounts/${accountId}`);
+}
 
 export const useGetProposalPageByAccountId = (accountId: string) => {
     return useLoadMore<Proposal>(`${ART_SERVICE}/proposals/accounts/${accountId}`, {

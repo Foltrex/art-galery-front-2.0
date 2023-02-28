@@ -4,7 +4,7 @@ import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
-const X_TOTAL_COUNT_HEADER: string = "X-Total-Count";
+const X_TOTAL_COUNT_HEADER: string = "x-total-count";
 
 // TODO: maybe delete latter
 export interface IPageable {
@@ -37,27 +37,21 @@ export const fetch = <T>({
         .then(response => response.data);
 };
 
-// export const count = (url: string): Promise<number> => {
-//     return axiosApi
-//         .head(url)
-//         .then(response => response.headers)
-//         .then(headers => headers[X_TOTAL_COUNT_HEADER])
-//         .then(value => {
-//             if (value && Number.isInteger(value)) {
-//                 return +value;
-//             } else {
-//                 throw new Error('value isn\'t integer');
-//             }
-//         });
-// }
+export const count = (url: string): Promise<number> => {
+    return axiosApi
+        .head(url)
+        .then(response => response.headers)
+        .then(headers => headers[X_TOTAL_COUNT_HEADER] ?? '0')
+        .then(value => +value);
+}
 
-// export const useCount = (url: string | null) => {
-//     return useQuery<number, Error, number, string>(
-//         url!,
-//         () => count(url!),
-//         { retry: 10 }
-//     );
-// }
+export const useCount = (url: string | null) => {
+    return useQuery<number, Error, number, string>(
+        url!,
+        () => count(url!),
+        { retry: 2 }
+    );
+}
 
 // TODO: use for addresses and organizaitons in forms
 export const usePrefetch = <T>(url: string | null, params?: object) => {
