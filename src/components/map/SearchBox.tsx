@@ -23,14 +23,7 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const { data } = useSearch(searchText);
 
     useEffect(() => {
-        const delayFetch = setTimeout(() => {
-            if (data) {
-                setListPlace(data)
-            } else {
-                alertStore.setShow(true, "error", "Search error", "something went wrong")
-                setListPlace([])
-            }
-        }, 1500)
+        const delayFetch = setTimeout(() => setListPlace(data ?? []), 1500)
 
         return () => clearTimeout(delayFetch)
     }, [searchText, data])
