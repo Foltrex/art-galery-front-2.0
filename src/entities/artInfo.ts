@@ -1,6 +1,7 @@
 
 import Big from "big.js";
 import { Art } from "./art";
+import { Currency } from "./currency";
 import { Facility } from "./facility";
 import { Organization } from "./organization";
 
@@ -9,7 +10,8 @@ export interface ArtInfo {
     art: Art;
     organization: Organization;
     facility: Facility;
-    price: Big;
+    price: string;
+    currency: Currency;
     comission: number;
     creationDate: Date;
     expositionDateStart: Date;
