@@ -1,8 +1,6 @@
 import { Card, ImageListItem, ImageListItemBar } from "@mui/material";
-import { width } from "@mui/system";
 import { useNavigate } from "react-router-dom";
-import { useGetArtInfosByAccountId } from "../../api/ArtInfoApi";
-import { useGetFacilityByAccountId } from "../../api/FacilityApi";
+import { useGetLastArtInfoByArtId } from "../../api/ArtInfoApi";
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import { Art } from "../../entities/art";
 import { AccountEnum } from "../../entities/enums/AccountEnum";
@@ -18,9 +16,8 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const navigate = useNavigate();
 
     const accountType = TokenService.getCurrentAccountType();
-    const accountId = TokenService.getCurrentAccountId();
 
-    const { data: files } = useGetAllFileInfosByArtId(art.id)
+    const { data: files } = useGetAllFileInfosByArtId(art.id);
 
     let fileIds: string[] = [];
     if (files) {
@@ -34,14 +31,14 @@ const ArtItem: React.FC<IArtItemProps> = ({ art }) => {
     const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
     const images = imagesData?.map(data => FileService.toImage(data));
 
-    const { data: artInfo } = useGetArtInfosByAccountId(art.id);
-    console.log(artInfo)
+    const { data: artInfo } = useGetLastArtInfoByArtId(art.id);
+    
     let facilityName = ''
     if (artInfo?.facility) {
         const { name } = artInfo.facility;
         facilityName = name ?? 'Exhibited';
     } else {
-        facilityName = 'Avalable';
+        facilityName = 'Available';
     }
 
     let artLink = '';

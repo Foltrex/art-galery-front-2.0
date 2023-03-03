@@ -13,11 +13,12 @@ interface IRepresentativeArtsProps {
 
 const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = () => {
 	const [searchText, setSearchText] = React.useState<string>();
-	const [isBusy, setIsBusy] = React.useState(false);
+	const [isExhibited, setIsExhibited] = React.useState(true);
 
 	const token = TokenService.decode(AuthService.getToken());
 	const { data: infinteData, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
-		name: searchText
+		name: searchText,
+		isExhibited: isExhibited
 	});
 
 	const lastPage = infinteData?.pages.at(-1);
@@ -25,6 +26,10 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 
 	const handleSearch = (searchText: string) => {
 		setSearchText(searchText);
+	}
+
+	const handleExhibitedCheckboxClick = () => {
+		setIsExhibited(!isExhibited);
 	}
 
 	return (
@@ -36,8 +41,8 @@ const RepresentativeArts: React.FunctionComponent<IRepresentativeArtsProps> = ()
 					<FormControlLabel 
 						control={
 							<Checkbox 
-								checked={isBusy}
-								onChange={() => setIsBusy(!isBusy)}
+								checked={isExhibited}
+								onChange={handleExhibitedCheckboxClick}
 							/>
 						} 
 						label='Exhibited'

@@ -10,6 +10,9 @@ interface IInfiniteArtListProps {
 }
 
 const InfiniteArtList: React.FunctionComponent<IInfiniteArtListProps> = ({ infinteData }) => {
+    infinteData.pages.map((page, i) => {
+        console.log(page)
+    }); 
     return (
         <ImageList
             gap={12}
