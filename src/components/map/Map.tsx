@@ -1,7 +1,7 @@
-import React, {useEffect} from "react";
-import {MapContainer, Marker, TileLayer, useMap} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { useEffect } from "react";
+import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
 const icon = L.icon({
     iconUrl: "./images/placeholder.png",

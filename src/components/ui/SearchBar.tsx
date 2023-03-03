@@ -22,7 +22,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch }) => {
             <Paper sx={{...sx, display: 'flex', alignItems: 'center'}}>
                 <InputBase 
                     sx={{ flexGrow: 1, pl: 2 }} 
-                    placeholder='Search Paintings' 
+                    placeholder='Search Paintings...' 
                     inputProps={{ 'aria-label': 'search paintings' }}
                     onChange={handleChange} 
                 />

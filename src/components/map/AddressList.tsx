@@ -1,10 +1,9 @@
-import * as React from 'react';
+import { Divider, ListItemIcon } from "@mui/material";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import {Divider, ListItemIcon} from "@mui/material";
-import {GeoPosition} from "./SearchBox";
-import {Address} from "../../entities/address";
+import { Address } from "../../entities/address";
+import { GeoPosition } from "./SearchBox";
 
 export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any }) {
     return (
