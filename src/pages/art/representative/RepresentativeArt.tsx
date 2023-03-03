@@ -14,7 +14,7 @@ import ProposalDialog from './ProposalDialog';
 interface IRepresentativeArtProps {
 }
 
-const RepresentativeArt: React.FunctionComponent<IRepresentativeArtProps> = (props) => {
+const RepresentativeArt: React.FunctionComponent<IRepresentativeArtProps> = () => {
 	const [openProposalDialog, setOpenProposalDialog] = React.useState(false);
 
 	const { id: artId } = useParams();
