@@ -1,17 +1,28 @@
 import { Box, Typography, IconButton, Divider, Stack, Grid } from '@mui/material';
 import * as React from 'react';
 import { Art } from '../../../entities/art';
+import HistoryIcon from '@mui/icons-material/History';
+import ArtExhibitionHistory from '../ArtExhibitionHistory';
+import { History } from '@mui/icons-material';
 
 interface IRepresentativeArtInfoProps {
 	art: Art;
 }
 
 const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps> = ({art}) => {
+	const [showArtExhibitionHistory, setShowArtExhibitionHistory] = React.useState(false);
+
 	return (
 		<>
-			<Typography sx={{ fontSize: '2em' }}>
-				{art.name}
-			</Typography>
+			<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+				<Typography sx={{ fontSize: '2em' }}>
+					{art.name}
+				</Typography>
+
+				<IconButton onClick={() => setShowArtExhibitionHistory(true)}>
+					<History />
+				</IconButton>
+			</Box>
 			<Divider sx={{ my: 1 }} />
 			<Stack spacing={2} sx={{ marginTop: 4 }}>
 				<Grid container>
@@ -34,6 +45,11 @@ const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps
 					</Grid>
 				</Grid>
 			</Stack>
+
+			<ArtExhibitionHistory 
+				art={art}
+				open={showArtExhibitionHistory} 
+				onClose={() => setShowArtExhibitionHistory(false)} />
 		</>
 	);
 };

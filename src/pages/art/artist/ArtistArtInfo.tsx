@@ -6,6 +6,8 @@ import * as React from 'react';
 import { useSaveFile } from '../../../api/FileApi';
 import { FileService } from '../../../services/FileService';
 import { Art as ArtEntity } from '../../../entities/art';
+import { History } from '@mui/icons-material';
+import ArtExhibitionHistory from '../ArtExhibitionHistory';
 
 interface IArtInfoProps {
 	art: ArtEntity;
@@ -18,6 +20,8 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 	onEditButtonClick, 
 	onDeleteButtonClick 
 }) => {
+	const [showArtExhibitionHistory, setShowArtExhibitionHistory] = React.useState(false);
+
 	const fileInput = React.useRef<HTMLInputElement>(null);
 	
 	const mutationSaveImage = useSaveFile();
@@ -40,6 +44,11 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 					{art.name}
 				</Typography>
 				<Box>
+					<IconButton
+						onClick={() => setShowArtExhibitionHistory(true)}
+					>
+						<History />
+					</IconButton>
 					<IconButton onClick={onEditButtonClick}>
 						<EditIcon />
 					</IconButton>
@@ -65,6 +74,11 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 					</Grid>
 				</Grid>
 			</Stack>
+
+			<ArtExhibitionHistory 
+				art={art}
+				open={showArtExhibitionHistory} 
+				onClose={() => setShowArtExhibitionHistory(false)} />
 		</>
 	);
 };
