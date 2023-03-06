@@ -1,7 +1,7 @@
 import { Grid } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import ArtistArtForm from './AristArtForm';
 import ArtistArtInfo from './ArtistArtInfo';
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useDeleteFile } from "../../../api/FileApi";

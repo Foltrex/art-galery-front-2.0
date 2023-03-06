@@ -1,6 +1,7 @@
 import { File as FileEntity } from "../entities/file";
 import {Buffer} from 'buffer';
 import naclUtil from 'tweetnacl-util';
+import { decode } from "base64-arraybuffer";
 
 export class FileService {
     static async toFile(artId: string, file: File): Promise<FileEntity> {
@@ -17,7 +18,6 @@ export class FileService {
 
         return fileEnity;
     }
-
 
     static toImage(binaryData: ArrayBuffer) {
         const imageData = new Uint8Array(binaryData);

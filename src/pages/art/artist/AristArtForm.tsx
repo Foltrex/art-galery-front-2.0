@@ -1,7 +1,8 @@
+import { Add } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
-import { Box, Divider, Grid, IconButton, InputBase, Stack, Typography } from '@mui/material';
+import { Box, Divider, Grid, IconButton, InputBase, Stack } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { RefObject } from 'react';
 import * as yup from 'yup';
 import { useGetArtistByAccountId } from '../../../api/ArtistApi';
 import { Art } from '../../../entities/art';
@@ -9,7 +10,8 @@ import { TokenService } from '../../../services/TokenService';
 
 interface IArtFormProps {
 	art?: Art;
-	onSubmit: (art: Art) => Promise<void>
+	onSubmit: (art: Art) => Promise<void>;
+	onImageAdd?: () => void;
 }
 
 interface FormValues {
@@ -17,7 +19,7 @@ interface FormValues {
 	description: string;
 }
 
-const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
+const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImageAdd }) => {
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: artist } = useGetArtistByAccountId(accountId);
 
@@ -57,7 +59,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	const formik = useFormik({
 		initialValues: initialValues,
 		validationSchema: validationSchema,
-		onSubmit: onSaveArt
+		onSubmit: onSaveArt,
+		enableReinitialize: true,
 	});
 
 	return (
@@ -70,9 +73,16 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 					onChange={formik.handleChange}
 					fullWidth
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
-				<IconButton type='submit' disabled={formik.isSubmitting}>
-					<SaveIcon />
-				</IconButton>
+				
+				<Stack direction='row'>
+					<IconButton onClick={onImageAdd}>
+						<Add fontSize='large' />
+					</IconButton>
+
+					<IconButton type='submit' disabled={formik.isSubmitting}>
+						<SaveIcon />
+					</IconButton>
+				</Stack>
 			</Box>
 			<Divider sx={{ my: 1 }} />
 			<Stack spacing={2} sx={{ marginTop: 4 }}>

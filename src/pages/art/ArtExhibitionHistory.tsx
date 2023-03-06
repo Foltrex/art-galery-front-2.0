@@ -15,8 +15,6 @@ interface IArtExhibitionHistoryProps {
 const ArtExhibitionHistory: React.FunctionComponent<IArtExhibitionHistoryProps> = ({ art, open, onClose }) => {
 	const { data: artInfosHistory, isFetched } = useGetArtInfosByArtId(art.id);
 
-	console.log(artInfosHistory?.at(0))
-	
 	const renderArtHistory = () => {
 		return artInfosHistory && artInfosHistory.length > 0
 			? artInfosHistory.map(item => (
