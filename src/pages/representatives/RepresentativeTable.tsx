@@ -37,8 +37,8 @@ const mapRepresentativeToTableRow = (representative: Representative): IRepresent
         firstname: representative.firstname,
         lastname: representative.lastname,
         email: 'unknown',
-        organizationRole: organizationRole.name,
-        facility: facility.name
+        organizationRole: organizationRole?.name,
+        facility: facility?.name
     };
 }
 

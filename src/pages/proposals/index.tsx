@@ -7,7 +7,7 @@ import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { Proposal } from '../../entities/proposal';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import LoadMoreButton from '../arts/LoadMoreButton';
+import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import ArtistProposalTableItem from './ArtistProposalTableItem';
 import ProposalInfo from './ProposalInfo';
 import RepresentativeProposalTableItem from './RepresentativeProposalTableItem';

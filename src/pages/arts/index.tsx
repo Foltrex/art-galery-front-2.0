@@ -9,7 +9,7 @@ import SearchBar from '../../components/ui/SearchBar';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
 import InfiniteArtList from './InfiniteArtList';
-import LoadMoreButton from './LoadMoreButton';
+import LoadMoreButton from '../../components/ui/LoadMoreButton';
 
 const Arts = () => {
 	const navigate = useNavigate();
