@@ -15,6 +15,8 @@ import Representatives from './pages/representatives';
 import Settings from "./pages/settings";
 import { AuthService } from "./services/AuthService";
 import Proposals from './pages/proposals';
+import ArtistProfile from './pages/artists/ArtistProfile';
+import Organization from './pages/organization';
 
 function App() {
 
@@ -40,6 +42,7 @@ function App() {
                     <Route path='facilities' element={<Facilities/>}/>
                     <Route path='representatives' element={<Representatives/>}/>
                     <Route path='proposals' element={<Proposals />}/>
+                    <Route path='organization' element={<Organization />} />
 
                     <Route path='arts'>
                         <Route path='artist'>
@@ -53,6 +56,11 @@ function App() {
                             <Route path=':id' element={<RepresentativeArt />} />
                         </Route>
                     </Route>
+
+                    <Route path='artists'>
+                        <Route path=':id' element={<ArtistProfile />} />
+                    </Route>
+
                     <Route path='settings' element={<Settings/>}/>
                 </Route>
             </Routes>
