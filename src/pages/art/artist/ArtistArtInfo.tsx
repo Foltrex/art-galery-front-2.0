@@ -1,13 +1,16 @@
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
 import { useSaveFile } from '../../../api/FileApi';
 import { FileService } from '../../../services/FileService';
 import { Art as ArtEntity } from '../../../entities/art';
 import { History } from '@mui/icons-material';
 import ArtExhibitionHistory from '../ArtExhibitionHistory';
+import { useGenereateQRCode } from '../../../api/QRCodeApi';
+import { TokenService } from '../../../services/TokenService';
+import { AccountEnum } from '../../../entities/enums/AccountEnum';
 
 interface IArtInfoProps {
 	art: ArtEntity;
@@ -36,6 +39,14 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 			console.log(e);
 		}
 	}
+
+	const artUrl = FileService.createImageLinkForAccountType(
+		art.id!, 
+		TokenService.getCurrentAccountType()
+	);
+	// const { data: qrData } = useGenereateQRCode(artUrl);
+	// const qrImage = URL.createObjectURL(qrData!);
+	// console.log(qrData)
 
 	return (
 		<>

@@ -2,8 +2,23 @@ import { File as FileEntity } from "../entities/file";
 import {Buffer} from 'buffer';
 import naclUtil from 'tweetnacl-util';
 import { decode } from "base64-arraybuffer";
+import { AccountEnum } from "../entities/enums/AccountEnum";
 
 export class FileService {
+    static createImageLinkForAccountType(artId: string, accountType: AccountEnum) {
+        switch (accountType) {
+            case AccountEnum.ARTIST: {
+                return `http://localhost:3000/arts/artist/${artId}`;
+            }
+            case AccountEnum.REPRESENTATIVE: {
+                return `http://localhost:3000/arts/representative/${artId}`;
+            }
+            default: {
+                throw new Error('Invalid account type for image\'s url creating')
+            }
+        }
+    }
+
     static async toFile(artId: string, file: File): Promise<FileEntity> {
         const arrayBufferFile = await this.toArrayBufferFromBlob(file);
         const binaryFile = new Uint8Array(arrayBufferFile);
