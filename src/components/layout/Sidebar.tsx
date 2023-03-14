@@ -36,7 +36,7 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
         {
             text: 'Organization',
             icon: <AccountCircleOutlinedIcon/>,
-            link: '/'
+            link: '/organization'
         },
         {
             text: 'Catalog',

@@ -1,16 +1,15 @@
+import { History } from '@mui/icons-material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Button, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
+import { useGetArtistByAccountId } from '../../../api/ArtistApi';
 import { useSaveFile } from '../../../api/FileApi';
-import { FileService } from '../../../services/FileService';
 import { Art as ArtEntity } from '../../../entities/art';
-import { History } from '@mui/icons-material';
-import ArtExhibitionHistory from '../ArtExhibitionHistory';
-import { useGenereateQRCode } from '../../../api/QRCodeApi';
+import { FileService } from '../../../services/FileService';
 import { TokenService } from '../../../services/TokenService';
-import { AccountEnum } from '../../../entities/enums/AccountEnum';
+import ArtExhibitionHistory from '../ArtExhibitionHistory';
 
 interface IArtInfoProps {
 	art: ArtEntity;
@@ -40,13 +39,12 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 		}
 	}
 
-	const artUrl = FileService.createImageLinkForAccountType(
-		art.id!, 
-		TokenService.getCurrentAccountType()
-	);
-	// const { data: qrData } = useGenereateQRCode(artUrl);
-	// const qrImage = URL.createObjectURL(qrData!);
-	// console.log(qrData)
+	const accountId = TokenService.getCurrentAccountId();
+	const { data: currenctArtist } = useGetArtistByAccountId(accountId);
+	const currenctArtistId = currenctArtist?.id;
+	const artistId = art.artist.id;
+
+	const isEditable = currenctArtistId === artistId;
 
 	return (
 		<>
@@ -60,20 +58,24 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 					>
 						<History />
 					</IconButton>
-					<IconButton onClick={onEditButtonClick}>
-						<EditIcon />
-					</IconButton>
-					<IconButton onClick={() => fileInput.current?.click()}>
-						<AddPhotoAlternateIcon color='primary' />
-						<input
-							type='file'
-							style={{ display: 'none' }}
-							ref={fileInput}
-							onChange={handleFileInputChange} />
-					</IconButton>
-					<IconButton onClick={onDeleteButtonClick}>
-						<DeleteIcon color='error' />
-					</IconButton>
+					{isEditable &&
+						<>
+							<IconButton onClick={onEditButtonClick}>
+								<EditIcon />
+							</IconButton>
+							<IconButton onClick={() => fileInput.current?.click()}>
+								<AddPhotoAlternateIcon color='primary' />
+								<input
+									type='file'
+									style={{ display: 'none' }}
+									ref={fileInput}
+									onChange={handleFileInputChange} />
+							</IconButton>
+							<IconButton onClick={onDeleteButtonClick}>
+								<DeleteIcon color='error' />
+							</IconButton>
+						</>
+					}
 				</Box>
 			</Box>
 			<Divider sx={{ my: 1 }} />

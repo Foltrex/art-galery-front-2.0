@@ -7,7 +7,6 @@ import { useQuery } from 'react-query';
 
 const Representatives = () => {
 	const [openCreateForm, setOpenCreateForm] = useState(false);
-    // const { isLoading, error, data } = useQuery()
 
 	return (
         <div>

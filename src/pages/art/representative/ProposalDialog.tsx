@@ -37,7 +37,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	const { data: currencies } = useGetAllCurrencies();
 	const { data: artist } = useGetArtistByArtId(art.id);
 
-	const [proposalObj, setProposal] = useState({ facility } as Proposal);
+	const [proposalObj, setProposal] = useState({ facility: facility } as Proposal);
 	const [currentCurrency, setCurrentCurrency] = useState<Currency>();
 
 	React.useEffect(() => {
@@ -73,6 +73,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	const onSaveProposal = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);
 		try {
+			console.log(proposalObj)
 			// todo: change latter
 			const proposal: Proposal = {
 				art: art,
@@ -123,6 +124,7 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 
 						{currencies?.map(currency => (
 							<Button
+								key={currency.id}
 								variant='outlined'
 								onClick={() => handleCurrencyButtonClick(currency)}
 								sx={{ my: 1, mr: 1 }}
