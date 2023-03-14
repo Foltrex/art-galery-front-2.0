@@ -84,7 +84,11 @@ export const useFetch = <T>(
     );
 };
 
-export const useLoadMore = <T>(url: string | null, params?: object) => {
+export const useLoadMore = <T>(
+    url: string | null, 
+    params?: object, 
+    config?: UseQueryOptions<T, Error, T, QueryKeyT>
+) => {
     return useInfiniteQuery<
         IPage<T>,
         Error,
