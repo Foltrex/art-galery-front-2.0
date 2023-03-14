@@ -5,8 +5,7 @@ import PrivateRoute from './components/routes/PrivateRoute';
 import ArtCreation from './pages/art/artist/ArtCreation';
 import ArtistArt from './pages/art/artist/ArtistArt';
 import RepresentativeArt from './pages/art/representative/RepresentativeArt';
-import Arts from './pages/arts/ArtistArts';
-import RepresentativeArts from './pages/arts/RepresentativeArts';
+import Arts from './pages/arts';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
@@ -50,7 +49,7 @@ function App() {
                         </Route>
 
                         <Route path='representative'>
-                            <Route index element={<RepresentativeArts />} />
+                            <Route index element={<Arts />} />
                             <Route path=':id' element={<RepresentativeArt />} />
                         </Route>
                     </Route>
