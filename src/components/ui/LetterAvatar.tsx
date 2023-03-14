@@ -7,7 +7,7 @@ interface ILetterAvatarProps {
 	sx?: SxProps<Theme>;
 }
 
-const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({name, sx}) => {
+const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({ name, sx }) => {
 	const stringToColor = (string?: string) => {
 		if (!string) {
 			return '#e0e0e0';
@@ -26,17 +26,16 @@ const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({name, sx}) =
 			const value = (hash >> (i * 8)) & 0xff;
 			color += `00${value.toString(16)}`.slice(-2);
 		}
-		
+
 		return color;
 	}
 
 	return (
 		<Avatar
-			sx={{...sx, bgcolor: stringToColor(name)}} 
+			sx={{ ...sx, bgcolor: stringToColor(name) }}
 		>
-			{name && name.at(0)
-				? name[0].toUpperCase()
-				: '?'
+			{
+				name.at(0)?.toUpperCase()
 			}
 		</Avatar>
 	);

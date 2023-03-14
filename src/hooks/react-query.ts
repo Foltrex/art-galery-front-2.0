@@ -102,7 +102,7 @@ export const useLoadMore = <T>(url: string | null, params?: object) => {
     );
 };
 
-const useGenericMutation = <T, S = T | undefined>(
+export const useGenericMutation = <T, S = T | undefined>(
     func: (data: T | S) => Promise<AxiosResponse<S>>,
     url: string,
     params?: object,

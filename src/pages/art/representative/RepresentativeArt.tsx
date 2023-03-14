@@ -10,6 +10,8 @@ import RepresentativeArtInfo from './RepresentativeArtInfo';
 import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 import { useSaveProposal } from '../../../api/ProposalApi';
 import ProposalDialog from './ProposalDialog';
+import { TokenService } from '../../../services/TokenService';
+import { useGetLastArtInfoByArtId } from '../../../api/ArtInfoApi';
 
 interface IRepresentativeArtProps {
 }
@@ -35,6 +37,7 @@ const RepresentativeArt: React.FunctionComponent<IRepresentativeArtProps> = () =
 
 	const mutationSaveProposal = useSaveProposal();
 
+	const { data: lastArtInfo } = useGetLastArtInfoByArtId(artId);
 
 	return (
 		<Grid container
@@ -57,14 +60,16 @@ const RepresentativeArt: React.FunctionComponent<IRepresentativeArtProps> = () =
 			<Grid item sm={6}>
 				{ art && <RepresentativeArtInfo art={art} /> }
 
-				<Button 
-					startIcon={<AssignmentReturnedIcon />}
-					variant='contained' 
-					sx={{ borderRadius: 8, mt: 25, left: '50%', transform: 'translate(-50%, -50%)' }}
-					onClick={() => setOpenProposalDialog(true)}
-				>
-					Propose
-				</Button>
+				{!lastArtInfo &&
+					<Button 
+						startIcon={<AssignmentReturnedIcon />}
+						variant='contained' 
+						sx={{ borderRadius: 8, mt: 25, left: '50%', transform: 'translate(-50%, -50%)' }}
+						onClick={() => setOpenProposalDialog(true)}
+					>
+						Propose
+					</Button>
+				} 
 			</Grid>
 
 			{art && <ProposalDialog 

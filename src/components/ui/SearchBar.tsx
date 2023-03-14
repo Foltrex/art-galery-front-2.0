@@ -7,9 +7,10 @@ import { Container } from "@mui/system";
 interface ISearchBarProps {
     sx?: SxProps<Theme>;
     onSearch: (text: string) => void;
+    placeholder: string;
 }
 
-const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch }) => {
+const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => {
     const [searcingText, setSearchingText] = useState('');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -22,7 +23,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch }) => {
             <Paper sx={{...sx, display: 'flex', alignItems: 'center'}}>
                 <InputBase 
                     sx={{ flexGrow: 1, pl: 2 }} 
-                    placeholder='Search Paintings...' 
+                    placeholder={placeholder} 
                     inputProps={{ 'aria-label': 'search paintings' }}
                     onChange={handleChange} 
                 />
