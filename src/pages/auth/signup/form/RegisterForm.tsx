@@ -89,6 +89,7 @@ const RegisterForm = () => {
     useEffect(() => {
         if (representative) {
             const representativeObj = {
+                ...representative,
                 firstname: formik.values.firstname,
                 lastname: formik.values.lastname,
             } as Representative;
@@ -96,6 +97,7 @@ const RegisterForm = () => {
                 .then(() => navigate('/'));
         } else if (artist) {
             const artistObj = {
+                ...artist,
                 firstname: formik.values.firstname,
                 lastname: formik.values.lastname,
             } as Artist;
