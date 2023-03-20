@@ -35,7 +35,7 @@ const LetterAvatar: React.FunctionComponent<ILetterAvatarProps> = ({ name, sx })
 			sx={{ ...sx, bgcolor: stringToColor(name) }}
 		>
 			{
-				name.at(0)?.toUpperCase()
+				name && name[0].toUpperCase()
 			}
 		</Avatar>
 	);
