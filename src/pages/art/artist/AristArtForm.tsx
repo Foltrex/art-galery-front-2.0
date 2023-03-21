@@ -1,5 +1,6 @@
 import { Add } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
+import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { Box, Divider, Grid, IconButton, InputBase, Stack } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import { RefObject } from 'react';
@@ -75,9 +76,9 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 				
 				<Stack direction='row'>
-					<IconButton onClick={onImageAdd}>
-						<Add fontSize='large' />
-					</IconButton>
+					{/* <IconButton onClick={onImageAdd}>
+						<AddPhotoAlternateIcon color='primary' />
+					</IconButton> */}
 
 					<IconButton type='submit' disabled={formik.isSubmitting}>
 						<SaveIcon />

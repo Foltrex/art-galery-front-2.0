@@ -1,7 +1,8 @@
 import {USER_SERVICE} from "../http/axios";
-import {useDelete, useFetch, usePatch} from "../hooks/react-query";
+import {useDelete, useFetch, usePatch, usePost} from "../hooks/react-query";
 import {AuthService} from "../services/AuthService";
 import { Account } from "../entities/account";
+import { Representative } from "../entities/representative";
 
 export const useFetchAccountByEmail = (email: string) => {
     return useFetch(`${USER_SERVICE}/accounts/byEmail/${email}`, undefined, {
@@ -28,4 +29,8 @@ export const useDeleteAccountById = () => {
             'Authorization': `Bearer ${AuthService.getToken()}`,
         }
     });
+}
+
+export const useSaveRepresentative = () => {
+    return usePost<object, Representative>(`${USER_SERVICE}/auth/register-representative`);
 }
