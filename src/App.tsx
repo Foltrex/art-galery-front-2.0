@@ -1,4 +1,3 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/routes/PrivateRoute';
@@ -17,9 +16,103 @@ import { AuthService } from "./services/AuthService";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
 import Organization from './pages/organization';
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
+
+const router = createBrowserRouter([
+    {
+        path: '/admin/auth/signin',
+        element: <Login/>
+    },
+    {
+        path: '/admin/auth/signup',
+        element: <Register/>
+    },
+    {
+        path: '/admin/auth/passwordrecovery',
+        element: <PasswordRecovery/>
+    },
+    {
+        path: "/admin",
+        element: (<PrivateRoute>
+            <Layout/>
+        </PrivateRoute>),
+        children: [
+            {
+                index: true,
+                element: <Profile />,
+            },
+            {
+                path: 'facilities',
+                element: <Facilities />,
+            },
+            {
+                path: 'representatives',
+                element: <Representatives />,
+            },
+            {
+                path: 'proposals',
+                element: <Proposals />,
+            },
+            {
+                path: 'organization',
+                element: <Organization />,
+            },
+            {
+                path: 'arts',
+                children: [
+                    {
+                        path: 'artist',
+                        children: [
+                            {
+                                index: true,
+                                element: <Arts />
+                            },
+                            {
+                                path: 'new',
+                                element: <ArtCreation />
+                            },
+                            {
+                                path: ':id',
+                                element: <ArtistArt />
+                            },
+                        ],
+                    },
+                    {
+                        path: 'representative',
+                        children: [
+                            {
+                                index: true,
+                                element: <Arts />
+                            },
+                            {
+                                path: ':id',
+                                element: <RepresentativeArt />
+                            },
+                        ],
+                    },
+                ]
+            },
+            {
+                path: 'artists',
+                children: [
+                    {
+                        path: ":id",
+                        element: <ArtistProfile/>
+                    }
+                ]
+            },
+            {
+                path: "settings",
+                element: <Settings/>
+            }
+        ],
+    },
+]);
 
 function App() {
-
     window.addEventListener('beforeunload', (event) => {
         if (!AuthService.getRememberMe()) {
             AuthService.logout()
@@ -27,44 +120,7 @@ function App() {
     });
 
     return (
-        <BrowserRouter>
-            <Routes>
-                <Route path='/auth/signin' element={<Login/>}/>
-                <Route path='/auth/signup' element={<Register/>}/>
-                <Route path='/auth/passwordrecovery' element={<PasswordRecovery/>}/>
-
-                <Route path='/' element={
-                    <PrivateRoute>
-                        <Layout/>
-                    </PrivateRoute>
-                }>
-                    <Route index element={<Profile/>}/>
-                    <Route path='facilities' element={<Facilities/>}/>
-                    <Route path='representatives' element={<Representatives/>}/>
-                    <Route path='proposals' element={<Proposals />}/>
-                    <Route path='organization' element={<Organization />} />
-
-                    <Route path='arts'>
-                        <Route path='artist'>
-                            <Route index element={<Arts />} />
-                            <Route path='new' element={<ArtCreation />} />
-                            <Route path=':id' element={<ArtistArt />} />
-                        </Route>
-
-                        <Route path='representative'>
-                            <Route index element={<Arts />} />
-                            <Route path=':id' element={<RepresentativeArt />} />
-                        </Route>
-                    </Route>
-
-                    <Route path='artists'>
-                        <Route path=':id' element={<ArtistProfile />} />
-                    </Route>
-
-                    <Route path='settings' element={<Settings/>}/>
-                </Route>
-            </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} />
     );
 }
 

@@ -5,8 +5,7 @@ export const USER_SERVICE = "user-service"
 export const FILE_SERVICE = "file-service"
 
 const X_TOTAL_COUNT_HEADER: string = "X-Total-Count";
-
-export let axiosApi = axios.create({baseURL: `http://localhost:8080/`})
+export let axiosApi = axios.create({baseURL: process.env.REACT_APP_API_URL})
 
 axiosApi.interceptors.request.use(request => {
     return request;
