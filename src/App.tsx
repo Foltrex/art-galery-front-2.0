@@ -23,19 +23,19 @@ import {
 
 const router = createBrowserRouter([
     {
-        path: '/admin/auth/signin',
+        path: '/auth/signin',
         element: <Login/>
     },
     {
-        path: '/admin/auth/signup',
+        path: '/auth/signup',
         element: <Register/>
     },
     {
-        path: '/admin/auth/passwordrecovery',
+        path: '/auth/passwordrecovery',
         element: <PasswordRecovery/>
     },
     {
-        path: "/admin",
+        path: "/",
         element: (<PrivateRoute>
             <Layout/>
         </PrivateRoute>),
@@ -110,7 +110,7 @@ const router = createBrowserRouter([
             }
         ],
     },
-]);
+], {basename: "admin"});
 
 function App() {
     window.addEventListener('beforeunload', (event) => {
