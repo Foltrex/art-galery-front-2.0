@@ -110,7 +110,7 @@ const router = createBrowserRouter([
             }
         ],
     },
-], {basename: "admin"});
+], {basename: "/admin"});
 
 function App() {
     window.addEventListener('beforeunload', (event) => {
