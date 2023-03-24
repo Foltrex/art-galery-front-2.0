@@ -2,10 +2,12 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, For
 import { FormikHelpers, useFormik } from "formik";
 import React, { useEffect } from "react";
 import * as yup from 'yup';
+import { useGetAccountById, useSaveRepresentative } from "../../api/AccountApi";
+import { useRegisterRepresentative } from "../../api/AuthApi";
 import { useGetAllFacilitiesByAccountId, useGetFacilitiesPageByAccountId } from "../../api/FacilityApi";
 import { useGetOrganizationByAccountId } from "../../api/OrganizationApi";
 import { useGetOrganizationRoles } from "../../api/OrganizationRoleApi";
-import { useSaveRepresentative } from "../../api/RepresentativeApi";
+import { useUpdateRepresentativeById } from "../../api/RepresentativeApi";
 import { Facility } from "../../entities/facility";
 import { OrganizationRole } from "../../entities/organizationRole";
 import { Representative } from "../../entities/representative";
@@ -19,6 +21,7 @@ interface IRepresentativeFormProps {
 }
 
 interface FormValues {
+    email: string;
     firstname: string;
     lastname: string;
     facility: Facility;
@@ -27,9 +30,11 @@ interface FormValues {
 
 function RepresentativeForm({ open, onClose, representative }: IRepresentativeFormProps) {
     const token = TokenService.decode(AuthService.getToken());
+    
     const { data: facilities } = useGetAllFacilitiesByAccountId(token.id);
     const { data: organizationRoles } = useGetOrganizationRoles();
     const { data: organization } = useGetOrganizationByAccountId(token.id);
+    const { data: representativeAccount } = useGetAccountById(representative?.accountId);
 
     const [representativeObj, setRepresentative] = React.useState(
         representative ?? { 
@@ -47,6 +52,7 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
     }, [representative, organization]);
 
     const initialValues: FormValues = {
+        email: representativeAccount?.email ?? '',
         firstname: representativeObj.firstname,
         lastname: representativeObj.lastname,
         facility: representativeObj.facility,
@@ -54,6 +60,8 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
     };
 
     const validationSchema = yup.object({
+        email: yup.string()
+            .email(),
         firstname: yup.string()
             .min(1)
             .required(),
@@ -64,22 +72,31 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
             .required(),
     });
 
-    const mutationAdd = useSaveRepresentative();
+    const mutationSaveRepresentative = useRegisterRepresentative();
+    const mutationUpdateRepresentative = useUpdateRepresentativeById(representativeObj.id);
 
     const onSaveRepresentative = async (values: FormValues, {setSubmitting}: FormikHelpers<FormValues>) => {
         setSubmitting(true);
         try {
-            const representative: Representative = {
-                id: representativeObj.id,
-                firstname: values.firstname,
-                lastname: values.lastname,
-                organization: representativeObj.organization,
-                facility: values.facility,
-                organizationRole: values.organizationRole,
-                accountId: representativeObj.accountId
-            }
+            if (!representativeObj.id) {
+                const representative = {
+                    email: values.email,
+                    firstname: values.firstname,
+                    lastname: values.lastname,
+                    organizationId: representativeObj.organization.id,
+                    facilityId: values.facility.id,
+                }
+    
+                await mutationSaveRepresentative.mutateAsync(representative);
+            } else {
+                const representative: Representative = {
+                    ...representativeObj,
+                    firstname: values.firstname,
+                    lastname: values.lastname
+                };
 
-            await mutationAdd.mutateAsync(representative);
+                await mutationUpdateRepresentative.mutateAsync(representative);
+            }
         } catch (e) {
             // Add push notification
             console.log(e);
@@ -105,6 +122,20 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                 <Divider />
                 <DialogContent>
                     <Grid container rowSpacing={2}>
+                        <Grid item xs={12}>
+                            <TextField
+                                autoFocus
+                                name='email'
+                                label='Email'
+                                onChange={formik.handleChange}
+                                type="name"
+                                fullWidth
+                                required
+                                value={formik.values.email}
+                                variant="standard"
+                                disabled={!!representative}
+                            />
+                        </Grid>
                         <Grid item xs={12}>
                             <TextField
                                 autoFocus
@@ -148,29 +179,6 @@ function RepresentativeForm({ open, onClose, representative }: IRepresentativeFo
                                     {facilities?.map(facility => (
                                         <MenuItem key={facility.id} value={facility.id}>
                                             {facility.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-
-                        </Grid>
-                        <Grid item xs={12}>
-                            <FormControl fullWidth size='small'>
-                                <InputLabel id='organization-role-label'>Organization Role</InputLabel>
-                                <Select
-                                    labelId='organization-role-label'
-                                    name='organizationRole'
-                                    label='Organization Role'
-                                    value={formik.values?.organizationRole?.id ?? ''}
-                                    required
-                                    onChange={e => {
-                                        const selectedRole = organizationRoles?.find(r => r.id === e.target.value);
-                                        formik.setFieldValue('organizationRole', selectedRole);
-                                    }}
-                                >
-                                    {organizationRoles?.map(role => (
-                                        <MenuItem key={role.id} value={role.id}>
-                                            {role.name}
                                         </MenuItem>
                                     ))}
                                 </Select>
