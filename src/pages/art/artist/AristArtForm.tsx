@@ -1,7 +1,7 @@
 import { Add } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import { Box, Divider, Grid, IconButton, InputBase, Stack } from '@mui/material';
+import { Box, Divider, Grid, IconButton, InputBase, Stack, TextField } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import { RefObject } from 'react';
 import * as yup from 'yup';
@@ -26,10 +26,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 
 	const validationSchema = yup.object({
 		name: yup.string()
-			.min(1)
-			.required(),
-		description: yup.string()
-			.min(1)
 			.required()
 	});
 
@@ -67,12 +63,14 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-				<InputBase
+				<TextField
 					placeholder='Enter art name'
 					name='name'
 					value={formik.values.name}
 					onChange={formik.handleChange}
 					fullWidth
+					error={!!formik.errors.name}
+					helperText={formik.errors.name}
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 				
 				<Stack direction='row'>
