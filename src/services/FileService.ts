@@ -8,10 +8,10 @@ export class FileService {
     static createImageLinkForAccountType(artId: string, accountType: AccountEnum) {
         switch (accountType) {
             case AccountEnum.ARTIST: {
-                return `http://localhost:3000/arts/artist/${artId}`;
+                return process.env.REACT_APP_PUBLIC_URL + `/arts/artist/${artId}`;
             }
             case AccountEnum.REPRESENTATIVE: {
-                return `http://localhost:3000/arts/representative/${artId}`;
+                return process.env.REACT_APP_PUBLIC_URL + `/arts/representative/${artId}`;
             }
             default: {
                 throw new Error('Invalid account type for image\'s url creating')
