@@ -2,13 +2,14 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import * as React from 'react';
 import { useDeleteProposal, useGetProposalPageByAccountId, useSaveProposal } from '../../api/ProposalApi';
 import DeleteModal from '../../components/modal/DeleteModal';
+import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import ScrollTop from '../../components/ui/ScrollTop';
 import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { Proposal } from '../../entities/proposal';
 import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
-import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import ArtistProposalTableItem from './ArtistProposalTableItem';
+import CounterofferModal from './CounterofferModal';
 import ProposalInfo from './ProposalInfo';
 import RepresentativeProposalTableItem from './RepresentativeProposalTableItem';
 
@@ -20,6 +21,7 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 
 	const [openProposalInfoModal, setOpenProposalInfoModal] = React.useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+	const [openCounterOfferModal, setOpenCounterOfferModal] = React.useState(false);
 	const [proposal, setProposal] = React.useState<Proposal>();
 
 	const token = TokenService.decode(AuthService.getToken());
@@ -52,6 +54,28 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 		onSaveProposal(proposal);
 	}
 	
+	const handleArtistApproveProposalButtonClick = (proposal: Proposal) => {
+		onSaveProposal({...proposal, artistConfirmation: true});
+	}
+
+	const handleArtistRejectProposalButtonClick = (proposal: Proposal) => {
+		setProposal(proposal);
+		onSaveProposal({...proposal, artistConfirmation: false});
+		setOpenCounterOfferModal(true);
+	}
+
+	const handleOrganizationApproveProposalButtonClick = (proposal: Proposal) => {
+		onSaveProposal({...proposal, organizationConfirmation: true});
+	}
+
+	const handleOrganizationRejectProposalButtonClick = (proposal: Proposal) => {
+		setProposal(proposal);
+		onSaveProposal({...proposal, organizationConfirmation: false});
+		setOpenCounterOfferModal(true);
+	}
+
+
+
 	const mutationSaveProposal = useSaveProposal();
 
 	const onSaveProposal = async (proposal: Proposal) => {
@@ -69,15 +93,20 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 					<RepresentativeProposalTableItem 
 						proposal={proposal} 
 						onViewDetailsClick={handleViewDetailsClick}
-						onDeleteButtonClick={handleDeleteButtonClick} />
+						onOrganizationRejectProposalButtonClick={handleOrganizationRejectProposalButtonClick} 
+						onOrganizationApproveProposalButtonClick={handleOrganizationApproveProposalButtonClick} 
+						onDeleteButtonClick={handleDeleteButtonClick} 
+					/>
 				);
 			}
 			case AccountEnum.ARTIST: {
 				return (
 					<ArtistProposalTableItem
 						proposal={proposal}
-						onViewDetailsClick={handleViewDetailsClick}
-						onEditButtonClick={handleEditButtonClick} />
+						onViewDetailsClick={handleViewDetailsClick} 
+						onArtistRejectProposalButtonClick={handleArtistRejectProposalButtonClick} 
+						onArtistApproveProposalButtonClick={handleArtistApproveProposalButtonClick} 
+					/>
 				);
 			}
 		}
@@ -111,6 +140,12 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} /> }
 
 			<ScrollTop />
+
+			<CounterofferModal 
+				open={openCounterOfferModal} 
+				onClose={() => setOpenCounterOfferModal(false)} 
+				proposal={proposal!}			
+			/>
 
 			<ProposalInfo
 				proposal={proposal!}

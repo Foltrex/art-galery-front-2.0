@@ -1,22 +1,19 @@
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputAdornment, TextField } from '@mui/material';
 import { Box } from '@mui/system';
-import Big from 'big.js';
 import { FormikHelpers, useFormik } from 'formik';
-import lodash from 'lodash';
 import * as React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
-import { useGetArtistByAccountId, useGetArtistByArtId } from '../../../api/ArtistApi';
-import { useGetAllCurrencies, useSaveCurrency } from '../../../api/CurrencyApi';
-import { useGetFacilityByAccountId } from '../../../api/FacilityApi';
-import { useSaveProposal } from '../../../api/ProposalApi';
-import { Art } from '../../../entities/art';
-import { Artist } from '../../../entities/artist';
-import { Currency } from '../../../entities/currency';
-import { Proposal } from '../../../entities/proposal';
-import { TokenService } from '../../../services/TokenService';
+import { useGetArtistByArtId } from '../../api/ArtistApi';
+import { useGetAllCurrencies, useSaveCurrency } from '../../api/CurrencyApi';
+import { useGetFacilityByAccountId } from '../../api/FacilityApi';
+import { useSaveProposal } from '../../api/ProposalApi';
+import { Art } from '../../entities/art';
+import { Currency } from '../../entities/currency';
+import { Proposal } from '../../entities/proposal';
+import { TokenService } from '../../services/TokenService';
 
 interface FormValues {
 	money: string;
@@ -73,7 +70,6 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	const onSaveProposal = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);
 		try {
-			console.log(proposalObj)
 			// todo: change latter
 			const proposal: Proposal = {
 				art: art,

@@ -1,17 +1,15 @@
+import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
 import { Button, Grid } from '@mui/material';
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 import { useGetArtById } from '../../../api/ArtApi';
+import { useGetLastArtInfoByArtId } from '../../../api/ArtInfoApi';
 import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from '../../../api/FileApi';
-import DeleteModal from '../../../components/modal/DeleteModal';
+import { useSaveProposal } from '../../../api/ProposalApi';
 import ImageSlider from '../../../components/ui/ImageSlider';
+import ProposalDialog from '../../../components/ui/ProposalDialog';
 import { FileService } from '../../../services/FileService';
 import RepresentativeArtInfo from './RepresentativeArtInfo';
-import AssignmentReturnedIcon from '@mui/icons-material/AssignmentReturned';
-import { useSaveProposal } from '../../../api/ProposalApi';
-import ProposalDialog from './ProposalDialog';
-import { TokenService } from '../../../services/TokenService';
-import { useGetLastArtInfoByArtId } from '../../../api/ArtInfoApi';
 
 interface IRepresentativeArtProps {
 }

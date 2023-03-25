@@ -10,9 +10,12 @@ import { AuthService } from '../../services/AuthService';
 import { TokenService } from '../../services/TokenService';
 import InfiniteArtList from './InfiniteArtList';
 import LoadMoreButton from '../../components/ui/LoadMoreButton';
+import { AccountEnum } from '../../entities/enums/AccountEnum';
 
 const Arts = () => {
 	const navigate = useNavigate();
+
+	const accountType = TokenService.getCurrentAccountType();
 
 	const [searchText, setSearchText] = useState<string>();
 
@@ -90,11 +93,13 @@ const Arts = () => {
 						</Select>
 					</FormControl>
 
-					<Tooltip title='Add New Art'>
-						<IconButton onClick={() => navigate('/arts/artist/new')}>
-							<AddIcon fontSize='large' />
-						</IconButton>
-					</Tooltip>
+					{accountType === AccountEnum.ARTIST &&
+						<Tooltip title='Add New Art'>
+							<IconButton onClick={() => navigate('/arts/artist/new')}>
+								<AddIcon fontSize='large' />
+							</IconButton>
+						</Tooltip>
+					}
 				</Box>
 
 				<FormGroup sx={{ px: 5, pt: 1 }}>

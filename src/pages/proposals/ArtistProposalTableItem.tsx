@@ -1,25 +1,32 @@
 import { Button, Stack, TableCell, TableRow, Typography } from '@mui/material';
 import * as React from 'react';
-import { useSaveProposal } from '../../api/ProposalApi';
 import LetterAvatar from '../../components/ui/LetterAvatar';
 import { Proposal } from '../../entities/proposal';
 
 interface IArtistTableItemProps {
 	proposal: Proposal;
 	onViewDetailsClick: (proposal: Proposal) => void;
-	onEditButtonClick: (proposal: Proposal) => void;
+	onArtistRejectProposalButtonClick: (proposal: Proposal) => void;
+	onArtistApproveProposalButtonClick: (proposal: Proposal) => void;
 }
 
 const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({ 
 	proposal, 
 	onViewDetailsClick, 
-	onEditButtonClick 
+	onArtistApproveProposalButtonClick,
+	onArtistRejectProposalButtonClick
 }) => {
+	const { 
+		price, 
+		currency, 
+		art, 
+		artist,
+		organization, 
+		artistConfirmation,
+		organizationConfirmation
+	} = proposal;
 
-	const { price, currency, art, organization, artistConfirmation } = proposal;
-
-	if (artistConfirmation !== null) {
-
+	if (artistConfirmation !== null && organizationConfirmation !== null) {
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
@@ -51,8 +58,7 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 				</TableCell>
 			</TableRow>
 		);
-	} else {
-
+	} else if (artistConfirmation === null) {
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
@@ -79,14 +85,14 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 						<Button
 							variant='contained'
 							sx={{ borderRadius: 8 }}
-							onClick={() => onEditButtonClick({...proposal, artistConfirmation: true})}
+							onClick={() => onArtistApproveProposalButtonClick(proposal)}
 						>
 							Approve
 						</Button>
 						<Button
 							variant='outlined'
 							sx={{ borderRadius: 8 }}
-							onClick={() => onEditButtonClick({...proposal, artistConfirmation: false})}
+							onClick={() => onArtistRejectProposalButtonClick(proposal)}
 						>
 							Reject
 						</Button>
@@ -94,7 +100,28 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 				</TableCell>
 			</TableRow>
 		);
+	} else {
+		return (
+			<TableRow>
+			<TableCell align='center' sx={{ width: 10 }}>
+				<LetterAvatar name={artist.firstname} />
+			</TableCell>
+			<TableCell align='left'>
+				<Stack direction='column'>
+					<strong>{artist.firstname} {artist.lastname}</strong>
+					You propose {artist.firstname} {artist.lastname} {price} {currency.label} for painting {art.name}
+				</Stack>
+			</TableCell>
 
+			<TableCell />
+
+			<TableCell align='left'>
+				<Button size='small' onClick={() => onViewDetailsClick(proposal)}>
+					View details
+				</Button>
+			</TableCell>
+		</TableRow>
+		);
 	}
 };
 
