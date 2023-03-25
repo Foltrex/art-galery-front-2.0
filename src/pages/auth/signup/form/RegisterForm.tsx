@@ -113,7 +113,7 @@ const RegisterForm = () => {
             alertStore.setShow(false)
         } catch (error: any) {
             console.log(error.response.data.message)
-            alertStore.setShow(true, 'error', "Register error", error.response.data.message);
+            alertStore.setShow(true, 'error', "Registration error", error.response.data.message);
         }
     }
 
