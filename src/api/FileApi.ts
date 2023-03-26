@@ -1,7 +1,7 @@
-import { useDelete, useFetch, usePost } from "../hooks/react-query"
-import { File } from '../entities/file';
-import { axiosApi, FILE_SERVICE } from "../http/axios";
-import { QueryFunctionContext, useQuery } from "react-query";
+import {useDelete, useFetch, usePost} from "../hooks/react-query"
+import {File} from '../entities/file';
+import {axiosApi, FILE_SERVICE} from "../http/axios";
+import {useQuery} from "react-query";
 
 
 export const fetchImages = (ids: string[] = []) => {

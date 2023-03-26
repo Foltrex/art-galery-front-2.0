@@ -1,6 +1,13 @@
-import { AxiosError, AxiosResponse } from "axios";
-import { QueryFunctionContext, useInfiniteQuery, useMutation, useQuery, useQueryClient, UseQueryOptions } from "react-query";
-import { axiosApi } from "../http/axios";
+import {AxiosError, AxiosResponse} from "axios";
+import {
+    QueryFunctionContext,
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
+    UseQueryOptions
+} from "react-query";
+import {axiosApi} from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
@@ -73,6 +80,7 @@ export const useFetch = <T>(
     params?: object,
     config?: UseQueryOptions<T, Error, T, QueryKeyT>
 ) => {
+    console.log(url, params);
     return useQuery<T, Error, T, QueryKeyT>(
         [url!, params],
         context => fetch(context),

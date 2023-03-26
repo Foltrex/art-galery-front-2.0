@@ -1,8 +1,6 @@
-import { File as FileEntity } from "../entities/file";
-import {Buffer} from 'buffer';
+import {File as FileEntity} from "../entities/file";
 import naclUtil from 'tweetnacl-util';
-import { decode } from "base64-arraybuffer";
-import { AccountEnum } from "../entities/enums/AccountEnum";
+import {AccountEnum} from "../entities/enums/AccountEnum";
 
 export class FileService {
     static createImageLinkForAccountType(artId: string, accountType: AccountEnum) {

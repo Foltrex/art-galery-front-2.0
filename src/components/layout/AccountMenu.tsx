@@ -1,18 +1,28 @@
-import { Login, Logout, Mail, Settings } from '@mui/icons-material';
-import { Avatar, Badge, CircularProgress, Divider, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import {Login, Logout, Mail, Settings} from '@mui/icons-material';
+import {
+    Avatar,
+    Badge,
+    CircularProgress,
+    Divider,
+    IconButton,
+    ListItemIcon,
+    Menu,
+    MenuItem,
+    Tooltip
+} from '@mui/material';
 import * as React from 'react';
-import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
-import { useCountProposalsByAccountId } from '../../api/ProposalApi';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
+import {useCookies} from 'react-cookie';
+import {useNavigate} from 'react-router-dom';
+import {useCountProposalsByAccountId} from '../../api/ProposalApi';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
 import LetterAvatar from '../ui/LetterAvatar';
 
 interface IAccountMenuProps {
 }
 
 const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
-	const [cookies, setCookie] = useCookies(['token']);
+	const [cookies] = useCookies(['token']);
 	const [isLogin] = React.useState<boolean | null>(cookies.token);
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const openAccountMenu = !!anchorEl;

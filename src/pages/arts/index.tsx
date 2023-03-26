@@ -1,16 +1,32 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Checkbox, Container, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, IconButton, InputLabel, MenuItem, Paper, Radio, RadioGroup, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import {
+    Box,
+    Container,
+    Divider,
+    FormControl,
+    FormControlLabel,
+    FormGroup,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectChangeEvent,
+    Tooltip
+} from '@mui/material';
 
-import { ChangeEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useGetAllArtsByAccountIdAndSearchText } from '../../api/ArtApi';
+import {ChangeEvent, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useGetAllArtsByAccountIdAndSearchText} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
 import SearchBar from '../../components/ui/SearchBar';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
 import InfiniteArtList from './InfiniteArtList';
 import LoadMoreButton from '../../components/ui/LoadMoreButton';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
+import {AccountEnum} from '../../entities/enums/AccountEnum';
 
 const Arts = () => {
 	const navigate = useNavigate();

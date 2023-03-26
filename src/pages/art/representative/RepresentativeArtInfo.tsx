@@ -1,9 +1,8 @@
-import { Box, Typography, IconButton, Divider, Stack, Grid } from '@mui/material';
+import {Box, Divider, Grid, IconButton, Stack, Typography} from '@mui/material';
 import * as React from 'react';
-import { Art } from '../../../entities/art';
-import HistoryIcon from '@mui/icons-material/History';
+import {Art} from '../../../entities/art';
 import ArtExhibitionHistory from '../ArtExhibitionHistory';
-import { History } from '@mui/icons-material';
+import {History} from '@mui/icons-material';
 
 interface IRepresentativeArtInfoProps {
 	art: Art;

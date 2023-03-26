@@ -1,21 +1,21 @@
-import { Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField } from "@mui/material";
+import {Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField} from "@mui/material";
 import Box from "@mui/material/Box";
-import { Formik, useFormik } from "formik";
-import { useEffect } from "react";
-import { useCookies } from 'react-cookie';
-import { useNavigate } from "react-router-dom";
+import {useFormik} from "formik";
+import {useEffect} from "react";
+import {useCookies} from 'react-cookie';
+import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
-import { useGetArtistByAccountId, useUpdateArtistById } from "../../../../api/ArtistApi";
-import { useRegister } from '../../../../api/AuthApi';
-import { useGetRepresentativeByAccountId, useUpdateRepresentativeById } from "../../../../api/RepresentativeApi";
+import {useGetArtistByAccountId, useUpdateArtistById} from "../../../../api/ArtistApi";
+import {useRegister} from '../../../../api/AuthApi';
+import {useGetRepresentativeByAccountId, useUpdateRepresentativeById} from "../../../../api/RepresentativeApi";
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import AlertNotification from '../../../../components/notifications/AlertNotification';
-import { Artist } from "../../../../entities/artist";
-import { AccountEnum } from "../../../../entities/enums/AccountEnum";
-import { Representative } from "../../../../entities/representative";
-import { AuthService } from "../../../../services/AuthService";
-import { TokenService } from "../../../../services/TokenService";
-import { useRootStore } from "../../../../stores/provider/RootStoreProvider";
+import {Artist} from "../../../../entities/artist";
+import {AccountEnum} from "../../../../entities/enums/AccountEnum";
+import {Representative} from "../../../../entities/representative";
+import {AuthService} from "../../../../services/AuthService";
+import {TokenService} from "../../../../services/TokenService";
+import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import RegisterFormBottom from './RegisterFormBottom';
 
 interface IRegisterFormValues {

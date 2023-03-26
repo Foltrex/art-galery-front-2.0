@@ -1,13 +1,10 @@
-import { Add } from '@mui/icons-material';
 import SaveIcon from '@mui/icons-material/Save';
-import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
-import { Box, Divider, Grid, IconButton, InputBase, Stack, TextField } from '@mui/material';
-import { FormikHelpers, useFormik } from 'formik';
-import { RefObject } from 'react';
+import {Box, Divider, Grid, IconButton, InputBase, Stack, TextField} from '@mui/material';
+import {FormikHelpers, useFormik} from 'formik';
 import * as yup from 'yup';
-import { useGetArtistByAccountId } from '../../../api/ArtistApi';
-import { Art } from '../../../entities/art';
-import { TokenService } from '../../../services/TokenService';
+import {useGetArtistByAccountId} from '../../../api/ArtistApi';
+import {Art} from '../../../entities/art';
+import {TokenService} from '../../../services/TokenService';
 
 interface IArtFormProps {
 	art?: Art;
@@ -23,6 +20,16 @@ interface FormValues {
 const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImageAdd }) => {
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: artist } = useGetArtistByAccountId(accountId);
+
+	/*
+	let artist:Artist|undefined = undefined;
+	useEffect(() => {
+		if(!accountId) {
+			return;
+		}
+		artist = useGetArtistByAccountId(accountId).data;
+	}, [accountId])
+	*/
 
 	const validationSchema = yup.object({
 		name: yup.string()

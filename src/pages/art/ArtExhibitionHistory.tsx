@@ -1,10 +1,22 @@
-import { Close } from '@mui/icons-material';
-import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, List, ListItem, ListItemAvatar, ListItemText, Stack, Typography } from '@mui/material';
-import lodash from 'lodash';
+import {Close} from '@mui/icons-material';
+import {
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Stack,
+    Typography
+} from '@mui/material';
 import * as React from 'react';
-import { useGetArtInfosByArtId } from '../../api/ArtInfoApi';
+import {useGetArtInfosByArtId} from '../../api/ArtInfoApi';
 import LetterAvatar from '../../components/ui/LetterAvatar';
-import { Art } from '../../entities/art';
+import {Art} from '../../entities/art';
 
 interface IArtExhibitionHistoryProps {
 	art: Art;
@@ -13,7 +25,7 @@ interface IArtExhibitionHistoryProps {
 }
 
 const ArtExhibitionHistory: React.FunctionComponent<IArtExhibitionHistoryProps> = ({ art, open, onClose }) => {
-	const { data: artInfosHistory, isFetched } = useGetArtInfosByArtId(art.id);
+	const { data: artInfosHistory } = useGetArtInfosByArtId(art.id);
 
 	const renderArtHistory = () => {
 		return artInfosHistory && artInfosHistory.length > 0

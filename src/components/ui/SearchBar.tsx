@@ -1,8 +1,8 @@
-import { Autocomplete, Box, IconButton, InputBase, Paper, SxProps, TextField, Theme } from "@mui/material";
+import {IconButton, InputBase, Paper, SxProps, Theme} from "@mui/material";
 
 import SearchIcon from '@mui/icons-material/Search';
-import { ChangeEvent, useState } from "react";
-import { Container } from "@mui/system";
+import {ChangeEvent, useState} from "react";
+import {Container} from "@mui/system";
 
 interface ISearchBarProps {
     sx?: SxProps<Theme>;
