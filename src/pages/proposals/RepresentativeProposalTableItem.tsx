@@ -1,10 +1,8 @@
 import { Delete } from '@mui/icons-material';
 import { Button, IconButton, Stack, TableCell, TableRow, Typography } from '@mui/material';
 import * as React from 'react';
-import { useDeleteProposal } from '../../api/ProposalApi';
 import LetterAvatar from '../../components/ui/LetterAvatar';
 import { Proposal } from '../../entities/proposal';
-import { TokenService } from '../../services/TokenService';
 
 interface IRepresentativeTableItemProps {
 	proposal: Proposal;
