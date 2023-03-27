@@ -1,18 +1,17 @@
-import {Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
-import * as React from 'react';
-import {styled, useTheme} from '@mui/material/styles';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
-import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import PeopleOutline from '@mui/icons-material/PeopleOutline';
 import LocalPostOfficeOutlined from '@mui/icons-material/LocalPostOfficeOutlined';
 import LoginOutlined from '@mui/icons-material/LoginOutlined';
-import {Link} from 'react-router-dom';
-import {TokenService} from "../../services/TokenService";
-import {AccountEnum} from "../../entities/enums/AccountEnum";
 import PeopleIcon from '@mui/icons-material/People';
+import PeopleOutline from '@mui/icons-material/PeopleOutline';
+import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
+import { AccountEnum } from "../../entities/enums/AccountEnum";
+import { TokenService } from "../../services/TokenService";
 
 const drawerWidth = 240;
 
@@ -65,6 +64,11 @@ function prepareSidebar(accountType:string) {
                     text: 'Arts',
                     icon: <PhotoSizeSelectActualOutlinedIcon />,
                     link: '/arts/artist'
+                },
+                {
+                    text: 'Organizations',
+                    icon: <PeopleIcon />,
+                    link: '/organizations'
                 }
             ]
         case AccountEnum.SYSTEM: {

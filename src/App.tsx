@@ -16,12 +16,106 @@ import {AuthService} from "./services/AuthService";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
 import Organization from './pages/organization';
-import {BrowserRouter, Route, Routes,} from "react-router-dom";
-import ErrorPage from "./pages/error/ErrorPage";
-import Error404 from "./pages/error/Error404";
-import ArtistsGrid from "./pages/artists/ArtistsGrid";
-import OrganizationGrid from "./pages/organization/OrganizationsGrid";
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
+import Organizations from './pages/organizations';
 
+const router = createBrowserRouter([
+    {
+        path: '/auth/signin',
+        element: <Login/>
+    },
+    {
+        path: '/auth/signup',
+        element: <Register/>
+    },
+    {
+        path: '/auth/passwordrecovery',
+        element: <PasswordRecovery/>
+    },
+    {
+        path: "/",
+        element: (<PrivateRoute>
+            <Layout/>
+        </PrivateRoute>),
+        children: [
+            {
+                index: true,
+                element: <Profile />,
+            },
+            {
+                path: 'facilities',
+                element: <Facilities />,
+            },
+            {
+                path: 'representatives',
+                element: <Representatives />,
+            },
+            {
+                path: 'proposals',
+                element: <Proposals />,
+            },
+            {
+                path: 'organization',
+                element: <Organization />,
+            },
+            {
+                path: '/organizations',
+                element: <Organizations/>
+            },
+            {
+                path: 'arts',
+                children: [
+                    {
+                        path: 'artist',
+                        children: [
+                            {
+                                index: true,
+                                element: <Arts />
+                            },
+                            {
+                                path: 'new',
+                                element: <ArtCreation />
+                            },
+                            {
+                                path: ':id',
+                                element: <ArtistArt />
+                            },
+                        ],
+                    },
+                    {
+                        path: 'representative',
+                        children: [
+                            {
+                                index: true,
+                                element: <Arts />
+                            },
+                            {
+                                path: ':id',
+                                element: <RepresentativeArt />
+                            },
+                        ],
+                    },
+                ]
+            },
+            {
+                path: 'artists',
+                children: [
+                    {
+                        path: ":id",
+                        element: <ArtistProfile/>
+                    }
+                ]
+            },
+            {
+                path: "settings",
+                element: <Settings/>
+            }
+        ],
+    },
+], {basename: "/admin"});
 
 function App() {
     window.addEventListener('beforeunload', (event) => {
@@ -31,51 +125,7 @@ function App() {
     });
 
     return (
-        <BrowserRouter basename={"/admin"}>
-            <Routes>
-                <Route path='/auth/signin' element={<Login/>}/>
-                <Route path='/auth/signup' element={<Register/>}/>
-                <Route path='/auth/passwordrecovery' element={<PasswordRecovery/>}/>
-
-                <Route path='/' errorElement={<ErrorPage/>} element={
-                    <PrivateRoute>
-                        <Layout/>
-                    </PrivateRoute>
-                }>
-                    <Route path={"organizations"}>
-                        <Route index element={<OrganizationGrid/>}/>
-                    </Route>
-
-
-                    <Route index element={<Profile/>}/>
-                    <Route path='facilities' element={<Facilities/>}/>
-                    <Route path='representatives' element={<Representatives/>}/>
-                    <Route path='proposals' element={<Proposals/>}/>
-                    <Route path='organization' element={<Organization/>}/>
-
-                    <Route path='arts'>
-                        <Route path='artist'>
-                            <Route index element={<Arts/>}/>
-                            <Route path='new' element={<ArtCreation/>}/>
-                            <Route path=':id' element={<ArtistArt/>}/>
-                        </Route>
-
-                        <Route path='representative'>
-                            <Route index element={<Arts/>}/>
-                            <Route path=':id' element={<RepresentativeArt/>}/>
-                        </Route>
-                    </Route>
-
-                    <Route path='artists'>
-                        <Route index element={<ArtistsGrid/>} />
-                        <Route path=':id' element={<ArtistProfile/>}/>
-                    </Route>
-
-                    <Route path='settings' element={<Settings/>}/>
-                </Route>
-                <Route path={"*"} element={<Error404 />}/>
-            </Routes>
-        </BrowserRouter>
+        <RouterProvider router={router} />
     );
 }
 
