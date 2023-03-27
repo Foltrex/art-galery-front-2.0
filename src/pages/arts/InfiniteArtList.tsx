@@ -17,9 +17,9 @@ const InfiniteArtList: React.FunctionComponent<IInfiniteArtListProps> = ({ infin
             rowHeight={300}
             sx={{ width: 'auto' }}
         >
-            {infinteData.pages.map((page, i) => (
-                page.content.map((art, j) => {
-                    return <ArtItem key={10 * i + j} art={art} />
+            {infinteData.pages.map(page => (
+                page.content.map(art => {
+                    return <ArtItem key={art.id} art={art} />
                 })
             ))}
         </ImageList>
