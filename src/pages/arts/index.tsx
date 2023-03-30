@@ -36,10 +36,11 @@ const Arts = () => {
 	const [searchText, setSearchText] = useState<string>();
 
 	const searchFilters: Array<{label: string, value: string}> = [
+		{label: 'All', value: 'all'},
 		{label: 'Exhibited', value: 'exhibited'},
 		{label: 'Free', value: 'free'},
-		{label: 'All', value: 'all'}
 	];
+
 	const [searchFilter, setSearchFilter] = useState(searchFilters[0].value);
 
 	const searchOptions:  Array<{label: string, value: string}> = [
@@ -68,7 +69,7 @@ const Arts = () => {
 		setSearchFilter(e.target.value);
 	}
 
-	const handleChangeSearchOption = (e: SelectChangeEvent<string>) => {
+	const handleChangeSearchOption = (e: SelectChangeEvent) => {
 		setSearchOption(e.target.value);
 	}
 
@@ -76,13 +77,13 @@ const Arts = () => {
 		<Container sx={{position: 'relative'}}>
 			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
 				<Box
-					sx={{ 
-						display: 'flex', 
-						gap: '20px', 
-						justifyContent: 'space-between', 
+					sx={{
+						display: 'flex',
+						gap: '20px',
+						justifyContent: 'space-between',
 						alignItems: 'center',
 						px: 2,
-						pt: 2 
+						pt: 2
 					}}
 				>
 
@@ -99,8 +100,8 @@ const Arts = () => {
 							size='small'
 						>
 							{searchOptions.map(option => (
-								<MenuItem 
-									key={option.value} 
+								<MenuItem
+									key={option.value}
 									value={option.value}
 								>
 									{option.label}
@@ -123,13 +124,13 @@ const Arts = () => {
 						value={searchFilter}
 						onChange={handleChangeSearchFilter}
 						row
-					>	
+					>
 						{searchFilters.map(filter => (
-							<FormControlLabel 
-								key={filter.value} 
-								control={<Radio size='small' />} 
+							<FormControlLabel
+								key={filter.value}
+								control={<Radio size='small' />}
 								value={filter.value}
-								label={filter.label} /> 
+								label={filter.label} />
 						))}
 					</RadioGroup>
 				</FormGroup>
@@ -140,7 +141,7 @@ const Arts = () => {
 			</Paper>
 
 			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} />  }
-			
+
 			<ScrollTop />
 		</Container>
 	);
