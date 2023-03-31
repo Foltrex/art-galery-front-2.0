@@ -1,25 +1,15 @@
-import {
-    Button,
-    Checkbox,
-    CircularProgress,
-    FormControlLabel,
-    FormHelperText,
-    Grid,
-    Stack,
-    TextField
-} from "@mui/material";
+import {Button, CircularProgress, FormHelperText, Grid, TextField} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useFormik} from "formik";
-import {useEffect, useState} from "react";
-import {useCookies} from 'react-cookie';
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
-import { useRegister } from '../../../../api/AuthApi';
+import {useRegister} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import AlertNotification from '../../../../components/notifications/AlertNotification';
-import { AccountEnum } from "../../../../entities/enums/AccountEnum";
-import { AuthService } from "../../../../services/AuthService";
-import { useRootStore } from "../../../../stores/provider/RootStoreProvider";
+import {AccountEnum} from "../../../../entities/enums/AccountEnum";
+import {AuthService} from "../../../../services/AuthService";
+import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import RegisterFormBottom from './RegisterFormBottom';
 
 interface IRegisterFormValues {
@@ -40,8 +30,6 @@ const RegisterForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationRegister = useRegister();
-
-    const [cookies, setCookie] = useCookies(['token']);
     const [step, setStep] = useState(1);
 
     const initialValues: IRegisterFormValues = {
@@ -81,7 +69,6 @@ const RegisterForm = () => {
             setSubmitting(false)
         }
     })
-
 
     const submit = async (values: IRegisterFormValues) => {
         try {

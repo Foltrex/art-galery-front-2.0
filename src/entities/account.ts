@@ -4,8 +4,8 @@ import {AccountEnum} from "./enums/AccountEnum";
 export interface Account {
     id: string;
     email: string;
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     accountType: AccountEnum;
     metadata: Metadata[];
 }

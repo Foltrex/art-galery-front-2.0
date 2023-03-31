@@ -25,10 +25,11 @@ import Error404 from "./pages/error/Error404";
 import ProfilePage from "./pages/home/ProfilePage";
 
 function App() {
+    //@Todo maybe bug here
     window.addEventListener('beforeunload', (event) => {
-        if (!AuthService.getRememberMe()) {
-            AuthService.logout()
-        }
+        // if (!AuthService.getRememberMe()) {
+        //     AuthService.logout()
+        // }
     });
 
     return (
@@ -49,6 +50,7 @@ function App() {
                     <Route path={"organizations1"}>
                         <Route index element={<OrganizationGrid/>}/>
                     </Route>
+                    {/*@Todo new profile page*/}
                     <Route path={"/test"}>
                         <Route index element={<ProfilePage/>}/>
                     </Route>
@@ -74,13 +76,13 @@ function App() {
                     </Route>
 
                     <Route path='artists'>
-                        <Route index element={<ArtistsGrid/>} />
+                        <Route index element={<ArtistsGrid/>}/>
                         <Route path=':id' element={<ArtistProfile/>}/>
                     </Route>
 
                     <Route path='settings' element={<Settings/>}/>
                 </Route>
-                <Route path={"*"} element={<Error404 />}/>
+                <Route path={"*"} element={<Error404/>}/>
             </Routes>
         </BrowserRouter>
     );

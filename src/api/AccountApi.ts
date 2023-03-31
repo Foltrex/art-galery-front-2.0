@@ -15,6 +15,14 @@ export const useGetAccountById = (id?: string) => {
     return useFetch<Account>(`${USER_SERVICE}/accounts/${id}`, undefined, {enabled: !!id})
 }
 
+export const useUpdateAccountImageById = (id: string) => {
+    return usePatch(`${USER_SERVICE}/accounts/${id}/account-image`, undefined, {
+        headers: {
+            'Authorization': `Bearer ${AuthService.getToken()}`,
+        }
+    });
+}
+
 export const useUpdateAccountPasswordById = (id: string) => {
     return usePatch(`${USER_SERVICE}/accounts/${id}/password`, undefined, {
         headers: {

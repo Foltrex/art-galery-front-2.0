@@ -11,7 +11,7 @@ const RepresentativeInfo = () => {
     return (
         <Container>
             <Box sx={{mt: 6}}>
-                <ProfileImage/>
+                {/*<ProfileImage/>*/}
             </Box>
             <Box sx={{textAlign: 'center', width: '40%', mt: 4, mx: 'auto'}}>
                 <Typography variant='h4'>
