@@ -6,12 +6,14 @@ import Loading from '../../components/ui/Loading';
 import ArtistEditDialog from './edit/ArtistEditDialog';
 import {Button, Divider, Grid, Stack, Typography} from '@mui/material';
 import Error from "../../components/ui/Error";
+import { useGetAccountById } from '../../api/AccountApi';
 
 const ArtistInfo = () => {
     const accountId = TokenService.getCurrentAccountId();
     const [openEditForm, setOpenEditForm] = useState(false)
     // const {data: artist, isLoading, isIdle, isError, error} = useGetArtistByAccountId(accountId);
 
+    const { data: account } = useGetAccountById(accountId);
     // if (isLoading || isIdle) {
     //     return <Loading/>
     // }
@@ -33,7 +35,7 @@ const ArtistInfo = () => {
                         <Grid item sm={12}>
                             <Typography variant='h4'>
                                 Pechking Pochatlion
-                                {/* {artist.firstname}{' '}{artist.lastname}{' '} */}
+                                {/* {account.firstname}{' '}{artist.lastname}{' '} */}
                                 <Button onClick={() => setOpenEditForm(true)}>Edit</Button>
                             </Typography>
                             <Divider/>
