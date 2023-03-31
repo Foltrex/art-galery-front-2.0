@@ -1,7 +1,16 @@
-import {Button, Checkbox, CircularProgress, FormControlLabel, FormHelperText, Stack, TextField} from "@mui/material";
+import {
+    Button,
+    Checkbox,
+    CircularProgress,
+    FormControlLabel,
+    FormHelperText,
+    Grid,
+    Stack,
+    TextField
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useFormik} from "formik";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useCookies} from 'react-cookie';
 import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
@@ -24,21 +33,29 @@ interface IRegisterFormValues {
     firstname: string,
     lastname: string,
     accountType: AccountEnum | string,
+    metadata: string[],
+}
+
+const buttonStyle = {
+    paddingTop: "15px",
+    paddingBottom: "15px",
 }
 
 const RegisterForm = () => {
-    const { alertStore } = useRootStore();
+    const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationRegister = useRegister();
 
     const [cookies, setCookie] = useCookies(['token']);
+    const [step, setStep] = useState(1);
 
     const initialValues: IRegisterFormValues = {
         email: '',
         password: '',
         firstname: '',
         lastname: '',
-        accountType: AccountEnum.REPRESENTATIVE
+        accountType: '',
+        metadata: [],
     }
 
     const validationSchema = yup.object().shape({
@@ -51,10 +68,9 @@ const RegisterForm = () => {
             .min(6),
         firstname: yup.string()
             .required()
-            .min(1),
+            .min(2),
         lastname: yup.string()
-            .required()
-            .min(1),
+            .min(2),
         accountType: yup.string()
             .required('account type is a required field')
     })
@@ -64,26 +80,21 @@ const RegisterForm = () => {
         validateOnChange: false,
         validateOnBlur: true,
         validationSchema: validationSchema,
-        onSubmit: async (values, { setSubmitting }) => {
+        onSubmit: async (values, {setSubmitting}) => {
             setSubmitting(true)
             await submit(values)
             setSubmitting(false)
         }
     })
 
-    const options = [
-        { label: "Organization", value: AccountEnum.REPRESENTATIVE },
-        { label: "Artist", value: AccountEnum.ARTIST },
-    ];
-
     const currentAccountId = AuthService.isAuthenticated()
         ? TokenService.getCurrentAccountId()
         : undefined;
 
-    const { data: representative } = useGetRepresentativeByAccountId(currentAccountId);
+    const {data: representative} = useGetRepresentativeByAccountId(currentAccountId);
     const mutationUpdateRepresentative = useUpdateRepresentativeById(representative?.id);
 
-    const { data: artist } = useGetArtistByAccountId(currentAccountId);
+    const {data: artist} = useGetArtistByAccountId(currentAccountId);
     const mutationUpdateArtist = useUpdateArtistById(artist?.id);
 
     useEffect(() => {
@@ -117,85 +128,131 @@ const RegisterForm = () => {
         }
     }
 
+    const SwitchAccountTypeForm = () => {
+        return (
+            <>
+                <Grid container spacing={5} rowSpacing={1} minWidth={"40vw"}>
+                    <Grid item lg={6} xs={12}>
+                        <Button
+                            size={"large"}
+                            fullWidth
+                            variant="contained"
+                            style={buttonStyle}
+                            onClick={() => {
+                                formik.setFieldValue('accountType', AccountEnum.REPRESENTATIVE)
+                                setStep(2)
+                            }}
+                        >
+                            I'm Organization
+                        </Button>
+                    </Grid>
+                    <Grid item lg={6} xs={12}>
+                        <Button
+                            size={"large"}
+                            fullWidth
+                            variant="contained"
+                            style={buttonStyle}
+                            onClick={() => {
+                                formik.setFieldValue('accountType', AccountEnum.ARTIST)
+                                setStep(2)
+                            }}
+                        >
+                            I'm Artist
+                        </Button>
+                    </Grid>
+                </Grid>
+            </>
+        )
+    }
+
+    const InputDataForm = () => {
+        return (
+            <>
+                <TextField
+                    margin="normal"
+                    fullWidth
+                    label="Email"
+                    name={"email"}
+                    required
+                    defaultValue={formik.values.email}
+                    onChange={formik.handleChange}
+                    error={!!formik.errors.email} helperText={formik.errors.email}
+                />
+                <PasswordTextField
+                    id={"password"}
+                    label={"Password"}
+                    name={"password"}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    error={formik.errors.password}
+                />
+                <TextField
+                    margin="normal"
+                    fullWidth
+                    label="Firstname"
+                    name={"firstname"}
+                    required
+                    defaultValue={formik.values.firstname}
+                    onChange={formik.handleChange}
+                    error={!!formik.errors.firstname} helperText={formik.errors.firstname}
+                />
+                <TextField
+                    margin="normal"
+                    fullWidth
+                    label="Lastname"
+                    name={"lastname"}
+                    defaultValue={formik.values.lastname}
+                    onChange={formik.handleChange}
+                    error={!!formik.errors.lastname} helperText={formik.errors.lastname}
+                />
+                <Grid container spacing={1} rowSpacing={1} style={{marginTop: "10px"}}>
+                    <Grid item lg={6} xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            onClick={() => setStep(1)}
+                            disabled={formik.isSubmitting}
+                        >
+                            Back
+                        </Button>
+                    </Grid>
+                    <Grid item lg={6} xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            disabled={formik.isSubmitting}
+                        >
+                            {formik.isSubmitting ? <CircularProgress size={24}/> : "Sign Up"}
+                        </Button>
+                    </Grid>
+                </Grid>
+            </>
+        )
+    }
+
     return (
-        <form onSubmit={formik.handleSubmit}>
-            <AlertNotification />
+        <form onSubmit={formik.handleSubmit} id="form" noValidate>
+            <AlertNotification/>
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
             }}
             >
-                <Stack direction="row" spacing={2}>
-                    {
-                        options.map((option, index) => (
-                            <FormControlLabel
-                                key={index}
-                                label={option.label}
-                                control={
-                                    <Checkbox
-                                        value={option.value}
-                                        checked={formik.values.accountType == option.value}
-                                        onChange={(event) => {
-                                            formik.setFieldValue('accountType', event.target.value)
-                                        }}
-                                    />
-                                }
-                            />
-                        ))
-                    }
-                </Stack>
+                <div style={{textAlign: "right", width: "100%"}}>
+                    <span style={{color: "#797777"}}>Step {step} of 2</span>
+                </div>
+
                 {formik.errors.accountType &&
-                    <FormHelperText style={{ color: "red" }}>{formik.errors.accountType}</FormHelperText>}
+                    <FormHelperText style={{color: "red"}}>{formik.errors.accountType}</FormHelperText>}
             </Box>
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Email"
-                name={"email"}
-                defaultValue={formik.values.email}
-                onChange={formik.handleChange}
-                error={!!formik.errors.email} helperText={formik.errors.email}
-            />
-            <PasswordTextField
-                id={"password"}
-                label={"Password"}
-                name={"password"}
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                error={formik.errors.password}
-            />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Firstname"
-                name={"firstname"}
-                defaultValue={formik.values.firstname}
-                onChange={formik.handleChange}
-                error={!!formik.errors.firstname} helperText={formik.errors.firstname}
-            />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                label="Lastname"
-                name={"lastname"}
-                defaultValue={formik.values.lastname}
-                onChange={formik.handleChange}
-                error={!!formik.errors.lastname} helperText={formik.errors.lastname}
-            />
-            <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                disabled={formik.isSubmitting}
-                sx={{ mt: 3, mb: 2 }}
-            >
-                {formik.isSubmitting ? <CircularProgress size={24} /> : "Sign Up"}
-            </Button>
-            <RegisterFormBottom />
+            <div style={{marginTop: "20px", marginBottom: "20px"}}>
+                {step === 1 && SwitchAccountTypeForm()}
+                {step === 2 && InputDataForm()}
+            </div>
+            <RegisterFormBottom/>
         </form>
     )
 

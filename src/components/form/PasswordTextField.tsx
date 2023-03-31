@@ -23,7 +23,7 @@ const PasswordTextField = ({id, label, name, value, onChange, error}: IPasswordT
             required
             fullWidth
         >
-            <InputLabel htmlFor={id} style={{color: error ? "red" : ""}}>{label}</InputLabel>
+            <InputLabel htmlFor={id} style={{color: error ? "#D32F2F" : ""}}>{label}</InputLabel>
             <OutlinedInput
                 id={id}
                 type={showPassword ? 'text' : 'password'}
@@ -43,7 +43,7 @@ const PasswordTextField = ({id, label, name, value, onChange, error}: IPasswordT
                     </InputAdornment>
                 }
             />
-            <FormHelperText style={{color: "red"}}>{error}</FormHelperText>
+            <FormHelperText style={{color: "#D32F2F"}}>{error}</FormHelperText>
         </FormControl>
     );
 };
