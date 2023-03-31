@@ -4,6 +4,7 @@ import { CookiesProvider } from 'react-cookie';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import App from './App';
+import ErrorBoundary from './components/error/ErrorBoundary';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { RootStoreProvider } from "./stores/provider/RootStoreProvider";
@@ -17,15 +18,17 @@ const queryClient = new QueryClient();
 
 root.render(
     <React.StrictMode>
-        <CookiesProvider>
-            <QueryClientProvider client={queryClient}>
-                <RootStoreProvider>
-                    <ThemeProvider theme={defaultMaterialTheme}>
-                        <App />
-                    </ThemeProvider>
-                </RootStoreProvider>
-            </QueryClientProvider>
-        </CookiesProvider>
+        <ErrorBoundary>
+            <CookiesProvider>
+                <QueryClientProvider client={queryClient}>
+                    <RootStoreProvider>
+                        <ThemeProvider theme={defaultMaterialTheme}>
+                            <App />
+                        </ThemeProvider>
+                    </RootStoreProvider>
+                </QueryClientProvider>
+            </CookiesProvider>
+        </ErrorBoundary>
     </React.StrictMode>
 );
 

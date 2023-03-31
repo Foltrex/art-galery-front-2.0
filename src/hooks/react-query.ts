@@ -1,4 +1,4 @@
-import {AxiosError, AxiosResponse} from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import {
     QueryFunctionContext,
     useInfiniteQuery,
@@ -7,7 +7,7 @@ import {
     useQueryClient,
     UseQueryOptions
 } from "react-query";
-import {axiosApi} from "../http/axios";
+import { axiosApi } from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
@@ -69,7 +69,7 @@ export const usePrefetch = <T>(url: string | null, params?: object) => {
             queryClient.prefetchQuery<T, Error, T, QueryKeyT>(
                 [url!, params],
                 context => fetch(context),
-                { retry: 10 }
+                { retry: 3 }
             );
         }
     };
@@ -86,15 +86,15 @@ export const useFetch = <T>(
         context => fetch(context),
         {
             enabled: !!url,
-            retry: 10,
+            retry: 3,
             ...config,
         }
     );
 };
 
 export const useLoadMore = <T>(
-    url: string | null, 
-    params?: object, 
+    url: string | null,
+    params?: object,
     config?: UseQueryOptions<T, Error, T, QueryKeyT>
 ) => {
     return useInfiniteQuery<
@@ -106,7 +106,7 @@ export const useLoadMore = <T>(
         [url!, params],
         context => fetch({ ...context, pageParam: context.pageParam ?? 0 }),
         {
-            retry: 10,
+            retry: 3,
             getNextPageParam: (page) => !page.last
                 ? page.number + 1
                 : page.number
@@ -121,14 +121,17 @@ export const useGenericMutation = <T, S = T | undefined>(
 ) => {
     const queryClient = useQueryClient();
 
-    return useMutation<AxiosResponse<S>, AxiosError, T | S>(func, {
-        onMutate: async () => await queryClient.cancelQueries([url!, params]),
-        onError: (err, _, context) => {
-            console.log(err);
-            queryClient.setQueryData([url!, params], context);
-        },
-        onSettled: () => queryClient.invalidateQueries()
-    });
+    return useMutation<AxiosResponse<S>, AxiosError, T | S>(
+        func,
+        {
+            onMutate: async () => await queryClient.cancelQueries([url!, params]),
+            onError: (err, _, context) => {
+                console.log(err);
+                queryClient.setQueryData([url!, params], context);
+            },
+            onSettled: () => queryClient.invalidateQueries()
+        }
+    );
 };
 
 
