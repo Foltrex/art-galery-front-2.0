@@ -22,6 +22,7 @@ import ErrorPage from "./pages/error/ErrorPage";
 import OrganizationGrid from "./pages/organization/OrganizationsGrid";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
+import ProfilePage from "./pages/home/ProfilePage";
 
 function App() {
     window.addEventListener('beforeunload', (event) => {
@@ -47,6 +48,9 @@ function App() {
                     </Route>
                     <Route path={"organizations1"}>
                         <Route index element={<OrganizationGrid/>}/>
+                    </Route>
+                    <Route path={"/test"}>
+                        <Route index element={<ProfilePage/>}/>
                     </Route>
 
 

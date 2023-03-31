@@ -1,12 +1,14 @@
-import {Box, Grid, Typography, Divider, Stack} from "@mui/material";
-import {useGetRepresentativeByAccountId} from "../../api/RepresentativeApi";
+import React from 'react';
+import {Box, Divider, Grid, Typography} from "@mui/material";
 import {TokenService} from "../../services/TokenService";
 import {Container} from "@mui/system";
+import {useGetAccountById} from "../../api/AccountApi";
 import ProfileImage from "./ProfileImage";
 
-const RepresentativeInfo = () => {
+const ProfilePage = () => {
+
     const accountId = TokenService.getCurrentAccountId();
-    const {data: representative} = useGetRepresentativeByAccountId(accountId);
+    const {data: account} = useGetAccountById(accountId);
 
     return (
         <Container>
@@ -15,7 +17,7 @@ const RepresentativeInfo = () => {
             </Box>
             <Box sx={{textAlign: 'center', width: '40%', mt: 4, mx: 'auto'}}>
                 <Typography variant='h4'>
-                    {representative?.firstname}{' '}{representative?.lastname}{' '}
+                    {account?.firstname}{' '}{account?.lastname}{' '}
                     {/* <Button onClick={() => setOpenEditForm(true)}>Edit</Button> */}
                 </Typography>
 
@@ -30,4 +32,4 @@ const RepresentativeInfo = () => {
     );
 };
 
-export default RepresentativeInfo;
+export default ProfilePage;

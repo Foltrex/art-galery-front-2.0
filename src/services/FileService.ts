@@ -17,7 +17,7 @@ export class FileService {
         }
     }
 
-    static async toFile(artId: string, file: File): Promise<FileEntity> {
+    static async toFile(artId: string | null, file: File): Promise<FileEntity> {
         const arrayBufferFile = await this.toArrayBufferFromBlob(file);
         const binaryFile = new Uint8Array(arrayBufferFile);
         const encodedBase64Image =  naclUtil.encodeBase64(binaryFile);
