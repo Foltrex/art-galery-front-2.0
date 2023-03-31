@@ -14,17 +14,12 @@ import {useEffect, useState} from "react";
 import {useCookies} from 'react-cookie';
 import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
-import {useGetArtistByAccountId, useUpdateArtistById} from "../../../../api/ArtistApi";
-import {useRegister} from '../../../../api/AuthApi';
-import {useGetRepresentativeByAccountId, useUpdateRepresentativeById} from "../../../../api/RepresentativeApi";
+import { useRegister } from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import AlertNotification from '../../../../components/notifications/AlertNotification';
-import {Artist} from "../../../../entities/artist";
-import {AccountEnum} from "../../../../entities/enums/AccountEnum";
-import {Representative} from "../../../../entities/representative";
-import {AuthService} from "../../../../services/AuthService";
-import {TokenService} from "../../../../services/TokenService";
-import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
+import { AccountEnum } from "../../../../entities/enums/AccountEnum";
+import { AuthService } from "../../../../services/AuthService";
+import { useRootStore } from "../../../../stores/provider/RootStoreProvider";
 import RegisterFormBottom from './RegisterFormBottom';
 
 interface IRegisterFormValues {
@@ -87,41 +82,17 @@ const RegisterForm = () => {
         }
     })
 
-    const currentAccountId = AuthService.isAuthenticated()
-        ? TokenService.getCurrentAccountId()
-        : undefined;
-
-    const {data: representative} = useGetRepresentativeByAccountId(currentAccountId);
-    const mutationUpdateRepresentative = useUpdateRepresentativeById(representative?.id);
-
-    const {data: artist} = useGetArtistByAccountId(currentAccountId);
-    const mutationUpdateArtist = useUpdateArtistById(artist?.id);
-
-    useEffect(() => {
-        if (representative) {
-            const representativeObj = {
-                ...representative,
-                firstname: formik.values.firstname,
-                lastname: formik.values.lastname,
-            } as Representative;
-            mutationUpdateRepresentative.mutateAsync(representativeObj)
-                .then(() => navigate('/'));
-        } else if (artist) {
-            const artistObj = {
-                ...artist,
-                firstname: formik.values.firstname,
-                lastname: formik.values.lastname,
-            } as Artist;
-            mutationUpdateArtist.mutateAsync(artistObj)
-                .then(() => navigate('/'));
-        }
-    }, [representative, artist])
+    const options = [
+        { label: "Organization", value: AccountEnum.REPRESENTATIVE },
+        { label: "Artist", value: AccountEnum.ARTIST },
+    ];
 
     const submit = async (values: IRegisterFormValues) => {
         try {
             const response = await mutationRegister.mutateAsync(values)
             AuthService.setToken(response.data.token);
             alertStore.setShow(false)
+            navigate('/');
         } catch (error: any) {
             console.log(error.response.data.message)
             alertStore.setShow(true, 'error', "Registration error", error.response.data.message);
