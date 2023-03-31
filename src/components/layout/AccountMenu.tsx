@@ -13,7 +13,7 @@ import {
 import * as React from 'react';
 import {useCookies} from 'react-cookie';
 import {useNavigate} from 'react-router-dom';
-import {useCountProposalsByAccountId} from '../../api/ProposalApi';
+// import {useCountProposalsByAccountId} from '../../api/ProposalApi';
 import {AuthService} from '../../services/AuthService';
 import {TokenService} from '../../services/TokenService';
 import LetterAvatar from '../ui/LetterAvatar';
@@ -30,7 +30,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 	const token = TokenService.getCurrentDecodedToken();
 	const email = token.sub;
     const accountId = TokenService.getCurrentAccountId();
-    const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
+    // const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
 
 	const navigate = useNavigate();
 
@@ -136,7 +136,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 				<MenuItem onClick={() => navigate('/proposals')}>
 					<ListItemIcon>
 						<Badge 
-							badgeContent={proposalsCount} 
+							// badgeContent={proposalsCount} 
 							color='error'
 						>
 							<Mail fontSize='small' />
