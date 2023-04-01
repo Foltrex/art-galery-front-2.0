@@ -23,6 +23,12 @@ import OrganizationGrid from "./pages/organization/OrganizationsGrid";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
 import ProfilePage from "./pages/home/ProfilePage";
+import Filter from './components/ui/filter/Filter';
+import ArtFormatFilter from './pages/arts/filter/ArtFormatFilter';
+import ArtSizeFilter from './pages/arts/filter/ArtSizeFilter';
+import ArtStyleFilter from './pages/arts/filter/ArtStyleFilter';
+import ArtTopicFilter from './pages/arts/filter/ArtTopicFilter';
+import ArtTypeFilter from './pages/arts/filter/ArtTypeFilter';
 
 function App() {
     //@Todo maybe bug here
@@ -35,6 +41,18 @@ function App() {
     return (
         <BrowserRouter basename={"/admin"}>
             <Routes>
+                <Route 
+                    path='/testing' 
+                    element={
+                        <>
+                            <ArtFormatFilter />
+                            <ArtSizeFilter />
+                            <ArtStyleFilter />
+                            <ArtTopicFilter />
+                            <ArtTypeFilter />
+                        </>
+                    } 
+                />
                 <Route path='/auth/signin' element={<Login />} />
                 <Route path='/auth/signup' element={<Register />} />
                 <Route path='/auth/passwordrecovery' element={<PasswordRecovery />} />
