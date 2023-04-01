@@ -1,4 +1,4 @@
-import {Button, CircularProgress, FormHelperText, Grid, TextField} from "@mui/material";
+import {Button, CircularProgress, Grid, TextField, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useFormik} from "formik";
 import {useState} from "react";
@@ -11,6 +11,7 @@ import {AccountEnum} from "../../../../entities/enums/AccountEnum";
 import {AuthService} from "../../../../services/AuthService";
 import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import RegisterFormBottom from './RegisterFormBottom';
+import {Help} from "@mui/icons-material";
 
 interface IRegisterFormValues {
     email: string,
@@ -30,7 +31,7 @@ const RegisterForm = () => {
     const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationRegister = useRegister();
-    const [step, setStep] = useState(1);
+    const [accountType, setAccountType] = useState<string>("");
 
     const initialValues: IRegisterFormValues = {
         email: '',
@@ -94,10 +95,15 @@ const RegisterForm = () => {
                             style={buttonStyle}
                             onClick={() => {
                                 formik.setFieldValue('accountType', AccountEnum.REPRESENTATIVE)
-                                setStep(2)
+                                setAccountType(AccountEnum.REPRESENTATIVE)
                             }}
                         >
-                            I'm Organization
+                            <Tooltip title={
+                                <div style={{textAlign: 'center'}}>I am bar, hotel, casino or restaurant representative, and our facility is open for art expositions</div>
+                            }>
+                                <Help />
+                            </Tooltip>&nbsp;
+                                I'm Organization
                         </Button>
                     </Grid>
                     <Grid item lg={6} xs={12}>
@@ -108,9 +114,14 @@ const RegisterForm = () => {
                             style={buttonStyle}
                             onClick={() => {
                                 formik.setFieldValue('accountType', AccountEnum.ARTIST)
-                                setStep(2)
+                                setAccountType(AccountEnum.ARTIST)
                             }}
                         >
+                            <Tooltip title={
+                                <div style={{textAlign: 'center'}}>I am content creator, and I'm searching for room to host my arts</div>
+                            }>
+                                <Help />
+                            </Tooltip>&nbsp;
                             I'm Artist
                         </Button>
                     </Grid>
@@ -165,7 +176,7 @@ const RegisterForm = () => {
                             type="submit"
                             fullWidth
                             variant="contained"
-                            onClick={() => setStep(1)}
+                            onClick={() => setAccountType("")}
                             disabled={formik.isSubmitting}
                         >
                             Back
@@ -191,20 +202,20 @@ const RegisterForm = () => {
             <AlertNotification/>
             <Box sx={{
                 display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+                flexDirection: 'row',
+                marginBottom: '10px'
             }}
             >
-                <div style={{textAlign: "right", width: "100%"}}>
-                    <span style={{color: "#797777"}}>Step {step} of 2</span>
+                {accountType === AccountEnum.REPRESENTATIVE && <div style={{color: "#797777"}}>Organization representative</div>}
+                {accountType === AccountEnum.ARTIST && <div style={{color: "#797777"}}>Content creator</div>}
+                <div style={{marginLeft: 'auto', textAlign: "right", color: "#797777"}}>
+                    Step {accountType === "" ? 1 : 2} of 2
                 </div>
-
-                {formik.errors.accountType &&
-                    <FormHelperText style={{color: "red"}}>{formik.errors.accountType}</FormHelperText>}
             </Box>
-            <div style={{marginTop: "20px", marginBottom: "20px"}}>
-                {step === 1 && SwitchAccountTypeForm()}
-                {step === 2 && InputDataForm()}
+
+            <div style={{marginBottom: '20px'}}>
+                {accountType === "" && SwitchAccountTypeForm()}
+                {accountType !== "" && InputDataForm()}
             </div>
             <RegisterFormBottom/>
         </form>

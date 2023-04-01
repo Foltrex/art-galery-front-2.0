@@ -1,13 +1,8 @@
-import { Toolbar, IconButton, Typography, styled, useTheme, Button, CircularProgress } from '@mui/material';
-import {Link, useNavigate} from 'react-router-dom';
+import {IconButton, styled, Toolbar} from '@mui/material';
 import MuiAppBar, {AppBarProps as MuiAppBarProps} from "@mui/material/AppBar";
 import * as React from 'react';
 import MenuIcon from "@mui/icons-material/Menu";
-import {useEffect} from "react";
-import {Cookies, useCookies} from "react-cookie";
-import { AuthService } from '../../services/AuthService';
 import AccountMenu from './AccountMenu';
-import { TokenService } from '../../services/TokenService';
 
 const drawerWidth = 240;
 
@@ -50,19 +45,10 @@ const Topbar: React.FunctionComponent<ITopbarProps> = ({sidebarOpen, onSidebarBu
                 >
                     <MenuIcon/>
                 </IconButton>
-                <Typography
-                    variant="h6"
-                    noWrap
-                    component={Link}
-                    to='/'
-                    color='white'
-                    sx={{flexGrow: 1, textDecoration: 'none'}}
-                >
-                    Admin
-                </Typography>
 
-                <AccountMenu />
-                
+                <div style={{marginLeft: "auto"}}>
+                    <AccountMenu />
+                </div>
             </Toolbar>
         </AppBar>
     );

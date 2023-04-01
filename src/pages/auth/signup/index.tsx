@@ -16,7 +16,7 @@ export const Register: React.FunctionComponent<IRegisterProps> = () => {
             <CssBaseline/>
             <Box sx={boxStyle}>
                 <Avatar sx={avatarStyle}/>
-                <Typography component="h1" variant="h5">Sign up</Typography>
+                <Typography component="h1" style={{marginBottom: '20px'}} variant="h5">Sign up</Typography>
                 <RegisterForm/>
             </Box>
             <Copyright sx={{mt: 4}}/>

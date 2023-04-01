@@ -1,14 +1,13 @@
-import { Box, Alert, Grid, Typography, Button, Divider, Stack } from '@mui/material';
+import {Alert, Box, Button, Divider, Grid, Stack, Typography} from '@mui/material';
 import * as React from 'react';
-import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
-import { useGetRepresentativeByAccountId } from '../../api/RepresentativeApi';
+import {useGetOrganizationByAccountId} from '../../api/OrganizationApi';
+import {useGetRepresentativeByAccountId} from '../../api/RepresentativeApi';
 import Loading from '../../components/ui/Loading';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
-import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
-import { OrganizationStatusEnum } from '../../entities/enums/organizationStatusEnum';
-import { TokenService } from '../../services/TokenService';
-import { PrepareDataUtil } from '../../util/PrepareDataUtil';
+import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
+import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
+import {TokenService} from '../../services/TokenService';
 import OrganizationEditDialog from '../home/edit/OrganizationEditDialog';
+import {OrganizationStatus} from "./OrganizationStatus";
 
 interface IAppProps {
 }
@@ -74,9 +73,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
 								<Grid container>
 									<Grid item sm={4}><strong>Status</strong></Grid>
 									<Grid item sm={8}>
-										<span style={{ color: PrepareDataUtil.getOrganizationStatusColor(organization.status) }}>
-											{organization.status}
-										</span>
+										<OrganizationStatus organization={organization}/>
 									</Grid>
 								</Grid>
 								<Grid container>

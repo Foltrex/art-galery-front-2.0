@@ -7,11 +7,13 @@ import LoginOutlined from '@mui/icons-material/LoginOutlined';
 import PeopleIcon from '@mui/icons-material/People';
 import PeopleOutline from '@mui/icons-material/PeopleOutline';
 import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
-import { Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
-import { AccountEnum } from "../../entities/enums/AccountEnum";
-import { TokenService } from "../../services/TokenService";
+import {Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
+import {styled, useTheme} from '@mui/material/styles';
+import {Link} from 'react-router-dom';
+import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {Account} from "../../entities/account";
+import {find} from "../../util/MetadataUtil";
 
 const drawerWidth = 240;
 
@@ -28,14 +30,14 @@ interface ISidebarProps {
     onSidebarButtonClick: () => void;
 }
 
-function prepareSidebar(accountType:string) {
-    switch (accountType) {
+function prepareSidebar(account:Account) {
+    switch (account.accountType) {
         case AccountEnum.REPRESENTATIVE:
             return [
                 {
                     text: 'Organization',
                     icon: <AccountCircleOutlinedIcon/>,
-                    link: '/organization'
+                    link: '/organization/' + find('organizationId', account)
                 },
                 {
                     text: 'Catalog',
@@ -58,7 +60,7 @@ function prepareSidebar(accountType:string) {
                 {
                     text: 'Artist',
                     icon: <AccountCircleOutlinedIcon/>,
-                    link: '/'
+                    link: '/' + account.id
                 },
                 {
                     text: 'Arts',
@@ -81,7 +83,7 @@ function prepareSidebar(accountType:string) {
                 {
                     text: 'Organizations',
                     icon: <LocalPostOfficeOutlined/>,
-                    link: '/organizations?page=0&limit=10'
+                    link: '/organizations'
                 }
             ]
         }
@@ -95,9 +97,13 @@ function prepareSidebar(accountType:string) {
 }
 const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
     const theme = useTheme();
+    const {authStore} = useRootStore();
+    const account = authStore.account;
+    if(!account) {
+        return null;
+    }
 
-    const accountType = TokenService.getCurrentAccountType();
-    const sidebar = prepareSidebar(accountType);
+    const sidebar = prepareSidebar(account);
 
     return (
         <Drawer

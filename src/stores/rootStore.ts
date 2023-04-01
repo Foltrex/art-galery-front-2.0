@@ -4,6 +4,7 @@ import {FacilityStore} from "./facilityStore";
 import {OrganizationStore} from "./organizationStore";
 import {RepresentativeStore} from "./representativeStore";
 import {AlertStore} from "./alertStore";
+import {AuthStore} from "./authStore";
 
 
 export class RootStore {
@@ -13,6 +14,7 @@ export class RootStore {
     organizationStore: OrganizationStore;
     cityStore: CityStore;
     addressStore: AddressStore;
+    authStore: AuthStore;
 
     constructor() {
         this.alertStore = new AlertStore(this)
@@ -21,6 +23,7 @@ export class RootStore {
         this.organizationStore = new OrganizationStore(this);
         this.cityStore = new CityStore(this);
         this.addressStore = new AddressStore(this);
+        this.authStore = new AuthStore(this);
     }
 }
 
