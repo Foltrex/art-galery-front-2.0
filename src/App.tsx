@@ -96,7 +96,7 @@ function App() {
                     <Route path='artists'>
                         <Route index element={<ArtistsGrid />} />
                         <Route path=':id' element={<ArtistProfile />} />
-                        </Route>
+                    </Route>
 
                     <Route path='settings' element={<Settings />} />
                 </Route>

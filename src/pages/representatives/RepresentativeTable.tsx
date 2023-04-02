@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { useDeleteRepresentative, useGetRepresentativesPageByAccountId } from '../../api/RepresentativeApi';
-import DeleteModal from '../../components/modal/DeleteModal';
-import SkeletonTable from '../../components/table/SkeletonTable';
-import Table, { IColumnType } from '../../components/table/Table';
-import { Representative } from '../../entities/representative';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
-import RepresentativeForm from './RepresentativeForm';
+import {IColumnType} from '../../components/table/Table';
+import {Representative} from '../../entities/representative';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {UserGrid} from "../../components/users/UserGrid";
 
 interface IRepresentativeTableProps {
 }
@@ -43,63 +40,15 @@ const mapRepresentativeToTableRow = (representative: Representative): IRepresent
 }
 
 const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = (props) => {
-    const [openEditForm, setOpenEditForm] = useState(false);
-    const [openDeleteModal, setOpenDeleteModal] = useState(false);
-    const [representative, setRepresentative] = useState<Representative>();
 
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [pageNumber, setPageNumber] = useState(0);
 
     const token = TokenService.decode(AuthService.getToken());
-    const { data } = useGetRepresentativesPageByAccountId(token.id, pageNumber, rowsPerPage);
+    const {authStore} = useRootStore();
+    const account = authStore.account;
 
-    const handleDelete = (data: Representative) => {
-        setRepresentative(data);
-        setOpenDeleteModal(true);
-    }
 
-    const mutationDelete = useDeleteRepresentative();
 
-    const onDelete = async () => {
-        try {
-            await mutationDelete.mutateAsync(representative!.id);
-        } catch (e) {
-            // add push notification
-            console.log(e);
-        }
-    }
-
-    const handleEdit = (data: Representative) => {
-        setRepresentative(data);
-        setOpenEditForm(true);
-    }
-
-	return (
-        <>
-            {data
-                ?    <Table
-                        columns={columns}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
-                        mapModelToTableRow={mapRepresentativeToTableRow}
-                        page={data} 
-                        onPageChange={(_, page) => setPageNumber(page)} 
-                        onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
-                :   <SkeletonTable 
-                        columns={columns} 
-                        rowsPerPage={rowsPerPage} />
-            }
-
-            <RepresentativeForm 
-                open={openEditForm} 
-                onClose={() => setOpenEditForm(false)}
-                representative={representative} />    
-            <DeleteModal 
-                open={openDeleteModal} 
-                onClose={() => setOpenDeleteModal(false)} 
-                onDelete={onDelete} />
-        </>
-  	);
+	return <UserGrid />;
 };
 
 export default RepresentativeTable;

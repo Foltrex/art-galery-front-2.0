@@ -28,7 +28,6 @@
     "jspdf": "^2.5.1",
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.9.3",
-    "lodash": "^4.17.21",
     "mobx": "^6.7.0",
     "mobx-react": "^7.6.0",
     "mobx-react-lite": "^3.4.0",

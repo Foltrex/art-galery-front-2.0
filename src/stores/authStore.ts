@@ -5,7 +5,8 @@ import {Account} from "../entities/account";
 export class AuthStore {
     rootStore: RootStore;
 
-    account?: Account;
+    //@ts-ignore
+    account: Account;
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;

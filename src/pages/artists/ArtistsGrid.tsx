@@ -5,14 +5,8 @@ import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, {IColumnType} from '../../components/table/Table';
 import {Artist} from "../../entities/artist";
 
-interface IArtistData {
-    id: string;
-    firstName: string;
-    lastName: string;
-    address: string;
-}
 
-const columns: IColumnType<IArtistData>[] = [
+const columns: IColumnType<Artist>[] = [
     {
         key: 'firstName',
         title: 'First Name',
@@ -30,17 +24,6 @@ const columns: IColumnType<IArtistData>[] = [
     },
 ];
 
-
-const mapFacilityToTableRow = (artist: Artist): IArtistData => {
-    const address = artist.address;
-    const city = address?.city;
-    return {
-        id: artist.id,
-        firstName: artist.firstname,
-        lastName: artist.lastname,
-        address: address ? (city ? city.name + ', ' : '') + address.fullName: ''
-    };
-}
 
 const ArtistsGrid = () => {
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
@@ -67,7 +50,6 @@ const ArtistsGrid = () => {
                     columns={columns}
                     onDelete={handleDelete}
                     onEdit={handleEdit}
-                    mapModelToTableRow={mapFacilityToTableRow}
                     page={data}
                     onPageChange={(_, page) => setPageNumber(page)}
                     onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />

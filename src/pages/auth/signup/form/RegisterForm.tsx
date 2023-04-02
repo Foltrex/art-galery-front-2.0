@@ -16,8 +16,8 @@ import {Help} from "@mui/icons-material";
 interface IRegisterFormValues {
     email: string,
     password: string,
-    firstname: string,
-    lastname: string,
+    firstName: string,
+    lastName: string,
     accountType: AccountEnum | string,
     metadata: string[],
 }
@@ -36,8 +36,8 @@ const RegisterForm = () => {
     const initialValues: IRegisterFormValues = {
         email: '',
         password: '',
-        firstname: '',
-        lastname: '',
+        firstName: '',
+        lastName: '',
         accountType: '',
         metadata: [],
     }
@@ -50,10 +50,10 @@ const RegisterForm = () => {
         password: yup.string()
             .required()
             .min(6),
-        firstname: yup.string()
+        firstName: yup.string()
             .required()
             .min(2),
-        lastname: yup.string()
+        lastName: yup.string()
             .min(2),
         accountType: yup.string()
             .required('account type is a required field')
@@ -155,20 +155,20 @@ const RegisterForm = () => {
                     margin="normal"
                     fullWidth
                     label="Firstname"
-                    name={"firstname"}
+                    name={"firstName"}
                     required
-                    defaultValue={formik.values.firstname}
+                    defaultValue={formik.values.firstName}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.firstname} helperText={formik.errors.firstname}
+                    error={!!formik.errors.firstName} helperText={formik.errors.firstName}
                 />
                 <TextField
                     margin="normal"
                     fullWidth
                     label="Lastname"
-                    name={"lastname"}
-                    defaultValue={formik.values.lastname}
+                    name={"lastName"}
+                    defaultValue={formik.values.lastName}
                     onChange={formik.handleChange}
-                    error={!!formik.errors.lastname} helperText={formik.errors.lastname}
+                    error={!!formik.errors.lastName} helperText={formik.errors.lastName}
                 />
                 <Grid container spacing={1} rowSpacing={1} style={{marginTop: "10px"}}>
                     <Grid item lg={6} xs={12}>

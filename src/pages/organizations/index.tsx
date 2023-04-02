@@ -43,8 +43,7 @@ const OrganizationGrid = () => {
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                     page={data}
-                    mapModelToTableRow={(a) => a}
-                    onPageChange={(_, page) => setPageNumber(page)}
+                    onPageChange={(e, page) => setPageNumber(page)}
                     onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
                 : 	<SkeletonTable
                     columns={columns}
@@ -76,7 +75,7 @@ function getColumns(setOpenProposalModal:() => void):IColumnType<Organization>[]
             key: 'status',
             title: 'Status',
             minWidth: 150,
-            render: (c, organization) => {
+            render: (organization) => {
                 return <OrganizationStatus organization={organization}/>
             }
         },
@@ -84,7 +83,7 @@ function getColumns(setOpenProposalModal:() => void):IColumnType<Organization>[]
             key: 'address',
             title: 'Address',
             minWidth: 150,
-            render: (c, organization) => {
+            render: (organization) => {
                 const address = organization.address;
                 const city = address?.city;
                 return address ? (city ? city.name + ', ' : '') + address.fullName: '';
@@ -93,7 +92,7 @@ function getColumns(setOpenProposalModal:() => void):IColumnType<Organization>[]
         {
             key: 'controls',
             title: '',
-            render: (c, organization) => {
+            render: (organization) => {
                 if(accountType === AccountEnum.ARTIST) {
                     return <Tooltip title={'Propose'}>
                         <IconButton onClick={setOpenProposalModal}>

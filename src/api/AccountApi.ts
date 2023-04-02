@@ -1,14 +1,14 @@
 import {USER_SERVICE} from "../http/axios";
-import {useDelete, useFetch, usePatch, usePost} from "../hooks/react-query";
+import {IPage, useDelete, useFetch, usePatch, usePost} from "../hooks/react-query";
 import {AuthService} from "../services/AuthService";
 import {Account} from "../entities/account";
 import {Representative} from "../entities/representative";
 
-export const useFetchAccountByEmail = (email: string) => {
-    return useFetch(`${USER_SERVICE}/accounts/byEmail/${email}`, undefined, {
-        retry: false,
-        enabled: !!email,
-    });
+
+export const useGetAll = (filter:{email?: string, page?:number, size?: number}) => {
+    return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, {
+        retry: false
+    }) ;
 }
 
 export const useGetAccountById = (id?: string) => {

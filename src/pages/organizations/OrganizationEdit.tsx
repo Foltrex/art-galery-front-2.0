@@ -1,6 +1,6 @@
 import {Alert, Box, Button, Divider, Grid, Stack, Typography} from '@mui/material';
 import * as React from 'react';
-import {useGetOrganizationByAccountId} from '../../api/OrganizationApi';
+import {useGetAllOrganizations} from '../../api/OrganizationApi';
 import {useGetRepresentativeByAccountId} from '../../api/RepresentativeApi';
 import Loading from '../../components/ui/Loading';
 import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
@@ -8,14 +8,16 @@ import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnu
 import {TokenService} from '../../services/TokenService';
 import OrganizationEditDialog from '../home/edit/OrganizationEditDialog';
 import {OrganizationStatus} from "./OrganizationStatus";
+import {useParams} from "react-router-dom";
 
 interface IAppProps {
 }
 
 const App: React.FunctionComponent<IAppProps> = (props) => {
+	const matches =  useParams();
 	const accountId = TokenService.getCurrentAccountId();
 	const [openEditForm, setOpenEditForm] = React.useState(false)
-	const { data: organization, isLoading, isIdle, isError, error } = useGetOrganizationByAccountId(accountId);
+	const { data, isLoading, isIdle, isError, error } = useGetAllOrganizations({page: 0, size: 1, id: matches.oganizationId});
 	const { data: representative } = useGetRepresentativeByAccountId(accountId);
 	const organizationRole = representative?.organizationRole?.name;
 	const isOrganizationEditableByThisAccount = organizationRole === OrganizationRoleEnum.CREATOR;
@@ -26,6 +28,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
 	if (isError) {
 		return <Box display="flex" justifyContent="center">Error: {error.message}</Box>
 	}
+	const organization = data?.content[0];
 
 	const AlertWarning = () => {
 		if (organization.status === OrganizationStatusEnum.NEW) {

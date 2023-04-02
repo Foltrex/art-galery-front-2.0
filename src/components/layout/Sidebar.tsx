@@ -31,13 +31,14 @@ interface ISidebarProps {
 }
 
 function prepareSidebar(account:Account) {
+    console.log(account);
     switch (account.accountType) {
         case AccountEnum.REPRESENTATIVE:
             return [
                 {
                     text: 'Organization',
                     icon: <AccountCircleOutlinedIcon/>,
-                    link: '/organization/' + find('organizationId', account)
+                    link: '/organizations/' + find('organizationId', account)
                 },
                 {
                     text: 'Catalog',

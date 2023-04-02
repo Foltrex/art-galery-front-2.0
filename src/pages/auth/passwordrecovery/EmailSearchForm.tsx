@@ -5,7 +5,7 @@ import {createSearchParams, Link, useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import * as yup from "yup";
 import {useFormik} from "formik";
-import {useFetchAccountByEmail} from "../../../api/AccountApi";
+import {useGetAll} from "../../../api/AccountApi";
 import {useSendPasswordRecoveryCode} from "../../../api/AuthApi";
 
 interface IFormEmailValues {
@@ -16,7 +16,7 @@ const EmailSearchForm = () => {
     const navigate = useNavigate();
     const {alertStore} = useRootStore();
     const [emailSearch, setEmailSearch] = useState('');
-    const {data, isFetched, isLoading} = useFetchAccountByEmail(emailSearch);
+    const {data, isFetched, isLoading} = useGetAll({email: emailSearch});
     const mutationSendPasswordRecoveryCode = useSendPasswordRecoveryCode();
 
     const initialValues: IFormEmailValues = {
@@ -46,10 +46,10 @@ const EmailSearchForm = () => {
     }
 
     useEffect(() => {
-        if (data === undefined && isFetched) {
+        if ((data === undefined || data.content.length === 0) && isFetched) {
             alertStore.setShow(true, "error", " ", "Account with this email not found!")
             setEmailSearch("")
-        } else if (data !== undefined) {
+        } else if (data !== undefined && data.content.length > 0) {
             mutationSendPasswordRecoveryCode.mutateAsync({receiver: emailSearch})
                 .then(() => {
                     navigate({
@@ -65,7 +65,7 @@ const EmailSearchForm = () => {
                     alertStore.setShow(true, "error", " ", error.response.data.message)
                 })
         }
-    }, [isFetched])
+    }, [isFetched, data])
 
     return (
         <form onSubmit={formik.handleSubmit} id="form" noValidate>

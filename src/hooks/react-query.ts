@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from "axios";
+import {AxiosError, AxiosResponse} from "axios";
 import {
     QueryFunctionContext,
     useInfiniteQuery,
@@ -7,7 +7,7 @@ import {
     useQueryClient,
     UseQueryOptions
 } from "react-query";
-import { axiosApi } from "../http/axios";
+import {axiosApi} from "../http/axios";
 
 type QueryKeyT = [string, object | undefined];
 
@@ -33,15 +33,18 @@ export interface IPage<T> {
     pageable: IPageable;
 }
 
-
+interface QFC<T> extends QueryFunctionContext<QueryKeyT> {
+    map?: (p:any) => T
+}
 export const fetch = <T>({
     queryKey,
     pageParam,
-}: QueryFunctionContext<QueryKeyT>): Promise<T> => {
+    map,
+}: QFC<T>): Promise<T> => {
     const [url, params] = queryKey;
     return axiosApi
-        .get<T>(url, { params: { ...params, page: pageParam } })
-        .then(response => response.data);
+        .get<any>(url, { params: { ...params, page: pageParam } })
+        .then(response => map ? map(response.data) : ((response.data as any) as T));
 };
 
 export const count = (url: string): Promise<number> => {
@@ -78,12 +81,13 @@ export const usePrefetch = <T>(url: string | null, params?: object) => {
 export const useFetch = <T>(
     url: string | null,
     params?: object,
-    config?: UseQueryOptions<T, Error, T, QueryKeyT>
+    config?: UseQueryOptions<T, Error, T, QueryKeyT>,
+    map?: (p:any) => T
 ) => {
     console.log(url, params);
     return useQuery<T, Error, T, QueryKeyT>(
         [url!, params],
-        context => fetch(context),
+        context => fetch<T>({...context, map: map}),
         {
             enabled: !!url,
             retry: 3,

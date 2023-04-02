@@ -1,39 +1,37 @@
-import { Table as MuiTable, TableContainer, TablePagination } from '@mui/material';
+import {Table as MuiTable, TableContainer, TablePagination} from '@mui/material';
 import React from 'react';
-import { IPage } from '../../hooks/react-query';
+import {IPage} from '../../hooks/react-query';
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
 
 export interface IdentifiableRecord {
     id: string;
-};
+}
 
 export interface IColumnType<T extends IdentifiableRecord> {
     key: string;
     title: string;
     minWidth?: number;
-    render?: (column: IColumnType<T>, item: T) => void;
+    render?: (item: T) => void;
 }
 
-interface ITableProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
-    columns: IColumnType<T>[];
+interface ITableProps<S extends IdentifiableRecord> {
+    columns: IColumnType<S>[];
     page: IPage<S>;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
-    mapModelToTableRow: (model: S) => T;
     onPageChange: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
     onRowsPerPageChange:  (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
+function Table<S extends IdentifiableRecord>({
     columns, 
     page, 
     onEdit,
     onDelete,
-    mapModelToTableRow,
     onPageChange,
     onRowsPerPageChange
-}: ITableProps<T, S>): JSX.Element {
+}: ITableProps<S>): JSX.Element {
 
     return (
         <>
@@ -44,12 +42,11 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
                         page={page}
                         columns={columns}
                         onEdit={onEdit}
-                        onDelete={onDelete} 
-                        mapModelToTableRow={mapModelToTableRow} />
+                        onDelete={onDelete}/>
                 </MuiTable>
             </TableContainer>
             <TablePagination 
-                rowsPerPageOptions={[5, 10, 15]}
+                rowsPerPageOptions={[5, 10, 15, 25, 50]}
                 component='div'
                 count={page.totalElements}
                 rowsPerPage={page.size}
@@ -59,6 +56,6 @@ function Table<T extends IdentifiableRecord, S extends IdentifiableRecord>({
             />
         </>
     );
-};
+}
 
 export default Table;

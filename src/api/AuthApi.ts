@@ -1,10 +1,10 @@
-import {USER_SERVICE} from "../http/axios";
+import {ART_SERVICE, USER_SERVICE} from "../http/axios";
 import {TAuthToken} from "../entities/types/TAuthToken";
 import {usePost} from "../hooks/react-query";
 import {Representative} from "../entities/representative";
 
 export const useRegister = () => {
-    return usePost<object, TAuthToken>(`${USER_SERVICE}/auth/register`)
+    return usePost<object, TAuthToken>(`${ART_SERVICE}/auth/register`)
 }
 
 export const useLogin = () => {

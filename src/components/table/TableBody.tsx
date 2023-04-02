@@ -1,23 +1,21 @@
-import { TableBody as MuiTableBody } from '@mui/material';
-import { IPage } from '../../hooks/react-query';
-import { IColumnType, IdentifiableRecord } from './Table';
+import {TableBody as MuiTableBody} from '@mui/material';
+import {IPage} from '../../hooks/react-query';
+import {IColumnType, IdentifiableRecord} from './Table';
 import TableRow from './TableRow';
 
-interface ITableBodyProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
-    columns: IColumnType<T>[];
+interface ITableBodyProps<S extends IdentifiableRecord> {
+    columns: IColumnType<S>[];
     page: IPage<S>;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
-    mapModelToTableRow: (model: S) => T;
 }
 
-function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({ 
+function TableBody<S extends IdentifiableRecord>({
 	page,
 	columns,
 	onEdit,
-	onDelete,
-	mapModelToTableRow
-}: ITableBodyProps<T, S>): JSX.Element {
+	onDelete
+}: ITableBodyProps<S>): JSX.Element {
 	const { content, number, size } = page;
 	
 	return (
@@ -29,11 +27,10 @@ function TableBody<T extends IdentifiableRecord, S extends IdentifiableRecord>({
 					columns={columns}
 					item={item}
 					onDelete={onDelete} 
-					onEdit={onEdit} 
-					mapModelToTableRow={mapModelToTableRow} />
+					onEdit={onEdit} />
 			))}
 		</MuiTableBody>
 	);
-};
+}
 
 export default TableBody;

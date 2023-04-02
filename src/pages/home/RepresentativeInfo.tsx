@@ -1,8 +1,7 @@
-import {Box, Grid, Typography, Divider, Stack} from "@mui/material";
+import {Box, Divider, Grid, Typography} from "@mui/material";
 import {useGetRepresentativeByAccountId} from "../../api/RepresentativeApi";
 import {TokenService} from "../../services/TokenService";
 import {Container} from "@mui/system";
-import ProfileImage from "./ProfileImage";
 
 const RepresentativeInfo = () => {
     const accountId = TokenService.getCurrentAccountId();

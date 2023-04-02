@@ -1,54 +1,41 @@
 import * as React from 'react';
-import { useDeleteFacility, useGetFacilitiesPageByAccountId } from '../../api/FacilityApi';
+import {useDeleteFacility, useGetFacilitiesPageByAccountId} from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
-import Table, { IColumnType } from '../../components/table/Table';
-import { Facility } from '../../entities/facility';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
+import Table, {IColumnType} from '../../components/table/Table';
+import {Facility} from '../../entities/facility';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
 import FacilityForm from './FacilityForm';
+import {Address} from "../../entities/address";
+import {Organization} from "../../entities/organization";
 
-interface IFacilityData {
-	id: string;
-	name: string;
-	activity: string;
-	address: string;
-	organization: string;
-}
 
-const columns: IColumnType<IFacilityData>[] = [
+const columns: IColumnType<Facility>[] = [
 	{
 		key: 'name',
 		title: 'Name',
 		minWidth: 150
 	},
 	{
-		key: 'activity',
+		key: 'isActive',
 		title: 'Activity',
-		minWidth: 150
+		minWidth: 150,
+		render: (f) => f.isActive ? 'Active' : 'Inactive',
 	},
 	{
 		key: 'address',
 		title: 'Address',
-		minWidth: 150
+		minWidth: 150,
+		render: (f) => f.address?.fullName
 	},
 	{
 		key: 'organization',
 		title: 'Organization',
-		minWidth: 150
+		minWidth: 150,
+		render: (f) => f.organization.name!
 	},
 ];
-
-
-const mapFacilityToTableRow = (facility: Facility): IFacilityData => {
-	return {
-		id: facility.id,
-		name: facility.name,
-		activity: facility.isActive ? 'Active' : 'Inactive',
-		address: facility.address?.fullName,
-		organization: facility.organization.name!
-	};
-}
 
 const FacilityTable = () => {
 	const [openEditForm, setOpenEditForm] = React.useState(false);
@@ -90,7 +77,6 @@ const FacilityTable = () => {
 						columns={columns}
 						onDelete={handleDelete}
 						onEdit={handleEdit}
-						mapModelToTableRow={mapFacilityToTableRow}
 						page={data}
 						onPageChange={(_, page) => setPageNumber(page)} 
 						onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />

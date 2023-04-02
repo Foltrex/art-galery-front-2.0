@@ -1,28 +1,24 @@
 import * as React from 'react';
-import { IconButton, TableCell, TableRow as MuiTableRow } from '@mui/material';
-import { DeleteOutline } from '@mui/icons-material';
-import lodash from 'lodash';
-import { IdentifiableRecord, IColumnType } from './Table';
+import {IconButton, TableCell, TableRow as MuiTableRow} from '@mui/material';
+import {DeleteOutline} from '@mui/icons-material';
+import {IColumnType, IdentifiableRecord} from './Table';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
-import { number } from 'yup';
 
-interface ITableRowProps<T extends IdentifiableRecord, S extends IdentifiableRecord> {
+interface ITableRowProps<S extends IdentifiableRecord> {
     number: number;
-    columns: IColumnType<T>[];
+    columns: IColumnType<S>[];
     item: S;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
-    mapModelToTableRow: (model: S) => T;
 }
 
-const TableRow = <T extends IdentifiableRecord, S extends IdentifiableRecord>({ 
+const TableRow = <S extends IdentifiableRecord>({
 	item,
     number,
 	columns,
 	onEdit, 
-	onDelete,
-	mapModelToTableRow
-}: ITableRowProps<T, S>) => {
+	onDelete
+}: ITableRowProps<S>) => {
     return (
         <MuiTableRow hover>
             <TableCell align='center'>
@@ -37,8 +33,8 @@ const TableRow = <T extends IdentifiableRecord, S extends IdentifiableRecord>({
                     maxWidth: '150px'
                 }}>
                     {column.render
-                        ? column.render(column, mapModelToTableRow(item))
-                        : lodash.get(mapModelToTableRow(item), column.key)
+                        ? column.render(item)
+                        : (item as any)[column.key]
                     }
                 </TableCell>
             ))}

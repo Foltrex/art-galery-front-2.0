@@ -1,16 +1,6 @@
-import { Representative } from "../entities/representative";
-import { IPage, useDelete, useFetch, useUpdate } from "../hooks/react-query";
-import { ART_SERVICE } from "../http/axios";
-
-export const useGetRepresentativesPageByAccountId = (accountId: string, page?: number, size?: number) => {
-    return useFetch<IPage<Representative>>(
-        `${ART_SERVICE}/representatives/account/${accountId}`,
-        {
-            page: page,
-            size: size
-        }
-    )
-}
+import {Representative} from "../entities/representative";
+import {useDelete, useFetch, useUpdate} from "../hooks/react-query";
+import {ART_SERVICE} from "../http/axios";
 
 export const useGetRepresentativeByAccountId = (accountId?: string) => {
     return useFetch<Representative>(

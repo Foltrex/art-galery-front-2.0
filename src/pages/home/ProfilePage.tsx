@@ -1,24 +1,13 @@
 import React from 'react';
 import {Box, Divider, Grid, Typography} from "@mui/material";
-import {TokenService} from "../../services/TokenService";
 import {Container} from "@mui/system";
-import {useGetAccountById} from "../../api/AccountApi";
 import ProfileImage from "./ProfileImage";
-import Loading from "../../components/ui/Loading";
-import Error from "../../components/ui/Error";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 const ProfilePage = () => {
 
-    const accountId = TokenService.getCurrentAccountId();
-    const {data: account, isLoading, isIdle, isError, error} = useGetAccountById(accountId);
-
-    if (isLoading || isIdle) {
-        return <Loading/>
-    }
-
-    if (isError) {
-        return <Error message={error.message}/>
-    }
+    const {authStore} = useRootStore();
+    const account = authStore.account;
 
     return (
         <Container>

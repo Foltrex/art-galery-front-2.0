@@ -1,14 +1,25 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, FormControlLabel, Grid, Switch, TextField } from '@mui/material';
-import { FormikHelpers, useFormik } from 'formik';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    FormControlLabel,
+    Grid,
+    Switch,
+    TextField
+} from '@mui/material';
+import {FormikHelpers, useFormik} from 'formik';
 import * as React from 'react';
 import * as yup from 'yup';
-import { useSaveFacility } from '../../api/FacilityApi';
-import { useGetOrganizationByAccountId } from '../../api/OrganizationApi';
+import {useSaveFacility} from '../../api/FacilityApi';
+import {useGetAllOrganizations} from '../../api/OrganizationApi';
 import MapDialog from '../../components/map/MapDialog';
-import { Address } from '../../entities/address';
-import { Facility } from '../../entities/facility';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
+import {Address} from '../../entities/address';
+import {Facility} from '../../entities/facility';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
 
 interface IFacilityFormProps {
     open: boolean;
@@ -24,8 +35,8 @@ interface FormValues {
 
 function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
     const token = TokenService.decode(AuthService.getToken());
-    const { data: organization } = useGetOrganizationByAccountId(token.id);
-    
+    const { data } = useGetAllOrganizations({page: 0, size: 1, id: facility?.organization.id});
+    const organization = data?.content[0];
     const [facilityObj, setFacility] = React.useState(
         facility ?? { organization: organization } as Facility
     );
@@ -164,6 +175,6 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
             </form>
         </Dialog>
     );
-};
+}
 
 export default FacilityForm;
