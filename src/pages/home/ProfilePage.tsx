@@ -8,22 +8,29 @@ import {useGetAccountById} from "../../api/AccountApi";
 import Loading from "../../components/ui/Loading";
 import Error from "../../components/ui/Error";
 import ProfileInfo from "./ProfileInfo";
+import {observer} from "mobx-react-lite";
 
-const ProfilePage = () => {
+// const AlertNotification: React.FC<IRepresentativeTableItemProps> = observer((props) => {
+
+const ProfilePage = observer(() => {
 
     //@Todo what is it? it's not working now
-    // const {authStore} = useRootStore();
-    // const account = authStore.account;
+    const {authStore} = useRootStore();
+    const account = authStore.account;
 
-    const accountId = TokenService.getCurrentAccountId();
-    const {data: account, isLoading, isIdle, isError, error} = useGetAccountById(accountId);
+    // const accountId = TokenService.getCurrentAccountId();
+    // const {data: account, isLoading, isIdle, isError, error} = useGetAccountById(accountId);
+    //
+    // if (isLoading || isIdle) {
+    //     return <Loading/>
+    // }
+    //
+    // if (isError) {
+    //     return <Error message={error.message}/>
+    // }
 
-    if (isLoading || isIdle) {
+    if (account === undefined) {
         return <Loading/>
-    }
-
-    if (isError) {
-        return <Error message={error.message}/>
     }
 
     return (
@@ -36,6 +43,6 @@ const ProfilePage = () => {
             </Box>
         </Container>
     );
-};
+});
 
 export default ProfilePage;

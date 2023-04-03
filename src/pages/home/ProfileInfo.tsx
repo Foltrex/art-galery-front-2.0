@@ -4,6 +4,7 @@ import {Divider, Grid, Typography} from "@mui/material";
 import MetadataList from "./MetadataList";
 
 const ProfileInfo = (props: {account: Account}) => {
+    console.log(props.account)
     return (
         <>
             <Typography variant='h4'>
