@@ -14,6 +14,7 @@ import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
 import {find} from "../../util/MetadataUtil";
+import {observer} from "mobx-react";
 
 const drawerWidth = 240;
 
@@ -96,7 +97,7 @@ function prepareSidebar(account:Account) {
             }];
     }
 }
-const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) => {
+const Sidebar: React.FC<ISidebarProps> = observer(({sidebarOpen, onSidebarButtonClick}) => {
     const theme = useTheme();
     const {authStore} = useRootStore();
     const account = authStore.account;
@@ -148,6 +149,6 @@ const Sidebar: React.FC<ISidebarProps> = ({sidebarOpen, onSidebarButtonClick}) =
             </List>
         </Drawer>
     );
-};
+});
 
 export default Sidebar;
