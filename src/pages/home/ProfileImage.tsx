@@ -14,7 +14,7 @@ const ProfileImage = (props: { account: Account }) => {
     const [image, setImage] = useState<string>('');
     const mutationUpdateAccountImage = useUpdateAccountImageById(TokenService.getCurrentAccountId());
 
-    const imageId = props.account.metadata.find(item => item.key === "account_image")?.value || '';
+
     // const {data: imageData, isLoading, isIdle,} = useGetAllFileStreamByIds([imageId]);
 
     // useEffect(() => {
@@ -25,6 +25,7 @@ const ProfileImage = (props: { account: Account }) => {
     // }, [imageData])
 
     useEffect(() => {
+        const imageId = props.account.metadata.find(item => item.key === "account_image")?.value || '';
         if (imageId !== "") {
             const url = `${FILE_SERVICE}/files/${imageId}/data`;
             axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer'})

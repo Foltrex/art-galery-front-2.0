@@ -3,11 +3,28 @@ import {Box, Divider, Grid, Typography} from "@mui/material";
 import {Container} from "@mui/system";
 import ProfileImage from "./ProfileImage";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {TokenService} from "../../services/TokenService";
+import {useGetAccountById} from "../../api/AccountApi";
+import Loading from "../../components/ui/Loading";
+import Error from "../../components/ui/Error";
+import ProfileInfo from "./ProfileInfo";
 
 const ProfilePage = () => {
 
-    const {authStore} = useRootStore();
-    const account = authStore.account;
+    //@Todo what is it? it's not working now
+    // const {authStore} = useRootStore();
+    // const account = authStore.account;
+
+    const accountId = TokenService.getCurrentAccountId();
+    const {data: account, isLoading, isIdle, isError, error} = useGetAccountById(accountId);
+
+    if (isLoading || isIdle) {
+        return <Loading/>
+    }
+
+    if (isError) {
+        return <Error message={error.message}/>
+    }
 
     return (
         <Container>
@@ -15,16 +32,7 @@ const ProfilePage = () => {
                 <ProfileImage account={account}/>
             </Box>
             <Box sx={{textAlign: 'center', width: '40%', mt: 4, mx: 'auto'}}>
-                <Typography variant='h4'>
-                    {account?.firstName}{' '}{account?.lastName}{' '}
-                </Typography>
-
-                <Divider sx={{mx: 'auto'}}/>
-
-                <Grid container justifyContent='center' sx={{mt: 4}}>
-                    <Grid item sm={4}><strong>Email</strong></Grid>
-                    <Grid item sm={8}>{account?.email}</Grid>
-                </Grid>
+                <ProfileInfo account={account}/>
             </Box>
         </Container>
     );
