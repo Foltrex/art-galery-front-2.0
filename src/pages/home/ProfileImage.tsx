@@ -3,26 +3,16 @@ import DefaultProfileImage from "../../assets/images/man.png";
 import {FileService} from "../../services/FileService";
 import {Avatar} from "@mui/material";
 import {Account} from "../../entities/account";
-import {useUpdateAccountImageById} from "../../api/AccountApi";
 import {TokenService} from "../../services/TokenService";
 import Loading from "../../components/ui/Loading";
-import {axiosApi, FILE_SERVICE} from "../../http/axios";
+import {axiosApi, FILE_SERVICE, USER_SERVICE} from "../../http/axios";
+import {AuthService} from "../../services/AuthService";
 
 const ProfileImage = (props: { account: Account }) => {
 
     const fileInput = useRef<HTMLInputElement>(null);
     const [image, setImage] = useState<string>('');
-    const mutationUpdateAccountImage = useUpdateAccountImageById(TokenService.getCurrentAccountId());
-
-
-    // const {data: imageData, isLoading, isIdle,} = useGetAllFileStreamByIds([imageId]);
-
-    // useEffect(() => {
-    //     if (imageData !== undefined) {
-    //         const image = FileService.toImage(imageData[0]);
-    //         setImage(image)
-    //     }
-    // }, [imageData])
+    const accountId = TokenService.getCurrentAccountId();
 
     useEffect(() => {
         const imageId = props.account.metadata.find(item => item.key === "account_image")?.value || '';
@@ -42,11 +32,16 @@ const ProfileImage = (props: { account: Account }) => {
         const currentFile = fileList[0];
 
         const currentImage = await FileService.toBase64fromBlob(currentFile);
-        setImage(currentImage);
 
         if (currentFile !== undefined) {
             const fileEntity = await FileService.toFile(null, currentFile);
-            await mutationUpdateAccountImage.mutateAsync(fileEntity)
+            await axiosApi.patch(`${USER_SERVICE}/accounts/${accountId}/account-image`, fileEntity, {
+                headers: {
+                    'Authorization': `Bearer ${AuthService.getToken()}`,
+                }
+            }).then(() => {
+                setImage(currentImage);
+            })
         }
     }
 

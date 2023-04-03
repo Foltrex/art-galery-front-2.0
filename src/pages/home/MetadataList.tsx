@@ -2,6 +2,7 @@ import React from 'react';
 import {Metadata} from "../../entities/metadata";
 import {Grid} from "@mui/material";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 
 const MetadataList = (props: { metadata: Metadata[] }) => {
 
@@ -11,10 +12,12 @@ const MetadataList = (props: { metadata: Metadata[] }) => {
         <>
             {
                 metadataList.map(metadataItem => (
-                    <>
-                        <Grid item sm={4}><strong>{metadataItem.key}</strong></Grid>
+                    <React.Fragment key={metadataItem.key}>
+                        <Grid item sm={4}>
+                            <strong>{PrepareDataUtil.convertFirstLatterToUpperCase(metadataItem.key)}</strong>
+                        </Grid>
                         <Grid item sm={8}>{metadataItem.value}</Grid>
-                    </>
+                    </React.Fragment>
                 ))
             }
         </>

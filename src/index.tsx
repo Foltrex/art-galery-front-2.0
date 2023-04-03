@@ -14,7 +14,12 @@ const root = ReactDOM.createRoot(
 );
 
 const defaultMaterialTheme = createTheme();
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+}});
 
 root.render(
     <React.StrictMode>
