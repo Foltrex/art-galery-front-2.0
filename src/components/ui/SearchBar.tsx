@@ -11,7 +11,7 @@ interface ISearchBarProps {
 }
 
 const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => {
-    const [searcingText, setSearchingText] = useState('');
+    const [searchingText, setSearchingText] = useState('');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const text = e.target.value;
@@ -27,7 +27,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => 
                     inputProps={{ 'aria-label': 'search paintings' }}
                     onChange={handleChange} 
                 />
-                <IconButton aria-label='search' onClick={() => onSearch(searcingText)}>
+                <IconButton aria-label='search' onClick={() => onSearch(searchingText)}>
                     <SearchIcon />
                 </IconButton>
             </Paper>

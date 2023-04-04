@@ -17,7 +17,7 @@ const TableRow = <S extends IdentifiableRecord>({
     number,
 	columns,
 	onEdit, 
-	onDelete
+	onDelete,
 }: ITableRowProps<S>) => {
     return (
         <MuiTableRow hover>
@@ -39,25 +39,26 @@ const TableRow = <S extends IdentifiableRecord>({
                 </TableCell>
             ))}
 
-            <TableCell key='action' align='center'>
-                <div>
-                    <IconButton
-                        disableRipple
-                        aria-label='edit'
-                        onClick={() => onEdit(item)}
-                    >
-                        <ModeOutlinedIcon />
-                    </IconButton>
-                    <IconButton
-                        disableRipple
-                        aria-label='delete'
-                        onClick={() => onDelete(item)}
-                    >
-                        <DeleteOutline />
-                    </IconButton>
-                    {' '}
-                </div>
-            </TableCell>
+                {/*@Todo bad solution => don't set expression for display or not. Set cell in columns*/}
+                {/*<TableCell key='action' align='center'>*/}
+                {/*    <div>*/}
+                {/*        <IconButton*/}
+                {/*            disableRipple*/}
+                {/*            aria-label='edit'*/}
+                {/*            onClick={() => onEdit(item)}*/}
+                {/*        >*/}
+                {/*            <ModeOutlinedIcon />*/}
+                {/*        </IconButton>*/}
+                {/*        <IconButton*/}
+                {/*            disableRipple*/}
+                {/*            aria-label='delete'*/}
+                {/*            onClick={() => onDelete(item)}*/}
+                {/*        >*/}
+                {/*            <DeleteOutline />*/}
+                {/*        </IconButton>*/}
+                {/*        {' '}*/}
+                {/*    </div>*/}
+                {/*</TableCell>*/}
         </MuiTableRow>
     );
 };
