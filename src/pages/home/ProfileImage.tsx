@@ -23,6 +23,8 @@ const ProfileImage = (props: { account: Account }) => {
                     const image = FileService.toImage(response.data);
                     setImage(image)
                 })
+        } else {
+            setImage("empty")
         }
     }, [props.account])
 
@@ -46,15 +48,14 @@ const ProfileImage = (props: { account: Account }) => {
     }
 
     const Content = () => {
-        // if (isLoading || isIdle) {
-        if (false) {
+        if (image === '') {
             return <Loading/>
         } else {
             return (
                 <>
                     <Avatar
                         alt="profile"
-                        src={image !== '' ? image : DefaultProfileImage}
+                        src={image !== 'empty' ? image : DefaultProfileImage}
                         style={{
                             display: 'block',
                             marginLeft: 'auto',

@@ -9,7 +9,6 @@ import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
-import Profile from './pages/home';
 import Representatives from './pages/representatives';
 import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
@@ -20,7 +19,7 @@ import Organizations from './pages/organizations';
 import ErrorPage from "./pages/error/ErrorPage";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
-import ProfilePage from "./pages/home/ProfilePage";
+import ProfilePage from "./pages/home";
 import ArtFormatFilter from './pages/arts/filter/ArtFormatFilter';
 import ArtSizeFilter from './pages/arts/filter/ArtSizeFilter';
 import ArtStyleFilter from './pages/arts/filter/ArtStyleFilter';
@@ -42,24 +41,24 @@ function App() {
                     path='/testing'
                     element={
                         <>
-                            <ArtFormatFilter />
-                            <ArtSizeFilter />
-                            <ArtStyleFilter />
-                            <ArtTopicFilter />
-                            <ArtTypeFilter />
+                            <ArtFormatFilter/>
+                            <ArtSizeFilter/>
+                            <ArtStyleFilter/>
+                            <ArtTopicFilter/>
+                            <ArtTypeFilter/>
                         </>
                     }
                 />
-                <Route path='/auth/signin' element={<Login />} />
-                <Route path='/auth/signup' element={<Register />} />
-                <Route path='/auth/passwordrecovery' element={<PasswordRecovery />} />
+                <Route path='/auth/signin' element={<Login/>}/>
+                <Route path='/auth/signup' element={<Register/>}/>
+                <Route path='/auth/passwordrecovery' element={<PasswordRecovery/>}/>
 
                 <Route
                     path='/'
-                    errorElement={<ErrorPage />}
+                    errorElement={<ErrorPage/>}
                     element={
                         <PrivateRoute>
-                            <Layout />
+                            <Layout/>
                         </PrivateRoute>
                     }
                 >
@@ -68,38 +67,34 @@ function App() {
                         <Route path={":id"} element={<OrganizationEdit/>}/>
                         <Route path={"new"} element={<OrganizationEdit/>}/>
                     </Route>
-                    {/*@Todo new profile page*/}
-                    <Route path={"/test"}>
-                        <Route index element={<ProfilePage/>}/>
-                    </Route>
 
-                    <Route index element={<ProfilePage />} />
-                    <Route path='facilities' element={<Facilities />} />
-                    <Route path='representatives' element={<Representatives />} />
-                    <Route path='proposals' element={<Proposals />} />
+                    <Route index element={<ProfilePage/>}/>
+                    <Route path='facilities' element={<Facilities/>}/>
+                    <Route path='representatives' element={<Representatives/>}/>
+                    <Route path='proposals' element={<Proposals/>}/>
 
 
                     <Route path='arts'>
                         <Route path='artist'>
-                            <Route index element={<Arts />} />
-                            <Route path='new' element={<ArtCreation />} />
-                            <Route path=':id' element={<ArtistArt />} />
+                            <Route index element={<Arts/>}/>
+                            <Route path='new' element={<ArtCreation/>}/>
+                            <Route path=':id' element={<ArtistArt/>}/>
                         </Route>
 
                         <Route path='representative'>
-                            <Route index element={<Arts />} />
-                            <Route path=':id' element={<RepresentativeArt />} />
+                            <Route index element={<Arts/>}/>
+                            <Route path=':id' element={<RepresentativeArt/>}/>
                         </Route>
                     </Route>
 
                     <Route path='artists'>
-                        <Route index element={<ArtistsGrid />} />
-                        <Route path=':id' element={<ArtistProfile />} />
+                        <Route index element={<ArtistsGrid/>}/>
+                        <Route path=':id' element={<ArtistProfile/>}/>
                     </Route>
 
-                    <Route path='settings' element={<Settings />} />
+                    <Route path='settings' element={<Settings/>}/>
                 </Route>
-                <Route path={"*"} element={<Error404 />} />
+                <Route path={"*"} element={<Error404/>}/>
             </Routes>
         </BrowserRouter>
     );
