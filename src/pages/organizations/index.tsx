@@ -9,7 +9,7 @@ import {OrganizationStatus} from "./OrganizationStatus";
 import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {IPage} from "../../hooks/react-query";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {Divider, FormControlLabel, FormGroup, IconButton, Radio, RadioGroup, TableCell} from "@mui/material";
+import {Divider, FormControlLabel, FormGroup, IconButton, Radio, RadioGroup} from "@mui/material";
 import Paper from "@mui/material/Paper";
 import {Box, Stack} from "@mui/system";
 import SearchBar from "../../components/ui/SearchBar";
@@ -154,30 +154,31 @@ function getColumns(setOpenProposalModal: () => void,
             }
         },
         {
-            key: 'test',
-            title: 'test',
+            key: 'actions',
+            title: 'Actions',
             minWidth: 150,
             render: (organization) => {
-                return (
-                    <div>
-                        <h1>{organization.id}</h1>
-                        <IconButton
-                            disableRipple
-                            aria-label='edit'
-                            onClick={() => onEdit(organization)}
-                        >
-                            <ModeOutlinedIcon/>
-                        </IconButton>
-                        <IconButton
-                            disableRipple
-                            aria-label='delete'
-                            onClick={() => onDelete(organization)}
-                        >
-                            <DeleteOutline/>
-                        </IconButton>
-                        {' '}
-                    </div>
-                )
+                if (accountType === AccountEnum.ARTIST) {
+                    return (
+                        <div>
+                            <IconButton
+                                disableRipple
+                                aria-label='edit'
+                                onClick={() => onEdit(organization)}
+                            >
+                                <ModeOutlinedIcon/>
+                            </IconButton>
+                            <IconButton
+                                disableRipple
+                                aria-label='delete'
+                                onClick={() => onDelete(organization)}
+                            >
+                                <DeleteOutline/>
+                            </IconButton>
+                            {' '}
+                        </div>
+                    )
+                }
             }
         }
         // {

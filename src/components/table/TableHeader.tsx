@@ -24,12 +24,13 @@ function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<
 						<b>{column.title}</b>
 					</TableCell>
 				))}
-				
-				<TableCell
-					align='center'
-					style={{minWidth: 150}}>
-						<b>Actions</b>
-				</TableCell>
+
+				{/*@TODO remove*/}
+				{/*<TableCell*/}
+				{/*	align='center'*/}
+				{/*	style={{minWidth: 150}}>*/}
+				{/*		<b>Actions</b>*/}
+				{/*</TableCell>*/}
 			</TableRow>
 		</TableHead>
   	);
