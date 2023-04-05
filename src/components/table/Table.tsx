@@ -18,6 +18,7 @@ export interface IColumnType<T extends IdentifiableRecord> {
 interface ITableProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
     page: IPage<S>;
+    editable?: boolean;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
     onPageChange: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
@@ -27,6 +28,7 @@ interface ITableProps<S extends IdentifiableRecord> {
 function Table<S extends IdentifiableRecord>({
     columns, 
     page, 
+    editable = false,
     onEdit,
     onDelete,
     onPageChange,
@@ -37,16 +39,17 @@ function Table<S extends IdentifiableRecord>({
         <>
             <TableContainer>
                 <MuiTable stickyHeader aria-label="sticky table">
-                    <TableHeader columns={columns} />
+                    <TableHeader columns={columns} showActions={editable} />
                     <TableBody 
                         page={page}
+                        editable={editable}
                         columns={columns}
                         onEdit={onEdit}
                         onDelete={onDelete}/>
                 </MuiTable>
             </TableContainer>
             <TablePagination 
-                rowsPerPageOptions={[5, 10, 15, 25, 50]}
+                rowsPerPageOptions={[]}
                 component='div'
                 count={page.totalElements}
                 rowsPerPage={page.size}

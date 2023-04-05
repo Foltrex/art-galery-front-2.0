@@ -3,9 +3,10 @@ import { IColumnType, IdentifiableRecord } from './Table';
 
 interface ITableHeaderProps<T extends IdentifiableRecord> {
 	columns: IColumnType<T>[];
+	showActions?: boolean;
 }
 
-function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<T>): JSX.Element {
+function TableHeader<T extends IdentifiableRecord>({columns, showActions = false}: ITableHeaderProps<T>): JSX.Element {
 	return (
 		<TableHead>
 			<TableRow>
@@ -24,13 +25,6 @@ function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<
 						<b>{column.title}</b>
 					</TableCell>
 				))}
-
-				{/*@TODO remove*/}
-				{/*<TableCell*/}
-				{/*	align='center'*/}
-				{/*	style={{minWidth: 150}}>*/}
-				{/*		<b>Actions</b>*/}
-				{/*</TableCell>*/}
 			</TableRow>
 		</TableHead>
   	);

@@ -5,12 +5,12 @@ import TableHeader from './TableHeader';
 
 interface ISkeletonTableBodyProps<T extends IdentifiableRecord> {
     columns: IColumnType<T>[];
-    rowsPerPage: number;
+    rowsPerPage?: number;
 }
 
 const SkeletonTableBody = <T extends IdentifiableRecord>({
     columns,
-    rowsPerPage
+    rowsPerPage = 5
 }: ISkeletonTableBodyProps<T>) => {
     const data = [];
     for(let number = 0; number < rowsPerPage; number++) {

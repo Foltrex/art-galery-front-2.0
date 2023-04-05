@@ -48,7 +48,7 @@ export default function MapDialog(props: IMapDialogProps) {
             } as GeoPosition
             setSelectPosition(position)
         }
-    }, [])
+    }, [props.address])
 
 
     const save = () => {

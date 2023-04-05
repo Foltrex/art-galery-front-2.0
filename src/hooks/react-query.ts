@@ -33,6 +33,27 @@ export interface IPage<T> {
     pageable: IPageable;
 }
 
+export const createEmptyPage = <T>() => {
+    const emptyPage: IPage<T> = {
+        content: [],
+        totalElements: 0,
+        totalPages: 0,
+        numberOfElements: 0,
+        size: 0,
+        number: 0,
+        first: false,
+        last: false,
+        empty: false,
+        pageable: {
+            offset: 0,
+            pageNumber: 0,
+            pageSize: 25,
+        }
+    };
+
+    return emptyPage;
+}
+
 interface QFC<T> extends QueryFunctionContext<QueryKeyT> {
     map?: (p:any) => T
 }
@@ -84,13 +105,14 @@ export const useFetch = <T>(
     config?: UseQueryOptions<T, Error, T, QueryKeyT>,
     map?: (p:any) => T
 ) => {
-    console.log(url, params);
     return useQuery<T, Error, T, QueryKeyT>(
         [url!, params],
         context => fetch<T>({...context, map: map}),
         {
             enabled: !!url,
-            retry: 3,
+            retry: false,
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: false,
             ...config,
         }
     );
