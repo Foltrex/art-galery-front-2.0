@@ -39,7 +39,7 @@ export default function MapDialog(props: IMapDialogProps) {
         if (props.address !== undefined && props.address !== null) {
             const position = {
                 place_id: 1,
-                display_name: props.address.fullName,
+                display_name: props.address.name,
                 lat: props.address.city.latitude,
                 lon: props.address.city.longitude,
                 address: {
@@ -53,7 +53,7 @@ export default function MapDialog(props: IMapDialogProps) {
 
     const save = () => {
         const address = {
-            fullName: selectPosition?.display_name,
+            name: selectPosition?.display_name,
             city: {
                 name: selectPosition?.address.city,
                 latitude: selectPosition?.lat,

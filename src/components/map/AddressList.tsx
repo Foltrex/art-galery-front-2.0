@@ -25,7 +25,7 @@ export default function AddressList(props: { listPlace: GeoPosition[], setSelect
                             button
                             onClick={() => {
                                 const address = {
-                                    fullName: item.display_name,
+                                    name: item.display_name,
                                     city: {
                                         name: item.address.city,
                                         latitude: item.lat,
