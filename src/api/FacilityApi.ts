@@ -1,13 +1,30 @@
-import {Facility} from "../entities/facility";
-import {IPage, useDelete, useFetch, usePost} from "../hooks/react-query";
-import {ART_SERVICE} from "../http/axios";
+import { Facility } from "../entities/facility";
+import { IPage, useDelete, useFetch, usePost } from "../hooks/react-query";
+import { ART_SERVICE } from "../http/axios";
+
+
+export const useGetAllFacilities = (page: number = 0, size: number = 25, cityId?: string, facilityName?: string, isActive?: boolean | null) => {
+    return useFetch<IPage<Facility>>(
+        `${ART_SERVICE}/facilities`,
+        {
+            page: page,
+            size: size,
+            cityId: cityId,
+            facilityName: facilityName,
+            isActive: isActive,
+        }
+    );
+}
 
 
 export const useGetFacilitiesPageByAccountId = (accountId: string, page?: number, size?: number) => {
-    return useFetch<IPage<Facility>>(`${ART_SERVICE}/facilities/page/accounts/${accountId}`, {
-        page: page,
-        size: size
-    })
+    return useFetch<IPage<Facility>>(
+        `${ART_SERVICE}/facilities/page/accounts/${accountId}`,
+        {
+            page: page,
+            size: size
+        }
+    )
 }
 
 export const useGetAllFacilitiesByAccountId = (accountId?: string) => {
@@ -25,7 +42,7 @@ export const useGetFacilityByAccountId = (accountId?: string) => {
         { enabled: !!accountId }
     );
 }
- 
+
 
 export const useSaveFacility = () => {
     return usePost<Facility>(`${ART_SERVICE}/facilities`);
