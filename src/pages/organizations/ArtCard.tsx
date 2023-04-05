@@ -1,7 +1,7 @@
 import { Card, ImageListItem, Typography, ImageListItemBar, Skeleton, Box, CardContent } from '@mui/material';
 import * as React from 'react';
 import { Art } from '../../entities/art';
-import { useGetArtListItemImageByArtId } from '../../hooks/arts/useGetArtListItemImageByArtId';
+import { useGetArtListItemImageByArtId } from '../../hooks/useGetArtListItemImageByArtId';
 
 interface IArtCardProps {
     art: Art;

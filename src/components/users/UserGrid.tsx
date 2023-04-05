@@ -4,7 +4,7 @@ import {useState} from "react";
 import {Account} from "../../entities/account";
 import {useDeleteRepresentative} from "../../api/RepresentativeApi";
 import SkeletonTable from "../table/SkeletonTable";
-import RepresentativeForm from "../../pages/representatives/RepresentativeForm";
+import RepresentativeForm from "../../pages/users/RepresentativeForm";
 import DeleteModal from "../modal/DeleteModal";
 import {useGetAll} from "../../api/AccountApi";
 

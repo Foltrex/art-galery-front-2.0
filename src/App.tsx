@@ -9,7 +9,7 @@ import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
-import Representatives from './pages/representatives';
+import Representatives from './pages/users';
 import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
@@ -77,7 +77,7 @@ function App() {
                         <Route path={"new"} element={<FacilityEdit/>}/>
                     </Route>
 
-                    <Route path='representatives' element={<Representatives/>}/>
+                    <Route path='users' element={<Representatives/>}/>
                     <Route path='proposals' element={<Proposals/>}/>
 
 

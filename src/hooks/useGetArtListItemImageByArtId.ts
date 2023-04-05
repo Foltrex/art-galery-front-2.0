@@ -1,5 +1,6 @@
-import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
-import { FileService } from "../../services/FileService";
+import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../api/FileApi";
+import { FileService } from "../services/FileService";
+
 
 type QueryResultT = {
     data: string | undefined;

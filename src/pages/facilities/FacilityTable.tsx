@@ -18,6 +18,8 @@ import { useRootStore } from '../../stores/provider/RootStoreProvider';
 
 import * as MetadataUtils from "../../util/MetadataUtil";
 import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
+import { useGetOrganizationRoles } from '../../api/OrganizationRoleApi';
+import { useGetLoggedUserRole } from '../../hooks/useGetLoggedUserRole';
 
 interface IFacilityTableProps {
 	data?: IPage<Facility>;
@@ -27,10 +29,7 @@ interface IFacilityTableProps {
 }
 
 const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSuccess, onPageChange}) => {
-
-	const { authStore } = useRootStore();
-	const { account } = authStore; 
-	const organizationRole = MetadataUtils.find('organization_role', account);
+	const organizationRole = useGetLoggedUserRole();
 
 	const [openEditForm, setOpenEditForm] = React.useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
@@ -153,7 +152,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSucce
 					|| organizationRole === OrganizationRoleEnum.MODERATOR
 					)
 			);
-		
+
 	const renderTable = () => {
 		if (isSuccess && data) {
 			return (
