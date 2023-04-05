@@ -57,7 +57,7 @@ const ArtistProfile: React.FunctionComponent<IArtistProfileProps> = () => {
 							<Typography variant='h5'>Address</Typography>
 						</Grid>
 						<Grid item xs={8}>
-							<Tooltip title={artist?.address?.fullName}>
+							<Tooltip title={artist?.address?.name}>
 								<Typography 
 									variant='h5' 
 									color='text.secondary' 
@@ -68,7 +68,7 @@ const ArtistProfile: React.FunctionComponent<IArtistProfileProps> = () => {
 										textOverflow: 'ellipsis' 
 									}} 
 								>
-									{artist?.address?.fullName}
+									{artist?.address?.name}
 								</Typography>
 							</Tooltip>
 						</Grid>

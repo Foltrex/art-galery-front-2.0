@@ -1,10 +1,20 @@
-import {Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField} from '@mui/material';
+import {
+    Button,
+    CircularProgress,
+    Divider,
+    FormControl,
+    FormHelperText,
+    InputLabel,
+    MenuItem,
+    Select,
+    Stack,
+    TextField
+} from '@mui/material';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {useGetOrganizationById} from '../../api/OrganizationApi';
+import {useCreateOrganization, useGetOrganizationById, useUpdateOrganizationById} from '../../api/OrganizationApi';
 import Loading from '../../components/ui/Loading';
 import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
-import {TokenService} from '../../services/TokenService';
 import {useNavigate, useParams} from "react-router-dom";
 import MapDialog from "../../components/map/MapDialog";
 import {Address} from "../../entities/address";
@@ -12,10 +22,8 @@ import AlertNotification from "../../components/notifications/AlertNotification"
 import * as yup from "yup";
 import {useFormik} from "formik";
 import {Container} from "@mui/system";
-import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
-import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
-import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {Organization} from "../../entities/organization";
 
 interface IAppProps {
 }
@@ -31,6 +39,8 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
     const matches = useParams();
     const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
     const mode = matches.id !== undefined ? "EDIT" : "CREATE";
+    const [openOrganizationUsersDialog, setOpenOrganizationUsersDialog] = useState(false)
+    const [openOrganizationFacilitiesDialog, setOpenOrganizationFacilitiesDialog] = useState(false)
 
     const {authStore} = useRootStore();
     const account = authStore.account;
@@ -39,36 +49,33 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
     const [initialValues, setInitialValues] = useState<IFormValues>({
         name: '',
         address: null,
-        status: '',
+        status: OrganizationStatusEnum.NEW,
     })
 
     useEffect(() => {
         if (account) {
-            if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-                navigate("/")
-            }
-            const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-            const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
-
-            if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-                navigate("/")
-            }
+            // if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+            //     navigate("/")
+            // }
+            // const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+            // const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+            //
+            // if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+            //     navigate("/")
+            // }
         }
 
     }, [account])
 
     useEffect(() => {
         if (!isFetching && !isLoading) {
-            console.log(organization)
             organization && setInitialValues({
                 name: organization.name,
                 address: organization!.address,
                 status: organization!.status,
             })
-
         }
     }, [organization])
-
 
     const validationSchema = yup.object().shape({
         name: yup.string()
@@ -79,8 +86,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
             .required()
             .nullable(),
         status: yup.object()
-            .required()
-            .nullable()
+            .nullable(),
     })
 
     const formik = useFormik({
@@ -90,10 +96,33 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
         enableReinitialize: true,
         onSubmit: async (values, {setSubmitting}) => {
             setSubmitting(true)
-            // await submit(values)
+            await submit(values)
             setSubmitting(false)
         },
     });
+
+    const mutationUpdateOrganization = useUpdateOrganizationById(matches.id!);
+    const mutationCreateOrganization = useCreateOrganization();
+
+    const submit = async (values: IFormValues) => {
+        const request = {
+            id: matches.id ? matches.id : '',
+            name: values.name,
+            address: values.address,
+            status: values.status,
+        } as Organization;
+        if (mode === "CREATE") {
+            await mutationCreateOrganization.mutateAsync(request)
+                .then(response => {
+                    navigate(`/organizations/${response.data.id}`)
+                });
+        } else if (mode === "EDIT") {
+            await mutationUpdateOrganization.mutateAsync(request)
+                .then(() => {
+
+                });
+        }
+    }
 
     if (isLoading || account === undefined) {
         return <Loading/>
@@ -132,13 +161,14 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                         InputProps={{readOnly: true}}
                         InputLabelProps={formik.values.address === null ? undefined : {shrink: true}}
                         value={typeof formik.values.address === "object" ?
-                            formik.values.address?.fullName : formik.values.address
+                            formik.values.address?.name : formik.values.address
                         }
                         onClick={() => setOpenMap(true)}
                         onChange={formik.handleChange}
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />
-                    <FormControl fullWidth margin="normal">
+                    <FormControl fullWidth margin="normal" error={!!formik.errors.status}
+                    >
                         <InputLabel>Status</InputLabel>
                         <Select
                             name={"status"}
@@ -146,11 +176,15 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                             value={formik.values.status}
                             defaultValue={formik.values.status}
                             onChange={formik.handleChange}
+
                         >
                             <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
                             <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
                             <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
                         </Select>
+                        <FormHelperText style={{color: "red"}}>
+                            {formik.errors.status ? formik.errors.status : ''}
+                        </FormHelperText>
                     </FormControl>
                     {/*<FormGroup>*/}
                     {/*    <FormControlLabel control={*/}
@@ -170,18 +204,21 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                 >
                     <Button size={"large"}
                             color={"error"}
+                            onClick={() => navigate("/organizations")}
                     >
                         Back
                     </Button>
                     <Button size={"large"}
                             fullWidth
                             disabled={mode === "CREATE"}
+                            onClick={() => setOpenOrganizationUsersDialog(true)}
                     >
                         Participants
                     </Button>
                     <Button size={"large"}
                             fullWidth
                             disabled={mode === "CREATE"}
+                            onClick={() => setOpenOrganizationFacilitiesDialog(true)}
                     >
                         Facilities
                     </Button>
@@ -189,8 +226,9 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                             fullWidth
                             color={"success"}
                             variant="outlined"
+                            type="submit" form={"form"} disabled={formik.isSubmitting}
                     >
-                        Save
+                        {formik.isSubmitting ? <CircularProgress/> : "Save"}
                     </Button>
                 </Stack>
             </Container>

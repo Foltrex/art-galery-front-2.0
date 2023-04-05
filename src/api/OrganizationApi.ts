@@ -1,5 +1,5 @@
 import {Organization} from "../entities/organization";
-import {IPage, useFetch, useUpdate} from "../hooks/react-query";
+import {IPage, useFetch, usePost, useUpdate} from "../hooks/react-query";
 import {ART_SERVICE} from "../http/axios";
 import {Representative} from "../entities/representative";
 
@@ -21,6 +21,9 @@ export const useGetOrganizationById = (id?: string) => {
     );
 }
 
+export const useCreateOrganization = () => {
+    return usePost<Organization>(`${API}`);
+}
 
 export const useUpdateOrganizationById = (organizationId: string) => {
     return useUpdate<Organization>(`${API}/${organizationId}`);

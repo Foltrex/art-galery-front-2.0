@@ -62,14 +62,20 @@ function App() {
                         </PrivateRoute>
                     }
                 >
+                    <Route index element={<ProfilePage/>}/>
+
                     <Route path={"organizations"}>
                         <Route index element={<Organizations/>}/>
                         <Route path={":id"} element={<OrganizationEdit/>}/>
                         <Route path={"new"} element={<OrganizationEdit/>}/>
                     </Route>
 
-                    <Route index element={<ProfilePage/>}/>
-                    <Route path='facilities' element={<Facilities/>}/>
+                    <Route path='facilities'>
+                        <Route index element={<Facilities/>}/>
+                        <Route path={":id"} element={<OrganizationEdit/>}/>
+                        <Route path={"new"} element={<OrganizationEdit/>}/>
+                    </Route>
+
                     <Route path='representatives' element={<Representatives/>}/>
                     <Route path='proposals' element={<Proposals/>}/>
 

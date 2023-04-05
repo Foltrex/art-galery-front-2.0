@@ -27,7 +27,7 @@ const columns: IColumnType<Facility>[] = [
 		key: 'address',
 		title: 'Address',
 		minWidth: 150,
-		render: (f) => f.address?.fullName
+		render: (f) => f.address?.name
 	},
 	{
 		key: 'organization',

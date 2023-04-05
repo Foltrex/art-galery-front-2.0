@@ -152,7 +152,7 @@ function FacilityForm({ open, onClose, facility }: IFacilityFormProps) {
                                 InputProps={{ readOnly: true }}
                                 InputLabelProps={{ shrink: true }}
                                 value={typeof formik.values.address === "object" ?
-                                    formik.values.address?.fullName : formik.values.address
+                                    formik.values.address?.name : formik.values.address
                                 }
                                 onClick={() => setOpenMap(true)}
                                 onChange={formik.handleChange}
