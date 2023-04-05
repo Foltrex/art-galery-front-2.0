@@ -1,60 +1,106 @@
 import * as React from 'react';
-import {useDeleteFacility, useGetFacilitiesPageByAccountId} from '../../api/FacilityApi';
+import { useDeleteFacility } from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
-import Table, {IColumnType} from '../../components/table/Table';
-import {Facility} from '../../entities/facility';
-import {AuthService} from '../../services/AuthService';
-import {TokenService} from '../../services/TokenService';
+import Table, { IColumnType } from '../../components/table/Table';
+import { Facility } from '../../entities/facility';
+import { IPage, createEmptyPage } from '../../hooks/react-query';
 import FacilityForm from './FacilityForm';
-import {Address} from "../../entities/address";
-import {Organization} from "../../entities/organization";
+import { Checkbox, IconButton, Typography } from '@mui/material';
+import { TokenService } from '../../services/TokenService';
+import { AccountEnum } from '../../entities/enums/AccountEnum';
+import { Map } from '@mui/icons-material';
+import { Address } from '../../entities/address';
+import MapDialog from '../../components/map/MapDialog';
+import { useRootStore } from '../../stores/provider/RootStoreProvider';
 
+import * as MetadataUtils from "../../util/MetadataUtil";
+import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
 
-const columns: IColumnType<Facility>[] = [
-	{
-		key: 'name',
-		title: 'Name',
-		minWidth: 150
-	},
-	{
-		key: 'isActive',
-		title: 'Activity',
-		minWidth: 150,
-		render: (f) => f.isActive ? 'Active' : 'Inactive',
-	},
-	{
-		key: 'address',
-		title: 'Address',
-		minWidth: 150,
-		render: (f) => f.address?.name
-	},
-	{
-		key: 'organization',
-		title: 'Organization',
-		minWidth: 150,
-		render: (f) => f.organization.name!
-	},
-];
+interface IFacilityTableProps {
+	data?: IPage<Facility>;
+	isFetching: boolean;
+	isSuccess: boolean;
+	onPageChange: (page: number) => void;
+}
 
-const FacilityTable = () => {
+const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSuccess, onPageChange}) => {
+
+	const { authStore } = useRootStore();
+	const { account } = authStore; 
+	const organizationRole = MetadataUtils.find('organization_role', account);
+
 	const [openEditForm, setOpenEditForm] = React.useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+	const [currentFacilityAddress, setCurrentFacilityAddress] = React.useState<Address>();
 	const [facility, setFacility] = React.useState<Facility>();
+	
+	const [selectedFacilitiesId, setSelectedFacilitiesId] = React.useState<string[]>([]);
 
-	const [rowsPerPage, setRowsPerPage] = React.useState(5);
-	const [pageNumber, setPageNumber] = React.useState(0);
-
-	const token = TokenService.decode(AuthService.getToken());
-	const { data } = useGetFacilitiesPageByAccountId(token.id, pageNumber, rowsPerPage);
-
+	const handleFacilityCheckboxClick = (selectedFacilityId: string) => {
+		const indexOfFacilityId = selectedFacilitiesId.indexOf(selectedFacilityId);
+		if (indexOfFacilityId === -1) {
+			setSelectedFacilitiesId([...selectedFacilitiesId, selectedFacilityId]);
+		} else {
+			const filteredArray = selectedFacilitiesId.filter(facilityId => facilityId !== selectedFacilityId);
+			setSelectedFacilitiesId(filteredArray);
+		}
+	}
+	
+	const columns: IColumnType<Facility>[] = [
+		{
+			key: 'selected',
+			title: '',
+			minWidth: 10,
+			render: (facility) => TokenService.getCurrentAccountType() === AccountEnum.ARTIST
+					?  <Checkbox onClick={() => handleFacilityCheckboxClick(facility.id)} />
+					: <></>
+		},
+		{
+			key: 'name',
+			title: 'Name',
+			minWidth: 150
+		},
+		{
+			key: 'organization',
+			title: 'Organization',
+			minWidth: 150,
+			render: (facility) => facility.organization.name!
+		},
+		{
+			key: 'location',
+			title: 'Location',
+			minWidth: 150,
+			render: (facility) => {
+				return (
+					<IconButton 
+						onClick={() => {
+							if (!!facility.address) {
+								setCurrentFacilityAddress(facility.address);
+							}
+						}}
+					>
+						<Map />
+					</IconButton>
+				)
+			}
+		},
+		{
+			key: 'status',
+			title: 'Status',
+			minWidth: 150,
+			render: (facility) => facility.isActive 
+				?  <Typography sx={{color: 'success.main'}}>Active</Typography>
+				: <Typography sx={{color: 'error.main'}}>Inactive</Typography>,
+		},
+	];
 	
 	const handleDelete = async (data: Facility) => {
 		setFacility(data);
 		setOpenDeleteModal(true);
 	}
 
-    const mutationDelete = useDeleteFacility();
+	const mutationDelete = useDeleteFacility();
 
 	const onDelete = async () => {
 		try {
@@ -65,36 +111,76 @@ const FacilityTable = () => {
 		}
 	}
 
-    const handleEdit = (data: Facility) => {
-        setFacility(data);
-        setOpenEditForm(true);
-    }
+	const handleEdit = (data: Facility) => {
+		setFacility(data);
+		setOpenEditForm(true);
+	}
+
+	const handlePageChange = (page: number) => {
+		onPageChange(page);
+	}
+
+	const currentAccountType = TokenService.getCurrentAccountType();
+	const isTableRowsEditableByCurrentUser = currentAccountType === AccountEnum.SYSTEM 
+		|| (currentAccountType === AccountEnum.REPRESENTATIVE
+				&& (organizationRole === OrganizationRoleEnum.CREATOR  
+					|| organizationRole === OrganizationRoleEnum.MODERATOR
+					)
+			);
+		
+	const renderTable = () => {
+		if (isSuccess && data) {
+			return (
+				<Table
+					columns={columns}
+					onDelete={handleDelete}
+					onEdit={handleEdit}
+					page={data}
+					onPageChange={(_, page) => handlePageChange(page)}
+					onRowsPerPageChange={(event) => alert(event)} 
+					editable={isTableRowsEditableByCurrentUser}	
+				/>
+			);
+		} else if (isFetching) {
+			return (
+				<SkeletonTable columns={columns}/>
+			);
+		} else {
+			const emptyPage = createEmptyPage<Facility>();
+			return (
+				<Table
+					columns={columns}
+					onDelete={handleDelete}
+					onEdit={handleEdit}
+					page={emptyPage}
+					onPageChange={(_, page) => handlePageChange(page)}
+					onRowsPerPageChange={(event) => alert(event)} 
+					editable={isTableRowsEditableByCurrentUser} 
+				/>
+			);
+		}
+	}
 
 	return (
 		<>
-			{data && data.content
-				? 	<Table
-						columns={columns}
-						onDelete={handleDelete}
-						onEdit={handleEdit}
-						page={data}
-						onPageChange={(_, page) => setPageNumber(page)} 
-						onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
-				: 	<SkeletonTable 
-						columns={columns} 
-						rowsPerPage={rowsPerPage} />
-			}
+			{renderTable()}
 
-			<FacilityForm 
-				open={openEditForm} 
+			<FacilityForm
+				open={openEditForm}
 				onClose={() => setOpenEditForm(false)}
 				facility={facility} />
-            <DeleteModal 
-                open={openDeleteModal} 
-                onClose={() => setOpenDeleteModal(false)} 
-                onDelete={onDelete} />
+			<DeleteModal
+				open={openDeleteModal}
+				onClose={() => setOpenDeleteModal(false)}
+				onDelete={onDelete} />
+			<MapDialog 
+				open={!!currentFacilityAddress} 
+				onClose={() => setCurrentFacilityAddress(undefined)} 
+				address={currentFacilityAddress}
+				setFieldValue={(address) => console.log(address)} 
+			/>
 		</>
-  	);
+	);
 };
 
 export default FacilityTable;
