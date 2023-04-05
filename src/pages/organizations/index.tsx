@@ -16,23 +16,31 @@ import SearchBar from "../../components/ui/SearchBar";
 import {useNavigate} from "react-router-dom";
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import {DeleteOutline} from "@mui/icons-material";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
+import {Account} from "../../entities/account";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import Loading from "../../components/ui/Loading";
+
+const searchFilters: Array<{ label: string, value: string }> = [
+    {label: 'All', value: ''},
+    {label: 'New', value: 'NEW'},
+    {label: 'Active', value: 'ACTIVE'},
+    {label: 'Inactive', value: 'INACTIVE'},
+];
 
 const OrganizationGrid = () => {
-    const currentAccountType = TokenService.getCurrentAccountType();
-    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+    const navigate = useNavigate();
+    const {authStore} = useRootStore();
+    const account = authStore.account;
+
     const [data, setData] = useState<IPage<Organization>>();
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
+    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [openProposalModal, setOpenProposalModal] = useState(false);
-    const navigate = useNavigate();
 
-    const searchFilters: Array<{ label: string, value: string }> = [
-        {label: 'All', value: ''},
-        {label: 'New', value: 'NEW'},
-        {label: 'Active', value: 'ACTIVE'},
-        {label: 'Inactive', value: 'INACTIVE'},
-    ];
     const [searchFilter, setSearchFilter] = useState(searchFilters[0].value);
     const [searchText, setSearchText] = useState<string>();
 
@@ -41,12 +49,8 @@ const OrganizationGrid = () => {
     }
 
     const handleEdit = (data: Organization) => {
-        alert(data.name)
-
-        // navigate(`${data.id}`)
+        navigate(`${data.id}`)
     }
-
-    const columns = getColumns(() => setOpenProposalModal(true), handleEdit, handleDelete);
 
     useEffect(() => {
         const API = `${ART_SERVICE}/organizations`;
@@ -71,10 +75,19 @@ const OrganizationGrid = () => {
         setSearchFilter(e.target.value);
     }
 
+    if (account === undefined) {
+        return <Loading/>
+    }
+
+    const columns = getColumns(
+        () => setOpenProposalModal(true),
+        handleEdit,
+        handleDelete,
+        account);
+
     return (
         <>
             <Paper elevation={1} sx={{padding: '10px'}}>
-                <h1>{currentAccountType}</h1>
                 <Box
                     sx={{
                         display: 'flex',
@@ -137,8 +150,12 @@ const OrganizationGrid = () => {
 
 function getColumns(setOpenProposalModal: () => void,
                     onEdit: (data: Organization) => void,
-                    onDelete: (data: Organization) => void): IColumnType<Organization>[] {
+                    onDelete: (data: Organization) => void,
+                    account: Account): IColumnType<Organization>[] {
     const accountType = TokenService.getCurrentAccountType();
+    const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+    const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+
     return [
         {
             key: 'name',
@@ -158,7 +175,8 @@ function getColumns(setOpenProposalModal: () => void,
             title: 'Actions',
             minWidth: 150,
             render: (organization) => {
-                if (accountType === AccountEnum.ARTIST) {
+                if (accountType === AccountEnum.SYSTEM ||
+                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR || true)) {
                     return (
                         <div>
                             <IconButton

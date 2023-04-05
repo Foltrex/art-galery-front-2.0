@@ -1,105 +1,201 @@
-import {Alert, Box, Button, Divider, Grid, Stack, Typography} from '@mui/material';
+import {Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, TextField} from '@mui/material';
 import * as React from 'react';
-import {useGetAllOrganizations} from '../../api/OrganizationApi';
-import {useGetRepresentativeByAccountId} from '../../api/RepresentativeApi';
+import {useEffect, useState} from 'react';
+import {useGetOrganizationById} from '../../api/OrganizationApi';
 import Loading from '../../components/ui/Loading';
-import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
 import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
 import {TokenService} from '../../services/TokenService';
-import OrganizationEditDialog from '../home/edit/OrganizationEditDialog';
-import {OrganizationStatus} from "./OrganizationStatus";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
+import MapDialog from "../../components/map/MapDialog";
+import {Address} from "../../entities/address";
+import AlertNotification from "../../components/notifications/AlertNotification";
+import * as yup from "yup";
+import {useFormik} from "formik";
+import {Container} from "@mui/system";
+import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 
 interface IAppProps {
 }
 
+interface IFormValues {
+    name: string,
+    address: Address | null | string,
+    status: OrganizationStatusEnum | string
+}
+
 const App: React.FunctionComponent<IAppProps> = (props) => {
-	const matches =  useParams();
-	const accountId = TokenService.getCurrentAccountId();
-	const [openEditForm, setOpenEditForm] = React.useState(false)
-	const { data, isLoading, isIdle, isError, error } = useGetAllOrganizations({page: 0, size: 1, id: matches.oganizationId});
-	const { data: representative } = useGetRepresentativeByAccountId(accountId);
-	const organizationRole = representative?.organizationRole?.name;
-	const isOrganizationEditableByThisAccount = organizationRole === OrganizationRoleEnum.CREATOR;
+    const navigate = useNavigate()
+    const matches = useParams();
+    const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
+    const mode = matches.id !== undefined ? "EDIT" : "CREATE";
 
-	if (isLoading || isIdle) {
-		return <Loading />
-	}
-	if (isError) {
-		return <Box display="flex" justifyContent="center">Error: {error.message}</Box>
-	}
-	const organization = data?.content[0];
+    const {authStore} = useRootStore();
+    const account = authStore.account;
 
-	const AlertWarning = () => {
-		if (organization.status === OrganizationStatusEnum.NEW) {
-			return (
-				<Alert severity="warning">
-					Please, {' '}
-					<span style={{ cursor: "pointer" }} onClick={() => setOpenEditForm(true)}>
-						<b><u>fill</u></b>
-					</span>{' '}
-					the data about your organization!
-				</Alert>
-			)
-		} else {
-			return null
-		}
-	}
+    const [openMap, setOpenMap] = useState(false)
+    const [initialValues, setInitialValues] = useState<IFormValues>({
+        name: '',
+        address: null,
+        status: '',
+    })
 
-	const Render = () => {
-		return (
-			<div>
-				<OrganizationEditDialog
-					open={openEditForm}
-					onClose={() => setOpenEditForm(false)}
-					organization={organization}
-				/>
+    useEffect(() => {
+        if (account) {
+            if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+                navigate("/")
+            }
+            const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+            const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
 
-				{isOrganizationEditableByThisAccount && <AlertWarning />}
+            if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+                navigate("/")
+            }
+        }
 
-				<Box display="flex" justifyContent="center">
-					<Grid
-						sx={{ marginTop: "4%", width: "50vw" }}
-						justifyContent="center"
-					>
-						<Grid item sm={12}>
-							<Typography variant='h4'>
-								{organization.name}{' '}
-								{isOrganizationEditableByThisAccount &&
-									<Button onClick={() => setOpenEditForm(true)}>
-										Edit
-									</Button>
-								}
-							</Typography>
-							<Divider />
-							<Stack spacing={2} sx={{ marginTop: 4 }}>
-								<Grid container>
-									<Grid item sm={4}><strong>Status</strong></Grid>
-									<Grid item sm={8}>
-										<OrganizationStatus organization={organization}/>
-									</Grid>
-								</Grid>
-								<Grid container>
-									<Grid item sm={4}><strong>Address</strong></Grid>
-									<Grid item sm={8}>
-										{organization.address ? (organization.address.fullName) : "empty"}
-									</Grid>
-								</Grid>
-								<Grid container>
-									<Grid item sm={4}><strong>Email</strong></Grid>
-									<Grid item sm={8}>{TokenService.getCurrentDecodedToken().sub}</Grid>
-								</Grid>
-							</Stack>
-						</Grid>
-					</Grid>
-				</Box>
-			</div>
-		);
-	}
+    }, [account])
 
-	return (
-		<div><Render /></div>
-	)
+    useEffect(() => {
+        if (!isFetching && !isLoading) {
+            console.log(organization)
+            organization && setInitialValues({
+                name: organization.name,
+                address: organization!.address,
+                status: organization!.status,
+            })
+
+        }
+    }, [organization])
+
+
+    const validationSchema = yup.object().shape({
+        name: yup.string()
+            .required()
+            .min(2)
+            .max(255),
+        address: yup.object()
+            .required()
+            .nullable(),
+        status: yup.object()
+            .required()
+            .nullable()
+    })
+
+    const formik = useFormik({
+        initialValues: initialValues,
+        validationSchema: validationSchema,
+        validateOnChange: false,
+        enableReinitialize: true,
+        onSubmit: async (values, {setSubmitting}) => {
+            setSubmitting(true)
+            // await submit(values)
+            setSubmitting(false)
+        },
+    });
+
+    if (isLoading || account === undefined) {
+        return <Loading/>
+    }
+
+    return (
+        <div>
+            <Container maxWidth='md'>
+                <form onSubmit={formik.handleSubmit} id="form" noValidate>
+                    <MapDialog
+                        open={openMap}
+                        onClose={() => setOpenMap(false)}
+                        setFieldValue={(value: Address) => {
+                            formik.setFieldValue('address', value)
+                        }}
+                        address={formik.values.address as Address}
+                    />
+                    <AlertNotification/>
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Name"
+                        name={"name"}
+                        defaultValue={formik.values.name}
+                        value={formik.values.name}
+                        onChange={formik.handleChange}
+                        error={!!formik.errors.name} helperText={formik.errors.name}
+                    />
+                    <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Address"
+                        name={"address"}
+                        InputProps={{readOnly: true}}
+                        InputLabelProps={formik.values.address === null ? undefined : {shrink: true}}
+                        value={typeof formik.values.address === "object" ?
+                            formik.values.address?.fullName : formik.values.address
+                        }
+                        onClick={() => setOpenMap(true)}
+                        onChange={formik.handleChange}
+                        error={!!formik.errors.address} helperText={formik.errors.address}
+                    />
+                    <FormControl fullWidth margin="normal">
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                            name={"status"}
+                            label="Status"
+                            value={formik.values.status}
+                            defaultValue={formik.values.status}
+                            onChange={formik.handleChange}
+                        >
+                            <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
+                            <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
+                            <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
+                    {/*<FormGroup>*/}
+                    {/*    <FormControlLabel control={*/}
+                    {/*        <Switch*/}
+                    {/*            name={"isActive"}*/}
+                    {/*            checked={formik.values.isActive}*/}
+                    {/*            onChange={formik.handleChange}*/}
+                    {/*        />*/}
+                    {/*    } label="isActive"/>*/}
+                    {/*</FormGroup>*/}
+                </form>
+                <Stack
+                    direction={"row"}
+                    spacing={2}
+                    divider={<Divider orientation="vertical" flexItem/>}
+                    style={{marginTop: "15px"}}
+                >
+                    <Button size={"large"}
+                            color={"error"}
+                    >
+                        Back
+                    </Button>
+                    <Button size={"large"}
+                            fullWidth
+                            disabled={mode === "CREATE"}
+                    >
+                        Participants
+                    </Button>
+                    <Button size={"large"}
+                            fullWidth
+                            disabled={mode === "CREATE"}
+                    >
+                        Facilities
+                    </Button>
+                    <Button size={"large"}
+                            fullWidth
+                            color={"success"}
+                            variant="outlined"
+                    >
+                        Save
+                    </Button>
+                </Stack>
+            </Container>
+        </div>
+    )
 
 };
 
