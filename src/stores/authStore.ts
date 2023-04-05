@@ -6,7 +6,9 @@ export class AuthStore {
     rootStore: RootStore;
 
     //@ts-ignore
-    account: Account;
+    account: Account =  {
+        metadata: []
+    };
 
     constructor(rootStore: RootStore) {
         this.rootStore = rootStore;
