@@ -18,27 +18,29 @@ import {useParams} from "react-router-dom";
 import {Account} from "../../entities/account";
 import Paper from "@mui/material/Paper";
 import {PrepareDataUtil} from "../../util/PrepareDataUtil";
+import {Facility} from "../../entities/facility";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
     onClose: () => void;
 }
 
-const OrganizationUsersDialog = ({open, onClose}: IOrganizationFacilitiesDialogProps) => {
+const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDialogProps) => {
     const matches = useParams();
-    const [accounts, setAccounts] = useState<Account[]>([]);
+    const [facilities, setFacilities] = useState<Facility[]>([]);
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
     const [totalElements, setTotalElements] = useState(0)
 
     useEffect(() => {
-        axiosApi.get(`${USER_SERVICE}/accounts/organizations/${matches.id}`, {
+        axiosApi.get(`${ART_SERVICE}/facilities/organizations/${matches.id}`, {
             params: {
                 page: pageNumber,
                 size: rowsPerPage,
             }
         }).then(response => {
-            setAccounts(response.data.content)
+            console.log(response.data.content)
+            setFacilities(response.data.content)
             setTotalElements(response.data.totalElements)
         })
     }, [rowsPerPage, pageNumber])
@@ -62,20 +64,19 @@ const OrganizationUsersDialog = ({open, onClose}: IOrganizationFacilitiesDialogP
                         <TableHead>
                             <TableRow>
                                 <TableCell>Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Role</TableCell>
+                                <TableCell>Address</TableCell>
+                                <TableCell>isActive</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {accounts.map((account) => (
-                                <TableRow key={account.id}>
+                            {facilities.map((facility) => (
+                                <TableRow key={facility.id}>
                                     <TableCell component="th" scope="row">
-                                        {account.firstName} {account.lastName}
+                                        {facility.name}
                                     </TableCell>
-                                    <TableCell>{account.email}</TableCell>
+                                    <TableCell>{facility.address?.name}</TableCell>
                                     <TableCell>
-                                        {PrepareDataUtil.convertFirstLatterToUpperCase(
-                                                account.metadata.find(item => item.key === "organizationRole")!.value)}
+                                        {facility.isActive ? 'Active' : 'Inactive'}
                                     </TableCell>
                                 </TableRow>
                             ))}
@@ -99,4 +100,4 @@ const OrganizationUsersDialog = ({open, onClose}: IOrganizationFacilitiesDialogP
     );
 };
 
-export default OrganizationUsersDialog;
+export default OrganizationFacilitiesDialog;

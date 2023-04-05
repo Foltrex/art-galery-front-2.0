@@ -24,6 +24,8 @@ import {useFormik} from "formik";
 import {Container} from "@mui/system";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Organization} from "../../entities/organization";
+import OrganizationFacilitiesDialog from "./OrganizationFacilitiesDialog";
+import OrganizationUsersDialog from "./OrganizationUsersDialog";
 
 interface IAppProps {
 }
@@ -130,7 +132,15 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
 
     return (
         <div>
-            <Container maxWidth='md'>
+            <OrganizationFacilitiesDialog
+                open={openOrganizationFacilitiesDialog}
+                onClose={() => setOpenOrganizationFacilitiesDialog(false)}
+            />
+            <OrganizationUsersDialog
+                open={openOrganizationUsersDialog}
+                onClose={() => setOpenOrganizationUsersDialog(false)}
+            />
+            <Container maxWidth='lg'>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}
