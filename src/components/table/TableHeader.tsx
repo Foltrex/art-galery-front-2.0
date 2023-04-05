@@ -25,8 +25,6 @@ function TableHeader<T extends IdentifiableRecord>({columns, showActions = false
 						<b>{column.title}</b>
 					</TableCell>
 				))}
-				
-				<TableCell></TableCell>
 			</TableRow>
 		</TableHead>
   	);

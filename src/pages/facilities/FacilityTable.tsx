@@ -12,6 +12,8 @@ import { AccountEnum } from '../../entities/enums/AccountEnum';
 import { Map } from '@mui/icons-material';
 import { Address } from '../../entities/address';
 import MapDialog from '../../components/map/MapDialog';
+import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useRootStore } from '../../stores/provider/RootStoreProvider';
 
 import * as MetadataUtils from "../../util/MetadataUtil";
@@ -93,6 +95,30 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSucce
 				?  <Typography sx={{color: 'success.main'}}>Active</Typography>
 				: <Typography sx={{color: 'error.main'}}>Inactive</Typography>,
 		},
+		{
+			key: 'actions',
+			title: '',
+			render: (facility) => {
+				return (
+					<>
+					<IconButton
+						disableRipple
+						aria-label='edit'
+						onClick={() => handleEdit(facility)}
+					>
+						<ModeOutlinedIcon />
+					</IconButton>
+					<IconButton
+						disableRipple
+						aria-label='delete'
+						onClick={() => handleDelete(facility)}
+					>
+						<DeleteOutlinedIcon />
+					</IconButton>
+				</>
+				);
+			}
+		}
 	];
 	
 	const handleDelete = async (data: Facility) => {
