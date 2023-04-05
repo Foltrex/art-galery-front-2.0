@@ -4,5 +4,5 @@ import {ART_SERVICE} from "../http/axios";
 
 
 export const useGetAllCities = () => {
-    return useFetch<City[]>(`${ART_SERVICE}/cities`);
+    return useFetch<City[]>(`${ART_SERVICE}/cities/list`);
 }
