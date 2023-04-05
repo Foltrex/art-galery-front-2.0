@@ -24,7 +24,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => 
                 <InputBase 
                     sx={{ flexGrow: 1, pl: 2 }} 
                     placeholder={placeholder} 
-                    inputProps={{ 'aria-label': 'search paintings' }}
+                    inputProps={{ 'aria-label': placeholder }}
                     onChange={handleChange} 
                 />
                 <IconButton aria-label='search' onClick={() => onSearch(searchingText)}>
