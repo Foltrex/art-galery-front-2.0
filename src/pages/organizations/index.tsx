@@ -44,14 +44,6 @@ const OrganizationGrid = () => {
     const [searchFilter, setSearchFilter] = useState(searchFilters[0].value);
     const [searchText, setSearchText] = useState<string>();
 
-    const handleDelete = async (data: Organization) => {
-        alert(data.name)
-    }
-
-    const handleEdit = (data: Organization) => {
-        navigate(`${data.id}`)
-    }
-
     useEffect(() => {
         const API = `${ART_SERVICE}/organizations`;
         axiosApi.get(`${API}`, {
@@ -77,6 +69,14 @@ const OrganizationGrid = () => {
 
     if (account === undefined) {
         return <Loading/>
+    }
+
+    const handleDelete = async (data: Organization) => {
+        alert(data.name)
+    }
+
+    const handleEdit = (data: Organization) => {
+        navigate(`${data.id}`)
     }
 
     const columns = getColumns(
@@ -176,7 +176,7 @@ function getColumns(setOpenProposalModal: () => void,
             minWidth: 150,
             render: (organization) => {
                 if (accountType === AccountEnum.SYSTEM ||
-                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR || true)) {
+                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR)) {
                     return (
                         <div>
                             <IconButton

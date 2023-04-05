@@ -25,6 +25,7 @@ import ArtSizeFilter from './pages/arts/filter/ArtSizeFilter';
 import ArtStyleFilter from './pages/arts/filter/ArtStyleFilter';
 import ArtTopicFilter from './pages/arts/filter/ArtTopicFilter';
 import ArtTypeFilter from './pages/arts/filter/ArtTypeFilter';
+import FacilityEdit from "./pages/facilities/FacilityEdit";
 
 function App() {
     //@Todo maybe bug here
@@ -72,8 +73,8 @@ function App() {
 
                     <Route path='facilities'>
                         <Route index element={<Facilities/>}/>
-                        <Route path={":id"} element={<OrganizationEdit/>}/>
-                        <Route path={"new"} element={<OrganizationEdit/>}/>
+                        <Route path={":id"} element={<FacilityEdit/>}/>
+                        <Route path={"new"} element={<FacilityEdit/>}/>
                     </Route>
 
                     <Route path='representatives' element={<Representatives/>}/>

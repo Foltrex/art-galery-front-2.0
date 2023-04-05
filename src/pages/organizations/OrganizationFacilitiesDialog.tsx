@@ -1,24 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {
-    Button,
-    Dialog, DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    Table, TableBody,
-    TableCell,
-    TableContainer,
-    TableHead, TablePagination,
-    TableRow
-} from "@mui/material";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton} from "@mui/material";
 import {IPage} from "../../hooks/react-query";
-import {Organization} from "../../entities/organization";
-import {ART_SERVICE, axiosApi, USER_SERVICE} from "../../http/axios";
-import {useParams} from "react-router-dom";
-import {Account} from "../../entities/account";
-import Paper from "@mui/material/Paper";
-import {PrepareDataUtil} from "../../util/PrepareDataUtil";
+import {ART_SERVICE, axiosApi} from "../../http/axios";
+import {useNavigate, useParams} from "react-router-dom";
 import {Facility} from "../../entities/facility";
+import SkeletonTable from "../../components/table/SkeletonTable";
+import Table, {IColumnType} from '../../components/table/Table';
+import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
+import {DeleteOutline} from "@mui/icons-material";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
@@ -26,11 +15,12 @@ interface IOrganizationFacilitiesDialogProps {
 }
 
 const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDialogProps) => {
+    const navigate = useNavigate()
     const matches = useParams();
-    const [facilities, setFacilities] = useState<Facility[]>([]);
+
+    const [facilities, setFacilities] = useState<IPage<Facility>>();
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
-    const [totalElements, setTotalElements] = useState(0)
 
     useEffect(() => {
         axiosApi.get(`${ART_SERVICE}/facilities/organizations/${matches.id}`, {
@@ -40,58 +30,42 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
             }
         }).then(response => {
             console.log(response.data.content)
-            setFacilities(response.data.content)
-            setTotalElements(response.data.totalElements)
+            setFacilities(response.data)
         })
     }, [rowsPerPage, pageNumber])
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPageNumber(newPage);
-    };
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPageNumber(0);
-    };
+    const handleDelete = async (data: Facility) => {
+        alert(data.name)
+    }
+
+    const handleEdit = (data: Facility) => {
+        navigate(`/facilities/${data.id}`)
+    }
+
+    const columns = getColumns(
+        handleEdit,
+        handleDelete,
+    );
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth={"md"} fullWidth>
-            <DialogTitle>Organization's participants</DialogTitle>
+            <DialogTitle>Organization's facilities</DialogTitle>
             <Divider/>
             <DialogContent>
-                <TableContainer component={Paper}>
-                    <Table aria-label="users table">
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Name</TableCell>
-                                <TableCell>Address</TableCell>
-                                <TableCell>isActive</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {facilities.map((facility) => (
-                                <TableRow key={facility.id}>
-                                    <TableCell component="th" scope="row">
-                                        {facility.name}
-                                    </TableCell>
-                                    <TableCell>{facility.address?.name}</TableCell>
-                                    <TableCell>
-                                        {facility.isActive ? 'Active' : 'Inactive'}
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    <TablePagination
-                        rowsPerPageOptions={[1, 5, 10, 25]}
-                        component="div"
-                        count={totalElements}
-                        rowsPerPage={rowsPerPage}
-                        page={pageNumber}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
+                {facilities && facilities.content
+                    ? <Table
+                        columns={columns}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                        page={facilities}
+                        onPageChange={(e, page) => setPageNumber(page)}
+                        onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)}
                     />
-                </TableContainer>
+                    : <SkeletonTable
+                        columns={columns}
+                        rowsPerPage={rowsPerPage}/>
+                }
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose} variant={"contained"}>Close</Button>
@@ -99,5 +73,60 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
         </Dialog>
     );
 };
+
+function getColumns(onEdit: (data: Facility) => void, onDelete: (data: Facility) => void): IColumnType<Facility>[] {
+    return [
+        {
+            key: 'name',
+            title: 'Name',
+            minWidth: 150
+        },
+        {
+            key: 'address',
+            title: 'Address',
+            minWidth: 150,
+            render: (facility) => {
+                return (<span>{facility.address?.name}</span>)
+            }
+        },
+        {
+            key: 'isActive',
+            title: 'isActive',
+            minWidth: 150,
+            render: (facility) => {
+                return (
+                    <span>{facility.isActive ? 'Active' : 'Inactive'}</span>
+                )
+            }
+        },
+        {
+            key: 'actions',
+            title: 'Actions',
+            minWidth: 150,
+            render: (organization) => {
+
+                return (
+                    <div>
+                        <IconButton
+                            disableRipple
+                            aria-label='edit'
+                            onClick={() => onEdit(organization)}
+                        >
+                            <ModeOutlinedIcon/>
+                        </IconButton>
+                        <IconButton
+                            disableRipple
+                            aria-label='delete'
+                            onClick={() => onDelete(organization)}
+                        >
+                            <DeleteOutline/>
+                        </IconButton>
+                        {' '}
+                    </div>
+                )
+            }
+        }
+    ];
+}
 
 export default OrganizationFacilitiesDialog;
