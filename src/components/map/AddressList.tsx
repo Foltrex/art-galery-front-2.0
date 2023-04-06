@@ -1,9 +1,8 @@
-import { Divider, ListItemIcon } from "@mui/material";
+import {Divider, ListItemIcon} from "@mui/material";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { Address } from "../../entities/address";
-import { GeoPosition } from "./SearchBox";
+import {GeoPosition} from "./SearchBox";
 import Loading from "../ui/Loading";
 
 export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any, isLoading: boolean }) {
@@ -30,14 +29,6 @@ export default function AddressList(props: { listPlace: GeoPosition[], setSelect
                         <ListItem
                             button
                             onClick={() => {
-                                const address = {
-                                    name: item.display_name,
-                                    city: {
-                                        name: item.address.city,
-                                        latitude: item.lat,
-                                        longitude: item.lon,
-                                    }
-                                } as Address
                                 props.setSelectPosition(item);
                             }}
                         >

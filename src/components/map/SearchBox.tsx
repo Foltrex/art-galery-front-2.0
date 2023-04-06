@@ -18,15 +18,11 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const {setSelectPosition} = props;
     const [searchText, setSearchText] = useState("");
     const [listPlace, setListPlace] = useState<GeoPosition[]>([]);
-    const {alertStore} = useRootStore();
 
     const {data, isLoading, isFetching} = useSearch(searchText);
 
     useEffect(() => {
         setListPlace(data ?? [])
-        // const delayFetch = setTimeout(() => setListPlace(data ?? []), 1000)
-
-        // return () => clearTimeout(delayFetch)
     }, [data])
 
     return (
