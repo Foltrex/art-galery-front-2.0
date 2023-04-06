@@ -1,7 +1,7 @@
 import {OutlinedInput} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AddressList from "./AddressList";
-import { useSearch } from "../../api/OpenStreetMapApi";
+import {useSearch} from "../../api/OpenStreetMapApi";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 export interface GeoPosition {
@@ -20,13 +20,14 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const [listPlace, setListPlace] = useState<GeoPosition[]>([]);
     const {alertStore} = useRootStore();
 
-    const { data } = useSearch(searchText);
+    const {data, isLoading, isFetching} = useSearch(searchText);
 
     useEffect(() => {
-        const delayFetch = setTimeout(() => setListPlace(data ?? []), 1000)
+        setListPlace(data ?? [])
+        // const delayFetch = setTimeout(() => setListPlace(data ?? []), 1000)
 
-        return () => clearTimeout(delayFetch)
-    }, [searchText, data])
+        // return () => clearTimeout(delayFetch)
+    }, [data])
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
@@ -43,7 +44,11 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
                 </div>
             </div>
             <div>
-                <AddressList listPlace={listPlace} setSelectPosition={setSelectPosition}/>
+                <AddressList
+                    listPlace={listPlace}
+                    setSelectPosition={setSelectPosition}
+                    isLoading={isLoading && isFetching}
+                />
             </div>
         </div>
     );

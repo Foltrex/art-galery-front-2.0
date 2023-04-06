@@ -11,5 +11,9 @@ export const useSearch = (searchText: string) => {
     };
 
     const queryString = new URLSearchParams(params).toString();
-    return useFetch<any>(`${BASE_URL}${queryString}`);
+    return useFetch<any>(`${BASE_URL}${queryString}`, undefined, {
+            enabled: searchText !== '',
+            refetchInterval: 1000,
+        }
+    );
 }

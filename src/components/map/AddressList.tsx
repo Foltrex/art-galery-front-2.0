@@ -4,8 +4,14 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Address } from "../../entities/address";
 import { GeoPosition } from "./SearchBox";
+import Loading from "../ui/Loading";
 
-export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any }) {
+export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any, isLoading: boolean }) {
+
+    if (props.isLoading) {
+        return <div style={{marginTop: "10px"}}><Loading/></div>
+    }
+
     return (
         <List
             component="nav"
@@ -39,7 +45,7 @@ export default function AddressList(props: { listPlace: GeoPosition[], setSelect
                                 <img
                                     src={"./images/placeholder.png"}
                                     alt="Placeholder"
-                                    style={{width: 38, height: 38}}
+                                    style={{width: 32, height: 32}}
                                 />
                             </ListItemIcon>
                             <ListItemText primary={item?.display_name}/>
