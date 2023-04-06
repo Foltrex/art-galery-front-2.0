@@ -26,6 +26,10 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Organization} from "../../entities/organization";
 import OrganizationFacilitiesDialog from "./OrganizationFacilitiesDialog";
 import OrganizationUsersDialog from "./OrganizationUsersDialog";
+import {ART_SERVICE, axiosApi} from "../../http/axios";
+import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
 
 interface IAppProps {
 }
@@ -39,12 +43,12 @@ interface IFormValues {
 const App: React.FunctionComponent<IAppProps> = (props) => {
     const navigate = useNavigate()
     const matches = useParams();
-    const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
     const mode = matches.id !== undefined ? "EDIT" : "CREATE";
+    const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
     const [openOrganizationUsersDialog, setOpenOrganizationUsersDialog] = useState(false)
     const [openOrganizationFacilitiesDialog, setOpenOrganizationFacilitiesDialog] = useState(false)
 
-    const {authStore} = useRootStore();
+    const {authStore, alertStore} = useRootStore();
     const account = authStore.account;
 
     const [openMap, setOpenMap] = useState(false)
@@ -55,18 +59,19 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
     })
 
     useEffect(() => {
-        if (account) {
-            // if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-            //     navigate("/")
-            // }
-            // const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-            // const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
-            //
-            // if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-            //     navigate("/")
-            // }
-        }
+        if (false) {
+            if (account) {
+                if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+                    navigate("/")
+                }
+                const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+                const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
 
+                if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+                    navigate("/")
+                }
+            }
+        }
     }, [account])
 
     useEffect(() => {
@@ -103,10 +108,8 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
         },
     });
 
-    const mutationUpdateOrganization = useUpdateOrganizationById(matches.id!);
-    const mutationCreateOrganization = useCreateOrganization();
-
     const submit = async (values: IFormValues) => {
+        alertStore.setShow(false);
         const request = {
             id: matches.id ? matches.id : '',
             name: values.name,
@@ -114,14 +117,21 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
             status: values.status,
         } as Organization;
         if (mode === "CREATE") {
-            await mutationCreateOrganization.mutateAsync(request)
+            await axiosApi.post(`${ART_SERVICE}/organizations`, request)
                 .then(response => {
+                    alertStore.setShow(true, "success", "", "Organization created successfully")
                     navigate(`/organizations/${response.data.id}`)
+                })
+                .catch(error => {
+                    alertStore.setShow(true, "error", "Something went wrong. Try again", error.response.data.message)
                 });
         } else if (mode === "EDIT") {
-            await mutationUpdateOrganization.mutateAsync(request)
+            await axiosApi.put(`${ART_SERVICE}/organizations/${matches.id!}`, request)
                 .then(() => {
-
+                    alertStore.setShow(true, "success", "", "Organization updated successfully")
+                })
+                .catch(error => {
+                    alertStore.setShow(true, "error", "Something went wrong. Try again", error.response.data.message)
                 });
         }
     }
@@ -141,6 +151,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                 onClose={() => setOpenOrganizationUsersDialog(false)}
             />
             <Container maxWidth='lg'>
+                <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}
@@ -150,7 +161,6 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                         }}
                         address={formik.values.address as Address}
                     />
-                    <AlertNotification/>
                     <TextField
                         margin="normal"
                         required
@@ -196,15 +206,6 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                             {formik.errors.status ? formik.errors.status : ''}
                         </FormHelperText>
                     </FormControl>
-                    {/*<FormGroup>*/}
-                    {/*    <FormControlLabel control={*/}
-                    {/*        <Switch*/}
-                    {/*            name={"isActive"}*/}
-                    {/*            checked={formik.values.isActive}*/}
-                    {/*            onChange={formik.handleChange}*/}
-                    {/*        />*/}
-                    {/*    } label="isActive"/>*/}
-                    {/*</FormGroup>*/}
                 </form>
                 <Stack
                     direction={"row"}
@@ -238,7 +239,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                             variant="outlined"
                             type="submit" form={"form"} disabled={formik.isSubmitting}
                     >
-                        {formik.isSubmitting ? <CircularProgress/> : "Save"}
+                        {formik.isSubmitting ? <CircularProgress size={24}/> : "Save"}
                     </Button>
                 </Stack>
             </Container>

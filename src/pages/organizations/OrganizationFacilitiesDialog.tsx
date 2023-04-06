@@ -35,6 +35,7 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
     }, [rowsPerPage, pageNumber])
 
 
+    //@TODO CHANGE LATER
     const handleDelete = async (data: Facility) => {
         alert(data.name)
     }

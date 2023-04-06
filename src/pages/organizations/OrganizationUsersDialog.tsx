@@ -1,9 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton} from "@mui/material";
 import {IPage} from "../../hooks/react-query";
-import {ART_SERVICE, axiosApi, USER_SERVICE} from "../../http/axios";
+import {axiosApi, USER_SERVICE} from "../../http/axios";
 import {useNavigate, useParams} from "react-router-dom";
-import {Facility} from "../../entities/facility";
 import SkeletonTable from "../../components/table/SkeletonTable";
 import Table, {IColumnType} from '../../components/table/Table';
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
@@ -11,13 +10,14 @@ import {DeleteOutline} from "@mui/icons-material";
 import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {Account} from "../../entities/account";
+import {observer} from "mobx-react";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
     onClose: () => void;
 }
 
-const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDialogProps) => {
+const OrganizationFacilitiesDialog = observer(({open, onClose}: IOrganizationFacilitiesDialogProps) => {
     const navigate = useNavigate()
     const matches = useParams();
 
@@ -37,10 +37,12 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
     }, [rowsPerPage, pageNumber])
 
 
+    //@TODO CHANGE LATER
     const handleDelete = async (data: Account) => {
         alert(data.firstName)
     }
 
+    //@TODO CHANGE LATER
     const handleEdit = (data: Account) => {
         // navigate(`/facilities/${data.id}`)
         alert(data.firstName)
@@ -53,7 +55,7 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
 
     return (
         <Dialog open={open} onClose={onClose} maxWidth={"md"} fullWidth>
-            <DialogTitle>Organization's facilities</DialogTitle>
+            <DialogTitle>Organization's participants</DialogTitle>
             <Divider/>
             <DialogContent>
                 {accounts && accounts.content
@@ -75,14 +77,14 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
             </DialogActions>
         </Dialog>
     );
-};
+});
 
-function getColumns(onEdit: (data: Account) => void, onDelete: (data: Account) => void): IColumnType<Account>[] {
-
+function getColumns(onEdit: (data: Account) => void,
+                    onDelete: (data: Account) => void): IColumnType<Account>[] {
     return [
         {
             key: 'firstName',
-            title: 'FirsNname',
+            title: 'FirsName',
             minWidth: 150
         },
         {
