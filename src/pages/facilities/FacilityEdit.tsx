@@ -1,20 +1,7 @@
-import {
-    Button,
-    CircularProgress,
-    Divider,
-    FormControl, FormControlLabel, FormGroup,
-    FormHelperText,
-    InputLabel,
-    MenuItem,
-    Select,
-    Stack, Switch,
-    TextField
-} from '@mui/material';
+import {Button, CircularProgress, Divider, FormControlLabel, FormGroup, Stack, Switch, TextField} from '@mui/material';
 import * as React from 'react';
-import {useEffect, useState} from 'react';
-import {useCreateOrganization, useGetOrganizationById, useUpdateOrganizationById} from '../../api/OrganizationApi';
+import {ChangeEvent, useEffect, useRef, useState} from 'react';
 import Loading from '../../components/ui/Loading';
-import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
 import {useNavigate, useParams} from "react-router-dom";
 import MapDialog from "../../components/map/MapDialog";
 import {Address} from "../../entities/address";
@@ -23,7 +10,16 @@ import * as yup from "yup";
 import {useFormik} from "formik";
 import {Container} from "@mui/system";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
-import {Organization} from "../../entities/organization";
+import {useGetFacilityById} from "../../api/FacilityApi";
+import {ART_SERVICE, axiosApi} from "../../http/axios";
+import {Facility} from "../../entities/facility";
+import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
+import {useSaveArt} from "../../api/ArtApi";
+import {useSaveFile} from "../../api/FileApi";
+import {FileService} from "../../services/FileService";
+import {Art} from "../../entities/art";
 
 interface IFormValues {
     name: string,
@@ -34,12 +30,10 @@ interface IFormValues {
 const FacilityEdit = () => {
     const navigate = useNavigate()
     const matches = useParams();
-    const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
+    const {data: facility, isLoading, isFetching} = useGetFacilityById(matches.id);
     const mode = matches.id !== undefined ? "EDIT" : "CREATE";
-    const [openOrganizationUsersDialog, setOpenOrganizationUsersDialog] = useState(false)
-    const [openOrganizationFacilitiesDialog, setOpenOrganizationFacilitiesDialog] = useState(false)
 
-    const {authStore} = useRootStore();
+    const {authStore, alertStore} = useRootStore();
     const account = authStore.account;
 
     const [openMap, setOpenMap] = useState(false)
@@ -49,30 +43,63 @@ const FacilityEdit = () => {
         isActive: false,
     })
 
-    useEffect(() => {
-        if (account) {
-            // if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-            //     navigate("/")
-            // }
-            // const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-            // const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
-            //
-            // if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-            //     navigate("/")
-            // }
-        }
+    const fileInput = useRef<HTMLInputElement>(null);
+    const [files, setFiles] = useState<File[]>([]);
+    const [images, setImages] = useState<string[]>([]);
 
-    }, [account])
+    const mutationSaveImage = useSaveFile();
+
+    const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        const fileList = e.target.files!;
+
+        const file = fileList[0];
+        setFiles([...files, file]);
+
+        const image = await FileService.toBase64fromBlob(file);
+        setImages([...images, image]);
+    }
+
+    // const handleSubmit = async (art: Art) => {
+    //     const response = await mutationSaveArt.mutateAsync(art);
+    //     const { data: persistedArt } = response;
+    //     const { id: artId } = persistedArt;
+    //
+    //     const promises = files.map(async (file) => {
+    //         console.log(art.id)
+    //         const fileEntity = await FileService.toFile(artId!, file);
+    //         await mutationSaveImage.mutateAsync(fileEntity);
+    //     })
+    //     await Promise.all(promises);
+    //
+    //     navigate(`/arts/artist/${artId}`);
+    // }
+
+    useEffect(() => {
+        if (false) {
+            if (account && facility) {
+                if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+                    navigate("/")
+                }
+                const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+                const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+
+                if (organizationId !== facility!.organization.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+                    navigate("/")
+                }
+            }
+        }
+    }, [account, facility])
 
     useEffect(() => {
         if (!isFetching && !isLoading) {
-            // organization && setInitialValues({
-            //     name: organization.name,
-            //     address: organization!.address,
-            //     isActive: false,
-            // })
+            console.log(facility)
+            facility && setInitialValues({
+                name: facility.name,
+                address: facility!.address,
+                isActive: facility.isActive,
+            })
         }
-    }, [organization])
+    }, [facility])
 
     const validationSchema = yup.object().shape({
         name: yup.string()
@@ -96,27 +123,32 @@ const FacilityEdit = () => {
         },
     });
 
-    const mutationUpdateOrganization = useUpdateOrganizationById(matches.id!);
-    const mutationCreateOrganization = useCreateOrganization();
-
     const submit = async (values: IFormValues) => {
-        // const request = {
-        //     id: matches.id ? matches.id : '',
-        //     name: values.name,
-        //     address: values.address,
-        //     status: values.status,
-        // } as Organization;
-        // if (mode === "CREATE") {
-        //     await mutationCreateOrganization.mutateAsync(request)
-        //         .then(response => {
-        //             navigate(`/organizations/${response.data.id}`)
-        //         });
-        // } else if (mode === "EDIT") {
-        //     await mutationUpdateOrganization.mutateAsync(request)
-        //         .then(() => {
-        //
-        //         });
-        // }
+        alertStore.setShow(false);
+        const request = {
+            id: matches.id ? matches.id : '',
+            name: values.name,
+            address: values.address,
+            isActive: values.isActive,
+        } as Facility;
+        if (mode === "CREATE") {
+            await axiosApi.post(`${ART_SERVICE}/facilities`, request)
+                .then(response => {
+                    alertStore.setShow(true, "success", "", "Facility created successfully")
+                    navigate(`/facilities/${response.data.id}`)
+                })
+                .catch(error => {
+                    alertStore.setShow(true, "error", "Something went wrong. Try again", error.response.data.message)
+                });
+        } else if (mode === "EDIT") {
+            await axiosApi.put(`${ART_SERVICE}/facilities/${matches.id!}`, request)
+                .then(() => {
+                    alertStore.setShow(true, "success", "", "Facility updated successfully")
+                })
+                .catch(error => {
+                    alertStore.setShow(true, "error", "Something went wrong. Try again", error.response.data.message)
+                });
+        }
     }
 
     if (isLoading || account === undefined) {
