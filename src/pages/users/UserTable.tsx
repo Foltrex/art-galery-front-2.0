@@ -39,7 +39,7 @@ const mapRepresentativeToTableRow = (representative: Representative): IRepresent
     };
 }
 
-const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = (props) => {
+const UserTable: React.FunctionComponent<IRepresentativeTableProps> = (props) => {
 
 
     const token = TokenService.decode(AuthService.getToken());
@@ -51,4 +51,4 @@ const RepresentativeTable: React.FunctionComponent<IRepresentativeTableProps> = 
 	return <UserGrid />;
 };
 
-export default RepresentativeTable;
+export default UserTable;

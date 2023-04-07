@@ -46,9 +46,9 @@ function prepareSidebar(account:Account) {
                     link: '/arts/representative'
                 },
                 {
-                    text: 'Representatives',
+                    text: 'Users',
                     icon: <PeopleIcon />,
-                    link: '/representatives?page=0&limit=10'
+                    link: '/users'
                 },
                 {
                     text: 'Facilities',

@@ -9,7 +9,7 @@ import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
-import Representatives from './pages/users';
+import Representatives from './pages/users/UserRoute';
 import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
@@ -26,6 +26,7 @@ import ArtStyleFilter from './pages/arts/filter/ArtStyleFilter';
 import ArtTopicFilter from './pages/arts/filter/ArtTopicFilter';
 import ArtTypeFilter from './pages/arts/filter/ArtTypeFilter';
 import FacilityEdit from "./pages/facilities/FacilityEdit";
+import UserRoute from './pages/users/UserRoute';
 
 function App() {
     //@Todo maybe bug here
@@ -77,7 +78,7 @@ function App() {
                         <Route path={"new"} element={<FacilityEdit/>}/>
                     </Route>
 
-                    <Route path='users' element={<Representatives/>}/>
+                    <Route path='users' element={<UserRoute/>}/>
                     <Route path='proposals' element={<Proposals/>}/>
 
 

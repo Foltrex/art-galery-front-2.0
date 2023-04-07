@@ -1,5 +1,5 @@
 import {Table as MuiTable, TableContainer, TablePagination} from '@mui/material';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {IPage} from '../../hooks/react-query';
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';

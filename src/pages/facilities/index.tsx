@@ -7,6 +7,7 @@ import { useGetAllFacilities } from '../../api/FacilityApi';
 import SearchBar from '../../components/ui/SearchBar';
 import { City } from '../../entities/city';
 import FacilityTable from './FacilityTable';
+import CityDropdown from '../../components/cities/CityDropdown';
 
 const Facilities = () => {
 	const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -17,8 +18,6 @@ const Facilities = () => {
 	const { data: cities, isSuccess: isSuccessCities } = useGetAllCities();
 
 	const [city, setCity] = useState<City>();
-
-	console.log(city)
 
 	const handleCityChange = (e: SelectChangeEvent<string>) => {
 		const currentCity = cities?.find(city => city.id === e.target.value);
@@ -49,38 +48,14 @@ const Facilities = () => {
 	const renderCityDropdown = () => {
 		if (isSuccessCities && cities?.length !== 0) {
 			return (
-				<FormControl size='small' sx={{ flex: '20%' }} >
-					<InputLabel id='city-dropdown'>Cities</InputLabel>
-					<Select
-						labelId='city-dropdown'
-						value={city?.id ?? ''}
-						label='Cities'
-						onChange={handleCityChange}
-					>
-						<MenuItem value=''>All Cities</MenuItem>
-						{cities.map(city => (
-							<MenuItem key={city.id} value={city.id}>{city.name}</MenuItem>
-						))}
-					</Select>
-				</FormControl>
+				<CityDropdown
+					value={city?.id}
+					cities={cities} 
+					onChange={handleCityChange} />
 			);
 		} else if (isSuccessCities && (!cities || cities.length === 0)) {
 			return (
-				<FormControl size='small' sx={{ flex: '20%' }} variant='outlined'>
-					<InputLabel htmlFor='city-dropdown'>Cities</InputLabel>
-					<OutlinedInput 
-						id='city-dropdown'
-						label='Cities'
-						disabled
-						endAdornment={
-							<InputAdornment position='end'>
-								<IconButton disableRipple disableTouchRipple size='small'>
-									<ArrowDropDown />
-								</IconButton>
-							</InputAdornment>
-						}
-					/>
-				</FormControl>
+				<CityDropdown disabled />
 			);
 		} else {
 			return (
@@ -98,7 +73,7 @@ const Facilities = () => {
 					<SearchBar
 						onSearch={(text) => setFacilityName(text)}
 						placeholder={'Enter facility name...'}
-						sx={{ flex: '60%' }}
+						style={{ flex: '60%' }}
 					/>
 				</Box>
 

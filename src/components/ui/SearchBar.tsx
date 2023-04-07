@@ -1,16 +1,17 @@
 import {IconButton, InputBase, Paper, SxProps, Theme} from "@mui/material";
 
 import SearchIcon from '@mui/icons-material/Search';
-import {ChangeEvent, useState} from "react";
+import {CSSProperties, ChangeEvent, useState} from "react";
 import {Container} from "@mui/system";
 
 interface ISearchBarProps {
-    sx?: SxProps<Theme>;
+    style?: CSSProperties;
     onSearch: (text: string) => void;
     placeholder: string;
+    width?: string;
 }
 
-const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => {
+const SearchBar: React.FC<ISearchBarProps> = ({ style, onSearch, placeholder, width }) => {
     const [searchingText, setSearchingText] = useState('');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -19,8 +20,8 @@ const SearchBar: React.FC<ISearchBarProps> = ({ sx, onSearch, placeholder }) => 
     }
 
     return (
-        <Container>
-            <Paper sx={{...sx, display: 'flex', alignItems: 'center'}}>
+        <Container style={{ ...style }}>
+            <Paper sx={{ display: 'flex', alignItems: 'center'}}>
                 <InputBase 
                     sx={{ flexGrow: 1, pl: 2 }} 
                     placeholder={placeholder} 
