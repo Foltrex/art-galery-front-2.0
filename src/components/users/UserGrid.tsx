@@ -14,6 +14,7 @@ import { IconButton, Typography, styled } from "@mui/material";
 import { AccountEnum } from "../../entities/enums/AccountEnum";
 import { TokenService } from "../../services/TokenService";
 import { find } from "../../util/MetadataUtil";
+import { IPage } from "../../hooks/react-query";
 
 function renderName(a: Account) {
     const fn = a.firstName;
@@ -96,12 +97,15 @@ const columns: IColumnType<Account>[] = [
     }
 ];
 
-export const UserGrid = () => {
+export interface IUserGridProps {
+    data: IPage<Account>;
+    rowsPerPage: number;
+    onRowsPerPageChange: (rowsPerPage: number) => void;
+    onPageNumberChange: (page: number) => void;
+}
 
-    const [rowsPerPage, setRowsPerPage] = useState(15);
-    const [pageNumber, setPageNumber] = useState(0);
+export const UserGrid: React.FC<IUserGridProps> = ({data, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
     const [representative, setRepresentative] = useState<Account>();
-    const { data } = useGetAll({ page: pageNumber, size: rowsPerPage });
     
     
     const mutationDelete = useDeleteRepresentative();
@@ -135,8 +139,8 @@ export const UserGrid = () => {
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 page={data}
-                onPageChange={(_, page) => setPageNumber(page)}
-                onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
+                onPageChange={(_, page) => onPageNumberChange(page)}
+                onRowsPerPageChange={(event) => onRowsPerPageChange(+event.target.value)} />
             : <SkeletonTable
                 columns={columns}
                 rowsPerPage={rowsPerPage} />

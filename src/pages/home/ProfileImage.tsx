@@ -36,7 +36,7 @@ const ProfileImage = (props: { account: Account }) => {
         const currentImage = await FileService.toBase64fromBlob(currentFile);
 
         if (currentFile !== undefined) {
-            const fileEntity = await FileService.toFile(null, currentFile);
+            const fileEntity = await FileService.toFile(undefined, currentFile);
             await axiosApi.patch(`${USER_SERVICE}/accounts/${accountId}/account-image`, fileEntity, {
                 headers: {
                     'Authorization': `Bearer ${AuthService.getToken()}`,

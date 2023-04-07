@@ -12,6 +12,10 @@ export const useGetAllOrganizations = (params: { page: number, size: number, id?
     );
 }
 
+export const useGetAllOrganizationList = () => {
+    return useFetch<Organization[]>(`${API}/list`);
+}
+
 export const useGetOrganizationById = (id?: string) => {
     return useFetch<Organization>(
         `${ART_SERVICE}/organizations/${id}`,

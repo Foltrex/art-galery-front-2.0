@@ -4,10 +4,8 @@ import {Representative} from '../../entities/representative';
 import {AuthService} from '../../services/AuthService';
 import {TokenService} from '../../services/TokenService';
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
-import {UserGrid} from "../../components/users/UserGrid";
+import {IUserGridProps, UserGrid} from "../../components/users/UserGrid";
 
-interface IRepresentativeTableProps {
-}
 
 interface IRepresentativeData {
     id: string;
@@ -39,7 +37,7 @@ const mapRepresentativeToTableRow = (representative: Representative): IRepresent
     };
 }
 
-const UserTable: React.FunctionComponent<IRepresentativeTableProps> = (props) => {
+const UserTable: React.FunctionComponent<IUserGridProps> = (props) => {
 
 
     const token = TokenService.decode(AuthService.getToken());
@@ -48,7 +46,7 @@ const UserTable: React.FunctionComponent<IRepresentativeTableProps> = (props) =>
 
 
 
-	return <UserGrid />;
+	return <UserGrid {...props}/>;
 };
 
 export default UserTable;

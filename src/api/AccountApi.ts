@@ -5,7 +5,16 @@ import {Account} from "../entities/account";
 import {Representative} from "../entities/representative";
 
 
-export const useGetAll = (filter: { email?: string, page?: number, size?: number }) => {
+export const useGetAll = (
+    filter: { 
+        email?: string, 
+        page?: number, 
+        size?: number,  
+        username?: string,
+        usertype?: string,
+        organization?: string,
+        'city-id'?: string
+}) => {
     return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, {
         retry: false
     });
