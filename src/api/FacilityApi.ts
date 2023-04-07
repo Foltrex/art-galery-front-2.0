@@ -43,6 +43,14 @@ export const useGetFacilityByAccountId = (accountId?: string) => {
     );
 }
 
+export const useGetFacilityById = (id?: string) => {
+    return useFetch<Facility>(
+        `${ART_SERVICE}/facilities/${id}`,
+        undefined,
+        { enabled: !!id }
+    );
+}
+
 
 export const useSaveFacility = () => {
     return usePost<Facility>(`${ART_SERVICE}/facilities`);

@@ -1,13 +1,14 @@
 import {useDelete, useFetch, usePost} from "../hooks/react-query"
 import {File} from '../entities/file';
-import {axiosApi, FILE_SERVICE} from "../http/axios";
+import {ART_SERVICE, axiosApi, FILE_SERVICE} from "../http/axios";
 import {useQuery} from "react-query";
+import {EntityFile} from "../entities/entityFile";
 
 
 export const fetchImages = (ids: string[] = []) => {
     const requests = ids.map(id => {
         const url = `${FILE_SERVICE}/files/${id}/data`;
-        return axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer' });
+        return axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer'});
     })
 
     return Promise.all(requests)
@@ -16,7 +17,7 @@ export const fetchImages = (ids: string[] = []) => {
 
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
     return useQuery<ArrayBuffer[]>(
-        [`${FILE_SERVICE}/files/data`, { ids: ids }],
+        [`${FILE_SERVICE}/files/data`, {ids: ids}],
         () => fetchImages(ids), {
             // enabled: ids !== undefined
         }
@@ -27,12 +28,26 @@ export const useGetAllFileInfosByArtId = (artId?: string) => {
     return useFetch<File[]>(
         `${FILE_SERVICE}/files/arts/${artId}`,
         undefined,
-        { enabled: !!artId }
+        {enabled: !!artId}
     );
 }
 
+//@TODO Remove
 export const useSaveFile = () => {
     return usePost<File>(`${FILE_SERVICE}/files`);
+}
+
+//@TODO Rename later
+export const useNewSaveFile = () => {
+    return usePost<EntityFile>(`${ART_SERVICE}/files`);
+}
+
+export const useGetAllEntityFilesByEntityId = (entityId?: string) => {
+    return useFetch<EntityFile>(`${ART_SERVICE}/files/${entityId}`, {
+        entityId: entityId
+    }, {
+        enabled: !!entityId
+    });
 }
 
 export const useDeleteFile = () => {
