@@ -1,5 +1,5 @@
 import {Table as MuiTable, TableContainer, TablePagination} from '@mui/material';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import {IPage} from '../../hooks/react-query';
 import TableBody from './TableBody';
 import TableHeader from './TableHeader';
@@ -13,6 +13,7 @@ export interface IColumnType<T extends IdentifiableRecord> {
     title: string;
     minWidth?: number;
     render?: (item: T) => void;
+    sort?: (columnName:string, direction:'asc'|'desc'|undefined) => void
 }
 
 interface ITableProps<S extends IdentifiableRecord> {

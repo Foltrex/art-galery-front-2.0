@@ -68,11 +68,15 @@ const UserRoute = () => {
     const [organizationId, setOrganizationId] = useState<string>();
 
     const [username, setUsername] = useState<string>();
+    const [sort, setSort] = useState<string>();
 
+    const applySort = (key:string, direction:string|undefined) => {
+        setSort(direction ? key + "," + direction : undefined);
+    }
     const { data } = useGetAll({
         page: pageNumber, size: rowsPerPage, username: username,
         usertype: userType, 'city-id': city?.id,
-        organizationId: organizationId });
+        organizationId: organizationId, sort });
 
 
     return (
@@ -120,6 +124,7 @@ const UserRoute = () => {
                 {data &&
                     <UserTable
                         data={data}
+                        applySort={applySort}
                         rowsPerPage={rowsPerPage}
                         onRowsPerPageChange={setRowsPerPage}
                         onPageNumberChange={setPageNumber}

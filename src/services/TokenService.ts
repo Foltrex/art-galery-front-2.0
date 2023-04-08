@@ -1,8 +1,7 @@
 import jwt_decode from "jwt-decode";
-import { TDecodedToken } from "../entities/types/TDecodedToken";
-import { AuthService } from "./AuthService";
-import { AccountEnum } from "../entities/enums/AccountEnum";
-import * as MetadataUtils from "../util/MetadataUtil";
+import {TDecodedToken} from "../entities/types/TDecodedToken";
+import {AuthService} from "./AuthService";
+import {AccountEnum} from "../entities/enums/AccountEnum";
 
 export class TokenService {
 

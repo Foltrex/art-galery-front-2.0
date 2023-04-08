@@ -14,6 +14,7 @@ export const useGetAll = (
         usertype?: string,
         organizationId?: string,
         'city-id'?: string
+        sort?: string
 }) => {
     return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, {
         retry: false
