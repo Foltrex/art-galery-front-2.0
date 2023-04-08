@@ -1,5 +1,4 @@
-
-import Filter, { FilterElement } from '../../../components/ui/filter/Filter';
+import Filter, {FilterElement} from '../ui/filter/Filter';
 
 interface IArtFormatFilterProps {
 }

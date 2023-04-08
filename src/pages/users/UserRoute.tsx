@@ -1,15 +1,24 @@
-import { Search } from '@mui/icons-material';
-import { Autocomplete, Box, FormControl, IconButton, InputAdornment, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Skeleton, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
-import { useGetAll } from '../../api/AccountApi';
-import { useGetAllCities } from '../../api/CityApi';
+import {
+    Box,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    SelectChangeEvent,
+    Skeleton,
+    Typography
+} from '@mui/material';
+import {useState} from 'react';
+import {useGetAll} from '../../api/AccountApi';
+import {useGetAllCities} from '../../api/CityApi';
 import CityDropdown from '../../components/cities/CityDropdown';
 import SearchBar from '../../components/ui/SearchBar';
-import { City } from '../../entities/city';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
-import { TokenService } from '../../services/TokenService';
+import {City} from '../../entities/city';
+import {AccountEnum} from '../../entities/enums/AccountEnum';
+import {TokenService} from '../../services/TokenService';
 import UserTable from './UserTable';
-import { useGetAllOrganizationList } from '../../api/OrganizationApi';
+import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
 
 
 const UserRoute = () => {
@@ -22,7 +31,6 @@ const UserRoute = () => {
 
     const { data: cities, isSuccess: isSuccessCities } = useGetAllCities();
 
-    const { data: organizations } = useGetAllOrganizationList();
 
     const renderCityDropdown = () => {
         if (isSuccessCities && cities?.length !== 0) {
@@ -48,20 +56,24 @@ const UserRoute = () => {
     const userTypes = Object
         .keys(AccountEnum)
         .filter(type => loggedUserAccountType === AccountEnum.SYSTEM || type !== AccountEnum.SYSTEM);
-    const [userType, setUserType] = useState<string>();
+    const [userType, setUserType] = useState<string>('');
 
     const handleUsertypeChange = (e: SelectChangeEvent<string>) => {
         const currentUserType = userTypes.find(type => type === e.target.value);
-        setUserType(currentUserType);
+        setUserType(currentUserType || '');
     }
 
     const [rowsPerPage, setRowsPerPage] = useState(15);
     const [pageNumber, setPageNumber] = useState(0);
-    const [organizationName, setOrganizationName] = useState<string>();
+    const [organizationId, setOrganizationId] = useState<string>();
 
     const [username, setUsername] = useState<string>();
 
-    const { data } = useGetAll({ page: pageNumber, size: rowsPerPage, username: username, usertype: userType, 'city-id': city?.id, organization: organizationName });
+    const { data } = useGetAll({
+        page: pageNumber, size: rowsPerPage, username: username,
+        usertype: userType, 'city-id': city?.id,
+        organizationId: organizationId });
+
 
     return (
         <div>
@@ -102,21 +114,7 @@ const UserRoute = () => {
                         placeholder={'Enter lastname/firstname...'}
                     />
 
-                    {organizations &&
-                        <Autocomplete
-                            id='free-soloe'
-                            size='small'
-                            sx={{ flex: '30%', mx: 1 }}
-                            freeSolo
-                            renderInput={(params) => <TextField {...params} label="Organizaitons" />}
-                            options={organizations.map(o => o.name)}
-                            onInputChange={(event, value) => {
-                                if (event?.type === "change") {
-                                    setOrganizationName(value);
-                                }
-                            }} 
-                        />
-                    }
+                    <OrganizationsFilter setOrganizationId={setOrganizationId} />
                 </Box>
 
                 {data &&

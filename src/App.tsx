@@ -9,7 +9,7 @@ import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
-import Representatives from './pages/users/UserRoute';
+import UserRoute from './pages/users/UserRoute';
 import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
@@ -20,13 +20,12 @@ import ErrorPage from "./pages/error/ErrorPage";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
 import ProfilePage from "./pages/home";
-import ArtFormatFilter from './pages/arts/filter/ArtFormatFilter';
-import ArtSizeFilter from './pages/arts/filter/ArtSizeFilter';
-import ArtStyleFilter from './pages/arts/filter/ArtStyleFilter';
-import ArtTopicFilter from './pages/arts/filter/ArtTopicFilter';
-import ArtTypeFilter from './pages/arts/filter/ArtTypeFilter';
+import ArtFormatFilter from './components/form/ArtFormatFilter';
+import ArtSizeFilter from './components/form/ArtSizeFilter';
+import ArtStyleFilter from './components/form/ArtStyleFilter';
+import ArtTopicFilter from './components/form/ArtTopicFilter';
+import ArtTypeFilter from './components/form/ArtTypeFilter';
 import FacilityEdit from "./pages/facilities/FacilityEdit";
-import UserRoute from './pages/users/UserRoute';
 
 function App() {
     //@Todo maybe bug here

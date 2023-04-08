@@ -12,7 +12,7 @@ export const useGetAll = (
         size?: number,  
         username?: string,
         usertype?: string,
-        organization?: string,
+        organizationId?: string,
         'city-id'?: string
 }) => {
     return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, {

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Filter, { FilterElement } from '../../../components/ui/filter/Filter';
+import Filter, {FilterElement} from '../ui/filter/Filter';
 
 
 const ArtStyleFilter = () => {
