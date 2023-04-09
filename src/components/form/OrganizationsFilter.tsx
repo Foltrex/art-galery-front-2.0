@@ -7,7 +7,7 @@ export const OrganizationsFilter = ({setOrganizationId}:{setOrganizationId: (id:
     const { data: organizations } = useGetAllOrganizationList();
 
     const organizationOptions = useMemo(() => {
-        return organizations ? organizations.map(o => ({label: o.name, id: o.id})) : [];
+        return organizations ? organizations.map(o => ({label: o.name || '', id: o.id})) : [];
     }, [organizations]);
 
     return <Autocomplete
