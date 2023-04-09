@@ -13,7 +13,7 @@ import {Link} from 'react-router-dom';
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
-import {find} from "../../util/MetadataUtil";
+import {find, isCreatorOrAdmin} from "../../util/MetadataUtil";
 import {observer} from "mobx-react";
 
 const drawerWidth = 240;
@@ -32,60 +32,96 @@ interface ISidebarProps {
 }
 
 function prepareSidebar(account:Account) {
+    console.log(account);
     switch (account.accountType) {
-        case AccountEnum.REPRESENTATIVE:
-            return [
-                {
+        case AccountEnum.REPRESENTATIVE: {
+            const result = [];
+            const admin = isCreatorOrAdmin(account);
+            if(admin) {
+                result.push({
                     text: 'Organization',
                     icon: <AccountCircleOutlinedIcon/>,
                     link: '/organizations/' + find('organizationId', account)
-                },
-                {
-                    text: 'Catalog',
-                    icon: <PhotoSizeSelectActualOutlinedIcon />,
-                    link: '/arts/representative'
-                },
-                {
-                    text: 'Users',
-                    icon: <PeopleIcon />,
-                    link: '/users'
-                },
-                {
+                });
+                result.push({
                     text: 'Facilities',
                     icon: <HomeWorkOutlinedIcon/>,
-                    link: '/facilities?page=0&limit=10'
-                }
-            ];
+                    link: '/facilities'
+                });
+                result.push({
+                    text: 'Users',
+                    icon: <PeopleIcon/>,
+                    link: '/users'
+                });
+            } else {
+                result.push({
+                    text: 'Facility',
+                    icon: <HomeWorkOutlinedIcon/>,
+                    link: '/facilities/' + find("facilityId", account)
+                });
+            }
+            result.push({
+                text: 'Gallery',
+                icon: <PhotoSizeSelectActualOutlinedIcon/>,
+                link: '/gallery'
+            })
+            result.push({
+                text: 'Account',
+                icon: <AccountCircleOutlinedIcon/>,
+                link: '/account/' + account.id
+            })
+            return result;
+        }
         case AccountEnum.ARTIST:
             return [
-                {
-                    text: 'Artist',
-                    icon: <AccountCircleOutlinedIcon/>,
-                    link: '/' + account.id
-                },
-                {
-                    text: 'Arts',
-                    icon: <PhotoSizeSelectActualOutlinedIcon />,
-                    link: '/arts/artist'
-                },
                 {
                     text: 'Organizations',
                     icon: <PeopleIcon />,
                     link: '/organizations'
-                }
+                },
+                {
+                    text: 'Facilities',
+                    icon: <LocalPostOfficeOutlined/>,
+                    link: '/facilities'
+                },
+                {
+                    text: 'Gallery',
+                    icon: <PeopleOutline/>,
+                    link: '/gallery'
+                },
+                {
+                    text: 'Account',
+                    icon: <AccountCircleOutlinedIcon/>,
+                    link: '/account/' + account.id
+                },
             ]
         case AccountEnum.SYSTEM: {
             return [
                 {
-                    text: 'Artists',
-                    icon: <PeopleOutline/>,
-                    link: '/artists?page=0&limit=10'
-                },
-                {
                     text: 'Organizations',
                     icon: <LocalPostOfficeOutlined/>,
                     link: '/organizations'
-                }
+                },
+                {
+                    text: 'Facilities',
+                    icon: <LocalPostOfficeOutlined/>,
+                    link: '/facilities'
+                },
+                {
+                    text: 'Users',
+                    icon: <PeopleOutline/>,
+                    link: '/users'
+                },
+                {
+                    text: 'Gallery',
+                    icon: <PeopleOutline/>,
+                    link: '/gallery'
+                },
+                {
+                    text: 'Account',
+                    icon: <PeopleOutline/>,
+                    link: '/account/' + account.id
+                },
             ]
         }
         default:

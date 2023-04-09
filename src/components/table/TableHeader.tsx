@@ -38,8 +38,8 @@ function TableHeader<T extends IdentifiableRecord>({columns, showActions = false
 							column.sort(column.key, newSort);
 						}}
 					>
-						<TableSortLabel direction={sortDirection} active={
-							sortKey === column.key && sortDirection !== undefined}/>
+						{column.sort && <TableSortLabel direction={sortDirection} active={
+							sortKey === column.key && sortDirection !== undefined}/>}
 						<b>{column.title}</b>
 					</TableCell>
 				))}

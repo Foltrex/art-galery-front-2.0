@@ -11,3 +11,8 @@ export function find(key:string, account:Account):string|null {
     }
     return null;
 }
+
+export function isCreatorOrAdmin(account:Account) {
+    const role = find("accountRole", account);
+    return role === 'CREATOR' || role === 'ADMIN';
+}
