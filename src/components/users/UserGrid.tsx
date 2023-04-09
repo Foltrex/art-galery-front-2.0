@@ -66,8 +66,8 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
                 onDelete={handleDelete}
                 onEdit={handleEdit}
                 page={data}
-                onPageChange={(_, page) => onPageNumberChange(page)}
-                onRowsPerPageChange={(event) => onRowsPerPageChange(+event.target.value)} />
+                onPageChange={onPageNumberChange}
+                onRowsPerPageChange={onRowsPerPageChange} />
             : <SkeletonTable
                 columns={columns}
                 rowsPerPage={rowsPerPage} />

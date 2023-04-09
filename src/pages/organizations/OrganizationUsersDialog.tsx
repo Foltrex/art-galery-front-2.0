@@ -53,8 +53,8 @@ const OrganizationFacilitiesDialog = observer(({open, onClose}: IOrganizationFac
                         onDelete={handleDelete}
                         onEdit={handleEdit}
                         page={accounts}
-                        onPageChange={(e, page) => setPageNumber(page)}
-                        onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)}
+                        onPageChange={setPageNumber}
+                        onRowsPerPageChange={setRowsPerPage}
                     />
                     : <SkeletonTable
                         columns={columns}

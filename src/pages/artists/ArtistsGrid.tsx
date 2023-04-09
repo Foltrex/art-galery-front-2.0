@@ -51,8 +51,8 @@ const ArtistsGrid = () => {
                     onDelete={handleDelete}
                     onEdit={handleEdit}
                     page={data}
-                    onPageChange={(_, page) => setPageNumber(page)}
-                    onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)} />
+                    onPageChange={setPageNumber}
+                    onRowsPerPageChange={setRowsPerPage} />
                 : 	<SkeletonTable
                     columns={columns}
                     rowsPerPage={rowsPerPage} />

@@ -60,8 +60,8 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
                         onDelete={handleDelete}
                         onEdit={handleEdit}
                         page={facilities}
-                        onPageChange={(e, page) => setPageNumber(page)}
-                        onRowsPerPageChange={(event) => setRowsPerPage(+event.target.value)}
+                        onPageChange={setPageNumber}
+                        onRowsPerPageChange={setRowsPerPage}
                     />
                     : <SkeletonTable
                         columns={columns}

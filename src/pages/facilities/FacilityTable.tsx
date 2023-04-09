@@ -1,34 +1,31 @@
 import * as React from 'react';
-import { useDeleteFacility } from '../../api/FacilityApi';
+import {useDeleteFacility} from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
-import Table, { IColumnType } from '../../components/table/Table';
-import { Facility } from '../../entities/facility';
-import { IPage, createEmptyPage } from '../../hooks/react-query';
+import Table, {IColumnType} from '../../components/table/Table';
+import {Facility} from '../../entities/facility';
+import {createEmptyPage, IPage} from '../../hooks/react-query';
 import FacilityForm from './FacilityForm';
-import { Checkbox, IconButton, Typography } from '@mui/material';
-import { TokenService } from '../../services/TokenService';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
-import { Map } from '@mui/icons-material';
-import { Address } from '../../entities/address';
+import {Checkbox, IconButton, Typography} from '@mui/material';
+import {TokenService} from '../../services/TokenService';
+import {AccountEnum} from '../../entities/enums/AccountEnum';
+import {Map} from '@mui/icons-material';
+import {Address} from '../../entities/address';
 import MapDialog from '../../components/map/MapDialog';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { useRootStore } from '../../stores/provider/RootStoreProvider';
-
-import * as MetadataUtils from "../../util/MetadataUtil";
-import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
-import { useGetOrganizationRoles } from '../../api/OrganizationRoleApi';
-import { useGetLoggedUserRole } from '../../hooks/useGetLoggedUserRole';
+import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
+import {useGetLoggedUserRole} from '../../hooks/useGetLoggedUserRole';
 
 interface IFacilityTableProps {
 	data?: IPage<Facility>;
 	isFetching: boolean;
 	isSuccess: boolean;
 	onPageChange: (page: number) => void;
+	onRowsPerPageChange: (pageSize: number) => void;
 }
 
-const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSuccess, onPageChange}) => {
+const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange, isFetching, isSuccess, onPageChange}) => {
 	const organizationRole = useGetLoggedUserRole();
 
 	const [openEditForm, setOpenEditForm] = React.useState(false);
@@ -141,9 +138,6 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSucce
 		setOpenEditForm(true);
 	}
 
-	const handlePageChange = (page: number) => {
-		onPageChange(page);
-	}
 
 	const currentAccountType = TokenService.getCurrentAccountType();
 	const isTableRowsEditableByCurrentUser = currentAccountType === AccountEnum.SYSTEM 
@@ -154,33 +148,20 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, isFetching, isSucce
 			);
 
 	const renderTable = () => {
-		if (isSuccess && data) {
-			return (
-				<Table
-					columns={columns}
-					onDelete={handleDelete}
-					onEdit={handleEdit}
-					page={data}
-					onPageChange={(_, page) => handlePageChange(page)}
-					onRowsPerPageChange={(event) => alert(event)} 
-					editable={isTableRowsEditableByCurrentUser}	
-				/>
-			);
-		} else if (isFetching) {
+		if (isFetching) {
 			return (
 				<SkeletonTable columns={columns}/>
 			);
 		} else {
-			const emptyPage = createEmptyPage<Facility>();
 			return (
 				<Table
 					columns={columns}
 					onDelete={handleDelete}
 					onEdit={handleEdit}
-					page={emptyPage}
-					onPageChange={(_, page) => handlePageChange(page)}
-					onRowsPerPageChange={(event) => alert(event)} 
-					editable={isTableRowsEditableByCurrentUser} 
+					page={isSuccess && data ? data : createEmptyPage<Facility>()}
+					onPageChange={onPageChange}
+					onRowsPerPageChange={onRowsPerPageChange}
+					editable={isTableRowsEditableByCurrentUser}
 				/>
 			);
 		}

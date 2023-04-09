@@ -22,8 +22,8 @@ interface ITableProps<S extends IdentifiableRecord> {
     editable?: boolean;
     onDelete: (id: S) => void;
     onEdit: (data: S) => void;
-    onPageChange: (event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null, page: number) => void;
-    onRowsPerPageChange:  (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onPageChange: (page: number) => void;
+    onRowsPerPageChange:  (pageSize: number) => void;
 }
 
 function Table<S extends IdentifiableRecord>({
@@ -55,8 +55,8 @@ function Table<S extends IdentifiableRecord>({
                 count={page.totalElements}
                 rowsPerPage={page.size}
                 page={page.number}
-                onPageChange={onPageChange}
-                onRowsPerPageChange={onRowsPerPageChange}
+                onPageChange={(e, page) => onPageChange(page)}
+                onRowsPerPageChange={(e) => onRowsPerPageChange(parseInt(e.target.value))}
             />
         </>
     );

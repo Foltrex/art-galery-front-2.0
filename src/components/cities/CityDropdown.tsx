@@ -1,12 +1,10 @@
-import { FormControl, InputLabel, Select, MenuItem, SelectChangeEvent, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
+import {FormControl, InputLabel, MenuItem, Select} from '@mui/material';
 import * as React from 'react';
-import { City } from '../../entities/city';
-import { ArrowDropDown } from '@mui/icons-material';
+import {useGetAllCities} from "../../api/CityApi";
 
 interface ICityDropdownProps {
     value?: string;
-    cities?: City[];
-    onChange?: (e: SelectChangeEvent<string>) => void;
+    onChange: (cityId:string) => void;
     disabled?: boolean;
     style?: React.CSSProperties;
 }
@@ -14,47 +12,29 @@ interface ICityDropdownProps {
 const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
 
     value,
-    cities = [],
-    onChange = (e: SelectChangeEvent<string>) => { },
-    disabled = false,
-    style
+    onChange ,
+    disabled = false
 }) => {
-    if (!disabled) {
-        return (
-            <FormControl size='small' sx={{ flex: '20%' }} style={{...style}} >
-                <InputLabel id='city-dropdown'>Cities</InputLabel>
-                <Select
-                    labelId='city-dropdown'
-                    value={value ?? ''}
-                    label='Cities'
-                    onChange={onChange}
-                >
-                    <MenuItem value=''>All Cities</MenuItem>
-                    {cities.map(city => (
-                        <MenuItem key={city.id} value={city.id}>{city.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-        );
-    } else {
-        return (
-            <FormControl size='small' sx={{ flex: '20%' }} variant='outlined'>
-                <InputLabel htmlFor='city-dropdown'>Cities</InputLabel>
-                <OutlinedInput
-                    id='city-dropdown'
-                    label='Cities'
-                    disabled
-                    endAdornment={
-                        <InputAdornment position='end'>
-                            <IconButton disableRipple disableTouchRipple size='small'>
-                                <ArrowDropDown />
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                />
-            </FormControl>
-        );
-    }
+
+    const { data: cities } = useGetAllCities();
+
+    return (
+        <FormControl size='small' >
+            <InputLabel id='city-dropdown'>Cities</InputLabel>
+            <Select
+                disabled={disabled}
+                labelId='city-dropdown'
+                value={value ?? ''}
+                label='Cities'
+                onChange={(e, a) => onChange(e.target.value)}
+            >
+                <MenuItem value=''>All Cities</MenuItem>
+                {cities && cities.map(city => (
+                    <MenuItem key={city.id} value={city.id}>{city.name}</MenuItem>
+                ))}
+            </Select>
+        </FormControl>
+    );
 };
 
 export default CityDropdown;

@@ -1,20 +1,8 @@
-import {
-    Box,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Paper,
-    Select,
-    SelectChangeEvent,
-    Skeleton,
-    Typography
-} from '@mui/material';
+import {Box, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Typography} from '@mui/material';
 import {useState} from 'react';
 import {useGetAll} from '../../api/AccountApi';
-import {useGetAllCities} from '../../api/CityApi';
 import CityDropdown from '../../components/cities/CityDropdown';
 import SearchBar from '../../components/ui/SearchBar';
-import {City} from '../../entities/city';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
 import {TokenService} from '../../services/TokenService';
 import UserTable from './UserTable';
@@ -22,35 +10,13 @@ import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
 
 
 const UserRoute = () => {
-    const [city, setCity] = useState<City>();
+    const [cityId, setCityId] = useState<string>();
 
-    const handleCityChange = (e: SelectChangeEvent<string>) => {
-        const currentCity = cities?.find(city => city.id === e.target.value);
-        setCity(currentCity);
+    const handleCityChange = (e: string) => {
+        setCityId(e);
     }
 
-    const { data: cities, isSuccess: isSuccessCities } = useGetAllCities();
 
-
-    const renderCityDropdown = () => {
-        if (isSuccessCities && cities?.length !== 0) {
-            return (
-                <CityDropdown
-                    style={{ flex: '15%' }}
-                    value={city?.id}
-                    cities={cities}
-                    onChange={handleCityChange} />
-            );
-        } else if (isSuccessCities && (!cities || cities.length === 0)) {
-            return (
-                <CityDropdown style={{ flex: '15%' }} disabled />
-            );
-        } else {
-            return (
-                <Skeleton sx={{ flex: '15%' }} />
-            );
-        }
-    }
 
     const loggedUserAccountType = TokenService.getCurrentAccountType();
     const userTypes = Object
@@ -75,7 +41,7 @@ const UserRoute = () => {
     }
     const { data } = useGetAll({
         page: pageNumber, size: rowsPerPage, username: username,
-        usertype: userType, 'city-id': city?.id,
+        usertype: userType, 'city-id': cityId,
         organizationId: organizationId, sort });
 
 
@@ -110,7 +76,7 @@ const UserRoute = () => {
                         </Select>
                     </FormControl>
 
-                    {renderCityDropdown()}
+                    <CityDropdown value={cityId} onChange={handleCityChange} />
 
                     <SearchBar
                         style={{ flex: '30%', marginLeft: 1, marginRight: 1 }}
