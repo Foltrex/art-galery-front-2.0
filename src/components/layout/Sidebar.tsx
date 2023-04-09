@@ -37,6 +37,7 @@ function prepareSidebar(account:Account) {
         case AccountEnum.REPRESENTATIVE: {
             const result = [];
             const admin = isCreatorOrAdmin(account);
+            console.log(admin, account)
             if(admin) {
                 result.push({
                     text: 'Organization',
