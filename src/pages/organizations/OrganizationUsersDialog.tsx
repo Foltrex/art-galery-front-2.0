@@ -1,7 +1,5 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton} from "@mui/material";
-import {IPage} from "../../hooks/react-query";
-import {axiosApi, USER_SERVICE} from "../../http/axios";
 import {useNavigate, useParams} from "react-router-dom";
 import SkeletonTable from "../../components/table/SkeletonTable";
 import Table, {IColumnType} from '../../components/table/Table';
@@ -11,6 +9,7 @@ import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {Account} from "../../entities/account";
 import {observer} from "mobx-react";
+import {useGetAll} from "../../api/AccountApi";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
@@ -21,20 +20,10 @@ const OrganizationFacilitiesDialog = observer(({open, onClose}: IOrganizationFac
     const navigate = useNavigate()
     const matches = useParams();
 
-    const [accounts, setAccounts] = useState<IPage<Account>>();
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
-    useEffect(() => {
-        axiosApi.get(`${USER_SERVICE}/accounts/organizations/${matches.id}`, {
-            params: {
-                page: pageNumber,
-                size: rowsPerPage,
-            }
-        }).then(response => {
-            setAccounts(response.data)
-        })
-    }, [rowsPerPage, pageNumber])
+    const {data : accounts} = useGetAll({organizationId: matches.id, page: pageNumber, size: rowsPerPage});
 
 
     //@TODO CHANGE LATER
