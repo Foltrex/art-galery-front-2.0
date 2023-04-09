@@ -13,12 +13,6 @@ import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {find} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
 
-function renderName(a: Account) {
-    const fn = a.firstName;
-    const ln = a.lastName;
-    return (fn ? fn : "") + (fn && ln ? " " + ln : "");
-}
-
 const Circle = styled('span')({
     height: 10,
     width: 10,

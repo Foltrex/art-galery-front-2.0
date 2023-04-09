@@ -50,7 +50,7 @@ function Table<S extends IdentifiableRecord>({
                 </MuiTable>
             </TableContainer>
             <TablePagination 
-                rowsPerPageOptions={[]}
+                rowsPerPageOptions={[5, 10, 15, 25, 50]}
                 component='div'
                 count={page.totalElements}
                 rowsPerPage={page.size}

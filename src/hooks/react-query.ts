@@ -60,12 +60,11 @@ interface QFC<T> extends QueryFunctionContext<QueryKeyT> {
 export const fetch = <T>({
     queryKey,
     pageParam,
-    map,
-}: QFC<T>): Promise<T> => {
+}: QueryFunctionContext<QueryKeyT>): Promise<T> => {
     const [url, params] = queryKey;
     return axiosApi
-        .get<any>(url, { params: { ...params, page: pageParam } })
-        .then(response => map ? map(response.data) : ((response.data as any) as T));
+        .get<T>(url, { params: params })
+        .then(response => response.data);
 };
 
 export const count = (url: string): Promise<number> => {
@@ -102,12 +101,11 @@ export const usePrefetch = <T>(url: string | null, params?: object) => {
 export const useFetch = <T>(
     url: string | null,
     params?: object,
-    config?: UseQueryOptions<T, Error, T, QueryKeyT>,
-    map?: (p:any) => T
+    config?: UseQueryOptions<T, Error, T, QueryKeyT>
 ) => {
     return useQuery<T, Error, T, QueryKeyT>(
         [url!, params],
-        context => fetch<T>({...context, map: map}),
+        context => fetch<T>(context),
         {
             enabled: !!url,
             retry: false,
