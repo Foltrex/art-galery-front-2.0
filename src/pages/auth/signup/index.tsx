@@ -11,7 +11,6 @@ interface IRegisterProps {
 export const Register: React.FunctionComponent<IRegisterProps> = () => {
 
     return (
-        // <ThemeProvider theme={theme}>
         <Container component='main' maxWidth='xs'>
             <CssBaseline/>
             <Box sx={boxStyle}>
@@ -21,7 +20,6 @@ export const Register: React.FunctionComponent<IRegisterProps> = () => {
             </Box>
             <Copyright sx={{mt: 4}}/>
         </Container>
-        // </ThemeProvider>
     );
 
 };
