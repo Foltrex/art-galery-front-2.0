@@ -60,17 +60,15 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
     })
 
     useEffect(() => {
-        if (false) {
-            if (account) {
-                if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-                    navigate("/")
-                }
-                const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-                const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+        if (account) {
+            if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+                navigate("/")
+            }
+            const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+            const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
 
-                if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-                    navigate("/")
-                }
+            if (organizationId !== matches.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+                navigate("/")
             }
         }
     }, [account])

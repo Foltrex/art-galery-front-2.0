@@ -176,7 +176,7 @@ function getColumns(setOpenProposalModal: () => void,
             minWidth: 150,
             render: (organization) => {
                 if (accountType === AccountEnum.SYSTEM ||
-                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR || true)) {
+                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR)) {
                     return (
                         <div>
                             <IconButton
