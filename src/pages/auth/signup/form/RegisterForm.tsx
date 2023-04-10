@@ -1,7 +1,7 @@
 import {Button, CircularProgress, Grid, TextField, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useFormik} from "formik";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
 import {useRegister} from '../../../../api/AuthApi';
@@ -71,6 +71,10 @@ const RegisterForm = () => {
         }
     })
 
+    useEffect(() => {
+        alertStore.setShow(false)
+    }, [accountType])
+
     const submit = async (values: IRegisterFormValues) => {
         try {
             const response = await mutationRegister.mutateAsync(values)
@@ -99,11 +103,12 @@ const RegisterForm = () => {
                             }}
                         >
                             <Tooltip title={
-                                <div style={{textAlign: 'center'}}>I am bar, hotel, casino or restaurant representative, and our facility is open for art expositions</div>
+                                <div style={{textAlign: 'center'}}>I am bar, hotel, casino or restaurant representative,
+                                    and our facility is open for art expositions</div>
                             }>
-                                <Help />
+                                <Help/>
                             </Tooltip>&nbsp;
-                                I'm Organization
+                            I'm Organization
                         </Button>
                     </Grid>
                     <Grid item lg={6} xs={12}>
@@ -118,9 +123,10 @@ const RegisterForm = () => {
                             }}
                         >
                             <Tooltip title={
-                                <div style={{textAlign: 'center'}}>I am content creator, and I'm searching for room to host my arts</div>
+                                <div style={{textAlign: 'center'}}>I am content creator, and I'm searching for room to
+                                    host my arts</div>
                             }>
-                                <Help />
+                                <Help/>
                             </Tooltip>&nbsp;
                             I'm Artist
                         </Button>
@@ -199,14 +205,15 @@ const RegisterForm = () => {
 
     return (
         <form onSubmit={formik.handleSubmit} id="form" noValidate>
-            <AlertNotification/>
+            {accountType !== "" && <AlertNotification/>}
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',
                 marginBottom: '10px'
             }}
             >
-                {accountType === AccountEnum.REPRESENTATIVE && <div style={{color: "#797777"}}>Organization representative</div>}
+                {accountType === AccountEnum.REPRESENTATIVE &&
+                    <div style={{color: "#797777"}}>Organization representative</div>}
                 {accountType === AccountEnum.ARTIST && <div style={{color: "#797777"}}>Content creator</div>}
                 <div style={{marginLeft: 'auto', textAlign: "right", color: "#797777"}}>
                     Step {accountType === "" ? 1 : 2} of 2

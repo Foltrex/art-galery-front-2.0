@@ -28,22 +28,9 @@ const UserRoute = () => {
         const currentUserType = userTypes.find(type => type === e.target.value);
         setUserType(currentUserType || '');
     }
-
-    const [rowsPerPage, setRowsPerPage] = useState(15);
-    const [pageNumber, setPageNumber] = useState(0);
     const [organizationId, setOrganizationId] = useState<string>();
 
-    const [username, setUsername] = useState<string>();
-    const [sort, setSort] = useState<string>();
-
-    const applySort = (key:string, direction:string|undefined) => {
-        setSort(direction ? key + "," + direction : undefined);
-    }
-    const { data } = useGetAll({
-        page: pageNumber, size: rowsPerPage, username: username,
-        usertype: userType, 'city-id': cityId,
-        organizationId: organizationId, sort });
-
+    const [username, setUsername] = useState<string>()
 
     return (
         <div>
@@ -87,15 +74,7 @@ const UserRoute = () => {
                     <OrganizationsFilter setOrganizationId={setOrganizationId} />
                 </Box>
 
-                {data &&
-                    <UserTable
-                        data={data}
-                        applySort={applySort}
-                        rowsPerPage={rowsPerPage}
-                        onRowsPerPageChange={setRowsPerPage}
-                        onPageNumberChange={setPageNumber}
-                    />
-                }
+                <UserTable cityId={cityId} username={username} usertype={userType} organizationId={organizationId} />
             </Paper>
         </div>
     );

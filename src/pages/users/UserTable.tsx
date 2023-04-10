@@ -1,52 +1,52 @@
 import * as React from 'react';
-import {IColumnType} from '../../components/table/Table';
-import {Representative} from '../../entities/representative';
-import {AuthService} from '../../services/AuthService';
-import {TokenService} from '../../services/TokenService';
-import {useRootStore} from "../../stores/provider/RootStoreProvider";
-import {IUserGridProps, UserGrid} from "../../components/users/UserGrid";
+import { useState } from 'react';
+import { IUserGridProps, UserGrid } from "../../components/users/UserGrid";
+import { AuthService } from '../../services/AuthService';
+import { TokenService } from '../../services/TokenService';
+import { useRootStore } from "../../stores/provider/RootStoreProvider";
+import { IPage } from '../../hooks/react-query';
+import { Account } from '../../entities/account';
+import { useGetAll } from '../../api/AccountApi';
 
-
-interface IRepresentativeData {
-    id: string;
-    firstname: string;
-    lastname: string;
-    email: string;
-    organizationRole: string;
-    facility: string;
+interface IUserTableProps {
+    cityId?: string;
+    username?: string;
+    usertype?: string;
+    organizationId?: string;
 }
 
-const columns: IColumnType<IRepresentativeData>[] = [
-	{key: 'firstname', title: 'Firstname'},
-	{key: 'lastname', title: 'lastname'},
-	{key: 'email', title: 'Email'},
-	{key: 'organizationRole', title: 'Role'},
-    {key: 'facility', title: 'Facility'}
-];
+const UserTable: React.FunctionComponent<IUserTableProps> = ({ 
+    username, 
+    usertype, 
+    cityId, 
+    organizationId
+}) => {
+    const [rowsPerPage, setRowsPerPage] = useState(15);
+    const [pageNumber, setPageNumber] = useState(0);
 
-const mapRepresentativeToTableRow = (representative: Representative): IRepresentativeData => {
-    const { facility, organizationRole } = representative;
-        
-    return {
-        id: representative.id,
-        firstname: representative.firstname,
-        lastname: representative.lastname,
-        email: 'unknown',
-        organizationRole: organizationRole?.name,
-        facility: facility?.name
-    };
-}
+    const [sort, setSort] = useState<string>();
 
-const UserTable: React.FunctionComponent<IUserGridProps> = (props) => {
+    const applySort = (key: string, direction: string | undefined) => {
+        setSort(direction ? key + "," + direction : undefined);
+    }
+    const { data } = useGetAll({
+        page: pageNumber, 
+        size: rowsPerPage, 
+        username: username,
+        usertype: usertype, 
+        cityId: cityId,
+        organizationId: organizationId, 
+        sort
+    });
 
-
-    const token = TokenService.decode(AuthService.getToken());
-    const {authStore} = useRootStore();
-    const account = authStore.account;
-
-
-
-	return <UserGrid {...props}/>;
+    return (
+        <UserGrid 
+        data={data} 
+        rowsPerPage={rowsPerPage} 
+        onRowsPerPageChange={setRowsPerPage} 
+        onPageNumberChange={setPageNumber} 
+        applySort={applySort} />
+    );
 };
 
 export default UserTable;
