@@ -4,4 +4,5 @@ export enum MetadataEnum {
     ORGANIZATION_ID = "organizationId",
     FACILITY_ID = "facilityId",
     CITY_ID = "cityId",
+    DESCRIPTION = "description"
 }

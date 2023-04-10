@@ -16,10 +16,8 @@ import {Facility} from "../../entities/facility";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
-import {useSaveArt} from "../../api/ArtApi";
 import {useSaveFile} from "../../api/FileApi";
 import {FileService} from "../../services/FileService";
-import {Art} from "../../entities/art";
 
 interface IFormValues {
     name: string,
@@ -75,24 +73,21 @@ const FacilityEdit = () => {
     // }
 
     useEffect(() => {
-        if (false) {
-            if (account && facility) {
-                if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-                    navigate("/")
-                }
-                const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-                const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+        if (account && facility) {
+            if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
+                navigate("/")
+            }
+            const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
+            const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
 
-                if (organizationId !== facility!.organization.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-                    navigate("/")
-                }
+            if (organizationId !== facility!.organization.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
+                navigate("/")
             }
         }
     }, [account, facility])
 
     useEffect(() => {
         if (!isFetching && !isLoading) {
-            console.log(facility)
             facility && setInitialValues({
                 name: facility.name,
                 address: facility!.address,
