@@ -9,6 +9,8 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
 import Bubble from "./components/bubble/Bubble";
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -29,7 +31,9 @@ root.render(
                 <QueryClientProvider client={queryClient}>
                     <RootStoreProvider>
                         <ThemeProvider theme={defaultMaterialTheme}>
-                            <App />
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <App />
+                            </LocalizationProvider>
                         </ThemeProvider>
                     </RootStoreProvider>
                 </QueryClientProvider>

@@ -1,26 +1,43 @@
 import SaveIcon from '@mui/icons-material/Save';
-import {Box, Divider, Grid, IconButton, InputBase, Stack, TextField} from '@mui/material';
-import {FormikHelpers, useFormik} from 'formik';
+import { Box, Divider, FormControl, Grid, IconButton, Input, InputBase, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
+import { FormikHelpers, useFormik } from 'formik';
 import * as yup from 'yup';
-import {useGetArtistByAccountId} from '../../../api/ArtistApi';
-import {Art} from '../../../entities/art';
-import {TokenService} from '../../../services/TokenService';
+import { useGetArtistByAccountId } from '../../../api/ArtistApi';
+import { Art } from '../../../entities/art';
+import { TokenService } from '../../../services/TokenService';
+import { useRootStore } from '../../../stores/provider/RootStoreProvider';
+import ArtSizeFilter from '../../../components/form/art-size-filter/ArtSizeFilter';
+import ArtStyleFilter from '../../../components/form/art-style-filter/ArtStyleFilter';
+import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
+import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect } from 'react';
 
 interface IArtFormProps {
 	art?: Art;
 	onSubmit: (art: Art) => Promise<void>;
-	onImageAdd?: () => void;
 }
 
 interface FormValues {
 	name: string;
 	description: string;
+	style: string;
+	creationDate: Dayjs;
+	size: string;
 }
 
-const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImageAdd }) => {
+const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: artist } = useGetArtistByAccountId(accountId);
 
+	const rootStore = useRootStore();
+	const { authStore } = rootStore;
+	const account = authStore.account;
+
+
+	const artStyleItems = useGetArtStyleFilterContent();
+	const artSizeItems = useGetArtSizeFilterContent();
 	/*
 	let artist:Artist|undefined = undefined;
 	useEffect(() => {
@@ -39,7 +56,10 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 
 	const initialValues: FormValues = {
 		name: art?.name ?? '',
-		description: art?.description ?? ''
+		description: art?.description ?? '',
+		style: '',
+		creationDate: dayjs(),
+		size: ''
 	}
 
 	const onSaveArt = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
@@ -63,36 +83,124 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 	const formik = useFormik({
 		initialValues: initialValues,
 		validationSchema: validationSchema,
+		validateOnChange: false,
 		onSubmit: onSaveArt,
 		enableReinitialize: true,
 	});
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
-			<Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+			<Stack direction='column' rowGap={3}>
 				<TextField
-					placeholder='Enter art name'
-					name='name'
+					placeholder='Enter art name...'
+					name='artName'
+					required
 					value={formik.values.name}
 					onChange={formik.handleChange}
 					fullWidth
 					error={!!formik.errors.name}
 					helperText={formik.errors.name}
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
-				
-				<Stack direction='row'>
-					{/* <IconButton onClick={onImageAdd}>
-						<AddPhotoAlternateIcon color='primary' />
-					</IconButton> */}
+				<TextField
+					size='small'
+					required
+					placeholder='Artist...'
+					name='artistName'
+					value={`${account?.firstName}  ${account?.lastName} [${account?.id}]`}
+					InputProps={{ readOnly: true }}
+					fullWidth
+					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 
-					<IconButton type='submit' disabled={formik.isSubmitting}>
-						<SaveIcon />
-					</IconButton>
-				</Stack>
-			</Box>
-			<Divider sx={{ my: 1 }} />
-			<Stack spacing={2} sx={{ marginTop: 4 }}>
-				<Grid container>
+				<FormControl size='small'>
+					<InputLabel id='style-select' shrink={false}>
+						{!formik.values.style
+							? 'Style...'
+							: ''
+						}
+					</InputLabel>
+
+					<Select
+						labelId='style-select'
+						required
+						name='style'
+						value={formik.values.style}
+						onChange={formik.handleChange}
+						error={!!formik.errors.name}
+						// helperText={formik.errors.name}
+						sx={{ lineHeight: 'normal' }}
+						inputProps={{ shrink: false }}
+					>
+						{artStyleItems.map(s => (
+							<MenuItem 
+								key={s.value}
+								value={s.value}
+							>
+								{s.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+
+
+				<DatePicker 
+					disableFuture
+					value={formik.values.creationDate} 
+					onChange={formik.handleChange} 
+					views={['month', 'year']} 
+				/>
+
+				<FormControl size='small'>
+					<InputLabel id='size-select' shrink={false}>
+						{!formik.values.size
+							? 'Size...'
+							: ''
+						}
+					</InputLabel>
+					<Select
+						labelId='size-select'
+						required
+						placeholder='Size...'
+						name='size'
+						value={formik.values.size}
+						onChange={formik.handleChange}
+						error={!!formik.errors.size}
+						// helperText={formik.errors.name}
+						sx={{ lineHeight: 'normal' }}
+					>
+						{artSizeItems.map(s => (
+							<MenuItem
+								key={s.value}
+								value={s.value}
+							>
+								{s.label}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				{/* </Select> */}
+				{/* <TextField
+					required
+					size='small'
+					value={formik.values.name}
+					onChange={formik.handleChange}
+					fullWidth
+					error={!!formik.errors.name}
+					helperText={formik.errors.name}
+					sx={{ fontSize: '2em', lineHeight: 'normal' }} /> */}
+				<TextField
+					name='description'
+					value={formik.values.description}
+					onChange={formik.handleChange}
+					size='small'
+					placeholder='Description...'
+					fullWidth
+					error={!!formik.errors.description}
+					helperText={formik.errors.description}
+					sx={{ lineHeight: 'normal' }} />
+			</Stack>
+
+			{/* <Stack spacing={2} sx={{ marginTop: 4 }}> */}
+			{/* <Grid container>
 					<Grid item sm={4}><strong>Description</strong></Grid>
 					<Grid item sm={8}>
 						<InputBase
@@ -108,8 +216,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onImag
 							value={formik.values.description}
 						/>
 					</Grid>
-				</Grid>
-			</Stack>
+				</Grid> */}
+			{/* </Stack> */}
 		</form>
 	);
 };

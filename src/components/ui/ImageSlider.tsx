@@ -1,17 +1,21 @@
-import {Button, Modal} from "@mui/material";
-import {Container, fontSize, styled} from "@mui/system";
+import { Box, Button, Modal, Stack } from "@mui/material";
+import { Container, fontSize, styled } from "@mui/system";
 import Delete from "@mui/icons-material/Delete";
-import {useState} from "react";
+import { useState } from "react";
 
 interface IImageSliderProps {
     slides?: string[];
     onDelete?: (index: number) => void;
+	onImageAdd?: () => void;
 }
 
 const LeftArrowButton = styled('div')({
+    paddingTop: '20%',
+    textAlign: 'center',
+    width: '60px',
+    height: '100%',
+    backgroundColor: 'rgb(234, 237, 239)',
     position: 'absolute',
-    top: '50%',
-    transform: 'translate(0, -50%)',
     left: '22px',
     fontSize: '55px',
     color: '#fff',
@@ -20,9 +24,12 @@ const LeftArrowButton = styled('div')({
 });
 
 const RightArrowButton = styled('div')({
+    paddingTop: '20%',
+    textAlign: 'center',
+    width: '60px',
+    height: '100%',
+    backgroundColor: 'rgb(234, 237, 239)',
     position: 'absolute',
-    top: '50%',
-    transform: 'translate(0, -50%)',
     right: '22px',
     fontSize: '55px',
     color: '#fff',
@@ -37,7 +44,7 @@ interface SliderImageProps {
 //@todo remove
 const SliderImage = styled('div', {
     shouldForwardProp: prop => prop !== 'src'
-})<SliderImageProps>(({src}) => ({
+})<SliderImageProps>(({ src }) => ({
     backgroundImage: `url(${src})`,
     height: '100%',
     width: 'auto',
@@ -48,7 +55,7 @@ const SliderImage = styled('div', {
 }));
 //////
 
-const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({slides, onDelete}) => {
+const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDelete, onImageAdd }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showModal, setShowModal] = useState(false);
 
@@ -80,6 +87,11 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({slides, onDele
         setShowModal(false)
     }
 
+
+	// const handleMakeMainImageClick = () => {
+	// 	[slides[]]
+	// }
+
     return (
         <div style={{
             height: '100%',
@@ -94,7 +106,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({slides, onDele
             </RightArrowButton>
             }
 
-            <div style={{background: '#E8EDF0', width: '100%', height: '100%', textAlign: "center"}}>
+            <div style={{ background: 'white', width: '100%', height: '100%', textAlign: "center" }}>
                 {slides && <img
                     src={slides[currentIndex]}
                     onClick={handleImageClick}
@@ -111,35 +123,48 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({slides, onDele
                 />}
             </div>
 
-            {slides && <div style={{display: 'flex', justifyContent: 'center'}}>
+            {slides && <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh' }}>
                 {slides.map((_, index) => (
-                    <div
-                        key={index}
-                        style={{margin: '0 3px', cursor: 'pointer', fontSize: '20px '}}
+                    <img 
+                        src={slides[index]}
                         onClick={() => handleDotClick(index)}
-                    >
-                        &#x25CF;
-                    </div>
+                        width='50px'
+                        height='50px'
+                        style={{ marginRight: '10px', cursor: 'pointer' }}
+                    />
                 ))}
             </div>
             }
 
+            <Stack direction='column' sx={{ px: 30 }} gap={2}>
+                <Button variant='outlined' sx={{ p: 1.5, color: 'black', borderColor: 'black' }}>
+                    Make this image main
+                </Button>
+                <Button 
+                    variant='outlined' 
+                    sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
+                    onClick={onImageAdd}
+                >
+                    Load More
+                </Button>
+            </Stack>
+
             {slides && <Modal
                 open={showModal}
                 onClose={() => setShowModal(false)}
-                style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
                 <>
                     <img
                         // style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }}
-                        style={{maxWidth: '99%', maxHeight: '99%'}}
-                        src={slides[currentIndex]}/>
+                        style={{ maxWidth: '99%', maxHeight: '99%' }}
+                        src={slides[currentIndex]} />
 
                     <Button
-                        sx={{position: 'absolute', bottom: '10%', borderRadius: 8}}
+                        sx={{ position: 'absolute', bottom: '10%', borderRadius: 8 }}
                         color='error'
                         variant='contained'
-                        startIcon={<Delete/>}
+                        startIcon={<Delete />}
                         onClick={handleDeleteImageClick}>
                         Delete
                     </Button>
