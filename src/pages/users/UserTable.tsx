@@ -34,7 +34,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = ({
         size: rowsPerPage, 
         username: username,
         usertype: usertype, 
-        'city-id': cityId,
+        cityId: cityId,
         organizationId: organizationId, 
         sort
     });
