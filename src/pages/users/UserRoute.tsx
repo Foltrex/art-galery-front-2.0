@@ -40,9 +40,14 @@ const UserRoute = () => {
         setSort(direction ? key + "," + direction : undefined);
     }
     const { data } = useGetAll({
-        page: pageNumber, size: rowsPerPage, username: username,
-        usertype: userType, 'city-id': cityId,
-        organizationId: organizationId, sort });
+        page: pageNumber,
+        size: rowsPerPage,
+        username: username,
+        usertype: userType,
+        cityId: cityId,
+        organizationId: organizationId,
+        sort
+    });
 
 
     return (
