@@ -1,7 +1,9 @@
+import * as React from "react";
 import {ChangeEvent, useEffect, useState} from "react";
 import {FormControl, OutlinedInput} from "@mui/material";
 
-export const TypeFilter: React.FC<{ onChange: (s: string) => void, placeholder: string }> = ({
+export const TypeFilter: React.FC<{ style?:React.CSSProperties, onChange: (s: string) => void, placeholder: string }> = ({
+                                                                                                                             style,
                                                                                                  onChange,
                                                                                                  placeholder
                                                                                              }) => {
@@ -21,7 +23,7 @@ export const TypeFilter: React.FC<{ onChange: (s: string) => void, placeholder: 
         setState({text: e.target.value, lastUpdate: new Date().getTime(), triggerUpdate: true});
     }
 
-    return <FormControl>
+    return <FormControl style={style}>
         <OutlinedInput value={state.text}
                        size={"small"}
                        placeholder={placeholder}

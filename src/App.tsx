@@ -13,9 +13,10 @@ import UserRoute from './pages/users/UserRoute';
 import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
 import ArtistProfile from './pages/artists/ArtistProfile';
-import OrganizationEdit from './pages/organizations/OrganizationEdit';
 import {BrowserRouter, Route, Routes,} from "react-router-dom";
 import Organizations from './pages/organizations';
+import OrganizationNew from "./pages/organizations/OrganizationNew";
+import OrganizationEdit from './pages/organizations/OrganizationEdit';
 import ErrorPage from "./pages/error/ErrorPage";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
@@ -68,7 +69,7 @@ function App() {
                     <Route path={"organizations"}>
                         <Route index element={<Organizations/>}/>
                         <Route path={":id"} element={<OrganizationEdit/>}/>
-                        <Route path={"new"} element={<OrganizationEdit/>}/>
+                        <Route path={"new"} element={<OrganizationNew/>}/>
                     </Route>
 
                     <Route path='facilities'>

@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton} from "@mui/material";
-import {IPage} from "../../hooks/react-query";
-import {ART_SERVICE, axiosApi} from "../../http/axios";
+import {IPage} from "../../../hooks/react-query";
+import {ART_SERVICE, axiosApi} from "../../../http/axios";
 import {useNavigate, useParams} from "react-router-dom";
-import {Facility} from "../../entities/facility";
-import SkeletonTable from "../../components/table/SkeletonTable";
-import Table, {IColumnType} from '../../components/table/Table';
+import {Facility} from "../../../entities/facility";
+import SkeletonTable from "../../../components/table/SkeletonTable";
+import Table, {IColumnType} from '../../../components/table/Table';
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import {DeleteOutline} from "@mui/icons-material";
 

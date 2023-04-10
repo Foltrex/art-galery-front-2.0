@@ -1,19 +1,15 @@
 import * as React from 'react';
-import {ChangeEvent, useEffect, useState} from 'react';
+import {ChangeEvent, useState} from 'react';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, {IColumnType} from '../../components/table/Table';
 import {Organization} from "../../entities/organization";
 import {TokenService} from "../../services/TokenService";
-import {OrganizationStatus} from "./OrganizationStatus";
-import {ART_SERVICE, axiosApi} from "../../http/axios";
-import {IPage} from "../../hooks/react-query";
+import {OrganizationStatus} from "./components/OrganizationStatus";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {Divider, FormControlLabel, FormGroup, IconButton, Radio, RadioGroup} from "@mui/material";
-import Paper from "@mui/material/Paper";
-import {Box, Stack} from "@mui/system";
-import SearchBar from "../../components/ui/SearchBar";
-import {useNavigate} from "react-router-dom";
+import {Button, FormControl, FormControlLabel, IconButton, Radio, RadioGroup} from "@mui/material";
+import {Box} from "@mui/system";
+import {Link, useNavigate} from "react-router-dom";
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import {DeleteOutline} from "@mui/icons-material";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
@@ -21,8 +17,10 @@ import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
 import {Account} from "../../entities/account";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import Loading from "../../components/ui/Loading";
+import {TypeFilter} from "../../components/form/TypeFilter";
+import {useGetAllOrganizations} from "../../api/OrganizationApi";
 
-const searchFilters: Array<{ label: string, value: string }> = [
+const Statuses: Array<{ label: string, value: string }> = [
     {label: 'All', value: ''},
     {label: 'New', value: 'NEW'},
     {label: 'Active', value: 'ACTIVE'},
@@ -34,29 +32,22 @@ const OrganizationGrid = () => {
     const {authStore} = useRootStore();
     const account = authStore.account;
 
-    const [data, setData] = useState<IPage<Organization>>();
+    
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [openProposalModal, setOpenProposalModal] = useState(false);
 
-    const [searchFilter, setSearchFilter] = useState(searchFilters[0].value);
+    const [status, setStatus] = useState(Statuses[0].value);
     const [searchText, setSearchText] = useState<string>();
 
-    useEffect(() => {
-        const API = `${ART_SERVICE}/organizations`;
-        axiosApi.get(`${API}`, {
-            params: {
-                page: pageNumber,
-                size: rowsPerPage,
-                name: searchText,
-                status: searchFilter,
-            }
-        }).then(response => {
-            setData(response.data)
-        })
-    }, [rowsPerPage, pageNumber, searchText, searchFilter])
+    const {data} = useGetAllOrganizations({
+        page: pageNumber,
+        size: rowsPerPage,
+        name: searchText,
+        status: status,
+    });
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
@@ -64,7 +55,7 @@ const OrganizationGrid = () => {
 
 
     const handleChangeSearchFilter = (e: ChangeEvent<HTMLInputElement>) => {
-        setSearchFilter(e.target.value);
+        setStatus(e.target.value);
     }
 
     if (account === undefined) {
@@ -87,39 +78,40 @@ const OrganizationGrid = () => {
 
     return (
         <>
-            <Paper elevation={1} sx={{padding: '10px'}}>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        gap: '20px',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        px: 2,
-                        pt: 2
-                    }}
-                >
-                    <Stack>
-                        <SearchBar onSearch={handleSearch} placeholder={`Search by name...`}/>
-                        <FormGroup sx={{px: 5, pt: 1}}>
-                            <RadioGroup
-                                value={searchFilter}
-                                onChange={handleChangeSearchFilter}
-                                row
-                            >
-                                {searchFilters.map(filter => (
-                                    <FormControlLabel
-                                        key={filter.value}
-                                        control={<Radio size='small'/>}
-                                        value={filter.value}
-                                        label={filter.label}/>
-                                ))}
-                            </RadioGroup>
-                        </FormGroup>
-                    </Stack>
-                </Box>
-            </Paper>
+            <Box
+                sx={{
+                    display: 'flex',
+                    gap: '20px',
+                    alignItems: 'center',
+                    px: 2,
+                    pt: 2
+                }}
+            >
+                <FormControl>
+                    <TypeFilter onChange={handleSearch} placeholder={`Search by name...`}/>
+                </FormControl>
+                <FormControl>
+                    <RadioGroup
+                        value={status}
+                        onChange={handleChangeSearchFilter}
+                        row
+                    >
+                        {Statuses.map(filter => (
+                            <FormControlLabel
+                                key={filter.value}
+                                control={<Radio size='small'/>}
+                                value={filter.value}
+                                label={filter.label}/>
+                        ))}
+                    </RadioGroup>
+                </FormControl>
+                <FormControl style={{marginLeft: "auto"}}>
+                    <Link to={"/organizations/new"}>
+                        <Button variant="text" size={"large"}>New Organization</Button>
+                    </Link>
+                </FormControl>
+            </Box>
 
-            <Divider sx={{my: 3}}/>
             {data && data.content
                 ? <Table
                     columns={columns}
@@ -159,6 +151,18 @@ function getColumns(setOpenProposalModal: () => void,
             key: 'name',
             title: 'Name',
             minWidth: 150
+        },
+        {
+            key: 'city',
+            title: 'City',
+            minWidth: 150,
+            render: (organization) => organization?.address?.city?.name
+        },
+        {
+            key: 'address',
+            title: 'Address',
+            minWidth: 150,
+            render: (organization) => organization?.address?.name
         },
         {
             key: 'status',

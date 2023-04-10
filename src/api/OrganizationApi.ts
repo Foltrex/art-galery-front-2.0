@@ -4,7 +4,7 @@ import {ART_SERVICE} from "../http/axios";
 
 const API = `${ART_SERVICE}/organizations`;
 
-export const useGetAllOrganizations = (params: { page: number, size: number, id?: string }) => {
+export const useGetAllOrganizations = (params: { page: number, name?:string, status?:string, size: number, id?: string }) => {
     return useFetch<IPage<Organization>>(
         `${API}`,
         params,

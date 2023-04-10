@@ -1,8 +1,7 @@
-import {OutlinedInput} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import AddressList from "./AddressList";
 import {useSearch} from "../../api/OpenStreetMapApi";
-import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {TypeFilter} from "../form/TypeFilter";
 
 export interface GeoPosition {
     place_id: number,
@@ -27,17 +26,8 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
 
     return (
         <div style={{display: "flex", flexDirection: "column"}}>
-            <div style={{display: "flex"}}>
-                <div style={{flex: 1}}>
-                    <OutlinedInput
-                        style={{width: "100%"}}
-                        value={searchText}
-                        placeholder={"Type anything for search..."}
-                        onChange={(event) => {
-                            setSearchText(event.target.value);
-                        }}
-                    />
-                </div>
+            <div style={{display: "flex", justifyItems: "center"}}>
+                <TypeFilter style={{flex: 1}} onChange={setSearchText} placeholder={"Type anything for search..."}/>
             </div>
             <div>
                 <AddressList

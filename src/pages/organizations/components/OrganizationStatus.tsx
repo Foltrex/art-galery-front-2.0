@@ -1,5 +1,5 @@
-import {Organization} from "../../entities/organization";
-import {PrepareDataUtil} from "../../util/PrepareDataUtil";
+import {Organization} from "../../../entities/organization";
+import {PrepareDataUtil} from "../../../util/PrepareDataUtil";
 import * as React from "react";
 
 export function OrganizationStatus({organization}: { organization: Organization }) {

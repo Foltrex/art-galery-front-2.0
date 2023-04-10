@@ -1,13 +1,14 @@
-import { createTheme, ThemeProvider } from '@mui/material';
+import {createTheme, ThemeProvider} from '@mui/material';
 import React from 'react';
-import { CookiesProvider } from 'react-cookie';
+import {CookiesProvider} from 'react-cookie';
 import ReactDOM from 'react-dom/client';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import {QueryClient, QueryClientProvider} from 'react-query';
 import App from './App';
 import ErrorBoundary from './components/error/ErrorBoundary';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
-import { RootStoreProvider } from "./stores/provider/RootStoreProvider";
+import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
+import Bubble from "./components/bubble/Bubble";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -33,6 +34,7 @@ root.render(
                     </RootStoreProvider>
                 </QueryClientProvider>
             </CookiesProvider>
+            <Bubble />
         </ErrorBoundary>
     </React.StrictMode>
 );

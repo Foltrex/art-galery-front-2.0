@@ -25,12 +25,14 @@ import {useGetLoggedUserRole} from '../../hooks/useGetLoggedUserRole';
 import CityDropdown from "../../components/cities/CityDropdown";
 import {TypeFilter} from "../../components/form/TypeFilter";
 import {Link, useNavigate} from "react-router-dom";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {Account} from "../../entities/account";
 
 interface IFacilityTableProps {
 }
 
-function getColumns(handleFacilityCheckboxClick:(s:string) => void, handleDelete:(f:Facility) => void, navigate:(s:string) => void): IColumnType<Facility>[] {
-	return [
+function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account): IColumnType<Facility>[] {
+	const result:IColumnType<Facility>[] = [
 		{
 			key: 'selected',
 			title: '',
@@ -44,12 +46,16 @@ function getColumns(handleFacilityCheckboxClick:(s:string) => void, handleDelete
 			title: 'Name',
 			minWidth: 150
 		},
-		{
+	];
+	if(account && (account.accountType === AccountEnum.SYSTEM || account.accountType === AccountEnum.ARTIST)) {
+		result.push({
 			key: 'organization',
 			title: 'Organization',
 			minWidth: 150,
 			render: (facility) => facility?.organization?.name
-		},
+		})
+	}
+	result.push(
 		{
 			key: 'city',
 			title: 'City',
@@ -93,7 +99,8 @@ function getColumns(handleFacilityCheckboxClick:(s:string) => void, handleDelete
 				);
 			}
 		}
-	];
+	);
+	return result;
 }
 
 const FacilityTable: React.FC<IFacilityTableProps> = () => {
@@ -138,7 +145,10 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 		setOpenDeleteModal(true);
 	}
 
-	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate);
+	const {authStore} = useRootStore();
+	const account = authStore.account;
+
+	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate, account);
 
 	const mutationDelete = useDeleteFacility();
 
@@ -188,7 +198,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 				</FormControl>
 				<FormControl style={{marginLeft: "auto"}}>
 					<Link to={"/facilities/new"}>
-						<Button variant="text" size={"large"} onClick={() => {}}>New Facility</Button>
+						<Button variant="text" size={"large"}>New Facility</Button>
 					</Link>
 
 				</FormControl>

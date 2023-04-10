@@ -2,10 +2,10 @@ import {Close} from '@mui/icons-material';
 import {Dialog, DialogContent, DialogTitle, IconButton, ImageList} from '@mui/material';
 import * as React from 'react';
 import {useState} from 'react';
-import {useGetAllArtsByAccountIdAndSearchText} from '../../api/ArtApi';
-import ProposalDialog from '../../components/ui/ProposalDialog';
-import {Art} from '../../entities/art';
-import {TokenService} from '../../services/TokenService';
+import {useGetAllArtsByAccountIdAndSearchText} from '../../../api/ArtApi';
+import ProposalDialog from '../../../components/ui/ProposalDialog';
+import {Art} from '../../../entities/art';
+import {TokenService} from '../../../services/TokenService';
 import ArtCard from './ArtCard';
 
 interface IProposalDialogProps {
