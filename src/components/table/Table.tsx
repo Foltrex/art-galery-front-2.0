@@ -20,8 +20,6 @@ interface ITableProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
     page: IPage<S>;
     editable?: boolean;
-    onDelete: (id: S) => void;
-    onEdit: (data: S) => void;
     onPageChange: (page: number) => void;
     onRowsPerPageChange:  (pageSize: number) => void;
 }
@@ -30,8 +28,6 @@ function Table<S extends IdentifiableRecord>({
     columns, 
     page, 
     editable = false,
-    onEdit,
-    onDelete,
     onPageChange,
     onRowsPerPageChange
 }: ITableProps<S>): JSX.Element {
@@ -44,9 +40,7 @@ function Table<S extends IdentifiableRecord>({
                     <TableBody 
                         page={page}
                         editable={editable}
-                        columns={columns}
-                        onEdit={onEdit}
-                        onDelete={onDelete}/>
+                        columns={columns}/>
                 </MuiTable>
             </TableContainer>
             <TablePagination 

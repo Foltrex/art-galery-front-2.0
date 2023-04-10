@@ -32,7 +32,7 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
             console.log(response.data.content)
             setFacilities(response.data)
         })
-    }, [rowsPerPage, pageNumber])
+    }, [rowsPerPage, pageNumber, matches.id])
 
 
     //@TODO CHANGE LATER
@@ -57,8 +57,6 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
                 {facilities && facilities.content
                     ? <Table
                         columns={columns}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
                         page={facilities}
                         onPageChange={setPageNumber}
                         onRowsPerPageChange={setRowsPerPage}

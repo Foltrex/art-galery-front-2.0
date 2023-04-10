@@ -16,10 +16,8 @@ import {Facility} from "../../entities/facility";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
-import {useSaveArt} from "../../api/ArtApi";
 import {useSaveFile} from "../../api/FileApi";
 import {FileService} from "../../services/FileService";
-import {Art} from "../../entities/art";
 
 interface IFormValues {
     name: string,
@@ -155,9 +153,7 @@ const FacilityEdit = () => {
         return <Loading/>
     }
 
-    return (
-        <div>
-            <Container maxWidth='lg'>
+    return (<Container maxWidth='lg'>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}
@@ -227,9 +223,7 @@ const FacilityEdit = () => {
                         {formik.isSubmitting ? <CircularProgress/> : "Save"}
                     </Button>
                 </Stack>
-            </Container>
-        </div>
-    )
+            </Container>)
 
 };
 

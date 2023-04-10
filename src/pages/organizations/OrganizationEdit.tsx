@@ -73,7 +73,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                 }
             }
         }
-    }, [account])
+    }, [account, matches.id, mode])
 
     useEffect(() => {
         if (!isFetching && !isLoading) {
@@ -83,7 +83,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                 status: organization!.status,
             })
         }
-    }, [organization])
+    }, [organization, isFetching, isLoading])
 
     const validationSchema = yup.object().shape({
         name: yup.string()

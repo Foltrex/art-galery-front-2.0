@@ -1,55 +1,43 @@
 import * as React from 'react';
-import {useDeleteFacility} from '../../api/FacilityApi';
+import {ChangeEvent, useState} from 'react';
+import {useDeleteFacility, useGetAllFacilities} from '../../api/FacilityApi';
 import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
-import {createEmptyPage, IPage} from '../../hooks/react-query';
-import FacilityForm from './FacilityForm';
-import {Checkbox, IconButton, Typography} from '@mui/material';
+import {createEmptyPage} from '../../hooks/react-query';
+import {
+	Button,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	IconButton,
+	Radio,
+	RadioGroup,
+	Typography
+} from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
-import {Address} from '../../entities/address';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
 import {useGetLoggedUserRole} from '../../hooks/useGetLoggedUserRole';
+import CityDropdown from "../../components/cities/CityDropdown";
+import {TypeFilter} from "../../components/form/TypeFilter";
+import {Link, useNavigate} from "react-router-dom";
 
 interface IFacilityTableProps {
-	data?: IPage<Facility>;
-	isFetching: boolean;
-	isSuccess: boolean;
-	onPageChange: (page: number) => void;
-	onRowsPerPageChange: (pageSize: number) => void;
 }
 
-const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange, isFetching, isSuccess, onPageChange}) => {
-	const organizationRole = useGetLoggedUserRole();
-
-	const [openEditForm, setOpenEditForm] = React.useState(false);
-	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
-	const [facility, setFacility] = React.useState<Facility>();
-	
-	const [selectedFacilitiesId, setSelectedFacilitiesId] = React.useState<string[]>([]);
-
-	const handleFacilityCheckboxClick = (selectedFacilityId: string) => {
-		const indexOfFacilityId = selectedFacilitiesId.indexOf(selectedFacilityId);
-		if (indexOfFacilityId === -1) {
-			setSelectedFacilitiesId([...selectedFacilitiesId, selectedFacilityId]);
-		} else {
-			const filteredArray = selectedFacilitiesId.filter(facilityId => facilityId !== selectedFacilityId);
-			setSelectedFacilitiesId(filteredArray);
-		}
-	}
-	
-	const columns: IColumnType<Facility>[] = [
+function getColumns(handleFacilityCheckboxClick:(s:string) => void, handleDelete:(f:Facility) => void, navigate:(s:string) => void): IColumnType<Facility>[] {
+	return [
 		{
 			key: 'selected',
 			title: '',
 			minWidth: 10,
 			render: (facility) => TokenService.getCurrentAccountType() === AccountEnum.ARTIST
-					?  <Checkbox onClick={() => handleFacilityCheckboxClick(facility.id)} />
-					: <></>
+				?  <Checkbox onClick={() => handleFacilityCheckboxClick(facility.id)} />
+				: <></>
 		},
 		{
 			key: 'name',
@@ -60,7 +48,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 			key: 'organization',
 			title: 'Organization',
 			minWidth: 150,
-			render: (facility) => facility.organization.name!
+			render: (facility) => facility?.organization?.name
 		},
 		{
 			key: 'city',
@@ -77,7 +65,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 			key: 'status',
 			title: 'Status',
 			minWidth: 150,
-			render: (facility) => facility.isActive 
+			render: (facility) => facility.isActive
 				?  <Typography sx={{color: 'success.main'}}>Active</Typography>
 				: <Typography sx={{color: 'error.main'}}>Inactive</Typography>,
 		},
@@ -87,30 +75,70 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 			render: (facility) => {
 				return (
 					<>
-					<IconButton
-						disableRipple
-						aria-label='edit'
-						onClick={() => handleEdit(facility)}
-					>
-						<ModeOutlinedIcon />
-					</IconButton>
-					<IconButton
-						disableRipple
-						aria-label='delete'
-						onClick={() => handleDelete(facility)}
-					>
-						<DeleteOutlinedIcon />
-					</IconButton>
-				</>
+						<IconButton
+							disableRipple
+							aria-label='edit'
+							onClick={() => navigate("/facilities/" + facility.id)}
+						>
+							<ModeOutlinedIcon />
+						</IconButton>
+						<IconButton
+							disableRipple
+							aria-label='delete'
+							onClick={() => handleDelete(facility)}
+						>
+							<DeleteOutlinedIcon />
+						</IconButton>
+					</>
 				);
 			}
 		}
 	];
-	
+}
+
+const FacilityTable: React.FC<IFacilityTableProps> = () => {
+	const organizationRole = useGetLoggedUserRole();
+
+	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+	const [facility, setFacility] = React.useState<Facility>();
+	const [selectedFacilitiesId, setSelectedFacilitiesId] = React.useState<string[]>([]);
+	const [rowsPerPage, setRowsPerPage] = React.useState(25);
+	const [pageNumber, setPageNumber] = React.useState(0);
+	const [facilityName, setFacilityName] = useState<string>();
+	const [cityId, setCityId] = useState<string>();
+	const navigate = useNavigate();
+
+	const statuses: {label: string, value?: boolean}[] = [
+		{label: 'all'},
+		{label: 'active', value: true},
+		{label: 'inactive', value: false},
+	];
+	const [facilityStatus, setFacilityStatus] = useState(statuses[0]);
+
+	const { data, isFetching, isSuccess } = useGetAllFacilities(
+		pageNumber,
+		rowsPerPage,
+		cityId,
+		facilityName,
+		facilityStatus.value
+	);
+
+	const handleFacilityCheckboxClick = (selectedFacilityId: string) => {
+		const indexOfFacilityId = selectedFacilitiesId.indexOf(selectedFacilityId);
+		if (indexOfFacilityId === -1) {
+			setSelectedFacilitiesId([...selectedFacilitiesId, selectedFacilityId]);
+		} else {
+			const filteredArray = selectedFacilitiesId.filter(facilityId => facilityId !== selectedFacilityId);
+			setSelectedFacilitiesId(filteredArray);
+		}
+	}
+
 	const handleDelete = async (data: Facility) => {
 		setFacility(data);
 		setOpenDeleteModal(true);
 	}
+
+	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate);
 
 	const mutationDelete = useDeleteFacility();
 
@@ -123,48 +151,60 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 		}
 	}
 
-	const handleEdit = (data: Facility) => {
-		setFacility(data);
-		setOpenEditForm(true);
-	}
-
 
 	const currentAccountType = TokenService.getCurrentAccountType();
 	const isTableRowsEditableByCurrentUser = currentAccountType === AccountEnum.SYSTEM 
 		|| (currentAccountType === AccountEnum.REPRESENTATIVE
 				&& (organizationRole === OrganizationRoleEnum.CREATOR  
-					|| organizationRole === OrganizationRoleEnum.MODERATOR
-					)
+					|| organizationRole === OrganizationRoleEnum.MODERATOR)
 			);
 
-	const renderTable = () => {
-		if (isFetching) {
-			return (
-				<SkeletonTable columns={columns}/>
-			);
-		} else {
-			return (
-				<Table
-					columns={columns}
-					onDelete={handleDelete}
-					onEdit={handleEdit}
-					page={isSuccess && data ? data : createEmptyPage<Facility>()}
-					onPageChange={onPageChange}
-					onRowsPerPageChange={onRowsPerPageChange}
-					editable={isTableRowsEditableByCurrentUser}
-				/>
-			);
-		}
+	const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
+		const currentStatus = statuses.find(s => s.label === e.target.value);
+		setFacilityStatus(currentStatus!);
 	}
 
 	return (
 		<>
-			{renderTable()}
+			<div className="filter-row">
+				<CityDropdown value={cityId} onChange={setCityId} />
+				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
+				<FormControl>
+					<RadioGroup
+						name='status'
+						value={facilityStatus.label}
+						onChange={handleStatusChange}
+						row
+					>
+						{statuses.map(status => (
+							<FormControlLabel
+								key={status.label}
+								value={status.label}
+								control={<Radio />}
+								label={status.label}
+							/>
+						))}
+					</RadioGroup>
+				</FormControl>
+				<FormControl style={{marginLeft: "auto"}}>
+					<Link to={"/facilities/new"}>
+						<Button variant="text" size={"large"} onClick={() => {}}>New Facility</Button>
+					</Link>
 
-			<FacilityForm
-				open={openEditForm}
-				onClose={() => setOpenEditForm(false)}
-				facility={facility} />
+				</FormControl>
+
+			</div>
+
+			{isFetching
+				? <SkeletonTable columns={columns}/>
+				: <Table
+					columns={columns}
+					page={isSuccess && data ? data : createEmptyPage<Facility>()}
+					onPageChange={setPageNumber}
+					onRowsPerPageChange={setRowsPerPage}
+					editable={isTableRowsEditableByCurrentUser}/>
+			}
+
 			<DeleteModal
 				open={openDeleteModal}
 				onClose={() => setOpenDeleteModal(false)}

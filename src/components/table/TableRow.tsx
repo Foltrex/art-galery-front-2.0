@@ -1,16 +1,12 @@
 import * as React from 'react';
-import {IconButton, TableCell, TableRow as MuiTableRow} from '@mui/material';
-import {DeleteOutline} from '@mui/icons-material';
+import {TableCell, TableRow as MuiTableRow} from '@mui/material';
 import {IColumnType, IdentifiableRecord} from './Table';
-import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 
 interface ITableRowProps<S extends IdentifiableRecord> {
     number: number;
     columns: IColumnType<S>[];
     item: S;
     editable: boolean;
-    onDelete: (id: S) => void;
-    onEdit: (data: S) => void;
 }
 
 const TableRow = <S extends IdentifiableRecord>({
@@ -18,8 +14,6 @@ const TableRow = <S extends IdentifiableRecord>({
     editable,
     number,
 	columns,
-	onEdit, 
-	onDelete,
 }: ITableRowProps<S>) => {
     return (
         <MuiTableRow hover>

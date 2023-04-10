@@ -123,8 +123,6 @@ const OrganizationGrid = () => {
             {data && data.content
                 ? <Table
                     columns={columns}
-                    onDelete={handleDelete}
-                    onEdit={handleEdit}
                     page={data}
                     onPageChange={setPageNumber}
                     onRowsPerPageChange={setRowsPerPage}

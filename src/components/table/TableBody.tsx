@@ -7,16 +7,12 @@ interface ITableBodyProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
     page: IPage<S>;
 	editable: boolean;
-    onDelete: (id: S) => void;
-    onEdit: (data: S) => void;
 }
 
 function TableBody<S extends IdentifiableRecord>({
 	page,
 	editable,
 	columns,
-	onEdit,
-	onDelete
 }: ITableBodyProps<S>): JSX.Element {
 	const { content, number, size } = page;
 	
@@ -28,9 +24,7 @@ function TableBody<S extends IdentifiableRecord>({
 					number={itemIndex + 1 + number * size} 
 					columns={columns}
 					item={item}
-					editable={editable}
-					onDelete={onDelete} 
-					onEdit={onEdit} />
+					editable={editable} />
 			))}
 		</MuiTableBody>
 	);

@@ -63,8 +63,6 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         {data
             ? <Table
                 columns={columns}
-                onDelete={handleDelete}
-                onEdit={handleEdit}
                 page={data}
                 onPageChange={onPageNumberChange}
                 onRowsPerPageChange={onRowsPerPageChange} />
