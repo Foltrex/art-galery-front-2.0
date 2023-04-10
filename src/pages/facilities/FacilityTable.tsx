@@ -9,9 +9,7 @@ import FacilityForm from './FacilityForm';
 import {Checkbox, IconButton, Typography} from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
-import {Map} from '@mui/icons-material';
 import {Address} from '../../entities/address';
-import MapDialog from '../../components/map/MapDialog';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
@@ -30,7 +28,6 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 
 	const [openEditForm, setOpenEditForm] = React.useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
-	const [currentFacilityAddress, setCurrentFacilityAddress] = React.useState<Address>();
 	const [facility, setFacility] = React.useState<Facility>();
 	
 	const [selectedFacilitiesId, setSelectedFacilitiesId] = React.useState<string[]>([]);
@@ -66,22 +63,15 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 			render: (facility) => facility.organization.name!
 		},
 		{
-			key: 'location',
-			title: 'Location',
+			key: 'city',
+			title: 'City',
+			render: (facility) => facility?.address?.city?.name
+		},
+		{
+			key: 'address',
+			title: 'Address',
 			minWidth: 150,
-			render: (facility) => {
-				return (
-					<IconButton 
-						onClick={() => {
-							if (!!facility.address) {
-								setCurrentFacilityAddress(facility.address);
-							}
-						}}
-					>
-						<Map />
-					</IconButton>
-				)
-			}
+			render: (facility) => facility?.address?.name
 		},
 		{
 			key: 'status',
@@ -179,12 +169,6 @@ const FacilityTable: React.FC<IFacilityTableProps> = ({data, onRowsPerPageChange
 				open={openDeleteModal}
 				onClose={() => setOpenDeleteModal(false)}
 				onDelete={onDelete} />
-			<MapDialog 
-				open={!!currentFacilityAddress} 
-				onClose={() => setCurrentFacilityAddress(undefined)} 
-				address={currentFacilityAddress}
-				setFieldValue={(address) => console.log(address)} 
-			/>
 		</>
 	);
 };
