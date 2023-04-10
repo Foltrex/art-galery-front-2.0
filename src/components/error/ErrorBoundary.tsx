@@ -1,5 +1,5 @@
-import { Box, Typography } from '@mui/material';
-import ArtGaleryBackgroundImage from '../../assets/images/art-galery.jpeg'
+import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from '@mui/material';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
 
 export interface IErrorBoundaryProps extends React.PropsWithChildren {
@@ -7,12 +7,19 @@ export interface IErrorBoundaryProps extends React.PropsWithChildren {
 
 export interface IErrorBoundaryState {
     hasError: boolean;
+    errorMessage: string;
+    componentStack: string;
+    stackTrace?: string;
+    errorName: string;
 }
+
+const bold = {fontWeight: 'bold'}
+const overflow = {maxHeight: 600, overflow: "auto"};
 
 export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, IErrorBoundaryState> {
     constructor(props: IErrorBoundaryProps) {
         super(props);
-        this.state = { hasError: false };
+        this.state = { hasError: false, componentStack: '', errorMessage: '', errorName: ''};
     }
 
     static getDerivedStateFromError(_: Error) {
@@ -21,6 +28,7 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
         console.error("Uncaught error: ", error, errorInfo);
+        this.setState({componentStack: errorInfo.componentStack, errorMessage: error.message, stackTrace: error.stack, errorName: error.name});
     }
 
     public render() {
@@ -43,6 +51,26 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
                     >
                         You broke my app... Why did you do that?
                     </Typography>
+                    <br/><br/>
+                    <Accordion>
+                        <AccordionSummary
+                            expandIcon={<ExpandMore />}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <Typography>Error Name: {this.state.errorName}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails style={overflow}>
+                            <Typography>
+                                <Typography sx={bold}>Error message: </Typography>
+                                {this.state.errorMessage}
+                                <Typography sx={bold}>Stack trace: </Typography>
+                                {this.state.stackTrace}
+                                <Typography sx={bold}>Component stack: </Typography>
+                                {this.state.componentStack}
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 </Box>
             );
         }

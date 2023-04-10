@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {useCreateOrganization, useGetOrganizationById, useUpdateOrganizationById} from '../../api/OrganizationApi';
+import {useGetOrganizationById} from '../../api/OrganizationApi';
 import Loading from '../../components/ui/Loading';
 import {OrganizationStatusEnum} from '../../entities/enums/organizationStatusEnum';
 import {useNavigate, useParams} from "react-router-dom";
@@ -44,6 +44,7 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
     const navigate = useNavigate()
     const matches = useParams();
     const mode = matches.id !== undefined ? "EDIT" : "CREATE";
+    const organizationId = mode === "EDIT" ? matches.id : null;
     const {data: organization, isLoading, isFetching} = useGetOrganizationById(matches.id);
     const [openOrganizationUsersDialog, setOpenOrganizationUsersDialog] = useState(false)
     const [openOrganizationFacilitiesDialog, setOpenOrganizationFacilitiesDialog] = useState(false)
@@ -146,10 +147,11 @@ const App: React.FunctionComponent<IAppProps> = (props) => {
                 open={openOrganizationFacilitiesDialog}
                 onClose={() => setOpenOrganizationFacilitiesDialog(false)}
             />
-            <OrganizationUsersDialog
+            {organizationId && <OrganizationUsersDialog
                 open={openOrganizationUsersDialog}
+                organizationId={organizationId}
                 onClose={() => setOpenOrganizationUsersDialog(false)}
-            />
+            />}
             <Container maxWidth='lg'>
                 <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
