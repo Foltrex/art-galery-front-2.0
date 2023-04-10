@@ -6,7 +6,11 @@ import {PrepareDataUtil} from "../../util/PrepareDataUtil";
 
 const MetadataList = (props: { metadata: Metadata[] }) => {
 
-    const metadataList = props.metadata.filter(metadataItem => metadataItem.key !== MetadataEnum.ACCOUNT_IMAGE);
+    const metadataList = props.metadata
+        .filter(metadataItem => metadataItem.key !== MetadataEnum.ACCOUNT_IMAGE)
+        .filter(metadataItem => metadataItem.key !== MetadataEnum.ORGANIZATION_ID)
+        .filter(metadataItem => metadataItem.key !== MetadataEnum.FACILITY_ID)
+        .filter(metadataItem => metadataItem.key !== MetadataEnum.CITY_ID);
 
     return (
         <>
