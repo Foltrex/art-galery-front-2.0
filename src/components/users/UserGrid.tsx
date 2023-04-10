@@ -23,7 +23,7 @@ const Circle = styled('span')({
 
 
 export interface IUserGridProps {
-    data: IPage<Account>;
+    data?: IPage<Account>;
     rowsPerPage: number;
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onPageNumberChange: (page: number) => void;
