@@ -7,6 +7,7 @@ import {TokenService} from "../../services/TokenService";
 import Loading from "../../components/ui/Loading";
 import {axiosApi, FILE_SERVICE, USER_SERVICE} from "../../http/axios";
 import {AuthService} from "../../services/AuthService";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 
 const ProfileImage = (props: { account: Account }) => {
 
@@ -15,7 +16,7 @@ const ProfileImage = (props: { account: Account }) => {
     const accountId = TokenService.getCurrentAccountId();
 
     useEffect(() => {
-        const imageId = props.account.metadata.find(item => item.key === "account_image")?.value || '';
+        const imageId = props.account.metadata.find(item => item.key === MetadataEnum.ACCOUNT_IMAGE)?.value || '';
         if (imageId !== "") {
             const url = `${FILE_SERVICE}/files/${imageId}/data`;
             axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer'})
