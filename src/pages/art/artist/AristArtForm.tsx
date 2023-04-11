@@ -13,6 +13,7 @@ import { useGetArtSizeFilterContent } from '../../../components/form/art-size-fi
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
 import { useEffect } from 'react';
+import { Artist } from '../../../entities/artist';
 
 interface IArtFormProps {
 	art?: Art;
@@ -20,7 +21,7 @@ interface IArtFormProps {
 }
 
 interface FormValues {
-	name: string;
+	artName: string;
 	description: string;
 	style: string;
 	creationDate: Dayjs;
@@ -28,13 +29,12 @@ interface FormValues {
 }
 
 const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
-	const accountId = TokenService.getCurrentAccountId();
-	const { data: artist } = useGetArtistByAccountId(accountId);
+	// const accountId = TokenService.getCurrentAccountId();
+	// const { data: artist } = useGetArtistByAccountId(accountId);
 
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
 	const account = authStore.account;
-
 
 	const artStyleItems = useGetArtStyleFilterContent();
 	const artSizeItems = useGetArtSizeFilterContent();
@@ -55,7 +55,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 
 
 	const initialValues: FormValues = {
-		name: art?.name ?? '',
+		artName: art?.name ?? '',
 		description: art?.description ?? '',
 		style: '',
 		creationDate: dayjs(),
@@ -67,9 +67,9 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 		try {
 			const artEntity: Art = {
 				id: art?.id,
-				name: values.name,
+				name: values.artName,
 				description: values.description,
-				artist: artist!
+				artist: {} as Artist
 			};
 
 			onSubmit(artEntity);
@@ -85,7 +85,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 		validationSchema: validationSchema,
 		validateOnChange: false,
 		onSubmit: onSaveArt,
-		enableReinitialize: true,
 	});
 
 	return (
@@ -95,18 +94,18 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 					placeholder='Enter art name...'
 					name='artName'
 					required
-					value={formik.values.name}
+					value={formik.values.artName}
 					onChange={formik.handleChange}
 					fullWidth
-					error={!!formik.errors.name}
-					helperText={formik.errors.name}
+					error={!!formik.errors.artName}
+					helperText={formik.errors.artName}
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 				<TextField
 					size='small'
 					required
 					placeholder='Artist...'
 					name='artistName'
-					value={`${account?.firstName}  ${account?.lastName} [${account?.id}]`}
+					value={`${account?.firstName} ${account?.lastName}`}
 					InputProps={{ readOnly: true }}
 					fullWidth
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
@@ -125,7 +124,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 						name='style'
 						value={formik.values.style}
 						onChange={formik.handleChange}
-						error={!!formik.errors.name}
+						error={!!formik.errors.style}
 						// helperText={formik.errors.name}
 						sx={{ lineHeight: 'normal' }}
 						inputProps={{ shrink: false }}
@@ -177,16 +176,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 						))}
 					</Select>
 				</FormControl>
-				{/* </Select> */}
-				{/* <TextField
-					required
-					size='small'
-					value={formik.values.name}
-					onChange={formik.handleChange}
-					fullWidth
-					error={!!formik.errors.name}
-					helperText={formik.errors.name}
-					sx={{ fontSize: '2em', lineHeight: 'normal' }} /> */}
 				<TextField
 					name='description'
 					value={formik.values.description}
@@ -198,26 +187,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 					helperText={formik.errors.description}
 					sx={{ lineHeight: 'normal' }} />
 			</Stack>
-
-			{/* <Stack spacing={2} sx={{ marginTop: 4 }}> */}
-			{/* <Grid container>
-					<Grid item sm={4}><strong>Description</strong></Grid>
-					<Grid item sm={8}>
-						<InputBase
-							multiline
-							fullWidth
-							placeholder='Enter art description'
-							sx={{
-								borderRadius: 1,
-								borderColor: "black",
-							}}
-							name='description'
-							onChange={formik.handleChange}
-							value={formik.values.description}
-						/>
-					</Grid>
-				</Grid> */}
-			{/* </Stack> */}
 		</form>
 	);
 };
