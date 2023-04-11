@@ -2,12 +2,13 @@ import { Card, IconButton, ImageListItem, ImageListItemBar, Tooltip } from "@mui
 import { useNavigate } from "react-router-dom";
 import { useGetLastArtInfoByArtId } from "../../api/ArtInfoApi";
 import { useGetArtistByArtId } from "../../api/ArtistApi";
-import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
+import { useGetAllEntityFilesByEntityId, useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from "../../api/FileApi";
 import EmptyArt from '../../assets/images/empty-art.svg';
 import { Art } from "../../entities/art";
 import { FileService } from "../../services/FileService";
 import { TokenService } from "../../services/TokenService";
 import LetterAvatar from "./LetterAvatar";
+import { EntityFileTypeEnum } from "../../entities/enums/EntityFileTypeEnum";
 
 interface IArtItemProps {
     art: Art;
@@ -15,14 +16,12 @@ interface IArtItemProps {
 }
 
 const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
-    const navigate = useNavigate();
-
-    const { data: files } = useGetAllFileInfosByArtId(art.id);
+    const { data: files } = useGetAllEntityFilesByEntityId(art.id);
 
     let fileIds: string[] = [];
     if (files) {
         files.forEach(file => {
-            if (file.id) {
+            if (file.id && file.type === EntityFileTypeEnum.ORIGINAL) {
                 fileIds.push(file.id);
             }
         })

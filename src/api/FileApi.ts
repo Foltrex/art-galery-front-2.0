@@ -3,6 +3,7 @@ import {File} from '../entities/file';
 import {ART_SERVICE, axiosApi, FILE_SERVICE} from "../http/axios";
 import {useQuery} from "react-query";
 import {EntityFile} from "../entities/entityFile";
+import { useUpdate } from "../hooks/react-query";
 
 
 export const fetchImages = (ids: string[] = []) => {
@@ -43,12 +44,16 @@ export const useNewSaveFile = () => {
 }
 
 export const useGetAllEntityFilesByEntityId = (entityId?: string) => {
-    return useFetch<EntityFile>(`${ART_SERVICE}/files/${entityId}`, {
+    return useFetch<EntityFile[]>(`${ART_SERVICE}/files`, {
         entityId: entityId
     }, {
         enabled: !!entityId
     });
 }
+
+// export const useUpdateFile = () => {
+//     return useUpdate(`${ART_SERVICE}/files`)
+// }
 
 export const useDeleteFile = () => {
     return useDelete(`${FILE_SERVICE}/files`);

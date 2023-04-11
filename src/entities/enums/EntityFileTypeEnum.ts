@@ -1,4 +1,4 @@
 export enum EntityFileTypeEnum {
-    ORIGINAL,
-    THUMBNAIL,
+    ORIGINAL = 'ORIGINAL',
+    THUMBNAIL = 'THUMBNAIL',
 }

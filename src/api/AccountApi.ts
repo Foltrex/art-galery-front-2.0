@@ -3,6 +3,7 @@ import {IPage, useDelete, useFetch, usePatch, usePost} from "../hooks/react-quer
 import {AuthService} from "../services/AuthService";
 import {Account} from "../entities/account";
 import {Representative} from "../entities/representative";
+import { useRootStore } from "../stores/provider/RootStoreProvider";
 
 
 export const useGetAll = (
@@ -22,8 +23,11 @@ export const useGetAll = (
 }
 
 export const useGetAccountById = (id?: string) => {
+    const { authStore } = useRootStore();
+    const account = authStore.account;
+
     return useFetch<Account>(`${USER_SERVICE}/accounts/${id}`, undefined, {
-        enabled: !!id
+        enabled: !!id && account?.id !== id
     })
 }
 

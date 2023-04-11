@@ -6,13 +6,13 @@ export const useGetArtistById = (id?: string) => {
     return useFetch<Artist>(`${ART_SERVICE}/artists/${id}`, undefined, { enabled: !!id });
 }
 
-export const useGetArtistByAccountId = (accountId?: string) => {
-    return useFetch<Artist>(
-        `${ART_SERVICE}/artists/accounts/${accountId}`, 
-        undefined, 
-        { enabled: !!accountId, retry: false }
-    );
-}
+// export const useGetArtistByAccountId = (accountId?: string) => {
+//     return useFetch<Artist>(
+//         `${ART_SERVICE}/artists/accounts/${accountId}`, 
+//         undefined, 
+//         { enabled: !!accountId, retry: false }
+//     );
+// }
 
 export const useGetArtists = (params:{page:number, size: number}) => {
     return useFetch<IPage<Artist>>(

@@ -1,13 +1,19 @@
-import { Save } from '@mui/icons-material';
-import { Box, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
+import SaveIcon from '@mui/icons-material/Save';
+import { Box, Divider, FormControl, Grid, IconButton, Input, InputBase, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
 import { FormikHelpers, useFormik } from 'formik';
 import * as yup from 'yup';
-import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
-import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
 import { Art } from '../../../entities/art';
+import { TokenService } from '../../../services/TokenService';
 import { useRootStore } from '../../../stores/provider/RootStoreProvider';
+import ArtSizeFilter from '../../../components/form/art-size-filter/ArtSizeFilter';
+import ArtStyleFilter from '../../../components/form/art-style-filter/ArtStyleFilter';
+import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
+import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { useEffect } from 'react';
+import { Artist } from '../../../entities/artist';
+import { Save } from '@mui/icons-material';
 
 interface IArtFormProps {
 	art?: Art;
@@ -69,6 +75,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 				dateCreation: creationDateJS.toDate()
 			};
 
+			// console.log(artEntity)
 			onSubmit(artEntity);
 		} catch (e) {
 			console.log(e);
