@@ -10,9 +10,8 @@ interface IOrganizationFacilitiesDialogProps {
 }
 
 const OrganizationUsersDialog = observer(({open, onClose, organizationId}: IOrganizationFacilitiesDialogProps) => {
-
     return (
-        <Dialog open={open} onClose={onClose} maxWidth={"md"} fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth={"lg"} fullWidth>
             <DialogContent>
                 <UserTable organizationId={organizationId}/>
             </DialogContent>
