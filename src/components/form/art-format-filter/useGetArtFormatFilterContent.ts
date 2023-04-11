@@ -1,10 +1,7 @@
-import Filter, {FilterElement} from '../ui/filter/Filter';
+import { FilterElement } from "../../ui/filter/Filter"
 
-interface IArtFormatFilterProps {
-}
-
-const ArtFormatFilter = () => {
-    const content: FilterElement[] = [
+export const useGetArtFormatFilterContent = (): FilterElement[] => {
+    return [
         {label: 'Horisontal', value: 'horisontal'},
         {label: 'Vertical', value: 'vertical'},
         {label: 'Square', value: 'square'},
@@ -14,10 +11,4 @@ const ArtFormatFilter = () => {
         {label: 'Triptych', value: 'triptych'},
         {label: 'Polyptych', value: 'polyptych'},
     ];
-
-  return (
-    <Filter title={'Formats'} variant='radio' content={content} />
-  );
-};
-
-export default ArtFormatFilter;
+}

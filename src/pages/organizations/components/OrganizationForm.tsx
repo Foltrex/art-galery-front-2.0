@@ -27,7 +27,7 @@ import OrganizationUsersDialog from "./OrganizationUsersDialog";
 
 interface IAppProps {
     data?: Organization;
-    submit: (org:Organization) => Promise<boolean>
+    submit: (org: Organization) => Promise<boolean>
 }
 
 
@@ -76,15 +76,20 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
 
     return (
         <div>
-            <OrganizationFacilitiesDialog
-                open={openOrganizationFacilitiesDialog}
-                onClose={() => setOpenOrganizationFacilitiesDialog(false)}
-            />
-            {data.id && <OrganizationUsersDialog
-                open={openOrganizationUsersDialog}
-                organizationId={data.id}
-                onClose={() => setOpenOrganizationUsersDialog(false)}
-            />}
+            {
+                data.id && <OrganizationFacilitiesDialog
+                    open={openOrganizationFacilitiesDialog}
+                    onClose={() => setOpenOrganizationFacilitiesDialog(false)}
+                    organizationId={data.id}
+                />
+            }
+            {
+                data.id && <OrganizationUsersDialog
+                    open={openOrganizationUsersDialog}
+                    organizationId={data.id}
+                    onClose={() => setOpenOrganizationUsersDialog(false)}
+                />
+            }
             <Container maxWidth='lg'>
                 <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>

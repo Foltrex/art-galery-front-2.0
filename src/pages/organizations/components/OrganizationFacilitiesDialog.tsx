@@ -12,9 +12,10 @@ import {DeleteOutline} from "@mui/icons-material";
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
     onClose: () => void;
+    organizationId: string;
 }
 
-const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDialogProps) => {
+const OrganizationFacilitiesDialog = ({open, onClose, organizationId}: IOrganizationFacilitiesDialogProps) => {
     const navigate = useNavigate()
     const matches = useParams();
 
@@ -23,16 +24,18 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
     const [pageNumber, setPageNumber] = React.useState(0);
 
     useEffect(() => {
-        axiosApi.get(`${ART_SERVICE}/facilities/organizations/${matches.id}`, {
-            params: {
-                page: pageNumber,
-                size: rowsPerPage,
-            }
-        }).then(response => {
-            console.log(response.data.content)
-            setFacilities(response.data)
-        })
-    }, [rowsPerPage, pageNumber, matches.id])
+        if (open) {
+            axiosApi.get(`${ART_SERVICE}/facilities/organizations/${organizationId}`, {
+                params: {
+                    page: pageNumber,
+                    size: rowsPerPage,
+                }
+            }).then(response => {
+                console.log(response.data.content)
+                setFacilities(response.data)
+            })
+        }
+    }, [rowsPerPage, pageNumber, open])
 
 
     //@TODO CHANGE LATER
@@ -50,7 +53,7 @@ const OrganizationFacilitiesDialog = ({open, onClose}: IOrganizationFacilitiesDi
     );
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth={"md"} fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth={"lg"} fullWidth>
             <DialogTitle>Organization's facilities</DialogTitle>
             <Divider/>
             <DialogContent>

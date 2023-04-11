@@ -21,9 +21,9 @@ import ErrorPage from "./pages/error/ErrorPage";
 import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
 import ProfilePage from "./pages/home";
-import ArtFormatFilter from './components/form/ArtFormatFilter';
-import ArtSizeFilter from './components/form/ArtSizeFilter';
-import ArtStyleFilter from './components/form/ArtStyleFilter';
+import ArtFormatFilter from './components/form/art-format-filter/ArtFormatFilter';
+import ArtSizeFilter from './components/form/art-size-filter/ArtSizeFilter';
+import ArtStyleFilter from './components/form/art-style-filter/ArtStyleFilter';
 import ArtTopicFilter from './components/form/ArtTopicFilter';
 import ArtTypeFilter from './components/form/ArtTypeFilter';
 import FacilityEdit from "./pages/facilities/FacilityEdit";
@@ -81,6 +81,10 @@ function App() {
                     <Route path='users' element={<UserRoute/>}/>
                     <Route path='proposals' element={<Proposals/>}/>
 
+                    <Route path='gallery'>
+                        <Route index element={<Arts />} />
+                        <Route path=':id' element={<ArtistArt />} />
+                    </Route>
 
                     <Route path='arts'>
                         <Route path='artist'>

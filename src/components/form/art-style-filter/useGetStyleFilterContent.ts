@@ -1,9 +1,7 @@
-import * as React from 'react';
-import Filter, {FilterElement} from '../ui/filter/Filter';
+import { FilterElement } from "../../ui/filter/Filter";
 
-
-const ArtStyleFilter = () => {
-    const content: FilterElement[] = [
+export const useGetArtStyleFilterContent = (): FilterElement[] => {
+    return [
         {label: 'Abstractionism', value: 'abstractionism'},
         {label: 'Still life', value: 'still-life'},
         {label: 'Landscape', value: 'landscape'},
@@ -21,10 +19,4 @@ const ArtStyleFilter = () => {
         {label: 'Figurative art', value: 'figurative-art'},
         {label: 'Digital art', value: 'digital-art'},
     ];
-
-  return (
-    <Filter title={'Styles'} variant={'checkbox'} content={content} />
-  );
-};
-
-export default ArtStyleFilter;
+}

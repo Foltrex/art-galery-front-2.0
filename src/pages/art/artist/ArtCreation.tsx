@@ -35,7 +35,6 @@ const ArtCreation = () => {
 		const { id: artId } = persistedArt;
 
 		const promises = files.map(async (file) => {
-			console.log(art.id)
 			const fileEntity = await FileService.toFile(artId!, file);
 			await mutationSaveImage.mutateAsync(fileEntity);
 		})
@@ -50,14 +49,17 @@ const ArtCreation = () => {
 			sx={{ marginTop: "4%" }}
 			justifyContent="center"
 		>
-			<Grid item sm={6}>
+			<Grid item sm={7}>
 				<div style={{
 					width: 'auto',
 					height: '380px',
 					margin: '0 15px',
 				}}>
 					{files.at(0)
-						? <ImageSlider slides={images} />
+						? <ImageSlider 
+							slides={images} 
+							onImageAdd={() => fileInput.current?.click()} 
+						  />
 						: <Box
 							component='div'
 							style={{
@@ -89,11 +91,10 @@ const ArtCreation = () => {
 					/>
 				</div>
 			</Grid>
-			<Grid item sm={6}>
+			<Grid item sm={5}>
 				<ArtForm
 					art={{} as Art}
-					onSubmit={handleSubmit} 
-					onImageAdd={() => fileInput.current?.click()}
+					onSubmit={handleSubmit}
 				/>
 			</Grid>
 		</Grid>
