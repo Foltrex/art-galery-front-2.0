@@ -11,7 +11,7 @@ import {
     TextField
 } from '@mui/material';
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import Loading from '../../../components/ui/Loading';
 import {OrganizationStatusEnum} from '../../../entities/enums/organizationStatusEnum';
 import {useNavigate} from "react-router-dom";
@@ -24,20 +24,30 @@ import {Container} from "@mui/system";
 import {Organization} from "../../../entities/organization";
 import OrganizationFacilitiesDialog from "./OrganizationFacilitiesDialog";
 import OrganizationUsersDialog from "./OrganizationUsersDialog";
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import {Facility} from "../../../entities/facility";
 
 interface IAppProps {
     data?: Organization;
     submit: (org: Organization) => Promise<boolean>
 }
 
+interface IFormValues {
+    id: string
+    name: string,
+    address: Address | null | string,
+    status: OrganizationStatusEnum | string,
+    facilities: Facility[]
+}
 
 const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) => {
     const navigate = useNavigate()
     const [openOrganizationUsersDialog, setOpenOrganizationUsersDialog] = useState(false)
     const [openOrganizationFacilitiesDialog, setOpenOrganizationFacilitiesDialog] = useState(false)
-
-
     const [openMap, setOpenMap] = useState(false)
+    const {authStore} = useRootStore();
+    const account = authStore.account;
 
     const validationSchema = yup.object().shape({
         name: yup.string()
@@ -51,20 +61,32 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
             .nullable(),
     })
 
+    const [initialValues, setInitialValues] = useState<IFormValues>({
+        id: '',
+        name: '',
+        address: null,
+        status: '',
+        facilities: []
+    })
+
+    useEffect(() => {
+        data && setInitialValues({
+            id: data.id,
+            name: data.name,
+            address: data.address,
+            status: data.status,
+            facilities: data.facilities
+        })
+    }, [data])
+
     const formik = useFormik({
-        initialValues: {
-            id: '',
-            name: '',
-            address: null,
-            status: OrganizationStatusEnum.NEW,
-            facilities: []
-        } as Organization,
+        initialValues: initialValues,
         validationSchema: validationSchema,
         validateOnChange: false,
         enableReinitialize: true,
         onSubmit: async (values, {setSubmitting}) => {
             setSubmitting(true)
-            submit(values).then(() => {
+            submit(values as Organization).then(() => {
                 setSubmitting(false)
             })
         },
@@ -127,25 +149,26 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                         onChange={formik.handleChange}
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />
-                    <FormControl fullWidth margin="normal" error={!!formik.errors.status}
-                    >
-                        <InputLabel>Status</InputLabel>
-                        <Select
-                            name={"status"}
-                            label="Status"
-                            value={formik.values.status}
-                            defaultValue={formik.values.status}
-                            onChange={formik.handleChange}
-
-                        >
-                            <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
-                            <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
-                            <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
-                        </Select>
-                        <FormHelperText style={{color: "red"}}>
-                            {formik.errors.status ? formik.errors.status : ''}
-                        </FormHelperText>
-                    </FormControl>
+                    {
+                        formik.values.status !== '' &&
+                            <FormControl fullWidth margin="normal" error={!!formik.errors.status}
+                            >
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    name={"status"}
+                                    label="Status"
+                                    defaultValue={formik.values.status}
+                                    onChange={formik.handleChange}
+                                >
+                                    <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
+                                    <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
+                                    <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
+                                </Select>
+                                <FormHelperText style={{color: "red"}}>
+                                    {formik.errors.status ? formik.errors.status : ''}
+                                </FormHelperText>
+                            </FormControl>
+                    }
                 </form>
                 <Stack
                     direction={"row"}
@@ -153,12 +176,15 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                     divider={<Divider orientation="vertical" flexItem/>}
                     style={{marginTop: "15px"}}
                 >
-                    <Button size={"large"}
-                            color={"error"}
-                            onClick={() => navigate("/organizations")}
-                    >
-                        Back
-                    </Button>
+                    {
+                        account.accountType === AccountEnum.SYSTEM &&
+                        <Button size={"large"}
+                                color={"error"}
+                                onClick={() => navigate("/organizations")}
+                        >
+                            Back
+                        </Button>
+                    }
                     <Button size={"large"}
                             fullWidth
                             disabled={!data.id}
