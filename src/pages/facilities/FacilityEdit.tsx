@@ -13,9 +13,6 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetFacilityById} from "../../api/FacilityApi";
 import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {Facility} from "../../entities/facility";
-import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {MetadataEnum} from "../../entities/enums/MetadataEnum";
-import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
 import {useSaveFile} from "../../api/FileApi";
 import {FileService} from "../../services/FileService";
 
@@ -71,20 +68,6 @@ const FacilityEdit = () => {
     //
     //     navigate(`/arts/artist/${artId}`);
     // }
-
-    useEffect(() => {
-        if (account && facility) {
-            if (mode === "CREATE" && account.accountType !== AccountEnum.SYSTEM) {
-                navigate("/")
-            }
-            const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-            const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
-
-            if (organizationId !== facility!.organization.id || organizationRole !== OrganizationRoleEnum.CREATOR) {
-                navigate("/")
-            }
-        }
-    }, [account, facility])
 
     useEffect(() => {
         if (!isFetching && !isLoading) {
