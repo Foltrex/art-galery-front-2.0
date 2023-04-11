@@ -3,26 +3,29 @@ import {TableCell, TableRow as MuiTableRow} from '@mui/material';
 import {IColumnType, IdentifiableRecord} from './Table';
 
 interface ITableRowProps<S extends IdentifiableRecord> {
-    number: number;
+    number: number|null;
     columns: IColumnType<S>[];
     item: S;
-    editable: boolean;
+    clazz?:string
 }
 
 const TableRow = <S extends IdentifiableRecord>({
 	item,
-    editable,
     number,
 	columns,
+    clazz,
 }: ITableRowProps<S>) => {
     return (
-        <MuiTableRow hover>
+        <MuiTableRow hover className={clazz}>
             <TableCell align='center'>
                 {number}
             </TableCell>
 
             {columns.map((column, columnIndex) => (
-                <TableCell key={`table-cell-${columnIndex}`} align='center' sx={{
+                <TableCell key={columnIndex}
+                           align='center'
+                           colSpan={column.colspan}
+                           sx={{
                     whiteSpace: 'nowrap', 
                     overflow: 'hidden',
                     textOverflow: 'ellipsis',

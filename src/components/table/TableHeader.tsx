@@ -24,6 +24,7 @@ function TableHeader<T extends IdentifiableRecord>({columns, showActions = false
 
 				{columns.map((column) => (
 					<TableCell
+						colSpan={column.colspan}
 						key={column.key}
 						align='center'
 						style={{minWidth: column.minWidth || 150}}

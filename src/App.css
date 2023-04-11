@@ -48,3 +48,11 @@
     transform: rotate(360deg);
   }
 }
+.table-group-visible {
+  transition: opacity ease-in-out 0.3s;
+  opacity: 1;
+}
+.table-group-invis {
+  transition: opacity ease-in-out 0.3s;
+  opacity: 0;
+}

@@ -12,7 +12,9 @@ export interface IColumnType<T extends IdentifiableRecord> {
     key: string;
     title: string;
     minWidth?: number;
+    colspan?: number;
     render?: (item: T) => void;
+    groupBy?: (item: T) => string|undefined
     sort?: (columnName:string, direction:'asc'|'desc'|undefined) => void
 }
 
@@ -22,6 +24,7 @@ interface ITableProps<S extends IdentifiableRecord> {
     editable?: boolean;
     onPageChange: (page: number) => void;
     onRowsPerPageChange:  (pageSize: number) => void;
+    groupBy?:string[]
 }
 
 function Table<S extends IdentifiableRecord>({
@@ -29,7 +32,8 @@ function Table<S extends IdentifiableRecord>({
     page, 
     editable = false,
     onPageChange,
-    onRowsPerPageChange
+    onRowsPerPageChange,
+    groupBy
 }: ITableProps<S>): JSX.Element {
 
     return (
@@ -37,7 +41,8 @@ function Table<S extends IdentifiableRecord>({
             <TableContainer>
                 <MuiTable stickyHeader aria-label="sticky table">
                     <TableHeader columns={columns} showActions={editable} />
-                    <TableBody 
+                    <TableBody
+                        groupBy={groupBy}
                         page={page}
                         editable={editable}
                         columns={columns}/>
