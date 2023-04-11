@@ -1,19 +1,13 @@
-import SaveIcon from '@mui/icons-material/Save';
-import { Box, Divider, FormControl, Grid, IconButton, Input, InputBase, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { FormikHelpers, useFormik } from 'formik';
-import * as yup from 'yup';
-import { useGetArtistByAccountId } from '../../../api/ArtistApi';
-import { Art } from '../../../entities/art';
-import { TokenService } from '../../../services/TokenService';
-import { useRootStore } from '../../../stores/provider/RootStoreProvider';
-import ArtSizeFilter from '../../../components/form/art-size-filter/ArtSizeFilter';
-import ArtStyleFilter from '../../../components/form/art-style-filter/ArtStyleFilter';
-import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
-import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
+import { Save } from '@mui/icons-material';
+import { Box, FormControl, IconButton, InputLabel, MenuItem, Select, Stack, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { useEffect } from 'react';
-import { Artist } from '../../../entities/artist';
+import { FormikHelpers, useFormik } from 'formik';
+import * as yup from 'yup';
+import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
+import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
+import { Art } from '../../../entities/art';
+import { useRootStore } from '../../../stores/provider/RootStoreProvider';
 
 interface IArtFormProps {
 	art?: Art;
@@ -49,8 +43,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	*/
 
 	const validationSchema = yup.object({
-		name: yup.string()
-			.required()
+		// name: yup.string()
+		// 	.required()
 	});
 
 
@@ -64,12 +58,15 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 
 	const onSaveArt = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);
+		
+		const creationDateJS = formik.values.creationDate;
 		try {
 			const artEntity: Art = {
 				id: art?.id,
 				name: values.artName,
 				description: values.description,
-				artist: {} as Artist
+				artistAccountId: account.id,
+				dateCreation: creationDateJS.toDate()
 			};
 
 			onSubmit(artEntity);
@@ -90,16 +87,21 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<Stack direction='column' rowGap={3}>
-				<TextField
-					placeholder='Enter art name...'
-					name='artName'
-					required
-					value={formik.values.artName}
-					onChange={formik.handleChange}
-					fullWidth
-					error={!!formik.errors.artName}
-					helperText={formik.errors.artName}
-					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
+				<Box sx={{ display: 'flex' }}>
+					<TextField
+						placeholder='Enter art name...'
+						name='artName'
+						required
+						value={formik.values.artName}
+						onChange={formik.handleChange}
+						error={!!formik.errors.artName}
+						helperText={formik.errors.artName}
+						sx={{ fontSize: '2em', lineHeight: 'normal', flexGrow: 1 }} />
+
+					<IconButton type='submit'>
+						<Save />
+					</IconButton>
+				</Box>
 				<TextField
 					size='small'
 					required
@@ -130,7 +132,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 						inputProps={{ shrink: false }}
 					>
 						{artStyleItems.map(s => (
-							<MenuItem 
+							<MenuItem
 								key={s.value}
 								value={s.value}
 							>
@@ -141,11 +143,11 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 				</FormControl>
 
 
-				<DatePicker 
+				<DatePicker
 					disableFuture
-					value={formik.values.creationDate} 
-					onChange={formik.handleChange} 
-					views={['month', 'year']} 
+					value={formik.values.creationDate}
+					onChange={formik.handleChange}
+					views={['month', 'year']}
 				/>
 
 				<FormControl size='small'>

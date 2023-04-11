@@ -37,9 +37,9 @@ const RepresentativeArtInfo: React.FunctionComponent<IRepresentativeArtInfoProps
 						<strong>Arist</strong>
 					</Grid>
 					<Grid item sm={8}>
-						{art.artist.firstname
+						{/* {art.artist.firstname
 							? `${art.artist.firstname} ${art.artist.lastname}`
-							: 'Unknown'
+							: 'Unknown' */
 						}
 					</Grid>
 				</Grid>

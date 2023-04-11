@@ -42,9 +42,9 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 	const accountId = TokenService.getCurrentAccountId();
 	const { data: currenctArtist } = useGetArtistByAccountId(accountId);
 	const currenctArtistId = currenctArtist?.id;
-	const artistId = art.artist.id;
+	// const artistId = art.artist.id;
 
-	const isEditable = currenctArtistId === artistId;
+	// const isEditable = currenctArtistId === artistId;
 
 	return (
 		<>
@@ -58,7 +58,7 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 					>
 						<History />
 					</IconButton>
-					{isEditable &&
+					{/* {isEditable && */
 						<>
 							<IconButton onClick={onEditButtonClick}>
 								<EditIcon />

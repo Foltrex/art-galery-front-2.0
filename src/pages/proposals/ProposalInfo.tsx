@@ -47,11 +47,11 @@ const ProposalInfo: React.FunctionComponent<IProposalInfoProps> = ({ proposal, o
 						{art?.name}
 					</Stack>
 					<Stack>
-						<strong>Artist</strong>
+						{/* <strong>Artist</strong>
 						{art?.artist.firstname
 							? `${art?.artist.firstname} ${art?.artist.lastname}`
 							: 'Unknown artist'
-						}
+						} */}
 					</Stack>
 					<Stack>
 						<strong>Price</strong>

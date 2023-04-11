@@ -61,7 +61,9 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
                     actionIcon={
                         showAuthor && 
                             <Tooltip title={artist?.firstname + ' ' + artist?.lastname}>
-                                <IconButton onClick={() => navigate(`/artists/${art.artist.id}`)}>
+                                <IconButton onClick={() => {
+                                    // navigate(`/artists/${art.artist.id}`)
+                                }}>
                                     <LetterAvatar 
                                         name={artist?.firstname + ' ' + artist?.lastname} 
                                         sx={{w: 28, h: 28, mr: 1}}
