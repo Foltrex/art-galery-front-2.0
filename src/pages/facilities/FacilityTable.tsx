@@ -29,10 +29,12 @@ import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
 import {isCreatorOrAdmin} from "../../util/MetadataUtil";
 
 interface IFacilityTableProps {
-	organizationId?:string
+	createNew?:() => void
+	edit:(id:string) => void
+	organizationId?:string|null
 }
 
-function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account, canEdit:boolean): IColumnType<Facility>[] {
+function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account, canEdit:boolean, edit:(s:string) => void): IColumnType<Facility>[] {
 
 
 	const result:IColumnType<Facility>[] = [
@@ -87,7 +89,7 @@ function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDele
 						{canEdit && <IconButton
 							disableRipple
 							aria-label='edit'
-							onClick={() => navigate("/facilities/" + facility.id)}
+							onClick={() => edit(facility.id)}
 						>
 							<ModeOutlinedIcon />
 						</IconButton>}
@@ -133,7 +135,8 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 		rowsPerPage,
 		cityId,
 		facilityName,
-		facilityStatus.value
+		facilityStatus.value,
+		organizationId
 	);
 	const mutationDelete = useDeleteFacility();
 
@@ -158,7 +161,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 
 
 	const canEdit = account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(account);
-	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate, account, canEdit);
+	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate, account, canEdit, props.edit);
 
 
 	const onDelete = async () => {
@@ -201,9 +204,10 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 					</RadioGroup>
 				</FormControl>
 				{canEdit && <FormControl style={{marginLeft: "auto"}}>
-					<Link to={"/facilities/new"}>
+					{props.createNew && <Button variant="text" size={"large"} onClick={props.createNew}>New Facility</Button>}
+					{!props.createNew && <Link to={"/facilities/new"}>
 						<Button variant="text" size={"large"}>New Facility</Button>
-					</Link>
+					</Link>}
 				</FormControl>}
 
 			</div>

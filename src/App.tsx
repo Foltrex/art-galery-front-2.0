@@ -26,7 +26,8 @@ import ArtSizeFilter from './components/form/art-size-filter/ArtSizeFilter';
 import ArtStyleFilter from './components/form/art-style-filter/ArtStyleFilter';
 import ArtTopicFilter from './components/form/ArtTopicFilter';
 import ArtTypeFilter from './components/form/ArtTypeFilter';
-import FacilityEdit from "./pages/facilities/FacilityEdit";
+import {FacilityNewRoute} from "./pages/facilities/FacilityCreateRoute";
+import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 
 function App() {
     //@Todo maybe bug here
@@ -74,8 +75,8 @@ function App() {
 
                     <Route path='facilities'>
                         <Route index element={<Facilities/>}/>
-                        <Route path={":id"} element={<FacilityEdit/>}/>
-                        <Route path={"new"} element={<FacilityEdit/>}/>
+                        <Route path={":id"} element={<FacilityNewRoute/>}/>
+                        <Route path={"new"} element={<FacilityEditRoute/>}/>
                     </Route>
 
                     <Route path='users' element={<UserRoute/>}/>

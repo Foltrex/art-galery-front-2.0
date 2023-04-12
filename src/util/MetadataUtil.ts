@@ -16,3 +16,6 @@ export function isCreatorOrAdmin(account:Account) {
     const role = find("organizationRole", account);
     return role === 'CREATOR' || role === 'ADMIN';
 }
+export function findOrganizationId(account:Account) {
+    return find("organizationId", account);
+}

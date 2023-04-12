@@ -36,7 +36,7 @@ export default function MapDialog(props: IMapDialogProps) {
     const [selectPosition, setSelectPosition] = useState<GeoPosition | null>(null);
 
     useEffect(() => {
-        if (props.address !== undefined && props.address !== null) {
+        if (props.address && props.address.city) {
             const position = {
                 place_id: 1,
                 display_name: props.address.name,

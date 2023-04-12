@@ -1,9 +1,9 @@
-import { Facility } from "../entities/facility";
-import { IPage, useDelete, useFetch, usePost } from "../hooks/react-query";
-import { ART_SERVICE } from "../http/axios";
+import {Facility} from "../entities/facility";
+import {IPage, useDelete, useFetch, usePost} from "../hooks/react-query";
+import {ART_SERVICE} from "../http/axios";
 
 
-export const useGetAllFacilities = (page: number = 0, size: number = 25, cityId?: string, facilityName?: string, isActive?: boolean | null) => {
+export const useGetAllFacilities = (page: number = 0, size: number = 25, cityId?: string, facilityName?: string, isActive?: boolean | null, organizationId?:string) => {
     return useFetch<IPage<Facility>>(
         `${ART_SERVICE}/facilities`,
         {
@@ -12,6 +12,7 @@ export const useGetAllFacilities = (page: number = 0, size: number = 25, cityId?
             cityId: cityId,
             facilityName: facilityName,
             isActive: isActive,
+            organizationId: organizationId,
         }
     );
 }
