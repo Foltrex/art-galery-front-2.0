@@ -1,6 +1,6 @@
 import Table, {IColumnType} from "../table/Table";
 import * as React from "react";
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {Account} from "../../entities/account";
 import {useDeleteRepresentative} from "../../api/RepresentativeApi";
 import SkeletonTable from "../table/SkeletonTable";
@@ -10,8 +10,11 @@ import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {IconButton, styled, Typography} from "@mui/material";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {find} from "../../util/MetadataUtil";
+import {find, findOrganizationId} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
+import {Organization} from "../../entities/organization";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 
 const Circle = styled('span')({
     height: 10,
@@ -25,6 +28,7 @@ const Circle = styled('span')({
 export interface IUserGridProps {
     data?: IPage<Account>;
     rowsPerPage: number;
+    organizationId?: string;
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onPageNumberChange: (page: number) => void;
     applySort: (key:string, direction:string|undefined) => void
@@ -32,7 +36,14 @@ export interface IUserGridProps {
 
 export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
     const [representative, setRepresentative] = useState<Account>();
-    
+    const {authStore} = useRootStore();
+    const { data: organizationsList } = useGetAllOrganizationList();
+    const organizations = useMemo(() => {
+        return organizationsList?.reduce((prev:Record<string, Organization>, current:Organization) => {
+            prev[current.id] = current;
+            return prev;
+        }, {} as Record<string, Organization>)
+    }, [organizationsList])
     
     const mutationDelete = useDeleteRepresentative();
     const onDelete = async () => {
@@ -57,7 +68,9 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         setOpenEditForm(true);
     }
 
-    const columns = getColumns(applySort);
+    const columns = useMemo(
+        () => getColumns(applySort, authStore.account, organizations),
+        [applySort, authStore.account, organizations]);
 
     return <>
         {data
@@ -82,8 +95,8 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     </>
 }
 
-function getColumns(applySort:(key:string, direction:string|undefined) => void):IColumnType<Account>[] {
-    return [
+function getColumns(applySort:(key:string, direction:string|undefined) => void, account:Account, organizations?:Record<string, Organization>):IColumnType<Account>[] {
+    const columns:IColumnType<Account>[] = [
         {
             key: 'firstName',
             title: 'First Name',
@@ -120,6 +133,26 @@ function getColumns(applySort:(key:string, direction:string|undefined) => void):
                 }
             }
         },
+    ];
+
+    if(account.accountType !== AccountEnum.REPRESENTATIVE) {
+        columns.push({
+            key: 'organization',
+            title: 'Organization',
+            render: account => {
+                if(!organizations) {
+                    return '';
+                }
+                const orgId = findOrganizationId(account);
+                if(!orgId) {
+                    return '';
+                }
+                return organizations[orgId]?.name
+            }
+        });
+    }
+
+    columns.push(
         {
             key: 'role',
             title: 'Role',
@@ -148,6 +181,7 @@ function getColumns(applySort:(key:string, direction:string|undefined) => void):
                     </>
                 );
             }
-        }
-    ];
+        });
+
+    return columns;
 }

@@ -44,6 +44,7 @@ const OrganizationGrid = () => {
 
     const {data} = useGetAllOrganizations({
         page: pageNumber,
+        sort: 'name,asc',
         size: rowsPerPage,
         name: searchText,
         status: status,

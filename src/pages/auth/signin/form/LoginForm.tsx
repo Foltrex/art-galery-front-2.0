@@ -4,11 +4,11 @@ import {Button, Checkbox, CircularProgress, FormControlLabel, TextField} from "@
 import * as yup from "yup";
 import AlertNotification from '../../../../components/notifications/AlertNotification';
 import LoginFormBottom from "./LoginFormBottom";
-import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
+import Bubble from "../../../../components/bubble/Bubble";
 
 interface ILoginFormValues {
     email: string,
@@ -16,7 +16,6 @@ interface ILoginFormValues {
 }
 
 const LoginForm = () => {
-    const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationLogin = useLogin();
     const [rememberMe, setRememberMe] = useState<boolean>(true)
@@ -42,11 +41,12 @@ const LoginForm = () => {
             const response = await mutationLogin.mutateAsync(values);
             AuthService.setToken(response.data.token);
             AuthService.setRememberMe(rememberMe)
-            alertStore.setShow(false)
             navigate('/');
         } catch (error: any) {
             console.log(error.response.data.message)
-            alertStore.setShow(true, "error", "Login error", error.response.data.message)
+            Bubble.error("Login error. Error message: " + (error.response.data.message
+                ? error.response.data.message
+                : error.response.data.error))
         }
     }
 
