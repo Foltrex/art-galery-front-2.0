@@ -5,10 +5,9 @@ import TableSortLabel from '@mui/material/TableSortLabel';
 
 interface ITableHeaderProps<T extends IdentifiableRecord> {
 	columns: IColumnType<T>[];
-	showActions?: boolean;
 }
 
-function TableHeader<T extends IdentifiableRecord>({columns, showActions = false}: ITableHeaderProps<T>): JSX.Element {
+function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<T>): JSX.Element {
 
 	const [sortDirection, setSortDirection] = useState<'asc'|'desc'|undefined>();
 	const [sortKey, setSortKey] = useState<string>('');

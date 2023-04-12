@@ -20,18 +20,21 @@ import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import {OrganizationRoleEnum} from '../../entities/enums/organizationRoleEnum';
-import {useGetLoggedUserRole} from '../../hooks/useGetLoggedUserRole';
 import CityDropdown from "../../components/cities/CityDropdown";
 import {TypeFilter} from "../../components/form/TypeFilter";
 import {Link, useNavigate} from "react-router-dom";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
+import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
+import {isCreatorOrAdmin} from "../../util/MetadataUtil";
 
 interface IFacilityTableProps {
+	organizationId?:string
 }
 
-function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account): IColumnType<Facility>[] {
+function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account, canEdit:boolean): IColumnType<Facility>[] {
+
+
 	const result:IColumnType<Facility>[] = [
 		{
 			key: 'selected',
@@ -81,20 +84,20 @@ function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDele
 			render: (facility) => {
 				return (
 					<>
-						<IconButton
+						{canEdit && <IconButton
 							disableRipple
 							aria-label='edit'
 							onClick={() => navigate("/facilities/" + facility.id)}
 						>
 							<ModeOutlinedIcon />
-						</IconButton>
-						<IconButton
+						</IconButton>}
+						{canEdit && <IconButton
 							disableRipple
 							aria-label='delete'
 							onClick={() => handleDelete(facility)}
 						>
 							<DeleteOutlinedIcon />
-						</IconButton>
+						</IconButton>}
 					</>
 				);
 			}
@@ -103,8 +106,9 @@ function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDele
 	return result;
 }
 
-const FacilityTable: React.FC<IFacilityTableProps> = () => {
-	const organizationRole = useGetLoggedUserRole();
+const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
+	const [oId, setOrganizationId] = useState<string>();
+	const organizationId = props.organizationId || oId;
 
 	const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 	const [facility, setFacility] = React.useState<Facility>();
@@ -114,6 +118,8 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 	const [facilityName, setFacilityName] = useState<string>();
 	const [cityId, setCityId] = useState<string>();
 	const navigate = useNavigate();
+	const {authStore} = useRootStore();
+	const account = authStore.account;
 
 	const statuses: {label: string, value?: boolean}[] = [
 		{label: 'all'},
@@ -129,6 +135,11 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 		facilityName,
 		facilityStatus.value
 	);
+	const mutationDelete = useDeleteFacility();
+
+	if(!account) {
+		return null;
+	}
 
 	const handleFacilityCheckboxClick = (selectedFacilityId: string) => {
 		const indexOfFacilityId = selectedFacilitiesId.indexOf(selectedFacilityId);
@@ -145,12 +156,10 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 		setOpenDeleteModal(true);
 	}
 
-	const {authStore} = useRootStore();
-	const account = authStore.account;
 
-	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate, account);
+	const canEdit = account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(account);
+	const columns = getColumns(handleFacilityCheckboxClick, handleDelete, navigate, account, canEdit);
 
-	const mutationDelete = useDeleteFacility();
 
 	const onDelete = async () => {
 		try {
@@ -162,13 +171,6 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 	}
 
 
-	const currentAccountType = TokenService.getCurrentAccountType();
-	const isTableRowsEditableByCurrentUser = currentAccountType === AccountEnum.SYSTEM 
-		|| (currentAccountType === AccountEnum.REPRESENTATIVE
-				&& (organizationRole === OrganizationRoleEnum.CREATOR  
-					|| organizationRole === OrganizationRoleEnum.MODERATOR)
-			);
-
 	const handleStatusChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const currentStatus = statuses.find(s => s.label === e.target.value);
 		setFacilityStatus(currentStatus!);
@@ -179,6 +181,8 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 			<div className="filter-row">
 				<CityDropdown value={cityId} onChange={setCityId} />
 				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
+				{!props.organizationId && <OrganizationsFilter setOrganizationId={setOrganizationId} />}
+
 				<FormControl>
 					<RadioGroup
 						name='status'
@@ -196,12 +200,11 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 						))}
 					</RadioGroup>
 				</FormControl>
-				<FormControl style={{marginLeft: "auto"}}>
+				{canEdit && <FormControl style={{marginLeft: "auto"}}>
 					<Link to={"/facilities/new"}>
 						<Button variant="text" size={"large"}>New Facility</Button>
 					</Link>
-
-				</FormControl>
+				</FormControl>}
 
 			</div>
 
@@ -211,8 +214,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = () => {
 					columns={columns}
 					page={isSuccess && data ? data : createEmptyPage<Facility>()}
 					onPageChange={setPageNumber}
-					onRowsPerPageChange={setRowsPerPage}
-					editable={isTableRowsEditableByCurrentUser}/>
+					onRowsPerPageChange={setRowsPerPage}/>
 			}
 
 			<DeleteModal

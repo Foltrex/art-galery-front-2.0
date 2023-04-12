@@ -8,7 +8,6 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 interface ITableBodyProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
     page: IPage<S>;
-	editable: boolean;
 	groupBy?:string[]
 }
 enum BucketType {

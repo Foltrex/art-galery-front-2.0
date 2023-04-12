@@ -32,7 +32,6 @@ interface ISidebarProps {
 }
 
 function prepareSidebar(account:Account) {
-    console.log(account);
     switch (account.accountType) {
         case AccountEnum.REPRESENTATIVE: {
             const result = [];

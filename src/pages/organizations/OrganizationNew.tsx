@@ -1,11 +1,10 @@
 import OrganizationForm from "./components/OrganizationForm";
 import {ART_SERVICE, axiosApi} from "../../http/axios";
-import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
 import {useNavigate} from "react-router-dom";
+import Bubble from "../../components/bubble/Bubble";
 
 const OrganizationNew = () => {
-    const {alertStore} = useRootStore();
     const navigate = useNavigate()
 
     return <OrganizationForm
@@ -19,12 +18,12 @@ const OrganizationNew = () => {
         submit={(organization) => {
             return axiosApi.post(`${ART_SERVICE}/organizations`, organization)
                 .then(response => {
-                    alertStore.setShow(true, "success", "", "Organization created successfully")
+                    Bubble.success("Organization created successfully")
                     navigate(`/organizations/${response.data.id}`)
                     return true;
                 })
                 .catch(error => {
-                    alertStore.setShow(true, "error", "Something went wrong. Try again", error.response.data.message)
+                    Bubble.error({message: "Failed to create new organization. Error message: " + error.response.data.message, duration: 999999})
                     return false;
                 });}
         }/>;

@@ -3,7 +3,6 @@ import {
     CircularProgress,
     Divider,
     FormControl,
-    FormHelperText,
     InputLabel,
     MenuItem,
     Select,
@@ -26,19 +25,10 @@ import OrganizationFacilitiesDialog from "./OrganizationFacilitiesDialog";
 import OrganizationUsersDialog from "./OrganizationUsersDialog";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
-import {Facility} from "../../../entities/facility";
 
 interface IAppProps {
     data?: Organization;
     submit: (org: Organization) => Promise<boolean>
-}
-
-interface IFormValues {
-    id: string
-    name: string,
-    address: Address | null | string,
-    status: OrganizationStatusEnum | string,
-    facilities: Facility[]
 }
 
 const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) => {
@@ -56,16 +46,14 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
             .max(255),
         address: yup.object()
             .required()
-            .nullable(),
-        status: yup.object()
-            .nullable(),
+            .nullable()
     })
 
-    const [initialValues, setInitialValues] = useState<IFormValues>({
+    const [initialValues, setInitialValues] = useState<Organization>({
         id: '',
         name: '',
         address: null,
-        status: '',
+        status: OrganizationStatusEnum.NEW,
         facilities: []
     })
 
@@ -129,7 +117,6 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                         fullWidth
                         label="Name"
                         name={"name"}
-                        defaultValue={formik.values.name}
                         value={formik.values.name}
                         onChange={formik.handleChange}
                         error={!!formik.errors.name} helperText={formik.errors.name}
@@ -139,36 +126,27 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                         required
                         fullWidth
                         label="Address"
-                        name={"address"}
+                        name={"address.name"}
                         InputProps={{readOnly: true}}
                         InputLabelProps={formik.values.address === null ? undefined : {shrink: true}}
-                        value={typeof formik.values.address === "object" ?
-                            formik.values.address?.name : formik.values.address
-                        }
+                        value={formik.values.address?.name}
                         onClick={() => setOpenMap(true)}
-                        onChange={formik.handleChange}
+                        onChange={(e) => formik.handleChange(e)}
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />
-                    {
-                        formik.values.status !== '' &&
-                            <FormControl fullWidth margin="normal" error={!!formik.errors.status}
-                            >
-                                <InputLabel>Status</InputLabel>
-                                <Select
-                                    name={"status"}
-                                    label="Status"
-                                    defaultValue={formik.values.status}
-                                    onChange={formik.handleChange}
-                                >
-                                    <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
-                                    <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
-                                    <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
-                                </Select>
-                                <FormHelperText style={{color: "red"}}>
-                                    {formik.errors.status ? formik.errors.status : ''}
-                                </FormHelperText>
-                            </FormControl>
-                    }
+                    <FormControl fullWidth margin="normal" error={!!formik.errors.status}>
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                            name={"status"}
+                            label="Status"
+                            value={formik.values.status}
+                            onChange={formik.handleChange}
+                        >
+                            <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
+                            <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
+                            <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
+                        </Select>
+                    </FormControl>
                 </form>
                 <Stack
                     direction={"row"}

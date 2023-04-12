@@ -11,10 +11,9 @@ import IconButton from '@mui/material/IconButton';
 export interface BubbleProps {
     id?: number;//auto assignable
     message: any;
-    duration?: number;
-    variant?: 'success' | 'warning' | 'error' | 'info';
-    classes?: any;
-    close?: () => void;
+    duration?: number;//0 for infinite, 6000 default value
+    variant?: 'success' | 'warning' | 'error' | 'info';//auto assignable
+    close?: () => void;//callback which is called after popup is closed (manually of by timeout)
 }
 
 const styles = {
@@ -59,6 +58,15 @@ class BubbleItem extends React.Component<BubbleProps, BubbleState> {
             }
         });
     };
+
+    componentDidMount() {
+        if(!this.props.duration) {
+            return;
+        }
+        setTimeout(() => {
+            this.close();
+        }, this.props.duration)
+    }
 
     render() {
         let Icon;

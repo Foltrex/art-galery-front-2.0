@@ -29,8 +29,7 @@ interface ITableProps<S extends IdentifiableRecord> {
 
 function Table<S extends IdentifiableRecord>({
     columns, 
-    page, 
-    editable = false,
+    page,
     onPageChange,
     onRowsPerPageChange,
     groupBy
@@ -40,11 +39,10 @@ function Table<S extends IdentifiableRecord>({
         <>
             <TableContainer>
                 <MuiTable stickyHeader aria-label="sticky table">
-                    <TableHeader columns={columns} showActions={editable} />
+                    <TableHeader columns={columns} />
                     <TableBody
                         groupBy={groupBy}
                         page={page}
-                        editable={editable}
                         columns={columns}/>
                 </MuiTable>
             </TableContainer>
