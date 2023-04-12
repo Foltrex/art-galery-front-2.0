@@ -15,11 +15,10 @@ import {
 import {useFormik} from "formik";
 import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
-import AlertNotification from "../../../components/notifications/AlertNotification";
 import * as yup from "yup";
 import {Organization} from "../../../entities/organization";
 import {OrganizationStatusEnum} from "../../../entities/enums/organizationStatusEnum";
-import { useUpdateOrganizationById } from '../../../api/OrganizationApi';
+import {useUpdateOrganizationById} from '../../../api/OrganizationApi';
 
 interface IOrganizationEditDialogProps {
     open: boolean;
@@ -96,7 +95,6 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
                         }}
                         address={formik.values.address as Address}
                     />
-                    <AlertNotification/>
                     <TextField
                         margin="normal"
                         required

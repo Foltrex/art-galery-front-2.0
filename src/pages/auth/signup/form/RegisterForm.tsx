@@ -1,17 +1,16 @@
 import {Button, CircularProgress, Grid, TextField, Tooltip} from "@mui/material";
 import Box from "@mui/material/Box";
 import {useFormik} from "formik";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import * as yup from "yup";
 import {useRegister} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
-import AlertNotification from '../../../../components/notifications/AlertNotification';
 import {AccountEnum} from "../../../../entities/enums/AccountEnum";
 import {AuthService} from "../../../../services/AuthService";
-import {useRootStore} from "../../../../stores/provider/RootStoreProvider";
 import RegisterFormBottom from './RegisterFormBottom';
 import {Help} from "@mui/icons-material";
+import Bubble from "../../../../components/bubble/Bubble";
 
 interface IRegisterFormValues {
     email: string,
@@ -28,7 +27,6 @@ const buttonStyle = {
 }
 
 const RegisterForm = () => {
-    const {alertStore} = useRootStore();
     const navigate = useNavigate();
     const mutationRegister = useRegister();
     const [accountType, setAccountType] = useState<string>("");
@@ -71,18 +69,14 @@ const RegisterForm = () => {
         }
     })
 
-    useEffect(() => {
-        alertStore.setShow(false)
-    }, [accountType])
 
     const submit = async (values: IRegisterFormValues) => {
         try {
             const response = await mutationRegister.mutateAsync(values)
             AuthService.setToken(response.data.token);
-            alertStore.setShow(false)
             navigate('/');
         } catch (error: any) {
-            alertStore.setShow(true, 'error', "Registration error", error.response.data.message);
+            Bubble.error({message: "Failed to register account. Error message is: " + error.response.data.message, duration: 999999});
         }
     }
 
@@ -204,7 +198,6 @@ const RegisterForm = () => {
 
     return (
         <form onSubmit={formik.handleSubmit} id="form" noValidate>
-            {accountType !== "" && <AlertNotification/>}
             <Box sx={{
                 display: 'flex',
                 flexDirection: 'row',

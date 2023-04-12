@@ -21,7 +21,9 @@ export default function SearchBox(props: { selectPosition: any; setSelectPositio
     const {data, isLoading, isFetching} = useSearch(searchText);
 
     useEffect(() => {
-        setListPlace(data ?? [])
+        setListPlace((data ?? []).filter(item => {
+            return item.address?.city
+        }))
     }, [data])
 
     return (

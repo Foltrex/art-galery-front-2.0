@@ -12,8 +12,6 @@ import {TransitionProps} from '@mui/material/transitions';
 import Map from "./Map";
 import SearchBox, {GeoPosition} from "./SearchBox";
 import {Address} from "../../entities/address";
-import AlertNotification from "../notifications/AlertNotification";
-import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -32,7 +30,6 @@ interface IMapDialogProps {
 }
 
 export default function MapDialog(props: IMapDialogProps) {
-    const {alertStore} = useRootStore();
     const [selectPosition, setSelectPosition] = useState<GeoPosition | null>(null);
 
     useEffect(() => {
@@ -60,14 +57,8 @@ export default function MapDialog(props: IMapDialogProps) {
                 longitude: selectPosition?.lon,
             }
         } as Address
-        if (address.city?.name !== undefined) {
-            props.setFieldValue(address);
-            alertStore.setShow(false)
-            props.onClose()
-        } else {
-            alertStore.setShow(true, "error", "Address error",
-                "Please, select such address that it will contains city or more info")
-        }
+        props.setFieldValue(address);
+        props.onClose()
     }
 
     return (
@@ -96,7 +87,6 @@ export default function MapDialog(props: IMapDialogProps) {
                     </Button>
                 </Toolbar>
             </AppBar>
-            <AlertNotification/>
             <div
                 style={{
                     display: "flex",

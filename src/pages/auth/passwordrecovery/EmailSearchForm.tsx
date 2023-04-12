@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import AlertNotification from "../../../components/notifications/AlertNotification";
 import {Button, TextField} from "@mui/material";
 import {createSearchParams, Link, useNavigate} from "react-router-dom";
-import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import {useGetAll} from "../../../api/AccountApi";
 import {useSendPasswordRecoveryCode} from "../../../api/AuthApi";
+import Bubble from "../../../components/bubble/Bubble";
 
 interface IFormEmailValues {
     email: string,
@@ -14,7 +13,6 @@ interface IFormEmailValues {
 
 const EmailSearchForm = () => {
     const navigate = useNavigate();
-    const {alertStore} = useRootStore();
     const [emailSearch, setEmailSearch] = useState('');
     const {data, isFetched, isLoading} = useGetAll({email: emailSearch});
     const mutationSendPasswordRecoveryCode = useSendPasswordRecoveryCode();
@@ -47,7 +45,7 @@ const EmailSearchForm = () => {
 
     useEffect(() => {
         if ((data === undefined || data.content.length === 0) && isFetched) {
-            alertStore.setShow(true, "error", " ", "Account with this email not found!")
+            Bubble.error("Account with this email not found!")
             setEmailSearch("")
         } else if (data !== undefined && data.content.length > 0) {
             mutationSendPasswordRecoveryCode.mutateAsync({receiver: emailSearch})
@@ -58,18 +56,17 @@ const EmailSearchForm = () => {
                             email: emailSearch,
                         }).toString()
                     });
-                    alertStore.setShow(true, "success", " ", "Code was sent, check your email")
+                    Bubble.success("Message with confirmation code was sent to provided email")
                 })
                 .catch(error => {
                     console.log(error.response.data.message)
-                    alertStore.setShow(true, "error", " ", error.response.data.message)
+                    Bubble.error(error.response.data.message);
                 })
         }
     }, [isFetched, data])
 
     return (
         <form onSubmit={formik.handleSubmit} id="form" noValidate>
-            <AlertNotification/>
             <TextField
                 margin="normal"
                 required

@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {Form, Formik} from "formik";
 import {Button, Checkbox, CircularProgress, FormControlLabel, TextField} from "@mui/material";
 import * as yup from "yup";
-import AlertNotification from '../../../../components/notifications/AlertNotification';
 import LoginFormBottom from "./LoginFormBottom";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
@@ -64,7 +63,6 @@ const LoginForm = () => {
         >
             {formik => (
                 <Form noValidate>
-                    <AlertNotification/>
                     <TextField
                         margin="normal"
                         required

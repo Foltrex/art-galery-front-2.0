@@ -16,7 +16,6 @@ import {OrganizationStatusEnum} from '../../../entities/enums/organizationStatus
 import {useNavigate} from "react-router-dom";
 import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
-import AlertNotification from "../../../components/notifications/AlertNotification";
 import * as yup from "yup";
 import {useFormik} from "formik";
 import {Container} from "@mui/system";
@@ -101,7 +100,6 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                 />
             }
             <Container maxWidth='lg'>
-                <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <MapDialog
                         open={openMap}

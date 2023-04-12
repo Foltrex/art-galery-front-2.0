@@ -5,14 +5,13 @@ import {Stack} from "@mui/system";
 import {useDeleteAccountById} from "../../api/AccountApi";
 import {TokenService} from "../../services/TokenService";
 import {useNavigate} from "react-router-dom";
-import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import ChangePasswordDialog from "./dialog/ChangePasswordDialog";
 import DeleteModal from "../../components/modal/DeleteModal";
+import Bubble from "../../components/bubble/Bubble";
 
 const Settings = () => {
     const navigate = useNavigate();
     const deleteMutation = useDeleteAccountById();
-    const {alertStore} = useRootStore();
 
     const [openChangePasswordDialog, setOpenChangePasswordDialog] = useState(false)
     const [openDeleteAccountDialog, setOpenDeleteAccountDialog] = useState(false)
@@ -20,17 +19,12 @@ const Settings = () => {
     const onDelete = () => {
         deleteMutation.mutateAsync(TokenService.getCurrentAccountId())
             .then(() => {
-                alertStore.setShow(
-                    true,
-                    "success",
-                    " ",
-                    "Your account is successfully deleted"
-                );
-
+                Bubble.success("Your deleted. Bye-bye!");
                 navigate('/auth/signin');
             })
             .catch(error => {
                 console.log(error.response.data.message)
+                Bubble.error({message: "Failed to delete your account. Error message is: " + error.response.data.message, duration: 999999});
             })
     }
 

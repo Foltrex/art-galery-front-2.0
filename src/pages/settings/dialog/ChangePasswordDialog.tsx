@@ -5,8 +5,7 @@ import {useFormik} from "formik";
 import {useUpdateAccountPasswordById} from "../../../api/AccountApi";
 import {TokenService} from "../../../services/TokenService";
 import PasswordTextField from "../../../components/form/PasswordTextField";
-import AlertNotification from '../../../components/notifications/AlertNotification';
-import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import Bubble from "../../../components/bubble/Bubble";
 
 interface IChangePasswordDialogProps {
     open: boolean;
@@ -19,7 +18,6 @@ interface IFormValues {
 }
 
 const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
-    const {alertStore} = useRootStore();
     const mutationUpdateAccountPassword = useUpdateAccountPasswordById(TokenService.getCurrentAccountId());
 
     const initialValues: IFormValues = {
@@ -55,10 +53,10 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
     const submit = async (values: IFormValues) => {
         try {
             await mutationUpdateAccountPassword.mutateAsync(values)
-            alertStore.setShow(true, "success", " ", "Password changed successfully!")
+            Bubble.success("Password changed successfully!");
         } catch (error: any) {
             console.log(error.response.data.message)
-            alertStore.setShow(true, "error", " ", error.response.data.message)
+            Bubble.error({message: "Failed to change password. Error message is: " + error.response.data.message, duration: 999999});
         }
     }
 
@@ -67,7 +65,6 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
             <DialogTitle>Edit password</DialogTitle>
             <Divider/>
             <DialogContent>
-                <AlertNotification/>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
                     <PasswordTextField
                         id={"old-password"}
