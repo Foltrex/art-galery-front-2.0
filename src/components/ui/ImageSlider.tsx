@@ -7,6 +7,7 @@ interface IImageSliderProps {
     slides?: string[];
     onDelete?: (index: number) => void;
 	onImageAdd?: () => void;
+    setMainImageNumber?: (number: number) => void;
 }
 
 const LeftArrowButton = styled('div')({
@@ -55,7 +56,12 @@ const SliderImage = styled('div', {
 }));
 //////
 
-const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDelete, onImageAdd }) => {
+const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ 
+    slides, 
+    onDelete, 
+    onImageAdd, 
+    setMainImageNumber 
+}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showModal, setShowModal] = useState(false);
 
@@ -86,11 +92,6 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDel
 
         setShowModal(false)
     }
-
-
-	// const handleMakeMainImageClick = () => {
-	// 	[slides[]]
-	// }
 
     return (
         <div style={{
@@ -137,7 +138,15 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ slides, onDel
             }
 
             <Stack direction='column' sx={{ px: 30 }} gap={2}>
-                <Button variant='outlined' sx={{ p: 1.5, color: 'black', borderColor: 'black' }}>
+                <Button 
+                    onClick={() => {
+                        if (setMainImageNumber) {
+                            setMainImageNumber(currentIndex)
+                        }
+                    }}
+                    variant='outlined' 
+                    sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
+                >
                     Make this image main
                 </Button>
                 <Button 

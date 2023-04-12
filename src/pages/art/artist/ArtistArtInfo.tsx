@@ -2,13 +2,14 @@ import { History } from '@mui/icons-material';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Box, Divider, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Box, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
-import { useGetArtistByAccountId } from '../../../api/ArtistApi';
+// import { useGetArtistByAccountId } from '../../../api/ArtistApi';
+import { useGetAccountById } from '../../../api/AccountApi';
 import { useSaveFile } from '../../../api/FileApi';
 import { Art as ArtEntity } from '../../../entities/art';
 import { FileService } from '../../../services/FileService';
-import { TokenService } from '../../../services/TokenService';
+import { useRootStore } from '../../../stores/provider/RootStoreProvider';
 import ArtExhibitionHistory from '../ArtExhibitionHistory';
 
 interface IArtInfoProps {
@@ -27,6 +28,10 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 	const fileInput = React.useRef<HTMLInputElement>(null);
 	
 	const mutationSaveImage = useSaveFile();
+	
+	const { authStore } = useRootStore();
+	const account = authStore.account;
+	const { data: artist } = useGetAccountById(art.artistAccountId) ?? account;
 
 	const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		try {
@@ -38,13 +43,6 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 			console.log(e);
 		}
 	}
-
-	const accountId = TokenService.getCurrentAccountId();
-	const { data: currenctArtist } = useGetArtistByAccountId(accountId);
-	const currenctArtistId = currenctArtist?.id;
-	// const artistId = art.artist.id;
-
-	// const isEditable = currenctArtistId === artistId;
 
 	return (
 		<>
@@ -78,8 +76,34 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 					}
 				</Box>
 			</Box>
-			<Divider sx={{ my: 1 }} />
+			
 			<Stack spacing={2} sx={{ marginTop: 4 }}>
+				<Grid container>
+					<Grid item sm={4}><strong>Description</strong></Grid>
+					<Grid item sm={8}>
+						{art.description}
+					</Grid>
+				</Grid>
+				<Grid container>
+					<Grid item sm={4}><strong>Artist</strong></Grid>
+					<Grid item sm={8}>
+						{`${artist?.firstName} ${artist?.lastName}`}
+					</Grid>
+				</Grid>
+				<Grid container>
+					<Grid item sm={4}><strong>Style</strong></Grid>
+					<Grid item sm={8}>
+						{/* {art.} */}
+						With repos and arrays on front ???
+					</Grid>
+				</Grid>
+				<Grid container>
+					<Grid item sm={4}><strong>Size</strong></Grid>
+					<Grid item sm={8}>
+						{/* {art.} */}
+						With repos and arrays on front ???
+					</Grid>
+				</Grid>
 				<Grid container>
 					<Grid item sm={4}><strong>Description</strong></Grid>
 					<Grid item sm={8}>

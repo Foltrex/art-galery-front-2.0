@@ -3,9 +3,10 @@ import { Box, Grid, IconButton } from '@mui/material';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSaveArt } from '../../../api/ArtApi';
-import { useSaveFile } from '../../../api/FileApi';
+import { useNewSaveFile } from '../../../api/FileApi';
 import ImageSlider from '../../../components/ui/ImageSlider';
 import { Art } from '../../../entities/art';
+import { EntityFile } from '../../../entities/entityFile';
 import { FileService } from '../../../services/FileService';
 import ArtForm from './AristArtForm';
 
@@ -13,11 +14,12 @@ const ArtCreation = () => {
 	const fileInput = useRef<HTMLInputElement>(null);
 	const [files, setFiles] = useState<File[]>([]);
 	const [images, setImages] = useState<string[]>([]);
+	const [mainImageNumber, setMainImageNumber] = useState<number>();
 
 	const navigate = useNavigate();
 
 	const mutationSaveArt = useSaveArt();
-	const mutationSaveImage = useSaveFile();
+	const mutationSaveImage = useNewSaveFile();
 
 	const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
 		const fileList = e.target.files!;
@@ -34,8 +36,15 @@ const ArtCreation = () => {
 		const { data: persistedArt } = response;
 		const { id: artId } = persistedArt;
 
-		const promises = files.map(async (file) => {
-			const fileEntity = await FileService.toFile(artId!, file);
+		const promises = files.map(async (file, index) => {
+			var fileEntity: EntityFile = await FileService.toEntityFile(artId!, file);
+			if (index === mainImageNumber) {
+				fileEntity.isPrimary = true;
+			} else if (!mainImageNumber && index === 0) {
+				fileEntity.isPrimary = true;
+			} else {
+				 fileEntity.isPrimary = false;
+			}
 			await mutationSaveImage.mutateAsync(fileEntity);
 		})
 		await Promise.all(promises);
@@ -58,6 +67,7 @@ const ArtCreation = () => {
 					{files.at(0)
 						? <ImageSlider 
 							slides={images} 
+							setMainImageNumber={setMainImageNumber}
 							onImageAdd={() => fileInput.current?.click()} 
 						  />
 						: <Box

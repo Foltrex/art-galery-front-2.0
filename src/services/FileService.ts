@@ -1,6 +1,7 @@
 import {File as FileEntity} from "../entities/file";
 import naclUtil from 'tweetnacl-util';
 import {AccountEnum} from "../entities/enums/AccountEnum";
+import { EntityFile } from "../entities/entityFile";
 
 export class FileService {
     static createImageLinkForAccountType(artId: string, accountType: AccountEnum) {
@@ -29,6 +30,19 @@ export class FileService {
         };
 
         return fileEnity;
+    }
+
+    static async toEntityFile(artId: string, file: File): Promise<EntityFile> {
+        const arrayBufferFile = await this.toArrayBufferFromBlob(file);
+        const binaryFile = new Uint8Array(arrayBufferFile);
+        const encodedBase64Image =  naclUtil.encodeBase64(binaryFile);
+        
+        return {
+            entityId: artId,
+            isPrimary: true,
+            mimeType: file.type,
+            data: encodedBase64Image
+        };
     }
 
     static toImage(binaryData: ArrayBuffer) {
