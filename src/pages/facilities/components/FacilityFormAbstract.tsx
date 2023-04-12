@@ -1,4 +1,3 @@
-import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import * as React from "react";
 import {ChangeEvent, useRef, useState} from "react";
@@ -9,15 +8,19 @@ import {useFormik} from "formik";
 import {Facility} from "../../../entities/facility";
 import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
-import AlertNotification from "../../../components/notifications/AlertNotification";
 import {Button, CircularProgress, Divider, FormControlLabel, FormGroup, Stack, Switch, TextField} from "@mui/material";
+import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import {OrganizationsFilter} from "../../../components/form/OrganizationsFilter";
+import {findOrganizationId} from "../../../util/MetadataUtil";
 
 
 export const FacilityFormAbstract = (props:{data: Facility, back: () => void, onSubmit:(facility:Facility) => Promise<boolean>}) => {
-    const navigate = useNavigate()
-
-    const {authStore, alertStore} = useRootStore();
+    const {authStore} = useRootStore();
     const account = authStore.account;
+    const organizationId = (account.accountType === AccountEnum.REPRESENTATIVE
+        ? findOrganizationId(account)
+        : props.data.organization?.id) as string;
+
 
     const [openMap, setOpenMap] = useState(false)
 
@@ -52,8 +55,7 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
     //     navigate(`/arts/artist/${artId}`);
     // }
 
-
-    const validationSchema = yup.object().shape({
+    const validationShape = {
         name: yup.string()
             .required()
             .min(2)
@@ -61,10 +63,17 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
         address: yup.object()
             .required()
             .nullable(),
-    })
+    };
+    if(account.accountType === AccountEnum.SYSTEM) {
+        //@ts-ignore
+        validationShape.organization = yup.object({
+            id: yup.string().required("Please select organization")
+        });
+    }
+    const validationSchema = yup.object().shape(validationShape)
 
     const formik = useFormik({
-        initialValues: props.data,
+        initialValues: {...props.data, organization: {...props.data.organization, id: organizationId}},
         validationSchema: validationSchema,
         validateOnChange: false,
         enableReinitialize: true,
@@ -76,13 +85,15 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
     });
 
     const submit = async (values: Facility) => {
-        alertStore.setShow(false);
         values.id = props.data.id || '';
+        values.organization.id = values.organization.id || organizationId || '';
         props.onSubmit(values)
     }
 
-    return (<>
-        <form onSubmit={formik.handleSubmit} id="form" noValidate>
+    console.log(formik)
+
+    //@ts-ignore
+    return (<form onSubmit={formik.handleSubmit} id="facility_add_edit" noValidate>
             <MapDialog
                 open={openMap}
                 onClose={() => setOpenMap(false)}
@@ -91,22 +102,27 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
                 }}
                 address={formik.values.address as Address}
             />
-            <AlertNotification/>
             <TextField
+                fullWidth={true}
                 margin="normal"
+                size={"small"}
                 required
-                fullWidth
                 label="Name"
                 name={"name"}
-                defaultValue={formik.values.name}
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 error={!!formik.errors.name} helperText={formik.errors.name}
             />
+
+            {/*@ts-ignore*/}
+            {account.accountType === AccountEnum.SYSTEM
+                && <OrganizationsFilter error={formik.errors.organization?.id}
+                                        setOrganizationId={(s) => formik.setFieldValue('organization.id', s, true)}/>}
             <TextField
+                fullWidth={true}
                 margin="normal"
+                size={"small"}
                 required
-                fullWidth
                 label="Address"
                 name={"address"}
                 InputProps={{readOnly: true}}
@@ -128,29 +144,27 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
                     />
                 } label="isActive"/>
             </FormGroup>
-        </form>
-        <Stack
-            direction={"row"}
-            spacing={2}
-            divider={<Divider orientation="vertical" flexItem/>}
-            style={{marginTop: "15px"}}
-        >
-            <Button size={"large"}
-                    fullWidth
-                    color={"error"}
-                    variant="outlined"
-                    onClick={props.back}
+
+            <Stack
+                direction={"row"}
+                spacing={2}
+                divider={<Divider orientation="vertical" flexItem/>}
+                style={{marginTop: "15px"}}
             >
-                Back
-            </Button>
-            <Button size={"large"}
-                    fullWidth
-                    color={"success"}
-                    variant="outlined"
-                    type="submit" form={"form"} disabled={formik.isSubmitting}
-            >
-                {formik.isSubmitting ? <CircularProgress/> : "Save"}
-            </Button>
-        </Stack>
-    </>)
+                <Button size={"large"}
+                        color={"error"}
+                        variant="outlined"
+                        onClick={props.back}
+                >
+                    Back
+                </Button>
+                <Button size={"large"}
+                        color={"success"}
+                        variant="outlined"
+                        type="submit" form={"facility_add_edit"} disabled={formik.isSubmitting}
+                >
+                    {formik.isSubmitting ? <CircularProgress/> : "Save"}
+                </Button>
+            </Stack>
+        </form>)
 }

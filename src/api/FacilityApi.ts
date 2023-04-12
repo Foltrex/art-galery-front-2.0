@@ -3,16 +3,17 @@ import {IPage, useDelete, useFetch, usePost} from "../hooks/react-query";
 import {ART_SERVICE} from "../http/axios";
 
 
-export const useGetAllFacilities = (page: number = 0, size: number = 25, cityId?: string, facilityName?: string, isActive?: boolean | null, organizationId?:string) => {
+export const useGetAllFacilities = (page: number = 0, size: number = 25, sort:string, cityId?: string, facilityName?: string, isActive?: boolean | null, organizationId?:string) => {
     return useFetch<IPage<Facility>>(
         `${ART_SERVICE}/facilities`,
         {
-            page: page,
-            size: size,
-            cityId: cityId,
-            facilityName: facilityName,
-            isActive: isActive,
-            organizationId: organizationId,
+            page,
+            size,
+            cityId,
+            facilityName,
+            isActive,
+            organizationId,
+            sort
         }
     );
 }

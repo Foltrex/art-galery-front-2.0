@@ -3,7 +3,7 @@ import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {useMemo} from "react";
 import {Organization} from "../../entities/organization";
 
-export const OrganizationsFilter = ({setOrganizationId}:{setOrganizationId: (id:string|undefined) => void}) => {
+export const OrganizationsFilter = ({setOrganizationId, error}:{error?:any, setOrganizationId: (id:string|undefined) => void}) => {
 
     const { data: organizations } = useGetAllOrganizationList();
 
@@ -31,8 +31,7 @@ export const OrganizationsFilter = ({setOrganizationId}:{setOrganizationId: (id:
 
     return <Autocomplete
             size='small'
-            sx={{ flex: '30%', mx: 1 }}
-            renderInput={(params) => <TextField {...params} label="Organizaitons" />}
+            renderInput={(params) => <TextField {...params} label="Organizations" error={!!error} helperText={error} />}
             options={organizationOptions}
             onChange={(event, option) => {
                 setOrganizationId(option?.id)

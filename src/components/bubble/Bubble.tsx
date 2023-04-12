@@ -75,7 +75,7 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
 
     render() {
         return <React.Fragment>
-            <div style={{position: "fixed", bottom: 10, right: 10, zIndex: 100000}}>
+            <div style={{position: "fixed", bottom: 10, right: 10, zIndex: 100000, width: 350}}>
                 {this.state.snackbars.map((snackbar) => {
                     return <BubbleItem key={snackbar.id}
                                        message={snackbar.message}

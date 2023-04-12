@@ -133,10 +133,12 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 	const { data, isFetching, isSuccess } = useGetAllFacilities(
 		pageNumber,
 		rowsPerPage,
+		'name,asc',
 		cityId,
 		facilityName,
 		facilityStatus.value,
-		organizationId
+		organizationId,
+
 	);
 	const mutationDelete = useDeleteFacility();
 

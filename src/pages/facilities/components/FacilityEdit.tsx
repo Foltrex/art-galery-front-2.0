@@ -12,7 +12,7 @@ const FacilityEdit = (props:{facilityId: string, onSubmit: (facility:Facility) =
     if(isLoading || isFetching || !data) {
         return <Loading />
     }
-
+    console.log(data);
     return <FacilityFormAbstract data={data} back={props.back} onSubmit={(facility) => {
         return axiosApi.put(`${ART_SERVICE}/facilities/${facility.id!}`, facility)
             .then(() => {

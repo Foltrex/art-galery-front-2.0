@@ -26,7 +26,7 @@ import ArtSizeFilter from './components/form/art-size-filter/ArtSizeFilter';
 import ArtStyleFilter from './components/form/art-style-filter/ArtStyleFilter';
 import ArtTopicFilter from './components/form/ArtTopicFilter';
 import ArtTypeFilter from './components/form/ArtTypeFilter';
-import {FacilityNewRoute} from "./pages/facilities/FacilityCreateRoute";
+import {FacilityNewRoute} from "./pages/facilities/FacilityNewRoute";
 import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 
 function App() {
@@ -75,8 +75,8 @@ function App() {
 
                     <Route path='facilities'>
                         <Route index element={<Facilities/>}/>
-                        <Route path={":id"} element={<FacilityNewRoute/>}/>
-                        <Route path={"new"} element={<FacilityEditRoute/>}/>
+                        <Route path={":id"} element={<FacilityEditRoute/>}/>
+                        <Route path={"new"} element={<FacilityNewRoute/>}/>
                     </Route>
 
                     <Route path='users' element={<UserRoute/>}/>
