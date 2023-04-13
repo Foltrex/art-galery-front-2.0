@@ -3,7 +3,7 @@ import { Box, Grid, IconButton } from '@mui/material';
 import { ChangeEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSaveArt } from '../../../api/ArtApi';
-import { useNewSaveFile } from '../../../api/FileApi';
+import { useUploadFile } from '../../../api/FileApi';
 import ImageSlider from '../../../components/ui/ImageSlider';
 import { Art } from '../../../entities/art';
 import { EntityFile } from '../../../entities/entityFile';
@@ -19,7 +19,7 @@ const ArtCreation = () => {
 	const navigate = useNavigate();
 
 	const mutationSaveArt = useSaveArt();
-	const mutationSaveImage = useNewSaveFile();
+	const mutationSaveImage = useUploadFile();
 
 	const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
 		const fileList = e.target.files!;
@@ -67,7 +67,7 @@ const ArtCreation = () => {
 					{files.at(0)
 						? <ImageSlider 
 							slides={images} 
-							setMainImageNumber={setMainImageNumber}
+							handleMakeMainClick={setMainImageNumber}
 							onImageAdd={() => fileInput.current?.click()} 
 						  />
 						: <Box

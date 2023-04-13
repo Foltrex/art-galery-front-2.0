@@ -5,7 +5,6 @@ import FilterOpenButton from './FilterOpenButton';
 
 export interface FilterElement {
     label: string;
-    value: string;
 }
 
 export type FilterVariant = 'checkbox' | 'radio';

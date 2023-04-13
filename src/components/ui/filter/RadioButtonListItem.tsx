@@ -14,8 +14,8 @@ const StyledListItem = styled('li')({
 const RadioButtonListItem: React.FunctionComponent<IRadioButtonListItemProps> = ({ element }) => {
 	return (
 		<StyledListItem>
-			<input id={element.value} type='radio' name='style' value={element.value} />
-			<label htmlFor={element.value}>{element.label}</label>
+			<input id={element.label} type='radio' name='style' value={element.label} />
+			<label htmlFor={element.label}>{element.label}</label>
 		</StyledListItem>
 	);
 };

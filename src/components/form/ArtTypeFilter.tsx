@@ -1,14 +1,13 @@
 import * as React from 'react';
 import Filter, {FilterElement} from '../ui/filter/Filter';
+import { useGetAllArtTypes } from '../../api/ArtTypeApi';
 
 
 const ArtTypeFilter = () => {
-    const content: FilterElement[] = [
-        {label: 'Picture', value: 'picture'},
-        {label: 'Photo', value: 'photo'},
-        {label: 'Drawing', value: 'drawing'},
-        {label: 'Sculpture', value: 'sculpture'},
-    ];
+  const { data = [] } = useGetAllArtTypes();
+  const content = data.map(item => ({
+    label: item.label
+  } as FilterElement));
 
   return (
     <Filter title={'Types'} variant={'checkbox'} content={content} />

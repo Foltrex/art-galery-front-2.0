@@ -1,19 +1,16 @@
-import SaveIcon from '@mui/icons-material/Save';
-import { Box, Divider, FormControl, Grid, IconButton, Input, InputBase, InputLabel, MenuItem, Select, Stack, TextField, Typography } from '@mui/material';
-import { FormikHelpers, useFormik } from 'formik';
-import * as yup from 'yup';
-import { Art } from '../../../entities/art';
-import { TokenService } from '../../../services/TokenService';
-import { useRootStore } from '../../../stores/provider/RootStoreProvider';
-import ArtSizeFilter from '../../../components/form/art-size-filter/ArtSizeFilter';
-import ArtStyleFilter from '../../../components/form/art-style-filter/ArtStyleFilter';
-import { useGetArtStyleFilterContent } from '../../../components/form/art-style-filter/useGetStyleFilterContent';
-import { useGetArtSizeFilterContent } from '../../../components/form/art-size-filter/useGetArtSizeFilterContent';
+import { Save } from '@mui/icons-material';
+import { Box, FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { useEffect } from 'react';
-import { Artist } from '../../../entities/artist';
-import { Save } from '@mui/icons-material';
+import { FormikHelpers, useFormik } from 'formik';
+import * as yup from 'yup';
+import { useGetAllArtSizes } from '../../../api/ArtSizeApi';
+import { useGetAllArtStyles } from '../../../api/ArtStyleApi';
+import { Art } from '../../../entities/art';
+import { ArtSize } from '../../../entities/art-size';
+import { ArtStyle } from '../../../entities/art-style';
+import { useRootStore } from '../../../stores/provider/RootStoreProvider';
+import { useState } from 'react';
 
 interface IArtFormProps {
 	art?: Art;
@@ -23,21 +20,22 @@ interface IArtFormProps {
 interface FormValues {
 	artName: string;
 	description: string;
-	style: string;
 	creationDate: Dayjs;
-	size: string;
+	size: ArtSize;
 }
 
 const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	// const accountId = TokenService.getCurrentAccountId();
 	// const { data: artist } = useGetArtistByAccountId(accountId);
+	const [selectedStyles, setSelectedStyles] = useState<ArtStyle[]>(art?.artStyles ?? []);
 
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
 	const account = authStore.account;
 
-	const artStyleItems = useGetArtStyleFilterContent();
-	const artSizeItems = useGetArtSizeFilterContent();
+	const { data: artStyleItems = []} = useGetAllArtStyles();
+	
+	const { data: artSizeItems = []} = useGetAllArtSizes();
 	/*
 	let artist:Artist|undefined = undefined;
 	useEffect(() => {
@@ -57,9 +55,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 	const initialValues: FormValues = {
 		artName: art?.name ?? '',
 		description: art?.description ?? '',
-		style: '',
 		creationDate: dayjs(),
-		size: ''
+		size:  artSizeItems[0] || artSizeItems[0]
 	}
 
 	const onSaveArt = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
@@ -72,10 +69,11 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 				name: values.artName,
 				description: values.description,
 				artistAccountId: account.id,
-				dateCreation: creationDateJS.toDate()
+				dateCreation: creationDateJS.toDate(),
+				artStyles: selectedStyles,
+				artSize: values.size
 			};
 
-			// console.log(artEntity)
 			onSubmit(artEntity);
 		} catch (e) {
 			console.log(e);
@@ -91,6 +89,15 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 		onSubmit: onSaveArt,
 	});
 
+	const handleStyleSelect = (e: SelectChangeEvent<string | string[]>) => {
+		const idsString = e.target.value;
+		const ids = typeof idsString === 'string' ? idsString.split(',') : idsString;
+		const styles = ids.map(id => artStyleItems.find(s => s.id === id)!);
+		console.log(selectedStyles)
+		setSelectedStyles(styles);
+	}
+	
+	const selectedStylesIds = selectedStyles.map(s => s.id);
 	return (
 		<form onSubmit={formik.handleSubmit}>
 			<Stack direction='column' rowGap={3}>
@@ -121,7 +128,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 
 				<FormControl size='small'>
 					<InputLabel id='style-select' shrink={false}>
-						{!formik.values.style
+						{selectedStyles.length === 0
 							? 'Style...'
 							: ''
 						}
@@ -131,17 +138,26 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 						labelId='style-select'
 						required
 						name='style'
-						value={formik.values.style}
-						onChange={formik.handleChange}
-						error={!!formik.errors.style}
+						multiple
+						value={selectedStylesIds}
+						renderValue={values => {
+							const styles = values.map(value => {
+								return selectedStyles.find(s => s.id === value)!;
+							})
+
+							return styles
+								.map(s => s.label)
+								.join(', ');
+						}}
+						onChange={handleStyleSelect}
 						// helperText={formik.errors.name}
 						sx={{ lineHeight: 'normal' }}
 						inputProps={{ shrink: false }}
 					>
-						{artStyleItems.map(s => (
+						{artStyleItems.map(s => !selectedStyles.includes(s) && (
 							<MenuItem
-								key={s.value}
-								value={s.value}
+								key={s.id}
+								value={s.id}
 							>
 								{s.label}
 							</MenuItem>
@@ -169,16 +185,21 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 						required
 						placeholder='Size...'
 						name='size'
-						value={formik.values.size}
-						onChange={formik.handleChange}
+						value={formik.values.size?.id}
+						onChange={e => {
+							const size =  artSizeItems.find(
+								s => s.id === e.target.value
+							);
+							formik.setFieldValue('size', size);
+						}}
 						error={!!formik.errors.size}
 						// helperText={formik.errors.name}
 						sx={{ lineHeight: 'normal' }}
 					>
 						{artSizeItems.map(s => (
 							<MenuItem
-								key={s.value}
-								value={s.value}
+								key={s.id}
+								value={s.id}
 							>
 								{s.label}
 							</MenuItem>

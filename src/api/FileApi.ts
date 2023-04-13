@@ -1,9 +1,8 @@
-import {useDelete, useFetch, usePost} from "../hooks/react-query"
-import {File} from '../entities/file';
-import {ART_SERVICE, axiosApi, FILE_SERVICE} from "../http/axios";
-import {useQuery} from "react-query";
-import {EntityFile} from "../entities/entityFile";
-import { useUpdate } from "../hooks/react-query";
+import { useQuery } from "react-query";
+import { EntityFile } from "../entities/entityFile";
+import { File } from '../entities/file';
+import { useDelete, useFetch, usePost } from "../hooks/react-query";
+import { ART_SERVICE, FILE_SERVICE, axiosApi } from "../http/axios";
 
 
 export const fetchImages = (ids: string[] = []) => {
@@ -25,6 +24,12 @@ export const useGetAllFileStreamByIds = (ids?: string[]) => {
     );
 }
 
+export const useGetFileStreamById = (id?: string) => {
+    return useFetch<ArrayBuffer>( `${FILE_SERVICE}/files/${id}/data`, undefined, {
+        enabled: !!id
+    });
+}
+
 export const useGetAllFileInfosByArtId = (artId?: string) => {
     return useFetch<File[]>(
         `${FILE_SERVICE}/files/arts/${artId}`,
@@ -39,8 +44,12 @@ export const useSaveFile = () => {
 }
 
 //@TODO Rename later
+export const useUploadFile = () => {
+    return usePost<EntityFile>(`${ART_SERVICE}/files/upload`);
+}
+
 export const useNewSaveFile = () => {
-    return usePost<EntityFile>(`${ART_SERVICE}/files`);
+    return usePost<EntityFile>(`${ART_SERVICE}/files`)
 }
 
 export const useGetAllEntityFilesByEntityId = (entityId?: string) => {

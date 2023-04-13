@@ -6,7 +6,7 @@ import { Box, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
 // import { useGetArtistByAccountId } from '../../../api/ArtistApi';
 import { useGetAccountById } from '../../../api/AccountApi';
-import { useSaveFile } from '../../../api/FileApi';
+import { useUploadFile, useSaveFile } from '../../../api/FileApi';
 import { Art as ArtEntity } from '../../../entities/art';
 import { FileService } from '../../../services/FileService';
 import { useRootStore } from '../../../stores/provider/RootStoreProvider';
@@ -27,7 +27,7 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 
 	const fileInput = React.useRef<HTMLInputElement>(null);
 	
-	const mutationSaveImage = useSaveFile();
+	const mutationSaveImage = useUploadFile();
 	
 	const { authStore } = useRootStore();
 	const account = authStore.account;
@@ -36,7 +36,7 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 	const handleFileInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
 		try {
 			const files = event.target.files!;
-			const file = await FileService.toFile(art.id!, files[0]);
+			const file = await FileService.toEntityFile(art.id!, files[0]);
 			await mutationSaveImage.mutateAsync(file);
 		} catch (e) {
 			// TODO: add push events
@@ -93,15 +93,16 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({
 				<Grid container>
 					<Grid item sm={4}><strong>Style</strong></Grid>
 					<Grid item sm={8}>
-						{/* {art.} */}
-						With repos and arrays on front ???
+						{art.artStyles
+							.map(s => s.label)
+							.join(', ')
+						}
 					</Grid>
 				</Grid>
 				<Grid container>
 					<Grid item sm={4}><strong>Size</strong></Grid>
 					<Grid item sm={8}>
-						{/* {art.} */}
-						With repos and arrays on front ???
+						{art.artSize.label}
 					</Grid>
 				</Grid>
 				<Grid container>

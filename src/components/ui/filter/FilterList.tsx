@@ -28,7 +28,7 @@ const FilterList: React.FunctionComponent<IFilterListProps> = ({ style, content,
             return (
                 <StyledList style={{ ...style }}>
                     {content.map(item => (
-                        <CheckboxListItem key={item.value} element={item} />
+                        <CheckboxListItem key={item.label} element={item} />
                     ))}
                 </StyledList>
             );
@@ -37,7 +37,7 @@ const FilterList: React.FunctionComponent<IFilterListProps> = ({ style, content,
             return (
                 <StyledList style={{ ...style }}>
                     {content.map(item => (
-                        <RadioButtonListItem key={item.value} element={item} />
+                        <RadioButtonListItem key={item.label} element={item} />
                     ))}
                 </StyledList>
             );

@@ -14,8 +14,8 @@ const StyledListItem = styled('li')({
 const CheckboxListItem: React.FunctionComponent<ICheckboxListItemProps> = ({element}) => {
   return (
     <StyledListItem>
-        <input id={element.value} type='checkbox' name='style' value={element.value} />
-        <label htmlFor={element.value}>{element.label}</label>
+        <input id={element.label} type='checkbox' name='style' value={element.label} />
+        <label htmlFor={element.label}>{element.label}</label>
     </StyledListItem>
   );
 };

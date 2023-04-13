@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { RefObject, useState } from "react";
 import ArtistArtForm from './AristArtForm';
 import ArtistArtInfo from './ArtistArtInfo';
-import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useDeleteFile, useGetAllEntityFilesByEntityId } from "../../../api/FileApi";
+import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds, useDeleteFile, useGetAllEntityFilesByEntityId, useUploadFile, useNewSaveFile } from "../../../api/FileApi";
 import DeleteModal from "../../../components/modal/DeleteModal";
 import ImageSlider from "../../../components/ui/ImageSlider";
 import { FileService } from "../../../services/FileService";
@@ -19,20 +19,19 @@ const Art = () => {
 
 	const [editingMode, setEditingMode] = useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
-	const [mainImageNumber, setMainImageNumber] = useState<number>();
 
 	const { id: artId } = useParams();
 	const { data: art } = useGetArtById(artId!);
 
-	const {data: fileEntities} = useGetAllEntityFilesByEntityId(art?.id);
+	const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(art?.id);
+	const originalFileEntities = fileEntities.filter(fileEntity => fileEntity.type === EntityFileTypeEnum.ORIGINAL);
+
 	let fileIds: string[] = [];
-	if (fileEntities) {
-		fileEntities.forEach(fileEntity => {
-			if (fileEntity.id && fileEntity.type === EntityFileTypeEnum.ORIGINAL) {
-				fileIds.push(fileEntity.id);
-			}
-		})
-	}
+	fileEntities.forEach(fileEntity => {
+		if (fileEntity.id && fileEntity.type === EntityFileTypeEnum.ORIGINAL) {
+			fileIds.push(fileEntity.id);
+		}
+	});
 
 	const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
 	const images = imagesData?.map(data => FileService.toImage(data));
@@ -67,19 +66,17 @@ const Art = () => {
 
 	const handleSubmit = async (art: ArtEntity) => {
 		await mutationSaveArt.mutateAsync(art);
-		// const promises = fileEntities?.map(async (file, index) => {
-		// 	var fileEntity: EntityFile = await FileService.toEntityFile(artId!, file);
-		// 	if (index === mainImageNumber) {
-		// 		fileEntity.isPrimary = true;
-		// 	} else if (!mainImageNumber && index === 0) {
-		// 		fileEntity.isPrimary = true;
-		// 	} else {
-		// 		 fileEntity.isPrimary = false;
-		// 	}
-		// 	await mutationSaveImage.mutateAsync(fileEntity);
-		// })
-		// await Promise.all(promises);
 		setEditingMode(false);
+	}
+
+	const mutationSaveFile = useNewSaveFile();
+
+	const handleMakeMainClick = async (mainImageNumber: number) => {
+		const promises = originalFileEntities.map(async (fileEntity, index) => {
+			fileEntity.isPrimary = index === mainImageNumber;
+			await mutationSaveFile.mutateAsync(fileEntity)
+		})
+		await Promise.all(promises);
 	}
 
 	return (
@@ -95,7 +92,11 @@ const Art = () => {
 					margin: '0 15px',
 				}}>
 					{images && images.at(0)
-						? <ImageSlider slides={images} onDelete={onDeleteFile} setMainImageNumber={setMainImageNumber} />
+						? <ImageSlider 
+							slides={images} 
+							onDelete={onDeleteFile} 
+							handleMakeMainClick={handleMakeMainClick}
+							showLoadMore={false} />
 						: <div style={{ background: '#E8EDF0', width: '100%', height: '100%' }} />
 					}
 				</div>

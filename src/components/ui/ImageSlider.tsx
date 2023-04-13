@@ -7,7 +7,8 @@ interface IImageSliderProps {
     slides?: string[];
     onDelete?: (index: number) => void;
 	onImageAdd?: () => void;
-    setMainImageNumber?: (number: number) => void;
+    handleMakeMainClick?: (number: number) => void;
+    showLoadMore?: boolean;
 }
 
 const LeftArrowButton = styled('div')({
@@ -60,7 +61,8 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
     slides, 
     onDelete, 
     onImageAdd, 
-    setMainImageNumber 
+    handleMakeMainClick,
+    showLoadMore = true
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -140,8 +142,8 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
             <Stack direction='column' sx={{ px: 30 }} gap={2}>
                 <Button 
                     onClick={() => {
-                        if (setMainImageNumber) {
-                            setMainImageNumber(currentIndex)
+                        if (handleMakeMainClick) {
+                            handleMakeMainClick(currentIndex)
                         }
                     }}
                     variant='outlined' 
@@ -149,13 +151,16 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                 >
                     Make this image main
                 </Button>
-                <Button 
-                    variant='outlined' 
-                    sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
-                    onClick={onImageAdd}
-                >
-                    Load More
-                </Button>
+
+                {showLoadMore &&
+                    <Button 
+                        variant='outlined' 
+                        sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
+                        onClick={onImageAdd}
+                    >
+                        Load More
+                    </Button>
+                }
             </Stack>
 
             {slides && <Modal

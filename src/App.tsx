@@ -20,6 +20,8 @@ import {FacilityNewRoute} from "./pages/facilities/FacilityNewRoute";
 import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 import {EditUserPage} from "./pages/users/EditUserPage";
 import {AddUserPage} from "./pages/users/AddUserPage";
+import ProfilePage from "./pages/home";
+import FacilityEdit from "./pages/facilities/FacilityEdit";
 
 function App() {
 
