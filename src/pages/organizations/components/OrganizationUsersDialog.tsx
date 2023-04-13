@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, Dialog, DialogActions, DialogContent} from "@mui/material";
 import {observer} from "mobx-react";
-import UserTable from "../../users/UserTable";
+import UserTable from "../../users/components/UserTable";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;

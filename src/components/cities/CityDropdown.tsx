@@ -1,10 +1,13 @@
-import {FormControl, InputLabel, MenuItem, Select} from '@mui/material';
+import {Autocomplete, TextField} from '@mui/material';
 import * as React from 'react';
+import {useMemo} from 'react';
 import {useGetAllCities} from "../../api/CityApi";
+import {City} from "../../entities/city";
 
 interface ICityDropdownProps {
     value?: string;
-    onChange: (cityId:string) => void;
+    error?: string;
+    onChange: (cityId?:string) => void;
     disabled?: boolean;
     style?: React.CSSProperties;
 }
@@ -13,27 +16,54 @@ const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
 
     value,
     onChange ,
+    error ,
     disabled = false
 }) => {
 
     const { data: cities } = useGetAllCities();
+    const cityOptions = useMemo(() => {
+        if(!cities) {
+            return [];
+        }
+        function buildLabel(o:City) {
+            if(map[o.name] === 1) {
+                return o.name || '';
+            } else {
+                return o.name + " [" + o.id + "]";
+            }
+        }
+        const map:Record<string, number> = {};
+        cities.forEach(org => {
+            if(map[org.name] === undefined) {
+                map[org.name] = 1
+            } else {
+                map[org.name]++;
+            }
+        })
+        return cities.map(o => ({label: buildLabel(o), id: o.id}));
+    }, [cities]);
+
+    const optValue = useMemo(() => {
+        if(!value || !cityOptions) {
+            return undefined;
+        }
+        for(let i = 0; i < cityOptions.length; i++) {
+            if(cityOptions[i].id === value) {
+                return cityOptions[i];
+            }
+        }
+    }, [value, cityOptions]);
 
     return (
-        <FormControl size='small' >
-            <InputLabel id='city-dropdown'>Cities</InputLabel>
-            <Select
-                disabled={disabled}
-                labelId='city-dropdown'
-                value={value ?? ''}
-                label='Cities'
-                onChange={(e, a) => onChange(e.target.value)}
-            >
-                <MenuItem value=''>All Cities</MenuItem>
-                {cities && cities.map(city => (
-                    <MenuItem key={city.id} value={city.id}>{city.name}</MenuItem>
-                ))}
-            </Select>
-        </FormControl>
+        <Autocomplete
+            size='small'
+            value={optValue}
+            renderInput={(params) => <TextField {...params} label="Cities" error={!!error} helperText={error} />}
+            options={cityOptions}
+            onChange={(event, option) => {
+                onChange(option?.id)
+            }}
+        />
     );
 };
 

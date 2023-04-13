@@ -10,7 +10,7 @@ import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
 import {Button, CircularProgress, Divider, FormControlLabel, FormGroup, Stack, Switch, TextField} from "@mui/material";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
-import {OrganizationsFilter} from "../../../components/form/OrganizationsFilter";
+import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import {findOrganizationId} from "../../../util/MetadataUtil";
 
 
@@ -90,7 +90,6 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
         props.onSubmit(values)
     }
 
-    console.log(formik)
 
     //@ts-ignore
     return (<form onSubmit={formik.handleSubmit} id="facility_add_edit" noValidate>
@@ -116,8 +115,8 @@ export const FacilityFormAbstract = (props:{data: Facility, back: () => void, on
 
             {/*@ts-ignore*/}
             {account.accountType === AccountEnum.SYSTEM
-                && <OrganizationsFilter error={formik.errors.organization?.id}
-                                        setOrganizationId={(s) => formik.setFieldValue('organization.id', s, true)}/>}
+                && <OrganizationsDropdown error={formik.errors.organization?.id}
+                                          onChange={(s) => formik.setFieldValue('organization.id', s, true)}/>}
             <TextField
                 fullWidth={true}
                 margin="normal"

@@ -1,4 +1,6 @@
 import {Account} from "../entities/account";
+import {MetadataEnum} from "../entities/enums/MetadataEnum";
+import {OrganizationRoleEnum} from "../entities/enums/organizationRoleEnum";
 
 export function find(key:string, account:Account):string|null {
     if(!account || !account.metadata) {
@@ -13,9 +15,9 @@ export function find(key:string, account:Account):string|null {
 }
 
 export function isCreatorOrAdmin(account:Account) {
-    const role = find("organizationRole", account);
-    return role === 'CREATOR' || role === 'ADMIN';
+    const role = find(MetadataEnum.ORGANIZATION_ROLE, account);
+    return role === OrganizationRoleEnum.CREATOR || role === OrganizationRoleEnum.MODERATOR;
 }
 export function findOrganizationId(account:Account) {
-    return find("organizationId", account);
+    return find(MetadataEnum.ORGANIZATION_ID, account);
 }

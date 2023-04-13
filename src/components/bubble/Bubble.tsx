@@ -63,11 +63,12 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
 
     close(snackbar: BubbleProps) {
         let length = this.state.snackbars.length;
-        const newList = [];
+        const newList = [...this.state.snackbars];
         while (length--) {
             const item = this.state.snackbars[length];
-            if (item !== snackbar) {
-                newList.push(item);
+            if (item === snackbar) {
+                newList.splice(length, 1);
+                break;
             }
         }
         this.setState({snackbars: newList});

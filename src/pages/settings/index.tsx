@@ -8,6 +8,7 @@ import {useNavigate} from "react-router-dom";
 import ChangePasswordDialog from "./dialog/ChangePasswordDialog";
 import DeleteModal from "../../components/modal/DeleteModal";
 import Bubble from "../../components/bubble/Bubble";
+import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -23,8 +24,8 @@ const Settings = () => {
                 navigate('/auth/signin');
             })
             .catch(error => {
-                console.log(error.response.data.message)
-                Bubble.error({message: "Failed to delete your account. Error message is: " + error.response.data.message, duration: 999999});
+                console.log(getErrorMessage(error))
+                Bubble.error({message: "Failed to delete your account. Error message is: " + getErrorMessage(error), duration: 999999});
             })
     }
 

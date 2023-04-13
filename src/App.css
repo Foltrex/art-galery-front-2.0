@@ -24,6 +24,9 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+.MuiSnackbarContent-message {
+  width: 260px;
+}
 
 .App-header {
   background-color: #282c34;
@@ -55,4 +58,23 @@
 .table-group-invis {
   transition: opacity ease-in-out 0.3s;
   opacity: 0;
+}
+.MuiFormControl-marginDense {
+  margin-top: 0 !important;
+}
+.profile-table {
+  margin: 0 auto;
+}
+.profile-table tr {
+  vertical-align: top;
+}
+.profile-table tr td:first-child {
+  max-width: 200px;
+  text-align: right;
+  padding: 12px 10px 0 0 ;
+}
+.profile-table tr td:last-child {
+  padding-top: 5px;
+  min-width: 300px;
+  text-align: left;
 }

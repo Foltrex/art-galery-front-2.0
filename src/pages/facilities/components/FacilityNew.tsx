@@ -3,6 +3,7 @@ import {ART_SERVICE, axiosApi} from "../../../http/axios";
 import {FacilityFormAbstract} from "./FacilityFormAbstract";
 import Bubble from "../../../components/bubble/Bubble";
 import {Facility} from "../../../entities/facility";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 
 const FacilityNew = (props:{back: () => void, onSubmit: (facility:Facility) => void}) => {
@@ -18,7 +19,8 @@ const FacilityNew = (props:{back: () => void, onSubmit: (facility:Facility) => v
                 return true;
             })
             .catch(error => {
-                Bubble.error({message: "Failed to create new facility. Error message is:" + error.response.data.message, duration: 999999})
+                console.log(getErrorMessage(error))
+                Bubble.error({message: "Failed to create new facility. Error message is:" + getErrorMessage(error), duration: 999999})
                 return false
             });
     }}/>

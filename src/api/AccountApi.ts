@@ -1,9 +1,8 @@
-import {USER_SERVICE} from "../http/axios";
-import {IPage, useDelete, useFetch, usePatch, usePost} from "../hooks/react-query";
+import {axiosApi, USER_SERVICE} from "../http/axios";
+import {IPage, useDelete, useFetch, usePatch} from "../hooks/react-query";
 import {AuthService} from "../services/AuthService";
 import {Account} from "../entities/account";
-import {Representative} from "../entities/representative";
-import { useRootStore } from "../stores/provider/RootStoreProvider";
+import {useRootStore} from "../stores/provider/RootStoreProvider";
 
 
 export const useGetAll = (
@@ -56,8 +55,16 @@ export const useDeleteAccountById = () => {
     });
 }
 
-export const useSaveRepresentative = () => {
-    return usePost<object, Representative>(`${USER_SERVICE}/auth/register-representative`, undefined, {
+export const updateUser = (account:Account) => {
+    return axiosApi.put<Account>(`${USER_SERVICE}/accounts/${account.id}`, account, {
+        headers: {
+            'Authorization': `Bearer ${AuthService.getToken()}`,
+        }
+    });
+}
+
+export const createUser = (account:Account) => {
+    return axiosApi.post<Account>(`${USER_SERVICE}/accounts/`, account, {
         headers: {
             'Authorization': `Bearer ${AuthService.getToken()}`,
         }

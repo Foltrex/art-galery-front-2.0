@@ -15,6 +15,7 @@ import {IPage} from "../../hooks/react-query";
 import {Organization} from "../../entities/organization";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
+import {NavigateFunction, useNavigate} from "react-router-dom";
 
 const Circle = styled('span')({
     height: 10,
@@ -37,6 +38,7 @@ export interface IUserGridProps {
 export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
     const [representative, setRepresentative] = useState<Account>();
     const {authStore} = useRootStore();
+    const navigate = useNavigate();
     const { data: organizationsList } = useGetAllOrganizationList();
     const organizations = useMemo(() => {
         return organizationsList?.reduce((prev:Record<string, Organization>, current:Organization) => {
@@ -69,8 +71,8 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     }
 
     const columns = useMemo(
-        () => getColumns(applySort, authStore.account, organizations),
-        [applySort, authStore.account, organizations]);
+        () => getColumns(applySort, authStore.account, navigate, organizations),
+        [applySort, authStore.account, organizations, navigate]);
 
     return <>
         {data
@@ -95,7 +97,7 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     </>
 }
 
-function getColumns(applySort:(key:string, direction:string|undefined) => void, account:Account, organizations?:Record<string, Organization>):IColumnType<Account>[] {
+function getColumns(applySort:(key:string, direction:string|undefined) => void, account:Account, navigate: NavigateFunction, organizations?:Record<string, Organization>):IColumnType<Account>[] {
     const columns:IColumnType<Account>[] = [
         {
             key: 'firstName',
@@ -167,14 +169,14 @@ function getColumns(applySort:(key:string, direction:string|undefined) => void, 
                         <IconButton
                             disableRipple
                             aria-label='edit'
-                            onClick={() => { }}
+                            onClick={() => {navigate("/users/" + account.id)}}
                         >
                             <ModeOutlinedIcon />
                         </IconButton>
                         <IconButton
                             disableRipple
                             aria-label='delete'
-                            onClick={() => { }}
+                            onClick={() => {}}
                         >
                             <DeleteOutlinedIcon />
                         </IconButton>

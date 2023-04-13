@@ -8,6 +8,7 @@ import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import Bubble from "../../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../../util/PrepareDataUtil";
 
 interface ILoginFormValues {
     email: string,
@@ -42,10 +43,8 @@ const LoginForm = () => {
             AuthService.setRememberMe(rememberMe)
             navigate('/');
         } catch (error: any) {
-            console.log(error.response.data.message)
-            Bubble.error("Login error. Error message: " + (error.response.data.message
-                ? error.response.data.message
-                : error.response.data.error))
+            console.log(getErrorMessage(error))
+            Bubble.error({message: "Login error. Error message: " + getErrorMessage(error), duration: 999999})
         }
     }
 

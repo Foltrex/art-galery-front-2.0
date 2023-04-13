@@ -6,6 +6,7 @@ import {useFormik} from "formik";
 import {usePasswordRecovery} from "../../../api/AuthApi";
 import PasswordTextField from "../../../components/form/PasswordTextField";
 import Bubble from "../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 
 interface IPasswordRecoveryFormValues {
@@ -55,8 +56,8 @@ const PasswordRecoveryForm = () => {
                 navigate('/auth/signin');
             })
             .catch(error => {
-                console.log(error.response.data.message)
-                Bubble.error("Failed to reset your password, error message is" + error.response.data.message)
+                console.log(getErrorMessage(error))
+                Bubble.error({message: "Failed to reset your password, error message is" + getErrorMessage(error), duration: 999999})
             })
     }
 

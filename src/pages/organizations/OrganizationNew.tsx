@@ -3,6 +3,7 @@ import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
 import {useNavigate} from "react-router-dom";
 import Bubble from "../../components/bubble/Bubble";
+import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 const OrganizationNew = () => {
     const navigate = useNavigate()
@@ -23,7 +24,8 @@ const OrganizationNew = () => {
                     return true;
                 })
                 .catch(error => {
-                    Bubble.error({message: "Failed to create new organization. Error message: " + error.response.data.message, duration: 999999})
+                    console.log(getErrorMessage(error))
+                    Bubble.error({message: "Failed to create new organization. Error message: " + getErrorMessage(error), duration: 999999})
                     return false;
                 });}
         }/>;

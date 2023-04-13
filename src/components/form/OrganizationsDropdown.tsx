@@ -3,7 +3,7 @@ import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {useMemo} from "react";
 import {Organization} from "../../entities/organization";
 
-export const OrganizationsFilter = ({setOrganizationId, error}:{error?:any, setOrganizationId: (id:string|undefined) => void}) => {
+export const OrganizationsDropdown = ({onChange, error, value}:{value?:string, error?:any, onChange: (id:string|undefined) => void}) => {
 
     const { data: organizations } = useGetAllOrganizationList();
 
@@ -29,12 +29,25 @@ export const OrganizationsFilter = ({setOrganizationId, error}:{error?:any, setO
         return organizations.map(o => ({label: buildLabel(o), id: o.id}));
     }, [organizations]);
 
+
+    const optValue = useMemo(() => {
+        if(!value || !organizationOptions) {
+            return undefined;
+        }
+        for(let i = 0; i < organizationOptions.length; i++) {
+            if(organizationOptions[i].id === value) {
+                return organizationOptions[i];
+            }
+        }
+    }, [value, organizationOptions]);
+
     return <Autocomplete
             size='small'
+            value={optValue}
             renderInput={(params) => <TextField {...params} label="Organizations" error={!!error} helperText={error} />}
             options={organizationOptions}
             onChange={(event, option) => {
-                setOrganizationId(option?.id)
+                onChange(option?.id)
             }}
         />
 }

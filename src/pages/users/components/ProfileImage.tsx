@@ -1,13 +1,13 @@
 import React, {ChangeEvent, useEffect, useRef, useState} from 'react';
-import DefaultProfileImage from "../../assets/images/man.png";
-import {FileService} from "../../services/FileService";
+import DefaultProfileImage from "../../../assets/images/man.png";
+import {FileService} from "../../../services/FileService";
 import {Avatar} from "@mui/material";
-import {Account} from "../../entities/account";
-import {TokenService} from "../../services/TokenService";
-import Loading from "../../components/ui/Loading";
-import {axiosApi, FILE_SERVICE, USER_SERVICE} from "../../http/axios";
-import {AuthService} from "../../services/AuthService";
-import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {Account} from "../../../entities/account";
+import {TokenService} from "../../../services/TokenService";
+import Loading from "../../../components/ui/Loading";
+import {axiosApi, FILE_SERVICE, USER_SERVICE} from "../../../http/axios";
+import {AuthService} from "../../../services/AuthService";
+import {MetadataEnum} from "../../../entities/enums/MetadataEnum";
 
 const ProfileImage = (props: { account: Account }) => {
 

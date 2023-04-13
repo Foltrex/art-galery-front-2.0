@@ -1,57 +1,31 @@
 import './App.css';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/routes/PrivateRoute';
-import ArtCreation from './pages/art/artist/ArtCreation';
 import ArtistArt from './pages/art/artist/ArtistArt';
-import RepresentativeArt from './pages/art/representative/RepresentativeArt';
 import Arts from './pages/arts';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
 import UserRoute from './pages/users/UserRoute';
-import Settings from "./pages/settings";
 import Proposals from './pages/proposals';
-import ArtistProfile from './pages/artists/ArtistProfile';
 import {BrowserRouter, Route, Routes,} from "react-router-dom";
 import Organizations from './pages/organizations';
 import OrganizationNew from "./pages/organizations/OrganizationNew";
 import OrganizationEdit from './pages/organizations/OrganizationEdit';
 import ErrorPage from "./pages/error/ErrorPage";
-import ArtistsGrid from "./pages/artists/ArtistsGrid";
 import Error404 from "./pages/error/Error404";
-import ProfilePage from "./pages/home";
-import ArtFormatFilter from './components/form/art-format-filter/ArtFormatFilter';
-import ArtSizeFilter from './components/form/art-size-filter/ArtSizeFilter';
-import ArtStyleFilter from './components/form/art-style-filter/ArtStyleFilter';
-import ArtTopicFilter from './components/form/ArtTopicFilter';
-import ArtTypeFilter from './components/form/ArtTypeFilter';
+import ProfilePage from "./pages/users/ProfilePage";
 import {FacilityNewRoute} from "./pages/facilities/FacilityNewRoute";
 import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
+import {EditUserPage} from "./pages/users/EditUserPage";
+import {AddUserPage} from "./pages/users/AddUserPage";
 
 function App() {
-    //@Todo maybe bug here
-    window.addEventListener('beforeunload', (event) => {
-        // if (!AuthService.getRememberMe()) {
-        //     AuthService.logout()
-        // }
-    });
 
     return (
         <BrowserRouter basename={"/admin"}>
             <Routes>
-                <Route
-                    path='/testing'
-                    element={
-                        <>
-                            <ArtFormatFilter/>
-                            <ArtSizeFilter/>
-                            <ArtStyleFilter/>
-                            <ArtTopicFilter/>
-                            <ArtTypeFilter/>
-                        </>
-                    }
-                />
                 <Route path='/auth/signin' element={<Login/>}/>
                 <Route path='/auth/signup' element={<Register/>}/>
                 <Route path='/auth/passwordrecovery' element={<PasswordRecovery/>}/>
@@ -67,45 +41,30 @@ function App() {
                 >
                     <Route index element={<ProfilePage/>}/>
 
-                    <Route path={"organizations"}>
+                    <Route path={"/organizations"}>
                         <Route index element={<Organizations/>}/>
                         <Route path={":id"} element={<OrganizationEdit/>}/>
                         <Route path={"new"} element={<OrganizationNew/>}/>
                     </Route>
 
-                    <Route path='facilities'>
+                    <Route path='/facilities'>
                         <Route index element={<Facilities/>}/>
                         <Route path={":id"} element={<FacilityEditRoute/>}/>
                         <Route path={"new"} element={<FacilityNewRoute/>}/>
                     </Route>
 
-                    <Route path='users' element={<UserRoute/>}/>
-                    <Route path='proposals' element={<Proposals/>}/>
+                    <Route path='/users'>
+                        <Route index element={<UserRoute/>}/>
+                        <Route path={":id"} element={<EditUserPage/>} />
+                        <Route path={"new"} element={<AddUserPage/>} />
+                    </Route>
 
-                    <Route path='gallery'>
+                    <Route path='/proposals' element={<Proposals/>}/>
+
+                    <Route path='/gallery'>
                         <Route index element={<Arts />} />
                         <Route path=':id' element={<ArtistArt />} />
                     </Route>
-
-                    <Route path='arts'>
-                        <Route path='artist'>
-                            <Route index element={<Arts/>}/>
-                            <Route path='new' element={<ArtCreation/>}/>
-                            <Route path=':id' element={<ArtistArt/>}/>
-                        </Route>
-
-                        <Route path='representative'>
-                            <Route index element={<Arts/>}/>
-                            <Route path=':id' element={<RepresentativeArt/>}/>
-                        </Route>
-                    </Route>
-
-                    <Route path='artists'>
-                        <Route index element={<ArtistsGrid/>}/>
-                        <Route path=':id' element={<ArtistProfile/>}/>
-                    </Route>
-
-                    <Route path='settings' element={<Settings/>}/>
                 </Route>
                 <Route path={"*"} element={<Error404/>}/>
             </Routes>

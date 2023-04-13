@@ -11,6 +11,7 @@ import {AuthService} from "../../../../services/AuthService";
 import RegisterFormBottom from './RegisterFormBottom';
 import {Help} from "@mui/icons-material";
 import Bubble from "../../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../../util/PrepareDataUtil";
 
 interface IRegisterFormValues {
     email: string,
@@ -76,7 +77,8 @@ const RegisterForm = () => {
             AuthService.setToken(response.data.token);
             navigate('/');
         } catch (error: any) {
-            Bubble.error({message: "Failed to register account. Error message is: " + error.response.data.message, duration: 999999});
+            console.log(getErrorMessage(error))
+            Bubble.error({message: "Failed to register account. Error message is: " + getErrorMessage(error), duration: 999999});
         }
     }
 

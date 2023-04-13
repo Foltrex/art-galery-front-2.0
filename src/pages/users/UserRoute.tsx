@@ -1,4 +1,4 @@
-import UserTable from './UserTable';
+import UserTable from './components/UserTable';
 import {findOrganizationId} from "../../util/MetadataUtil";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 

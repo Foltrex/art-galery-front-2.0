@@ -6,3 +6,7 @@ import {ART_SERVICE} from "../http/axios";
 export const useGetAllCities = () => {
     return useFetch<City[]>(`${ART_SERVICE}/cities/list`);
 }
+
+export const useGetCityById = (id:string) => {
+    return useFetch<City>(`${ART_SERVICE}/cities/${id}`, undefined, {enabled: !!id});
+}

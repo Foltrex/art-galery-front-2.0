@@ -7,14 +7,14 @@ import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
 import {createEmptyPage} from '../../hooks/react-query';
 import {
-	Button,
-	Checkbox,
-	FormControl,
-	FormControlLabel,
-	IconButton,
-	Radio,
-	RadioGroup,
-	Typography
+    Button,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    IconButton,
+    Radio,
+    RadioGroup,
+    Typography
 } from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
@@ -25,7 +25,7 @@ import {TypeFilter} from "../../components/form/TypeFilter";
 import {Link, useNavigate} from "react-router-dom";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
-import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
+import {OrganizationsDropdown} from "../../components/form/OrganizationsDropdown";
 import {isCreatorOrAdmin} from "../../util/MetadataUtil";
 
 interface IFacilityTableProps {
@@ -186,7 +186,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 			<div className="filter-row">
 				<CityDropdown value={cityId} onChange={setCityId} />
 				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
-				{!props.organizationId && <OrganizationsFilter setOrganizationId={setOrganizationId} />}
+				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} />}
 
 				<FormControl>
 					<RadioGroup

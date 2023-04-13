@@ -5,6 +5,7 @@ import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import Bubble from "../../components/bubble/Bubble";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 const OrganizationEdit = () => {
     const matches = useParams();
@@ -21,7 +22,8 @@ const OrganizationEdit = () => {
                 return true;
             })
             .catch(error => {
-                Bubble.error({message: "Failed to update organization. Error message: " + error.response.data.message, duration: 999999})
+                console.log(getErrorMessage(error))
+                Bubble.error({message: "Failed to update organization. Error message: " + getErrorMessage(error), duration: 999999})
                 return false
             });}
     }/>;

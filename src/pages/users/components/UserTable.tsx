@@ -1,13 +1,16 @@
 import * as React from 'react';
 import {useState} from 'react';
-import {UserGrid} from "../../components/users/UserGrid";
-import {TokenService} from '../../services/TokenService';
-import {useGetAll} from '../../api/AccountApi';
-import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
-import CityDropdown from "../../components/cities/CityDropdown";
-import {OrganizationsFilter} from "../../components/form/OrganizationsFilter";
-import {TypeFilter} from "../../components/form/TypeFilter";
+import {UserGrid} from "../../../components/users/UserGrid";
+import {TokenService} from '../../../services/TokenService';
+import {useGetAll} from '../../../api/AccountApi';
+import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
+import CityDropdown from "../../../components/cities/CityDropdown";
+import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
+import {TypeFilter} from "../../../components/form/TypeFilter";
+import {useNavigate} from "react-router-dom";
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import {isCreatorOrAdmin} from "../../../util/MetadataUtil";
 
 interface IUserTableProps {
     organizationId?: string;
@@ -22,6 +25,9 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
     const [rowsPerPage, setRowsPerPage] = useState(15);
     const [pageNumber, setPageNumber] = useState(0);
     const [userType, setUserType] = useState<string>('');
+    const navigate = useNavigate();
+    const {authStore} = useRootStore();
+    const canCreateUser = authStore.account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(authStore.account);
 
 
     const [sort, setSort] = useState<string>();
@@ -67,7 +73,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
 
                 <CityDropdown value={cityId} onChange={setCityId} />
 
-                {!props.organizationId && <OrganizationsFilter setOrganizationId={setOrganizationId} />}
+                {!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} />}
 
                 <FormControl size='small'>
                     <InputLabel id='usertype-dropdown'>Usertype</InputLabel>
@@ -85,7 +91,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
                         ))}
                     </Select>
                 </FormControl>
-
+                {canCreateUser && <FormControl size='small' style={{marginLeft: 'auto'}}><Button variant={"text"} onClick={() => navigate("/users/new")}>New User</Button></FormControl>}
             </Box>
 
             <UserGrid

@@ -6,6 +6,7 @@ import {useUpdateAccountPasswordById} from "../../../api/AccountApi";
 import {TokenService} from "../../../services/TokenService";
 import PasswordTextField from "../../../components/form/PasswordTextField";
 import Bubble from "../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 interface IChangePasswordDialogProps {
     open: boolean;
@@ -55,8 +56,8 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
             await mutationUpdateAccountPassword.mutateAsync(values)
             Bubble.success("Password changed successfully!");
         } catch (error: any) {
-            console.log(error.response.data.message)
-            Bubble.error({message: "Failed to change password. Error message is: " + error.response.data.message, duration: 999999});
+            console.log(getErrorMessage(error))
+            Bubble.error({message: "Failed to change password. Error message is: " + getErrorMessage(error), duration: 999999});
         }
     }
 

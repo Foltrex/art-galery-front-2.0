@@ -20,18 +20,26 @@ const styles = {
     success: {
         marginTop: 10,
         backgroundColor: green[600],
+        display: "flex",
+        alignItems: "baseline"
     },
     error: {
         marginTop: 10,
         backgroundColor: '#d32f2f',
+        display: "flex",
+        alignItems: "baseline"
     },
     info: {
         marginTop: 10,
         backgroundColor: '#3f51b5',
+        display: "flex",
+        alignItems: "baseline"
     },
     warning: {
         marginTop: 10,
         backgroundColor: amber[700],
+        display: "flex",
+        alignItems: "baseline"
     },
 }
 const iconStyle = {
@@ -40,7 +48,7 @@ const iconStyle = {
 };
 const messageStyle = {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: 'flex-start',
 };
 
 class BubbleState {
@@ -92,7 +100,7 @@ class BubbleItem extends React.Component<BubbleProps, BubbleState> {
             message={
                 <span id="client-snackbar" style={messageStyle}>
                         <Icon style={iconStyle}/>
-                    {this.props.message}
+                    <div style={{overflowWrap: "anywhere"}}>{this.props.message}</div>
                     </span>
             }
             action={[
