@@ -15,13 +15,11 @@ import OrganizationNew from "./pages/organizations/OrganizationNew";
 import OrganizationEdit from './pages/organizations/OrganizationEdit';
 import ErrorPage from "./pages/error/ErrorPage";
 import Error404 from "./pages/error/Error404";
-import ProfilePage from "./pages/users/ProfilePage";
 import {FacilityNewRoute} from "./pages/facilities/FacilityNewRoute";
 import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 import {EditUserPage} from "./pages/users/EditUserPage";
 import {AddUserPage} from "./pages/users/AddUserPage";
-import ProfilePage from "./pages/home";
-import FacilityEdit from "./pages/facilities/FacilityEdit";
+import ProfilePage from './pages/users/ProfilePage';
 
 function App() {
 
