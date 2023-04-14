@@ -67,7 +67,7 @@ function prepareSidebar(account:Account) {
             result.push({
                 text: 'Account',
                 icon: <AccountCircleOutlinedIcon/>,
-                link: '/account/' + account.id
+                link: '/'
             })
             return result;
         }
@@ -91,7 +91,7 @@ function prepareSidebar(account:Account) {
                 {
                     text: 'Account',
                     icon: <AccountCircleOutlinedIcon/>,
-                    link: '/account/' + account.id
+                    link: '/'
                 },
             ]
         case AccountEnum.SYSTEM: {
@@ -119,7 +119,7 @@ function prepareSidebar(account:Account) {
                 {
                     text: 'Account',
                     icon: <PeopleOutline/>,
-                    link: '/account/' + account.id
+                    link: '/'
                 },
             ]
         }

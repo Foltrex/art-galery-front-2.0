@@ -43,13 +43,13 @@ const ArtCreation = () => {
 			} else if (!mainImageNumber && index === 0) {
 				fileEntity.isPrimary = true;
 			} else {
-				 fileEntity.isPrimary = false;
+				fileEntity.isPrimary = false;
 			}
 			await mutationSaveImage.mutateAsync(fileEntity);
 		})
 		await Promise.all(promises);
 
-		navigate(`/arts/artist/${artId}`);
+		navigate(`/gallery/${artId}`);
 	}
 
 	return (

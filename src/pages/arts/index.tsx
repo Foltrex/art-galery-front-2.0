@@ -112,7 +112,7 @@ const Arts = () => {
 
 					{accountType === AccountEnum.ARTIST &&
 						<Tooltip title='Add New Art'>
-							<IconButton onClick={() => navigate('/arts/artist/new')}>
+							<IconButton onClick={() => navigate('/gallery/new')}>
 								<AddIcon fontSize='large' />
 							</IconButton>
 						</Tooltip>

@@ -145,12 +145,6 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 
 					Proposals
 				</MenuItem>
-				<MenuItem onClick={() => navigate('/settings')}>
-					<ListItemIcon>
-						<Settings fontSize='small' />
-					</ListItemIcon>
-					Settings
-				</MenuItem>
 
 				{renderLoginMenuItem()}
 			</Menu>

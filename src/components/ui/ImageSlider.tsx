@@ -6,9 +6,10 @@ import { useState } from "react";
 interface IImageSliderProps {
     slides?: string[];
     onDelete?: (index: number) => void;
-	onImageAdd?: () => void;
+    onImageAdd?: () => void;
     handleMakeMainClick?: (number: number) => void;
     showLoadMore?: boolean;
+    showMakeMain?: boolean;
 }
 
 const LeftArrowButton = styled('div')({
@@ -57,12 +58,13 @@ const SliderImage = styled('div', {
 }));
 //////
 
-const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({ 
-    slides, 
-    onDelete, 
-    onImageAdd, 
+const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
+    slides,
+    onDelete,
+    onImageAdd,
     handleMakeMainClick,
-    showLoadMore = true
+    showLoadMore = true,
+    showMakeMain = true
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -128,7 +130,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
 
             {slides && <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh' }}>
                 {slides.map((_, index) => (
-                    <img 
+                    <img
                         src={slides[index]}
                         onClick={() => handleDotClick(index)}
                         width='50px'
@@ -140,21 +142,23 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
             }
 
             <Stack direction='column' sx={{ px: 30 }} gap={2}>
-                <Button 
-                    onClick={() => {
-                        if (handleMakeMainClick) {
-                            handleMakeMainClick(currentIndex)
-                        }
-                    }}
-                    variant='outlined' 
-                    sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
-                >
-                    Make this image main
-                </Button>
+                {showMakeMain &&
+                    <Button
+                        onClick={() => {
+                            if (handleMakeMainClick) {
+                                handleMakeMainClick(currentIndex)
+                            }
+                        }}
+                        variant='outlined'
+                        sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
+                    >
+                        Make this image main
+                    </Button>
+                }
 
                 {showLoadMore &&
-                    <Button 
-                        variant='outlined' 
+                    <Button
+                        variant='outlined'
                         sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
                         onClick={onImageAdd}
                     >
