@@ -11,6 +11,9 @@ import {TypeFilter} from "../../../components/form/TypeFilter";
 import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {isCreatorOrAdmin} from "../../../util/MetadataUtil";
+import { Organization } from '../../../entities/organization';
+import { useGetOrganizationById, useGetOrganizationsByIds } from '../../../api/OrganizationApi';
+import { Metadata } from '../../../entities/metadata';
 
 interface IUserTableProps {
     organizationId?: string;
@@ -28,6 +31,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
     const navigate = useNavigate();
     const {authStore} = useRootStore();
     const canCreateUser = authStore.account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(authStore.account);
+    const showOrganizationColumn = authStore.account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(authStore.account);
 
 
     const [sort, setSort] = useState<string>();
@@ -44,7 +48,6 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
         organizationId: organizationId,
         sort
     });
-
 
     const loggedUserAccountType = TokenService.getCurrentAccountType();
     const userTypes = Object

@@ -10,12 +10,13 @@ import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {IconButton, styled, Typography} from "@mui/material";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {find, findOrganizationId} from "../../util/MetadataUtil";
+import {find, findOrganizationId, isCreatorOrAdmin} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
 import {Organization} from "../../entities/organization";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {NavigateFunction, useNavigate} from "react-router-dom";
+import { useDeleteAccountById } from "../../api/AccountApi";
 
 const Circle = styled('span')({
     height: 10,
@@ -32,11 +33,11 @@ export interface IUserGridProps {
     organizationId?: string;
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onPageNumberChange: (page: number) => void;
-    applySort: (key:string, direction:string|undefined) => void
+    applySort: (key:string, direction:string|undefined) => void;
 }
 
 export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
-    const [representative, setRepresentative] = useState<Account>();
+    const [user, setUser] = useState<Account>();
     const {authStore} = useRootStore();
     const navigate = useNavigate();
     const { data: organizationsList } = useGetAllOrganizationList();
@@ -47,10 +48,10 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         }, {} as Record<string, Organization>)
     }, [organizationsList])
     
-    const mutationDelete = useDeleteRepresentative();
+    const mutationDelete = useDeleteAccountById();
     const onDelete = async () => {
         try {
-            await mutationDelete.mutateAsync(representative!.id);
+            await mutationDelete.mutateAsync(user!.id);
         } catch (e) {
             // add push notification
             console.log(e);
@@ -61,17 +62,17 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const handleDelete = (data: Account) => {
-        setRepresentative(data);
+        setUser(data);
         setOpenDeleteModal(true);
     }
 
     const handleEdit = (data: Account) => {
-        setRepresentative(data);
+        setUser(data);
         setOpenEditForm(true);
     }
 
     const columns = useMemo(
-        () => getColumns(applySort, authStore.account, navigate, organizations),
+        () => getColumns(applySort, authStore.account, navigate, handleDelete, organizations),
         [applySort, authStore.account, organizations, navigate]);
 
     return <>
@@ -97,7 +98,13 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     </>
 }
 
-function getColumns(applySort:(key:string, direction:string|undefined) => void, account:Account, navigate: NavigateFunction, organizations?:Record<string, Organization>):IColumnType<Account>[] {
+function getColumns(
+    applySort:(key:string, direction:string|undefined) => void, 
+    account:Account, 
+    navigate: NavigateFunction, 
+    onDelete: (account: Account) => void,
+    organizations?:Record<string, Organization>,
+):IColumnType<Account>[] {
     const columns:IColumnType<Account>[] = [
         {
             key: 'firstName',
@@ -137,7 +144,7 @@ function getColumns(applySort:(key:string, direction:string|undefined) => void, 
         },
     ];
 
-    if(account.accountType !== AccountEnum.REPRESENTATIVE) {
+    if(account.accountType !== AccountEnum.REPRESENTATIVE || isCreatorOrAdmin(account)) {
         columns.push({
             key: 'organization',
             title: 'Organization',
@@ -176,7 +183,7 @@ function getColumns(applySort:(key:string, direction:string|undefined) => void, 
                         <IconButton
                             disableRipple
                             aria-label='delete'
-                            onClick={() => {}}
+                            onClick={() => onDelete(account)}
                         >
                             <DeleteOutlinedIcon />
                         </IconButton>

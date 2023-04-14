@@ -9,7 +9,7 @@ import {
 } from "react-query";
 import {axiosApi} from "../http/axios";
 
-type QueryKeyT = [string, object | undefined];
+export type QueryKeyT = [string, object | undefined];
 
 const X_TOTAL_COUNT_HEADER: string = "x-total-count";
 

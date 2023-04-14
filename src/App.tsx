@@ -20,6 +20,7 @@ import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 import {EditUserPage} from "./pages/users/EditUserPage";
 import {AddUserPage} from "./pages/users/AddUserPage";
 import ProfilePage from './pages/users/ProfilePage';
+import ArtCreation from './pages/art/artist/ArtCreation';
 
 function App() {
 
@@ -64,6 +65,7 @@ function App() {
                     <Route path='/gallery'>
                         <Route index element={<Arts />} />
                         <Route path=':id' element={<ArtistArt />} />
+                        <Route path='new' element={<ArtCreation />} />
                     </Route>
                 </Route>
                 <Route path={"*"} element={<Error404/>}/>
