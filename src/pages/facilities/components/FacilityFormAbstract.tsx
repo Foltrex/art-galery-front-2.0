@@ -1,19 +1,47 @@
-import { useRootStore } from "../../../stores/provider/RootStoreProvider";
-import * as React from "react";
-import { ChangeEvent, useRef, useState } from "react";
-import { useSaveFile } from "../../../api/FileApi";
-import { FileService } from "../../../services/FileService";
-import * as yup from "yup";
+import { AddAPhoto } from "@mui/icons-material";
+import { Button, CircularProgress, Divider, FormControlLabel, FormGroup, IconButton, Stack, Switch, TextField, styled } from "@mui/material";
 import { useFormik } from "formik";
-import { Facility } from "../../../entities/facility";
-import MapDialog from "../../../components/map/MapDialog";
-import { Address } from "../../../entities/address";
-import { Button, CircularProgress, Divider, FormControlLabel, FormGroup, Stack, Switch, TextField } from "@mui/material";
-import { AccountEnum } from "../../../entities/enums/AccountEnum";
+import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import * as yup from "yup";
+import { useUploadFile } from "../../../api/FileApi";
 import { OrganizationsDropdown } from "../../../components/form/OrganizationsDropdown";
-import { findOrganizationId } from "../../../util/MetadataUtil";
+import MapDialog from "../../../components/map/MapDialog";
 import ImageSlider from "../../../components/ui/ImageSlider";
+import { Address } from "../../../entities/address";
+import { AccountEnum } from "../../../entities/enums/AccountEnum";
+import { Facility } from "../../../entities/facility";
+import { useGetImagesForEntityId } from "../../../hooks/useGetImagesForEntityId";
+import { FileService } from "../../../services/FileService";
+import { useRootStore } from "../../../stores/provider/RootStoreProvider";
+import { findOrganizationId } from "../../../util/MetadataUtil";
+import _ from "lodash";
 
+interface ImageFrameProps {
+    showBorder?: boolean;
+}
+
+const ImageFrame = styled('div', {
+    shouldForwardProp: (prop) => prop !== 'showBorder',
+    overridesResolver: (props, styles) => [ styles.root ],
+
+})<ImageFrameProps>(({ showBorder = true }) => ({
+    border: showBorder ? '1px solid' : 'none',
+    display: 'block',
+    position: 'relative',
+    width: 400,
+    height: 300,
+    borderRadius: 2,
+    marginLeft: '50%',
+    transform: 'translate(-50%, 0)',
+    textAlign: 'center'
+}))
+
+const AddImageButton = styled(IconButton)({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)'
+})
 
 export const FacilityFormAbstract = (props: { data: Facility, back: () => void, onSubmit: (facility: Facility) => Promise<boolean> }) => {
     const { authStore } = useRootStore();
@@ -27,9 +55,20 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
 
     const fileInput = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<File[]>([]);
-    const [images, setImages] = useState<string[]>([]);
 
-    const mutationSaveImage = useSaveFile();
+    const facilityImages = useGetImagesForEntityId(props.data?.id)
+
+    // TODO: BUG WITH: const [images, setImages] = useState<string[]>(facilityImages);
+    // const [images, setImages] = useState<string[]>([]);
+    const [images, setImages] = useState<string[]>([]);
+    
+    // useEffect(() => {
+    //     if (facilityImages) {
+    //         setImages(_.union(images, facilityImages));
+    //     }
+    // }, [images])
+
+    const mutationUploadImage = useUploadFile();
 
     const handleFileInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const fileList = e.target.files!;
@@ -88,14 +127,55 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     const submit = async (values: Facility) => {
         values.id = props.data.id || '';
         values.organization.id = values.organization.id || organizationId || '';
-        props.onSubmit(values)
-    }
+        props.onSubmit(values);
 
+        const entityId = values.id;
+        if (entityId) {
+            const promises = files.map(async (file) => {
+                console.log(entityId)
+                const fileEntity = await FileService.toEntityFile(entityId, file);
+                await mutationUploadImage.mutateAsync(fileEntity);
+            })
+            await Promise.all(promises);
+        }
+    }
+    
+    const renderImageSlider = () => {
+        if (facilityImages.length > 0) {
+            return (
+                <ImageFrame showBorder={false} sx={{ mb: 10 }}>
+                    <ImageSlider slides={facilityImages} showLoadMore={false} showMakeMain={false} />
+                </ImageFrame>
+            );
+        } else if (images.length > 0) {
+            return (
+                <ImageFrame showBorder={false} sx={{ mb: 10 }}>
+                    <ImageSlider slides={images} showLoadMore={false} showMakeMain={false} />
+                </ImageFrame>
+            );
+        } else {
+            return (
+                <ImageFrame>
+                    <AddImageButton onClick={() => fileInput.current?.click()}>
+                        <AddAPhoto />
+                    </AddImageButton>
+                    <input
+                        style={{
+                            display: 'none'
+                        }}
+                        type='file'
+                        ref={fileInput}
+                        onChange={handleFileInputChange}
+                    />
+                </ImageFrame>
+            )
+        }
+    }
 
     //@ts-ignore
     return (
         <>
-            <ImageSlider showLoadMore={false} showMakeMain={false} />
+            {renderImageSlider()}
             <form onSubmit={formik.handleSubmit} id="facility_add_edit" noValidate>
                 <MapDialog
                     open={openMap}

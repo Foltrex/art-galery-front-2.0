@@ -6,7 +6,7 @@ import { Box, Grid, IconButton, Stack, Typography } from '@mui/material';
 import * as React from 'react';
 // import { useGetArtistByAccountId } from '../../../api/ArtistApi';
 import { useGetAccountById } from '../../../api/AccountApi';
-import { useUploadFile, useSaveFile } from '../../../api/FileApi';
+import { useUploadFile } from '../../../api/FileApi';
 import { Art as ArtEntity } from '../../../entities/art';
 import { FileService } from '../../../services/FileService';
 import { useRootStore } from '../../../stores/provider/RootStoreProvider';

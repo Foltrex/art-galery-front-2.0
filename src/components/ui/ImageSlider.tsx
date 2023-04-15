@@ -1,7 +1,7 @@
 import { Box, Button, Modal, Stack } from "@mui/material";
 import { Container, fontSize, styled } from "@mui/system";
 import Delete from "@mui/icons-material/Delete";
-import { useState } from "react";
+import { CSSProperties, useState } from "react";
 
 interface IImageSliderProps {
     slides?: string[];
@@ -10,16 +10,18 @@ interface IImageSliderProps {
     handleMakeMainClick?: (number: number) => void;
     showLoadMore?: boolean;
     showMakeMain?: boolean;
+    styles?: CSSProperties
 }
 
 const LeftArrowButton = styled('div')({
-    paddingTop: '20%',
+    paddingTop: '25%',
     textAlign: 'center',
-    width: '60px',
+    width: 60,
     height: '100%',
     backgroundColor: 'rgb(234, 237, 239)',
     position: 'absolute',
-    left: '22px',
+    top: '0',
+    left: -60,
     fontSize: '55px',
     color: '#fff',
     zIndex: 1,
@@ -27,36 +29,19 @@ const LeftArrowButton = styled('div')({
 });
 
 const RightArrowButton = styled('div')({
-    paddingTop: '20%',
+    paddingTop: '25%',
     textAlign: 'center',
-    width: '60px',
+    width: 60,
     height: '100%',
     backgroundColor: 'rgb(234, 237, 239)',
     position: 'absolute',
-    right: '22px',
+    top: '0',
+    right: -60,
     fontSize: '55px',
     color: '#fff',
     zIndex: 1,
     cursor: 'pointer'
 });
-
-interface SliderImageProps {
-    src: string;
-}
-
-//@todo remove
-const SliderImage = styled('div', {
-    shouldForwardProp: prop => prop !== 'src'
-})<SliderImageProps>(({ src }) => ({
-    backgroundImage: `url(${src})`,
-    height: '100%',
-    width: 'auto',
-    borderRadius: '10px',
-    backgroundPosition: 'center',
-    backgroundSize: 'contain',
-    backgroundRepeat: 'no-repeat'
-}));
-//////
 
 const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
     slides,
@@ -64,7 +49,8 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
     onImageAdd,
     handleMakeMainClick,
     showLoadMore = true,
-    showMakeMain = true
+    showMakeMain = true,
+    styles
 }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [showModal, setShowModal] = useState(false);
@@ -100,32 +86,35 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
     return (
         <div style={{
             height: '100%',
-            position: 'relative'
+            position: 'relative',
+            ...styles
         }}>
-            {slides && <LeftArrowButton onClick={handleLeftArrowClick}>
-                &#8249;
-            </LeftArrowButton>
-            }
-            {slides && <RightArrowButton onClick={handleRightArrowClick}>
-                &#8250;
-            </RightArrowButton>
-            }
 
-            <div style={{ background: 'white', width: '100%', height: '100%', textAlign: "center" }}>
-                {slides && <img
-                    src={slides[currentIndex]}
-                    onClick={handleImageClick}
-                    style={{
-                        maxWidth: '100%',
-                        height: '100%',
-                        width: 'auto',
-                        borderRadius: '0px',
-                        backgroundPosition: 'center',
-                        backgroundSize: 'contain',
-                        backgroundRepeat: 'no-repeat',
-                    }}
-                    alt={slides[currentIndex]}
-                />}
+            <div style={{ background: 'white', width: '100%', height: '100%', textAlign: "center", position: 'relative' }}>
+                {slides && (
+                    <>
+                        <img
+                            src={slides[currentIndex]}
+                            onClick={handleImageClick}
+                            style={{
+                                maxWidth: '100%',
+                                height: '100%',
+                                width: 'auto',
+                                backgroundPosition: 'center',
+                                backgroundSize: 'contain',
+                                backgroundRepeat: 'no-repeat',
+                            }}
+                            alt={slides[currentIndex]}
+                        />
+                        <LeftArrowButton onClick={handleLeftArrowClick}>
+                            &#8249;
+                        </LeftArrowButton>
+                        <RightArrowButton onClick={handleRightArrowClick}>
+                            &#8250;
+                        </RightArrowButton>
+                    </>
+                )
+                }
             </div>
 
             {slides && <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh' }}>

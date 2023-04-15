@@ -32,13 +32,13 @@ export class FileService {
         return fileEnity;
     }
 
-    static async toEntityFile(artId: string, file: File): Promise<EntityFile> {
+    static async toEntityFile(entityId: string, file: File): Promise<EntityFile> {
         const arrayBufferFile = await this.toArrayBufferFromBlob(file);
         const binaryFile = new Uint8Array(arrayBufferFile);
         const encodedBase64Image =  naclUtil.encodeBase64(binaryFile);
         
         return {
-            entityId: artId,
+            entityId: entityId,
             isPrimary: true,
             mimeType: file.type,
             data: encodedBase64Image

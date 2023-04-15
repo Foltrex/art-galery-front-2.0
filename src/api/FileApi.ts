@@ -15,11 +15,21 @@ export const fetchImages = (ids: string[] = []) => {
         .then(responses => responses.map(response => response.data));
 };
 
+export const fetchEntityFiles = (entityId?: string) => {
+    return axiosApi.get<EntityFile[]>(`${ART_SERVICE}/files`, {
+            params: {
+                entityId: entityId
+            }
+        })
+        .then(response => response.data);
+}
+
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
     return useQuery<ArrayBuffer[]>(
         [`${FILE_SERVICE}/files/data`, {ids: ids}],
-        () => fetchImages(ids), {
-            // enabled: ids !== undefined
+        () => fetchImages(ids), 
+        {
+            enabled: !!ids
         }
     );
 }
@@ -53,16 +63,12 @@ export const useNewSaveFile = () => {
 }
 
 export const useGetAllEntityFilesByEntityId = (entityId?: string) => {
-    return useFetch<EntityFile[]>(`${ART_SERVICE}/files`, {
-        entityId: entityId
-    }, {
-        enabled: !!entityId
-    });
+    return useQuery<EntityFile[]>(
+        [`${ART_SERVICE}/files`, { entityId: entityId }],
+        () => fetchEntityFiles(entityId),
+        { enabled: !!entityId }
+    )
 }
-
-// export const useUpdateFile = () => {
-//     return useUpdate(`${ART_SERVICE}/files`)
-// }
 
 export const useDeleteFile = () => {
     return useDelete(`${FILE_SERVICE}/files`);
