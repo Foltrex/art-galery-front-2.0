@@ -49,7 +49,7 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
                             fontFamily: "'Lobster', cursive",
                         }}
                     >
-                        You broke my app... Why did you do that?
+                        Something went wrong...
                     </Typography>
                     <br/><br/>
                     <Accordion>
