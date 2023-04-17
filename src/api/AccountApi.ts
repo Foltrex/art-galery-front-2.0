@@ -1,4 +1,4 @@
-import {axiosApi, USER_SERVICE} from "../http/axios";
+import {ART_SERVICE, axiosApi, USER_SERVICE} from "../http/axios";
 import {IPage, useDelete, useFetch, usePatch} from "../hooks/react-query";
 import {AuthService} from "../services/AuthService";
 import {Account} from "../entities/account";
@@ -63,10 +63,10 @@ export const updateUser = (account:Account) => {
     });
 }
 
-export const createUser = (account:Account) => {
-    return axiosApi.post<Account>(`${USER_SERVICE}/accounts/`, account, {
-        headers: {
-            'Authorization': `Bearer ${AuthService.getToken()}`,
-        }
-    });
-}
+// export const createUser = (account:Account) => {
+//     return axiosApi.post<Account>(`${ART_SERVICE}/accounts/`, account, {
+//         // headers: {
+//         //     'Authorization': `Bearer ${AuthService.getToken()}`,
+//         // }
+//     });
+// }

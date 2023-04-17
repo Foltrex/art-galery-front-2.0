@@ -39,7 +39,7 @@ function prepareRenders(account:Account, metadata:Record<string, string>, onChan
             edit: (v) => <FacilitiesDropdown value={v} onChange={s => onChange(MetadataEnum.FACILITY_ID, s)} />
         },
         [MetadataEnum.ORGANIZATION_ROLE]: {
-            label: () => "Role",
+            label: () => "Organization Role",
             view: () => <AccountRole account={account}/>,
             edit: (v) => <OrganizationRoleDropdown value={v} onChange={s => onChange(MetadataEnum.ORGANIZATION_ROLE, s)}/>
         },

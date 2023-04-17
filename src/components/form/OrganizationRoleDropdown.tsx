@@ -26,7 +26,7 @@ export const OrganizationRoleDropdown = ({onChange, error, value}:{value?:string
     return <Autocomplete
             size='small'
             value={optValue}
-            renderInput={(params) => <TextField {...params} label="Organization role" error={!!error} helperText={error} />}
+            renderInput={(params) => <TextField {...params} error={!!error} helperText={error} />}
             options={organizationOptions}
             onChange={(event, option) => {
                 onChange(option?.id)

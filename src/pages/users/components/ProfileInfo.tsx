@@ -85,7 +85,7 @@ const ProfileInfo = (props: { account: Account, onSubmit:(a:Account) => Promise<
                                 <td>{canEditEmail
                                     ? <TextField fullWidth margin="dense" size={"small"} required
                                                  name={"email"}
-                                                 label={"Email"}
+                                                //  label={"Email"}
                                                  value={formik.values.email}
                                                  onChange={formik.handleChange}
                                                  error={!!formik.errors.email} helperText={formik.errors.email}
