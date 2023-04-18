@@ -68,13 +68,14 @@
 .profile-table tr {
   vertical-align: top;
 }
+.profile-table tr td {
+  padding: 0 10px 10px;
+}
 .profile-table tr td:first-child {
   max-width: 200px;
   text-align: right;
-  padding: 12px 10px 0 0 ;
 }
 .profile-table tr td:last-child {
-  padding-top: 5px;
   min-width: 300px;
   text-align: left;
 }
