@@ -5,7 +5,7 @@ import TableBody from './TableBody';
 import TableHeader from './TableHeader';
 
 export interface IdentifiableRecord {
-    id: string;
+    id: string|number;
 }
 
 export interface IColumnType<T extends IdentifiableRecord> {

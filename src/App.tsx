@@ -20,10 +20,10 @@ import {FacilityEditRoute} from "./pages/facilities/FacilityEditRoute";
 import {EditUserPage} from "./pages/users/EditUserPage";
 import {AddUserPage} from "./pages/users/AddUserPage";
 import ProfilePage from './pages/users/ProfilePage';
+import {ErrorsRoute} from './pages/error/ErrorsRoute';
 import ArtCreation from './pages/art/artist/ArtCreation';
 
 function App() {
-
     return (
         <BrowserRouter basename={"/admin"}>
             <Routes>
@@ -58,6 +58,10 @@ function App() {
                         <Route index element={<UserRoute/>}/>
                         <Route path={":id"} element={<EditUserPage/>} />
                         <Route path={"new"} element={<AddUserPage/>} />
+                    </Route>
+
+                    <Route path='/errors'>
+                        <Route index element={<ErrorsRoute/>}/>
                     </Route>
 
                     <Route path='/proposals' element={<Proposals/>}/>

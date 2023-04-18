@@ -1,6 +1,8 @@
 import {Accordion, AccordionDetails, AccordionSummary, Box, Typography} from '@mui/material';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
+import {createError} from "../../api/ErrorsApi";
+import {UiError} from "../../entities/uiError";
 
 export interface IErrorBoundaryProps extends React.PropsWithChildren {
 }
@@ -28,7 +30,17 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
         console.error("Uncaught error: ", error, errorInfo);
-        this.setState({componentStack: errorInfo.componentStack, errorMessage: error.message, stackTrace: error.stack, errorName: error.name});
+
+        this.setState({componentStack: errorInfo.componentStack, errorMessage: error.message, stackTrace: error.stack, errorName: error.name}, () => {
+            createError({
+                status: 'OPEN',
+                url: document.location.toString(),
+                errorName:error.name,
+                errorMessage:error.message,
+                errorTrace: error.stack,
+                componentStack:errorInfo.componentStack
+            } as UiError)
+        });
     }
 
     public render() {

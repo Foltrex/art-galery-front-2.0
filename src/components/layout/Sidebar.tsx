@@ -6,6 +6,7 @@ import MapsHomeWorkOutlined from '@mui/icons-material/MapsHomeWorkOutlined';
 import GroupOutlined from '@mui/icons-material/GroupOutlined';
 import CropOriginalOutlined from '@mui/icons-material/CropOriginalOutlined';
 import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import {Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import {Link} from 'react-router-dom';
@@ -114,6 +115,11 @@ function prepareSidebar(account:Account) {
                     text: 'Gallery',
                     icon: <CropOriginalOutlined/>,
                     link: '/gallery'
+                },
+                {
+                    text: 'Errors',
+                    icon: <ErrorOutlineOutlinedIcon/>,
+                    link: '/errors'
                 },
                 {
                     text: 'Account',
