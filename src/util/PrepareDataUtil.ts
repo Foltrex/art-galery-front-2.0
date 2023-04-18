@@ -6,8 +6,6 @@ export class PrepareDataUtil {
         switch (status) {
             case OrganizationStatusEnum.INACTIVE:
                 return "red"
-            case OrganizationStatusEnum.NEW:
-                return "orange"
             case OrganizationStatusEnum.ACTIVE:
                 return "green"
         }

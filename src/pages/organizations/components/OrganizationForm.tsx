@@ -52,7 +52,7 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
         id: '',
         name: '',
         address: null,
-        status: OrganizationStatusEnum.NEW,
+        status: OrganizationStatusEnum.ACTIVE,
         facilities: []
     })
 
@@ -140,7 +140,6 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                             value={formik.values.status}
                             onChange={formik.handleChange}
                         >
-                            <MenuItem value={OrganizationStatusEnum.NEW}>New</MenuItem>
                             <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
                             <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
                         </Select>

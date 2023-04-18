@@ -13,7 +13,7 @@ const OrganizationNew = () => {
             id: '',
             name: '',
             address: null,
-            status: OrganizationStatusEnum.NEW,
+            status: OrganizationStatusEnum.ACTIVE,
             facilities: []
         }}
         submit={(organization) => {
