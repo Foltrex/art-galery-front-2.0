@@ -5,7 +5,7 @@ import {Account} from "../../entities/account";
 import {getErrorMessage} from "../../util/PrepareDataUtil";
 import Bubble from "../../components/bubble/Bubble";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import { useRegisterUser } from "../../api/AuthApi";
+import {useRegisterUser} from "../../api/AuthApi";
 
 export const AddUserPage = () => {
     const navigate = useNavigate();
@@ -31,7 +31,7 @@ export const AddUserPage = () => {
                     return true
                 })
                 .catch((error:any) => {
-                    Bubble.error({message: "Failed to update account information. Error message is: " + getErrorMessage(error), duration: 999999});
+                    Bubble.error({message: "Failed to create new account. Error message is: " + getErrorMessage(error), duration: 999999});
                     return false;
                 })
             //     .then()
