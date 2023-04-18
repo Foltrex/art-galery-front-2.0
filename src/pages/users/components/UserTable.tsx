@@ -11,9 +11,6 @@ import {TypeFilter} from "../../../components/form/TypeFilter";
 import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {isCreatorOrAdmin} from "../../../util/MetadataUtil";
-import { Organization } from '../../../entities/organization';
-import { useGetOrganizationById, useGetOrganizationsByIds } from '../../../api/OrganizationApi';
-import { Metadata } from '../../../entities/metadata';
 
 interface IUserTableProps {
     organizationId?: string;

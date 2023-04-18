@@ -2,7 +2,6 @@ import Table, {IColumnType} from "../table/Table";
 import * as React from "react";
 import {useMemo, useState} from "react";
 import {Account} from "../../entities/account";
-import {useDeleteRepresentative} from "../../api/RepresentativeApi";
 import SkeletonTable from "../table/SkeletonTable";
 import DeleteModal from "../modal/DeleteModal";
 
@@ -16,7 +15,7 @@ import {Organization} from "../../entities/organization";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import { useDeleteAccountById } from "../../api/AccountApi";
+import {useDeleteAccountById} from "../../api/AccountApi";
 
 const Circle = styled('span')({
     height: 10,
@@ -58,7 +57,6 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         }
     }
 
-    const [openEditForm, setOpenEditForm] = useState(false);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const handleDelete = (data: Account) => {
@@ -66,10 +64,6 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         setOpenDeleteModal(true);
     }
 
-    const handleEdit = (data: Account) => {
-        setUser(data);
-        setOpenEditForm(true);
-    }
 
     const columns = useMemo(
         () => getColumns(applySort, authStore.account, navigate, handleDelete, organizations),

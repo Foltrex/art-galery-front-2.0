@@ -1,8 +1,8 @@
-import { useQuery } from "react-query";
-import { EntityFile } from "../entities/entityFile";
-import { File } from '../entities/file';
-import { useDelete, useFetch, usePost } from "../hooks/react-query";
-import { ART_SERVICE, FILE_SERVICE, axiosApi } from "../http/axios";
+import {useQuery} from "react-query";
+import {EntityFile} from "../entities/entityFile";
+import {File} from '../entities/file';
+import {useDelete, useFetch, usePost} from "../hooks/react-query";
+import {ART_SERVICE, axiosApi, FILE_SERVICE} from "../http/axios";
 
 
 export const fetchImages = (ids: string[] = []) => {
@@ -14,15 +14,6 @@ export const fetchImages = (ids: string[] = []) => {
     return Promise.all(requests)
         .then(responses => responses.map(response => response.data));
 };
-
-export const fetchEntityFiles = (entityId?: string) => {
-    return axiosApi.get<EntityFile[]>(`${ART_SERVICE}/files`, {
-            params: {
-                entityId: entityId
-            }
-        })
-        .then(response => response.data);
-}
 
 export const useGetAllFileStreamByIds = (ids?: string[]) => {
     return useQuery<ArrayBuffer[]>(
@@ -63,9 +54,12 @@ export const useNewSaveFile = () => {
 }
 
 export const useGetAllEntityFilesByEntityId = (entityId?: string) => {
+    const path = `${ART_SERVICE}/files`;
     return useQuery<EntityFile[]>(
-        [`${ART_SERVICE}/files`, { entityId: entityId }],
-        () => fetchEntityFiles(entityId),
+        [path, { entityId: entityId }],
+        () => axiosApi.get<EntityFile[]>(path, {
+            params: {entityId: entityId}
+        }).then(response => response.data),
         { enabled: !!entityId }
     )
 }

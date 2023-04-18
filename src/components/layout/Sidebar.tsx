@@ -1,12 +1,11 @@
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import HomeWorkOutlinedIcon from '@mui/icons-material/HomeWorkOutlined';
-import LocalPostOfficeOutlined from '@mui/icons-material/LocalPostOfficeOutlined';
 import LoginOutlined from '@mui/icons-material/LoginOutlined';
-import PeopleIcon from '@mui/icons-material/People';
-import PeopleOutline from '@mui/icons-material/PeopleOutline';
-import PhotoSizeSelectActualOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActualOutlined';
+import HomeOutlined from '@mui/icons-material/HomeOutlined';
+import MapsHomeWorkOutlined from '@mui/icons-material/MapsHomeWorkOutlined';
+import GroupOutlined from '@mui/icons-material/GroupOutlined';
+import CropOriginalOutlined from '@mui/icons-material/CropOriginalOutlined';
+import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
 import {Divider, Drawer, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText} from '@mui/material';
 import {styled, useTheme} from '@mui/material/styles';
 import {Link} from 'react-router-dom';
@@ -39,34 +38,34 @@ function prepareSidebar(account:Account) {
             if(admin) {
                 result.push({
                     text: 'Organization',
-                    icon: <AccountCircleOutlinedIcon/>,
+                    icon: <HomeOutlined/>,
                     link: '/organizations/' + find('organizationId', account)
                 });
                 result.push({
                     text: 'Facilities',
-                    icon: <HomeWorkOutlinedIcon/>,
+                    icon: <MapsHomeWorkOutlined/>,
                     link: '/facilities'
                 });
                 result.push({
                     text: 'Users',
-                    icon: <PeopleIcon/>,
+                    icon: <GroupOutlined/>,
                     link: '/users'
                 });
             } else {
                 result.push({
                     text: 'Facility',
-                    icon: <HomeWorkOutlinedIcon/>,
+                    icon: <MapsHomeWorkOutlined/>,
                     link: '/facilities/' + find("facilityId", account)
                 });
             }
             result.push({
                 text: 'Gallery',
-                icon: <PhotoSizeSelectActualOutlinedIcon/>,
+                icon: <CropOriginalOutlined/>,
                 link: '/gallery'
             })
             result.push({
                 text: 'Account',
-                icon: <AccountCircleOutlinedIcon/>,
+                icon: <AccountCircleOutlined/>,
                 link: '/'
             })
             return result;
@@ -75,22 +74,22 @@ function prepareSidebar(account:Account) {
             return [
                 {
                     text: 'Organizations',
-                    icon: <PeopleIcon />,
+                    icon: <HomeOutlined />,
                     link: '/organizations'
                 },
                 {
                     text: 'Facilities',
-                    icon: <LocalPostOfficeOutlined/>,
+                    icon: <MapsHomeWorkOutlined/>,
                     link: '/facilities'
                 },
                 {
                     text: 'Gallery',
-                    icon: <PeopleOutline/>,
+                    icon: <CropOriginalOutlined/>,
                     link: '/gallery'
                 },
                 {
                     text: 'Account',
-                    icon: <AccountCircleOutlinedIcon/>,
+                    icon: <AccountCircleOutlined/>,
                     link: '/'
                 },
             ]
@@ -98,27 +97,27 @@ function prepareSidebar(account:Account) {
             return [
                 {
                     text: 'Organizations',
-                    icon: <LocalPostOfficeOutlined/>,
+                    icon: <HomeOutlined/>,
                     link: '/organizations'
                 },
                 {
                     text: 'Facilities',
-                    icon: <LocalPostOfficeOutlined/>,
+                    icon: <MapsHomeWorkOutlined/>,
                     link: '/facilities'
                 },
                 {
                     text: 'Users',
-                    icon: <PeopleOutline/>,
+                    icon: <GroupOutlined/>,
                     link: '/users'
                 },
                 {
                     text: 'Gallery',
-                    icon: <PeopleOutline/>,
+                    icon: <CropOriginalOutlined/>,
                     link: '/gallery'
                 },
                 {
                     text: 'Account',
-                    icon: <PeopleOutline/>,
+                    icon: <AccountCircleOutlined/>,
                     link: '/'
                 },
             ]
