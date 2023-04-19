@@ -91,6 +91,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 					size='small'
 					label='Artist'
 					name='artistName'
+					disabled
 					value={`${account?.firstName} ${account?.lastName}`}
 					InputProps={{ readOnly: true }}
 					fullWidth
