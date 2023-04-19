@@ -1,9 +1,12 @@
-import {Box, Chip, FormControl, InputLabel, MenuItem, OutlinedInput, Select, SelectChangeEvent} from "@mui/material";
+import {Box, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import * as React from "react";
 import {useMemo} from "react";
 import {ArtStyle} from "../../entities/art-style";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import {useGetAllArtStyles} from "../../api/ArtStyleApi";
+
+const sx = { lineHeight: 'normal' }
+const boxSx = { display: 'flex', flexWrap: 'wrap', gap: 0.5 };
 
 export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: (v:ArtStyle[]) => void}) => {
 
@@ -34,17 +37,16 @@ export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: 
     }, [selectedStylesMap, artStyleItems]);
 
     return <FormControl>
-        <InputLabel>Art Style</InputLabel>
+        <InputLabel size={"small"}>Art Style</InputLabel>
         <Select
             labelId="style-select"
             multiple
             size={"small"}
             value={selectedStylesIds}
             onChange={handleStyleSelect}
-            sx={{ lineHeight: 'normal' }}
-            input={<OutlinedInput id="style-select-chip" label="Styles" />}
+            sx={sx}
             renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                <Box sx={boxSx}>
                     {selected.map((value) => (
                         <Chip key={value} label={selectedStylesMap[value].label}
                               deleteIcon={<CancelOutlinedIcon
