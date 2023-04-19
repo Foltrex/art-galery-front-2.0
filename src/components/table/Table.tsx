@@ -10,7 +10,7 @@ export interface IdentifiableRecord {
 
 export interface IColumnType<T extends IdentifiableRecord> {
     key: string;
-    title: string;
+    title: string | JSX.Element;
     minWidth?: number;
     colspan?: number;
     render?: (item: T) => void;
