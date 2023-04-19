@@ -111,7 +111,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                     <table className={"profile-table"}>
                         <tbody>
                         <tr>
-                            <td><strong>Email</strong></td>
+                            <td className={"label"}><strong>Email</strong></td>
                             <td>{canEditEmail
                                 ? <TextField fullWidth margin="dense" size={"small"} required
                                              name={"email"}
@@ -123,12 +123,12 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                                 : <div style={{paddingTop: 8, marginBottom: 5}}>{props.account?.email}</div>}</td>
                         </tr>
                         {authStore.account.accountType === AccountEnum.SYSTEM && <tr>
-                            <td><strong>User type</strong></td>
+                            <td className={"label"}><strong>User type</strong></td>
                             <td><UserTypeDropdown value={formik.values.accountType}
                                                   onChange={e => formik.setFieldValue("accountType", e, false)}/></td>
                         </tr>}
                         <tr>
-                            <td><strong>Name</strong></td>
+                            <td className={"label"}><strong>Name</strong></td>
                             <td>{!canEdit && <span>{props.account?.firstName}&nbsp;{props.account?.lastName}</span>}
                                 {canEdit && <div>
                                     <TextField fullWidth margin="dense" size={"small"} required

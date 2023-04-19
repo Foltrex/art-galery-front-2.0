@@ -73,7 +73,7 @@ const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:bool
                 }
                 const value = metadata[key];
                 return <tr key={key}>
-                    <td>
+                    <td className={"label"}>
                         <strong>{render.label()}</strong>
                     </td>
                     <td>{props.canEdit ? render.edit(value) : render.view(value)}</td>

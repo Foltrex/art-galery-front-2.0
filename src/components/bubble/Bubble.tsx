@@ -20,19 +20,19 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
     static instance: Bubble;
 
     static error(snackbar: BubbleProps|string) {
-        Bubble.instance.add({...normalize(snackbar), variant: 'error'})
+        return Bubble.instance.add({...normalize(snackbar), variant: 'error'})
     }
 
     static info(snackbar: BubbleProps|string) {
-        Bubble.instance.add({...normalize(snackbar), variant: 'info'})
+        return Bubble.instance.add({...normalize(snackbar), variant: 'info'})
     }
 
     static success(snackbar: BubbleProps|string) {
-        Bubble.instance.add({...normalize(snackbar), variant: 'success'})
+        return Bubble.instance.add({...normalize(snackbar), variant: 'success'})
     }
 
     static warning(snackbar: BubbleProps|string) {
-        Bubble.instance.add({...normalize(snackbar), variant: 'warning'})
+        return Bubble.instance.add({...normalize(snackbar), variant: 'warning'})
     }
 
     componentDidMount(): void {
@@ -59,14 +59,18 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
         if (!this.updateInProgress) {
             this.frame();
         }
+        return snackbar.id;
     }
 
-    close(snackbar: BubbleProps) {
+    static close(snackbarId: number) {
+        Bubble.instance.close(snackbarId)
+    }
+    close(snackbarId: number) {
         let length = this.state.snackbars.length;
         const newList = [...this.state.snackbars];
         while (length--) {
             const item = this.state.snackbars[length];
-            if (item === snackbar) {
+            if (item.id === snackbarId) {
                 newList.splice(length, 1);
                 break;
             }
@@ -81,7 +85,7 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
                     return <BubbleItem key={snackbar.id}
                                        message={snackbar.message}
                                        duration={snackbar.duration === undefined ? 6000 : snackbar.duration}
-                                       close={() => this.close(snackbar)}
+                                       close={() => this.close(snackbar.id as number)}
                                        variant={snackbar.variant}
                     />
                 })}

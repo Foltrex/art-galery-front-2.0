@@ -1,5 +1,5 @@
 export interface ArtStyle {
-    id: string;
+    id: number;
     label: string;
     verified: boolean;
 }

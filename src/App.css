@@ -71,6 +71,9 @@
 .profile-table tr td {
   padding: 0 10px 10px;
 }
+.profile-table td.label {
+  padding-top: 8px
+}
 .profile-table tr td:first-child {
   max-width: 200px;
   text-align: right;

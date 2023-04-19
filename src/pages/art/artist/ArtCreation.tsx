@@ -1,20 +1,28 @@
-import { Add } from '@mui/icons-material';
-import { Box, Grid, IconButton } from '@mui/material';
-import { ChangeEvent, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSaveArt } from '../../../api/ArtApi';
-import { useUploadFile } from '../../../api/FileApi';
+import {Add} from '@mui/icons-material';
+import {Box, Grid, IconButton} from '@mui/material';
+import {ChangeEvent, useRef, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useSaveArt} from '../../../api/ArtApi';
+import {useUploadFile} from '../../../api/FileApi';
 import ImageSlider from '../../../components/ui/ImageSlider';
-import { Art } from '../../../entities/art';
-import { EntityFile } from '../../../entities/entityFile';
-import { FileService } from '../../../services/FileService';
+import {Art} from '../../../entities/art';
+import {EntityFile} from '../../../entities/entityFile';
+import {FileService} from '../../../services/FileService';
 import ArtForm from './AristArtForm';
+import Bubble from "../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 const ArtCreation = () => {
 	const fileInput = useRef<HTMLInputElement>(null);
 	const [files, setFiles] = useState<File[]>([]);
 	const [images, setImages] = useState<string[]>([]);
 	const [mainImageNumber, setMainImageNumber] = useState<number>();
+
+	const deleteImage = (index:number) => {
+		images.splice(index, 1)
+		const newImages = [...images];
+		setImages(newImages);
+	}
 
 	const navigate = useNavigate();
 
@@ -32,24 +40,35 @@ const ArtCreation = () => {
 	}
 
 	const handleSubmit = async (art: Art) => {
-		const response = await mutationSaveArt.mutateAsync(art);
-		const { data: persistedArt } = response;
-		const { id: artId } = persistedArt;
+		let infoId:number|undefined;
+		await mutationSaveArt.mutateAsync(art).then(response => {
+			infoId = Bubble.info("Data prepared, uploading images...");
 
-		const promises = files.map(async (file, index) => {
-			var fileEntity: EntityFile = await FileService.toEntityFile(artId!, file);
-			if (index === mainImageNumber) {
-				fileEntity.isPrimary = true;
-			} else if (!mainImageNumber && index === 0) {
-				fileEntity.isPrimary = true;
-			} else {
-				fileEntity.isPrimary = false;
-			}
-			await mutationSaveImage.mutateAsync(fileEntity);
-		})
-		await Promise.all(promises);
 
-		navigate(`/gallery/${artId}`);
+			const promises = files.map(async (file, index) => {
+				var fileEntity: EntityFile = await FileService.toEntityFile(response.data.id!, file);
+				if (index === mainImageNumber) {
+					fileEntity.isPrimary = true;
+				} else if (!mainImageNumber && index === 0) {
+					fileEntity.isPrimary = true;
+				} else {
+					fileEntity.isPrimary = false;
+				}
+				await mutationSaveImage.mutateAsync(fileEntity);
+			})
+			return Promise.all(promises).then(() => {
+				if(infoId !== undefined) {
+					Bubble.close(infoId);
+				}
+				Bubble.success("Art created successfully");
+				navigate(`/gallery/`);
+			}).catch(e => {
+				Bubble.error({message: "Failed to upload image(s). Error is " + getErrorMessage(e), duration: 999999});
+			});
+		}).catch(e => {
+			Bubble.error({message: "Failed to create new art, error is " + getErrorMessage(e), duration: 999999});
+		});
+
 	}
 
 	return (
@@ -64,8 +83,9 @@ const ArtCreation = () => {
 					height: '380px',
 					margin: '0 15px',
 				}}>
-					{files.at(0)
-						? <ImageSlider 
+					{images && images.length > 0
+						? <ImageSlider
+							onDelete={deleteImage}
 							slides={images} 
 							handleMakeMainClick={setMainImageNumber}
 							onImageAdd={() => fileInput.current?.click()} 

@@ -1,7 +1,8 @@
-import { Box, Button, Modal, Stack } from "@mui/material";
-import { Container, fontSize, styled } from "@mui/system";
+import {Button, Modal, Stack} from "@mui/material";
+import {Box, styled} from "@mui/system";
 import Delete from "@mui/icons-material/Delete";
-import { CSSProperties, useState } from "react";
+import Close from "@mui/icons-material/Close";
+import {CSSProperties, useState} from "react";
 
 interface IImageSliderProps {
     slides?: string[];
@@ -12,35 +13,28 @@ interface IImageSliderProps {
     showMakeMain?: boolean;
     styles?: CSSProperties
 }
-
-const LeftArrowButton = styled('div')({
-    paddingTop: '25%',
-    textAlign: 'center',
+const style:CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 60,
     height: '100%',
     backgroundColor: 'rgb(234, 237, 239)',
     position: 'absolute',
-    top: '0',
-    left: -60,
+    top: 0,
     fontSize: '55px',
     color: '#fff',
     zIndex: 1,
     cursor: 'pointer'
+}
+const LeftArrowButton = styled('div')({
+    ...style,
+    left: 0,
 });
 
 const RightArrowButton = styled('div')({
-    paddingTop: '25%',
-    textAlign: 'center',
-    width: 60,
-    height: '100%',
-    backgroundColor: 'rgb(234, 237, 239)',
-    position: 'absolute',
-    top: '0',
-    right: -60,
-    fontSize: '55px',
-    color: '#fff',
-    zIndex: 1,
-    cursor: 'pointer'
+    ...style,
+    right: 0,
 });
 
 const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
@@ -121,6 +115,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                 {slides.map((_, index) => (
                     <img
                         src={slides[index]}
+                        alt={"img"}
                         onClick={() => handleDotClick(index)}
                         width='50px'
                         height='50px'
@@ -163,18 +158,25 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
             >
                 <>
                     <img
-                        // style={{ maxWidth: '100%', maxHeight: '85%', minWidth: '45%' }}
-                        style={{ maxWidth: '99%', maxHeight: '99%' }}
-                        src={slides[currentIndex]} />
+                        style={{ maxWidth: '100%', maxHeight: '100%' }}
+                        src={slides[currentIndex]} alt={"img"} />
 
-                    <Button
-                        sx={{ position: 'absolute', bottom: '10%', borderRadius: 8 }}
-                        color='error'
-                        variant='contained'
-                        startIcon={<Delete />}
-                        onClick={handleDeleteImageClick}>
-                        Delete
-                    </Button>
+                    <Box sx={{ position: 'absolute', bottom: '15px', display: 'flex', gap: 10}}>
+                        {onDelete && <Button
+                            color='error'
+                            variant='contained'
+                            startIcon={<Delete />}
+                            onClick={handleDeleteImageClick}>
+                            Delete
+                        </Button>}
+                        <Button
+                            color='info'
+                            variant='contained'
+                            startIcon={<Close />}
+                            onClick={() => setShowModal(false)}>
+                            Close
+                        </Button>
+                    </Box>
                 </>
             </Modal>
             }
