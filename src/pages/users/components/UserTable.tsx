@@ -1,14 +1,16 @@
-import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
 import * as React from 'react';
-import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
-import { useGetAll } from '../../../api/AccountApi';
+import {useState} from 'react';
+import {useGetAll} from '../../../api/AccountApi';
 import CityDropdown from "../../../components/cities/CityDropdown";
 import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import {TypeFilter} from "../../../components/form/TypeFilter";
 import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {isCreatorOrAdmin} from "../../../util/MetadataUtil";
+import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import {TokenService} from "../../../services/TokenService";
+import {UserGrid} from "../../../components/users/UserGrid";
 
 interface IUserTableProps {
     organizationId?: string;
