@@ -1,10 +1,8 @@
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import * as React from 'react';
-import {useState} from 'react';
-import {UserGrid} from "../../../components/users/UserGrid";
-import {TokenService} from '../../../services/TokenService';
-import {useGetAll} from '../../../api/AccountApi';
-import {AccountEnum} from "../../../entities/enums/AccountEnum";
-import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
+import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { useGetAll } from '../../../api/AccountApi';
 import CityDropdown from "../../../components/cities/CityDropdown";
 import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import {TypeFilter} from "../../../components/form/TypeFilter";

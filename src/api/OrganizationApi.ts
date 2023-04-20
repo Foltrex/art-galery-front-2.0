@@ -12,7 +12,6 @@ export const useGetAllOrganizations = (params: { page: number, sort:string, name
     );
 }
 
-
 export const useGetAllOrganizationList = () => {
     return useFetch<Organization[]>(`${API}/list`);
 }

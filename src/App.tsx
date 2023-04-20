@@ -22,6 +22,8 @@ import {AddUserPage} from "./pages/users/AddUserPage";
 import ProfilePage from './pages/users/ProfilePage';
 import {ErrorsRoute} from './pages/error/ErrorsRoute';
 import ArtCreation from './pages/art/artist/ArtCreation';
+import { QueryClient, useQueryClient } from 'react-query';
+import OrganizationsRoute from './pages/organizations/OrganizationsRoute';
 
 function App() {
     return (
@@ -43,7 +45,7 @@ function App() {
                     <Route index element={<ProfilePage/>}/>
 
                     <Route path={"/organizations"}>
-                        <Route index element={<Organizations/>}/>
+                        <Route index element={<OrganizationsRoute/>}/>
                         <Route path={":id"} element={<OrganizationEdit/>}/>
                         <Route path={"new"} element={<OrganizationNew/>}/>
                     </Route>

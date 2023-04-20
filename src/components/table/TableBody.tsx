@@ -40,6 +40,7 @@ function prepareBuckets<S extends IdentifiableRecord>(columns:IColumnType<S>[], 
 				break;
 			}
 		}
+
 		if(!column || !column.groupBy) {
 			throw new Error("Table not properly configured, column with group key not found - " + group);
 		}
@@ -181,9 +182,12 @@ function TableBody<S extends IdentifiableRecord>({
 		}
 		const result:ReactNode[] = []
 		const buckets = prepareBuckets<S>(columns, content.map((c, i) => ({item: c, index: i + 1 + number * size})), groupBy, 0);
+
 		for(let key in buckets) {
 			result.push(<GroupRow bucket={buckets[key]} columns={columns} level={0}/>);
 		}
+
+		console.log(result)
 		return result;
 	}, [groupBy, content, columns]);
 

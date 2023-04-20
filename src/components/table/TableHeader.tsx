@@ -12,6 +12,14 @@ function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<
 	const [sortDirection, setSortDirection] = useState<'asc'|'desc'|undefined>();
 	const [sortKey, setSortKey] = useState<string>('');
 
+	const renderTableTitle = (tableTitle: string | JSX.Element) => {
+		if (tableTitle instanceof String) {
+			return <b>{tableTitle}</b>;
+		} else {
+			return tableTitle;
+		}
+	}
+
 	return (
 		<TableHead>
 			<TableRow>
@@ -40,7 +48,8 @@ function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<
 					>
 						{column.sort && <TableSortLabel direction={sortDirection} active={
 							sortKey === column.key && sortDirection !== undefined}/>}
-						<b>{column.title}</b>
+						{/* <b>{column.title}</b> */}
+						{renderTableTitle(column.title)}
 					</TableCell>
 				))}
 			</TableRow>

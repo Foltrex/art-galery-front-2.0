@@ -47,14 +47,10 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         }, {} as Record<string, Organization>)
     }, [organizationsList])
     
+
     const mutationDelete = useDeleteAccountById();
     const onDelete = async () => {
-        try {
-            await mutationDelete.mutateAsync(user!.id);
-        } catch (e) {
-            // add push notification
-            console.log(e);
-        }
+        await mutationDelete.mutateAsync(user!.id);
     }
 
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -88,7 +84,9 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
         <DeleteModal
             open={openDeleteModal}
             onClose={() => setOpenDeleteModal(false)}
-            onDelete={onDelete} />
+            onDelete={onDelete}
+            contextText={`You are about to delete ${user?.firstName} ${user?.lastName} account. All related data will be lost, and that action can not be undone. Are you sure to proceed?`}
+        />
     </>
 }
 

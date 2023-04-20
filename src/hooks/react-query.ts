@@ -8,6 +8,7 @@ import {
     UseQueryOptions
 } from "react-query";
 import {axiosApi} from "../http/axios";
+import Bubble from "../components/bubble/Bubble";
 
 export type QueryKeyT = [string, object | undefined];
 
@@ -142,6 +143,7 @@ export const useGenericMutation = <T, S = T | undefined>(
     func: (data: T | S) => Promise<AxiosResponse<S>>,
     url: string,
     params?: object,
+    mapErrorToMessage: (error: AxiosError) => string | undefined = e => e.message
 ) => {
     const queryClient = useQueryClient();
 
@@ -150,7 +152,13 @@ export const useGenericMutation = <T, S = T | undefined>(
         {
             onMutate: async () => await queryClient.cancelQueries([url!, params]),
             onError: (err, _, context) => {
-                console.log(err);
+                const errorMessage = mapErrorToMessage(err);
+                if (errorMessage) {
+                    Bubble.error(errorMessage);
+                } else {
+                    console.log(err);
+                }
+
                 queryClient.setQueryData([url!, params], context);
             },
             onSettled: () => queryClient.invalidateQueries()
@@ -162,12 +170,14 @@ export const useGenericMutation = <T, S = T | undefined>(
 export const useDelete = (
     url: string,
     params?: object,
-    config?: object
+    config?: object,
+    mapErrorToMessage?: (error: AxiosError) => string | undefined
 ) => {
     return useGenericMutation<string | number>(
         id => axiosApi.delete(`${url}/${id}`, config),
         url,
-        params
+        params,
+        mapErrorToMessage
     );
 };
 
