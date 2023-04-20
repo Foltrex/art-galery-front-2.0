@@ -2,11 +2,15 @@ import * as React from "react";
 import {ChangeEvent, useEffect, useState} from "react";
 import {FormControl, OutlinedInput} from "@mui/material";
 
-export const TypeFilter: React.FC<{ style?:React.CSSProperties, onChange: (s: string) => void, placeholder: string }> = ({
-                                                                                                                             style,
-                                                                                                 onChange,
-                                                                                                 placeholder
-                                                                                             }) => {
+interface TypeFilterProps {
+    style?: React.CSSProperties,
+    onChange: (s: string) => void,
+    placeholder?: string,
+    label?: string
+    inputProps?: any
+}
+
+export const TypeFilter: React.FC<TypeFilterProps> = ({style, inputProps, onChange, label, placeholder}) => {
     const [state, setState] = useState({text: '', lastUpdate: new Date().getTime(), triggerUpdate: false});
 
     useEffect(() => {
@@ -24,8 +28,10 @@ export const TypeFilter: React.FC<{ style?:React.CSSProperties, onChange: (s: st
     }
 
     return <FormControl style={style}>
-        <OutlinedInput value={state.text}
+        <OutlinedInput {...inputProps}
+                       value={state.text}
                        size={"small"}
+                       label={label}
                        placeholder={placeholder}
                        inputProps={{'aria-label': placeholder}}
                        onChange={handleChange}/>

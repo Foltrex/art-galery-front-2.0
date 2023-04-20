@@ -79,15 +79,7 @@ const OrganizationGrid = () => {
 
     return (
         <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    gap: '20px',
-                    alignItems: 'center',
-                    px: 2,
-                    pt: 2
-                }}
-            >
+            <Box sx={{display: 'flex', gap: '20px'}}>
                 <FormControl>
                     <TypeFilter onChange={handleSearch} placeholder={`Search by name...`}/>
                 </FormControl>

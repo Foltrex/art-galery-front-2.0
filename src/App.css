@@ -9,16 +9,6 @@
 .MuiInputBase-formControl {
   min-width: 200px;
 }
-.filter-row {
-  display: flex;
-  padding: 10px;
-}
-.filter-row > .MuiFormControl-root {
-  margin-right: 10px;
-}
-.filter-row > .MuiFormControl-root:last-child {
-  margin-right: 0;
-}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

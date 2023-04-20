@@ -1,150 +1,94 @@
 import AddIcon from '@mui/icons-material/Add';
-import {
-    Box,
-    Container,
-    Divider,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Paper,
-    Radio,
-    RadioGroup,
-    Select,
-    SelectChangeEvent,
-    Tooltip
-} from '@mui/material';
+import {Box, Container, FormControl, FormControlLabel, IconButton, Radio, RadioGroup, Tooltip} from '@mui/material';
 
-import {ChangeEvent, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {useGetAllArtsByAccountIdAndSearchText} from '../../api/ArtApi';
+import {useGetAllArts} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
-import SearchBar from '../../components/ui/SearchBar';
-import {AuthService} from '../../services/AuthService';
-import {TokenService} from '../../services/TokenService';
 import InfiniteArtList from './InfiniteArtList';
 import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
+import {TypeFilter} from "../../components/form/TypeFilter";
+import CityDropdown from "../../components/cities/CityDropdown";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import UsersAutocomplete from "../../components/form/UsersAutocomplete";
 
 const Arts = () => {
-	const navigate = useNavigate();
+    const navigate = useNavigate();
+    const {authStore} = useRootStore();
 
-	const accountType = TokenService.getCurrentAccountType();
+    const [artSearch, setArtSearch] = useState<string>();
+    const [artistId, setArtistId] = useState<string>();
+    const [cityId, setCityId] = useState<string>();
 
-	const [searchText, setSearchText] = useState<string>();
+    const all = {label: 'All', value: 'all'};
+    const exhibited = {label: 'Exhibited', value: 'exhibited'};
+    const free =  {label: 'Free', value: 'free'};
 
-	const searchFilters: Array<{label: string, value: string}> = [
-		{label: 'All', value: 'all'},
-		{label: 'Exhibited', value: 'exhibited'},
-		{label: 'Free', value: 'free'},
-	];
+    const searchFilters: Array<{ label: string, value: string }> = [
+        all,
+        exhibited,
+        free,
+    ];
 
-	const [searchFilter, setSearchFilter] = useState(searchFilters[0].value);
+    const accountType = authStore.account.accountType;
 
-	const searchOptions:  Array<{label: string, value: string}> = [
-		{label: 'Art Name', value: 'art name'},
-		{label: 'Arist Name', value: 'artist name'},
-		{label: 'City', value: 'city'},
-		{label: 'Decription', value: 'description'}
-	];
-	const [searchOption, setSearchOption] = useState(searchOptions[0].value);
+    const [artStatus, setArtStatus] = useState(
+        accountType === AccountEnum.ARTIST || accountType === AccountEnum.REPRESENTATIVE
+            ? free.value
+            : all.value
+    );
 
-	const token = TokenService.decode(AuthService.getToken());
-	const { data: infinteData, isSuccess, fetchNextPage } = useGetAllArtsByAccountIdAndSearchText(token.id, {
-		searchText: searchText,
-		searchFilter: searchFilter,
-		searchOption: searchOption
-	});
+    const {data: infinteData, isSuccess, fetchNextPage} = useGetAllArts({
+        searchText: artSearch,
+        artistId: accountType === AccountEnum.ARTIST ? authStore.account.id : artistId,
+        cityId: artStatus === exhibited.value ? cityId : undefined
+    });
 
-	const lastPage = infinteData?.pages.at(-1);
-	const isNotLast = lastPage && !lastPage.last;
+    const lastPage = infinteData?.pages.at(-1);
+    const isNotLast = lastPage && !lastPage.last;
 
-	const handleSearch = (searchText: string) => {
-		setSearchText(searchText);
-	}
+    return (
+        <Container sx={{position: 'relative'}}>
+                <Box sx={{display: 'flex', gap: '20px'}}>
 
-	const handleChangeSearchFilter = (e: ChangeEvent<HTMLInputElement>) => {
-		setSearchFilter(e.target.value);
-	}
+                    <TypeFilter onChange={setArtSearch} placeholder={"Art description"}/>
+                    {accountType !== AccountEnum.ARTIST && <UsersAutocomplete userType={AccountEnum.ARTIST} onChange={id => setArtistId(id)}/>}
+                    <FormControl>
+                        <RadioGroup
+                            value={artStatus}
+                            onChange={(e) => setArtStatus(e.target.value)}
+                            row
+                        >
+                            {searchFilters.map(filter => (
+                                <FormControlLabel
+                                    key={filter.value}
+                                    control={<Radio size='small'/>}
+                                    value={filter.value}
+                                    label={filter.label}/>
+                            ))}
+                        </RadioGroup>
+                    </FormControl>
 
-	const handleChangeSearchOption = (e: SelectChangeEvent) => {
-		setSearchOption(e.target.value);
-	}
+                    {artStatus === exhibited.value && <CityDropdown onChange={setCityId}/>}
 
-	return (
-		<Container sx={{position: 'relative'}}>
-			<Paper elevation={1} sx={{ padding: '10px', minHeight: 400 }}>
-				<Box
-					sx={{
-						display: 'flex',
-						gap: '20px',
-						justifyContent: 'space-between',
-						alignItems: 'center',
-						px: 2,
-						pt: 2
-					}}
-				>
+                    {accountType === AccountEnum.ARTIST &&
+                        <Tooltip title='Add New Art'>
+                            <IconButton onClick={() => navigate('/gallery/new')}>
+                                <AddIcon fontSize='large'/>
+                            </IconButton>
+                        </Tooltip>
+                    }
+                </Box>
 
-					<SearchBar onSearch={handleSearch} placeholder={`Search ${searchOption}...`} />
 
-					<FormControl sx={{ minWidth: 200 }}>
-						<InputLabel id='search-option-label'>Search Option</InputLabel>
-						<Select
-							labelId='search-option-label'
-							label='Search Option'
-							value={searchOption}
-							onChange={handleChangeSearchOption}
-							autoWidth
-							size='small'
-						>
-							{searchOptions.map(option => (
-								<MenuItem
-									key={option.value}
-									value={option.value}
-								>
-									{option.label}
-								</MenuItem>
-							))}
-						</Select>
-					</FormControl>
+            {isSuccess && <InfiniteArtList infinteData={infinteData}/>}
 
-					{accountType === AccountEnum.ARTIST &&
-						<Tooltip title='Add New Art'>
-							<IconButton onClick={() => navigate('/gallery/new')}>
-								<AddIcon fontSize='large' />
-							</IconButton>
-						</Tooltip>
-					}
-				</Box>
+            {isNotLast && <LoadMoreButton onClick={() => fetchNextPage()}/>}
 
-				<FormGroup sx={{ px: 5, pt: 1 }}>
-					<RadioGroup
-						value={searchFilter}
-						onChange={handleChangeSearchFilter}
-						row
-					>
-						{searchFilters.map(filter => (
-							<FormControlLabel
-								key={filter.value}
-								control={<Radio size='small' />}
-								value={filter.value}
-								label={filter.label} />
-						))}
-					</RadioGroup>
-				</FormGroup>
-
-				<Divider sx={{ my: 3 }} />
-
-				{ isSuccess && <InfiniteArtList infinteData={infinteData} /> }
-			</Paper>
-
-			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} />  }
-
-			<ScrollTop />
-		</Container>
-	);
+            <ScrollTop/>
+        </Container>
+    );
 };
 
 export default Arts;

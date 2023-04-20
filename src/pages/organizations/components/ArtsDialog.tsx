@@ -2,7 +2,7 @@ import {Close} from '@mui/icons-material';
 import {Dialog, DialogContent, DialogTitle, IconButton, ImageList} from '@mui/material';
 import * as React from 'react';
 import {useState} from 'react';
-import {useGetAllArtsByAccountIdAndSearchText} from '../../../api/ArtApi';
+import {useGetAllArts} from '../../../api/ArtApi';
 import ProposalDialog from '../../../components/ui/ProposalDialog';
 import {Art} from '../../../entities/art';
 import {TokenService} from '../../../services/TokenService';
@@ -28,7 +28,7 @@ const ArtsDialog: React.FunctionComponent<IProposalDialogProps> = ({open, onClos
 
     const token = TokenService.getCurrentDecodedToken();
 
-    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArtsByAccountIdAndSearchText(token.id);
+    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({artistId: token.id});
 
     return (
         <>

@@ -7,6 +7,7 @@ import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
 import {createEmptyPage} from '../../hooks/react-query';
 import {
+    Box,
     Button,
     Checkbox,
     FormControl,
@@ -183,7 +184,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 
 	return (
 		<>
-			<div className="filter-row">
+			<Box sx={{ display: 'flex', gap: '20px' }}>
 				<CityDropdown value={cityId} onChange={setCityId} />
 				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
 				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} />}
@@ -211,8 +212,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 						<Button variant="text" size={"large"}>New Facility</Button>
 					</Link>}
 				</FormControl>}
-
-			</div>
+			</Box>
 
 			{isFetching
 				? <SkeletonTable columns={columns}/>

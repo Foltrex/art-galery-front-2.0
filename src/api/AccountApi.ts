@@ -1,8 +1,9 @@
-import {ART_SERVICE, axiosApi, USER_SERVICE} from "../http/axios";
-import {IPage, useDelete, useFetch, usePatch} from "../hooks/react-query";
+import {axiosApi, USER_SERVICE} from "../http/axios";
+import {IPage, QueryKeyT, useDelete, useFetch, usePatch} from "../hooks/react-query";
 import {AuthService} from "../services/AuthService";
 import {Account} from "../entities/account";
 import {useRootStore} from "../stores/provider/RootStoreProvider";
+import {UseQueryOptions} from "react-query";
 
 
 export const useGetAll = (
@@ -10,13 +11,16 @@ export const useGetAll = (
         email?: string, 
         page?: number, 
         size?: number,  
-        username?: string,
+        //username?: string,not work currently, should be applied to username, which is actually email
+        name?: string,//search in lastname and firstname
         usertype?: string,
         organizationId?: string,
         cityId?: string
         sort?: string
-}) => {
-    return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, {
+    },
+    config?: UseQueryOptions<IPage<Account>, Error, IPage<Account>, QueryKeyT>
+) => {
+    return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, config || {
         retry: false
     });
 }

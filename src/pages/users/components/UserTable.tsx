@@ -39,7 +39,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
     const { data } = useGetAll({
         page: pageNumber,
         size: rowsPerPage,
-        username: username,
+        name: username,
         usertype: userType,
         cityId: cityId,
         organizationId: organizationId,
