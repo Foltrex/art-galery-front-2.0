@@ -65,7 +65,7 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
                 facilitiyId: f.id;
                 selected: false
             })
-            setCheckedFacilities(checkedF)
+            // setCheckedFacilities(checkedF)
         }
     }, [isSuccess, data]);
 
@@ -73,7 +73,7 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
     if (data?.content) {
         facilityContent = data.content.flatMap(organization => {
             const facilities = organization.facilities;
-            facilities.forEach(facility => facility.organization = organization);
+            // facilities.forEach(facility => facility.organization = organization);
             return facilities;
         })
     }
@@ -175,9 +175,9 @@ function getColumns(setOpenProposalModal: () => void,
         {
             key: 'organizationId',
             title: 'Organization',
-            render: (facility) => facility?.organization.name,
+            render: (facility) => facility?.organizationName,
             minWidth: 50,
-            groupBy: (facility) => facility.organization.id
+            groupBy: (facility) => facility.organizationId
         },
         {
             key: 'facility',
