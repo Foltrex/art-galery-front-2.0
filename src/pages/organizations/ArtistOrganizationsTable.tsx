@@ -60,11 +60,11 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
 
     React.useEffect(() => {
         if (isSuccess && data) {
-            const facilities = data.content.flatMap(organization => organization.facilities);
-            const checkedF = facilities.map(f => {
-                facilitiyId: f.id;
-                selected: false
-            })
+            // const facilities = data.content.flatMap(organization => organization.facilities);
+            // const checkedF = facilities.map(f => {
+            //     facilitiyId: f.id;
+            //     selected: false
+            // })
             // setCheckedFacilities(checkedF)
         }
     }, [isSuccess, data]);
