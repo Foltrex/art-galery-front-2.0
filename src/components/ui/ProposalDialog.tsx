@@ -1,19 +1,27 @@
-
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputAdornment, TextField } from '@mui/material';
-import { Box } from '@mui/system';
-import { FormikHelpers, useFormik } from 'formik';
+import {
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+	Divider,
+	InputAdornment,
+	TextField
+} from '@mui/material';
+import {Box} from '@mui/system';
+import {FormikHelpers, useFormik} from 'formik';
 import * as React from 'react';
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import * as yup from 'yup';
-import { useGetArtistByArtId } from '../../api/ArtistApi';
-import { useGetAllCurrencies, useSaveCurrency } from '../../api/CurrencyApi';
-import { useGetFacilityByAccountId } from '../../api/FacilityApi';
-import { useSaveProposal } from '../../api/ProposalApi';
-import { Art } from '../../entities/art';
-import { Currency } from '../../entities/currency';
-import { Proposal } from '../../entities/proposal';
-import { TokenService } from '../../services/TokenService';
+import {useGetArtistByArtId} from '../../api/ArtistApi';
+import {useGetAllCurrencies, useSaveCurrency} from '../../api/CurrencyApi';
+import {useGetFacilityByAccountId} from '../../api/FacilityApi';
+import {useSaveProposal} from '../../api/ProposalApi';
+import {Art} from '../../entities/art';
+import {Currency} from '../../entities/currency';
+import {Proposal} from '../../entities/proposal';
+import {TokenService} from '../../services/TokenService';
 
 interface FormValues {
 	money: string;
@@ -77,7 +85,8 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 				commission: values.commission,
 				currency: currentCurrency!,
 				artist: artist!,
-				organization: proposalObj.facility.organization,
+				organizationId: proposalObj.facility.organizationId!,
+				organizationName: proposalObj.facility.organizationName!,
 				facility: proposalObj.facility,
 				organizationConfirmation: true
 			};

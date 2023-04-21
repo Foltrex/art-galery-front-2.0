@@ -1,7 +1,7 @@
-import { Button, Stack, TableCell, TableRow, Typography } from '@mui/material';
+import {Button, Stack, TableCell, TableRow, Typography} from '@mui/material';
 import * as React from 'react';
 import LetterAvatar from '../../components/ui/LetterAvatar';
-import { Proposal } from '../../entities/proposal';
+import {Proposal} from '../../entities/proposal';
 
 interface IArtistTableItemProps {
 	proposal: Proposal;
@@ -21,7 +21,7 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 		currency, 
 		art, 
 		artist,
-		organization, 
+		organizationName,
 		artistConfirmation,
 		organizationConfirmation
 	} = proposal;
@@ -30,12 +30,12 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
-					<LetterAvatar name={organization.name} />
+					<LetterAvatar name={organizationName} />
 				</TableCell>
 				<TableCell align='left'>
 					<Stack direction='column'>
-						<strong>{organization.name}</strong>
-						{organization.name} propose you {price} {currency.label} for painting {art.name}
+						<strong>{organizationName}</strong>
+						{organizationName} propose you {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
 				<TableCell align='left'>
@@ -62,12 +62,12 @@ const ArtistTableItem: React.FunctionComponent<IArtistTableItemProps> = ({
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
-					<LetterAvatar name={organization.name} />
+					<LetterAvatar name={organizationName} />
 				</TableCell>
 				<TableCell align='left'>
 					<Stack direction='column'>
-						<strong>{organization.name}</strong>
-						{organization.name} propose you {price} {currency.label} for painting {art.name}
+						<strong>{organizationName}</strong>
+						{organizationName} propose you {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
 				<TableCell align='left'>

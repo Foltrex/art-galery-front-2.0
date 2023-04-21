@@ -1,20 +1,33 @@
-import { AddAPhoto } from "@mui/icons-material";
-import { Button, CircularProgress, Divider, FormControlLabel, FormGroup, IconButton, Stack, Switch, TextField, styled } from "@mui/material";
-import { useFormik } from "formik";
-import { ChangeEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {AddAPhoto} from "@mui/icons-material";
+import {
+    Button,
+    CircularProgress,
+    Divider,
+    FormControlLabel,
+    FormGroup,
+    IconButton,
+    Stack,
+    styled,
+    Switch,
+    TextField,
+    Tooltip
+} from "@mui/material";
+import {useFormik} from "formik";
+import * as React from "react";
+import {ChangeEvent, useRef, useState} from "react";
 import * as yup from "yup";
-import { useUploadFile } from "../../../api/FileApi";
-import { OrganizationsDropdown } from "../../../components/form/OrganizationsDropdown";
+import {useUploadFile} from "../../../api/FileApi";
+import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import MapDialog from "../../../components/map/MapDialog";
 import ImageSlider from "../../../components/ui/ImageSlider";
-import { Address } from "../../../entities/address";
-import { AccountEnum } from "../../../entities/enums/AccountEnum";
-import { Facility } from "../../../entities/facility";
-import { useGetImagesForEntityId } from "../../../hooks/useGetImagesForEntityId";
-import { FileService } from "../../../services/FileService";
-import { useRootStore } from "../../../stores/provider/RootStoreProvider";
-import { findOrganizationId } from "../../../util/MetadataUtil";
-import _ from "lodash";
+import {Address} from "../../../entities/address";
+import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import {Facility} from "../../../entities/facility";
+import {useGetImagesForEntityId} from "../../../hooks/useGetImagesForEntityId";
+import {FileService} from "../../../services/FileService";
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import {findOrganizationId} from "../../../util/MetadataUtil";
+import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 interface ImageFrameProps {
     showBorder?: boolean;
@@ -48,7 +61,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     const account = authStore.account;
     const organizationId = (account.accountType === AccountEnum.REPRESENTATIVE
         ? findOrganizationId(account)
-        : props.data.organization?.id) as string;
+        : props.data.organizationId) as string;
 
 
     const [openMap, setOpenMap] = useState(false)
@@ -113,7 +126,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     const validationSchema = yup.object().shape(validationShape)
 
     const formik = useFormik({
-        initialValues: { ...props.data, organization: { ...props.data.organization, id: organizationId } },
+        initialValues: { ...props.data, organizationId: organizationId },
         validationSchema: validationSchema,
         validateOnChange: false,
         enableReinitialize: true,
@@ -126,7 +139,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
 
     const submit = async (values: Facility) => {
         values.id = props.data.id || '';
-        values.organization.id = values.organization.id || organizationId || '';
+        values.organizationId = values.organizationId || organizationId || '';
         props.onSubmit(values);
 
         const entityId = values.id;
@@ -188,7 +201,6 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
                 <TextField
                     fullWidth={true}
                     margin="normal"
-                    size={"small"}
                     required
                     label="Name"
                     name={"name"}
@@ -199,12 +211,11 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
 
                 {/*@ts-ignore*/}
                 {account.accountType === AccountEnum.SYSTEM
-                    && <OrganizationsDropdown error={formik.errors.organization?.id}
-                        onChange={(s) => formik.setFieldValue('organization.id', s, true)} />}
+                    && <OrganizationsDropdown size={"medium"} error={formik.errors.organizationId}
+                        onChange={(s) => formik.setFieldValue('organizationId', s, true)} />}
                 <TextField
                     fullWidth={true}
                     margin="normal"
-                    size={"small"}
                     required
                     label="Address"
                     name={"address"}
@@ -221,11 +232,11 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
                 <FormGroup>
                     <FormControlLabel control={
                         <Switch
-                            name={"isActive"}
+                            name={"Status"}
                             checked={formik.values.isActive as boolean}
                             onChange={formik.handleChange}
                         />
-                    } label="isActive" />
+                    } label={<span style={{display: 'flex'}}>Status <Tooltip title={"Only active facilities may accept new offers. If facility is inactive, it would be shown in catalog until all art objects would be sold or canceled."}><HelpOutlineIcon color={"info"}/></Tooltip></span>} />
                 </FormGroup>
 
                 <Stack

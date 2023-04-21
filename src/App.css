@@ -72,3 +72,6 @@
   min-width: 300px;
   text-align: left;
 }
+.switch-control {
+  padding: 8px 0 5px;
+}

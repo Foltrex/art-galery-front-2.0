@@ -7,15 +7,15 @@ import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
 import {createEmptyPage} from '../../hooks/react-query';
 import {
-    Box,
-    Button,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    IconButton,
-    Radio,
-    RadioGroup,
-    Typography
+	Box,
+	Button,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	IconButton,
+	Radio,
+	RadioGroup,
+	Typography
 } from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
@@ -58,7 +58,7 @@ function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDele
 			key: 'organization',
 			title: 'Organization',
 			minWidth: 150,
-			render: (facility) => facility?.organization?.name
+			render: (facility) => facility?.organizationName
 		})
 	}
 	result.push(
@@ -131,7 +131,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 	];
 	const [facilityStatus, setFacilityStatus] = useState(statuses[0]);
 
-	const { data, isFetching, isSuccess } = useGetAllFacilities(
+	const facilities = useGetAllFacilities(
 		pageNumber,
 		rowsPerPage,
 		'name,asc',
@@ -141,6 +141,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 		organizationId,
 
 	);
+	const {data, isFetching, isSuccess } = facilities;
 	const mutationDelete = useDeleteFacility();
 
 	if(!account) {
@@ -181,6 +182,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 		const currentStatus = statuses.find(s => s.label === e.target.value);
 		setFacilityStatus(currentStatus!);
 	}
+
 
 	return (
 		<>

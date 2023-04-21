@@ -1,13 +1,13 @@
 import {
     Button,
     CircularProgress,
+    Container,
     Divider,
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
+    FormControlLabel,
     Stack,
-    TextField
+    Switch,
+    TextField,
+    Tooltip
 } from '@mui/material';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
@@ -18,12 +18,12 @@ import MapDialog from "../../../components/map/MapDialog";
 import {Address} from "../../../entities/address";
 import * as yup from "yup";
 import {useFormik} from "formik";
-import {Container} from "@mui/system";
 import {Organization} from "../../../entities/organization";
 import OrganizationFacilitiesDialog from "./OrganizationFacilitiesDialog";
 import OrganizationUsersDialog from "./OrganizationUsersDialog";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 interface IAppProps {
     data?: Organization;
@@ -132,18 +132,17 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                         onChange={(e) => formik.handleChange(e)}
                         error={!!formik.errors.address} helperText={formik.errors.address}
                     />
-                    <FormControl fullWidth margin="normal" error={!!formik.errors.status}>
-                        <InputLabel>Status</InputLabel>
-                        <Select
+
+                    <FormControlLabel className={"switch-control"} control={
+                        <Switch
+                            size={"medium"}
                             name={"status"}
-                            label="Status"
-                            value={formik.values.status}
-                            onChange={formik.handleChange}
-                        >
-                            <MenuItem value={OrganizationStatusEnum.ACTIVE}>Active</MenuItem>
-                            <MenuItem value={OrganizationStatusEnum.INACTIVE}>Inactive</MenuItem>
-                        </Select>
-                    </FormControl>
+                            checked={formik.values.status === OrganizationStatusEnum.ACTIVE}
+                            onChange={() => formik.setFieldValue("status", formik.values.status === OrganizationStatusEnum.ACTIVE
+                                ? OrganizationStatusEnum.INACTIVE
+                                : OrganizationStatusEnum.ACTIVE)}
+                        />
+                    } label={<span style={{display: 'flex'}}>Status <Tooltip title={"Only active organizations are shown in the catalog"}><HelpOutlineIcon color={"info"}/></Tooltip></span>} />
                 </form>
                 <Stack
                     direction={"row"}
@@ -154,7 +153,8 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                     {
                         account.accountType === AccountEnum.SYSTEM &&
                         <Button size={"large"}
-                                color={"error"}
+                                color={"primary"}
+                                variant={"outlined"}
                                 onClick={() => navigate("/organizations")}
                         >
                             Back

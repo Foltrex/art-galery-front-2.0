@@ -2,7 +2,7 @@ import React from 'react';
 import {Box, Button, Typography} from '@mui/material';
 import {useNavigate} from "react-router-dom";
 
-export default function Error404 ({back}:{back?:string}) {
+export default function Error400 ({back}:{back?:string}) {
     const navigate = useNavigate();
     return (
         <Box
@@ -15,10 +15,10 @@ export default function Error404 ({back}:{back?:string}) {
             }}
         >
             <Typography variant="h1">
-                404
+                400
             </Typography>
             <Typography variant="h6">
-                The page you’re looking for does not exist.
+                Request you sent could not be fulfilled. Most probably, something wrong with URL parameters.
             </Typography>
             <Button variant={"text"} onClick={() => navigate(back || "/")}>Back</Button>
         </Box>

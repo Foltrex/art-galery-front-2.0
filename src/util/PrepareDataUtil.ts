@@ -1,4 +1,6 @@
 import {OrganizationStatusEnum} from "../entities/enums/organizationStatusEnum";
+import {UseQueryResult} from "react-query/types/react/types";
+import {AxiosError} from "axios/index";
 
 export class PrepareDataUtil {
 
@@ -10,6 +12,13 @@ export class PrepareDataUtil {
                 return "green"
         }
     }
+}
+
+export function isQueryError(query:UseQueryResult) {
+    return !query.isLoading && !query.isFetching && query.isError;
+}
+export function getStatus(query:UseQueryResult) {
+    return ((query.error) as AxiosError)?.response?.status
 }
 
 export function getErrorMessage(e:any):string|undefined {

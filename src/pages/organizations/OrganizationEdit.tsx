@@ -5,15 +5,36 @@ import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import Bubble from "../../components/bubble/Bubble";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {getErrorMessage} from "../../util/PrepareDataUtil";
+import {getErrorMessage, getStatus, isQueryError} from "../../util/PrepareDataUtil";
+import {useMemo} from "react";
+import Error404 from "../error/Error404";
+import Error400 from "../error/Error400";
 
 const OrganizationEdit = () => {
     const matches = useParams();
     const {authStore} = useRootStore();
-    const {data} = useGetOrganizationById(matches.id);
+    const org = useGetOrganizationById(matches.id);
     const navigate = useNavigate()
 
-    return <OrganizationForm data={data} submit={(organization) => {
+    const isError = isQueryError(org);
+    const errorComponent = useMemo(() => {
+        if(isError) {
+            const status = getStatus(org);
+            if(status === 404) {
+                return <Error404 back={"/organizations"}/>
+            } else if(status === 400) {
+                return <Error400 back={"/organizations"}/>
+            }
+            Bubble.error("Failed to load organization data. Error message is " + getErrorMessage(org.error));
+            return null;
+        }
+    }, [isError]);
+
+    if(errorComponent) {
+        return errorComponent;
+    }
+
+    return <OrganizationForm data={org.data} submit={(organization) => {
         organization.id = matches.id!;
         return axiosApi.put(`${ART_SERVICE}/organizations/${matches.id!}`, organization)
             .then(() => {
