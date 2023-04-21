@@ -96,12 +96,13 @@ function reindexBucket<S extends IdentifiableRecord>(b:Bucket<S>, index:[number]
 	for(let bIndex in b.buckets) {
 		const child = b.buckets[bIndex];
 		reindexBucket(child, index);
-		if(child.content?.length === 1) {
-			b.content = b.content.concat(child.content);
-			toDelete.push(bIndex);
-		} else {
-			bucketsSize++;
-		}
+		// todo!
+		// if(child.content?.length === 1) {
+		// 	b.content = b.content.concat(child.content);
+		// 	toDelete.push(bIndex);
+		// } else {
+		// 	bucketsSize++;
+		// }
 	}
 	toDelete.forEach(index => delete(b.buckets[index]));
 	b.bucketsSize = bucketsSize;
@@ -130,9 +131,9 @@ function GroupRow<S extends IdentifiableRecord> ({bucket, columns, level, clazz}
 	const [isOpen, setIsOpen] = useState(true);
 	const [isShown, setIsShown] = useState(isOpen);
 
-	if(bucket.content?.length === 1 && bucket.bucketsSize === 0) {
-		return <TableRow key={bucket.content[0].item.id} number={bucket.content[0].index} columns={columns} item={bucket.content[0].item} />
-	}
+	// if(bucket.content?.length === 1 && bucket.bucketsSize === 0) {
+	// 	return <TableRow key={bucket.content[0].item.id} number={bucket.content[0].index} columns={columns} item={bucket.content[0].item} />
+	// }
 
 	let mainContent = bucket.column.render
 		? bucket.column.render(bucket.sample)
