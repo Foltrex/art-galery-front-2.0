@@ -5,7 +5,7 @@ import {Organization} from "../../entities/organization";
 import {getStatus, isQueryError} from "../../util/PrepareDataUtil";
 import Bubble from "../bubble/Bubble";
 
-export const OrganizationsDropdown = ({onChange, error, value, size}:{size?:"small"|"medium", value?:string, error?:any, onChange: (id:string|undefined) => void}) => {
+export const OrganizationsDropdown = ({onChange, error, value, size}:{size?:"small"|"medium", value?:string|null, error?:any, onChange: (id:string|undefined) => void}) => {
 
     const org = useGetAllOrganizationList();
     const organizations = org.data;
@@ -40,7 +40,10 @@ export const OrganizationsDropdown = ({onChange, error, value, size}:{size?:"sma
 
 
     const optValue = useMemo(() => {
-        if(!value || !organizationOptions) {
+        if(value === null || value === undefined){
+            return value;
+        }
+        if(!organizationOptions) {
             return undefined;
         }
         for(let i = 0; i < organizationOptions.length; i++) {
@@ -48,6 +51,7 @@ export const OrganizationsDropdown = ({onChange, error, value, size}:{size?:"sma
                 return organizationOptions[i];
             }
         }
+        return value === undefined ? undefined : null;
     }, [value, organizationOptions]);
 
     return <Autocomplete

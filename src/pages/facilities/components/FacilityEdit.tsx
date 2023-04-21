@@ -5,6 +5,7 @@ import Bubble from "../../../components/bubble/Bubble";
 import {Facility} from "../../../entities/facility";
 import {useGetFacilityById} from "../../../api/FacilityApi";
 import Loading from "../../../components/ui/Loading";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 
 const FacilityEdit = (props:{facilityId: string, onSubmit: (facility:Facility) => void, back:() => void}) => {
@@ -12,7 +13,6 @@ const FacilityEdit = (props:{facilityId: string, onSubmit: (facility:Facility) =
     if(isLoading || isFetching || !data) {
         return <Loading />
     }
-    console.log(data);
     return <FacilityFormAbstract data={data} back={props.back} onSubmit={(facility) => {
         return axiosApi.put(`${ART_SERVICE}/facilities/${facility.id!}`, facility)
             .then(() => {
@@ -21,7 +21,7 @@ const FacilityEdit = (props:{facilityId: string, onSubmit: (facility:Facility) =
                 return true;
             })
             .catch(error => {
-                Bubble.error({message: "Failed to update facility. Error is: " + error.response.data.message, duration: 999999})
+                Bubble.error({message: "Failed to update facility. Error is: " + getErrorMessage(error), duration: 999999})
                 return false
             });
     }}/>

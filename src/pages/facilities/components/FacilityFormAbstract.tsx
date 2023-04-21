@@ -2,7 +2,7 @@ import {AddAPhoto} from "@mui/icons-material";
 import {
     Button,
     CircularProgress,
-    Divider,
+    Container,
     FormControlLabel,
     FormGroup,
     IconButton,
@@ -119,9 +119,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     };
     if (account.accountType === AccountEnum.SYSTEM) {
         //@ts-ignore
-        validationShape.organization = yup.object({
-            id: yup.string().required("Please select organization")
-        });
+        validationShape.organizationId = yup.string().required("Please select organization");
     }
     const validationSchema = yup.object().shape(validationShape)
 
@@ -138,19 +136,20 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     });
 
     const submit = async (values: Facility) => {
+        console.log("on submit")
         values.id = props.data.id || '';
         values.organizationId = values.organizationId || organizationId || '';
-        props.onSubmit(values);
-
-        const entityId = values.id;
-        if (entityId) {
-            const promises = files.map(async (file) => {
-                console.log(entityId)
-                const fileEntity = await FileService.toEntityFile(entityId, file);
-                await mutationUploadImage.mutateAsync(fileEntity);
-            })
-            await Promise.all(promises);
-        }
+        props.onSubmit(values).then(() => {
+            const entityId = values.id;
+            if (entityId) {
+                const promises = files.map(async (file) => {
+                    console.log(entityId)
+                    const fileEntity = await FileService.toEntityFile(entityId, file);
+                    await mutationUploadImage.mutateAsync(fileEntity);
+                })
+                return Promise.all(promises);
+            }
+        });
     }
     
     const renderImageSlider = () => {
@@ -184,10 +183,9 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
             )
         }
     }
-
-    //@ts-ignore
+console.log(formik)
     return (
-        <>
+        <Container maxWidth='lg'>
             {renderImageSlider()}
             <form onSubmit={formik.handleSubmit} id="facility_add_edit" noValidate>
                 <MapDialog
@@ -211,7 +209,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
 
                 {/*@ts-ignore*/}
                 {account.accountType === AccountEnum.SYSTEM
-                    && <OrganizationsDropdown size={"medium"} error={formik.errors.organizationId}
+                    && <OrganizationsDropdown size={"medium"} value={formik.values.organizationId || null} error={formik.errors.organizationId}
                         onChange={(s) => formik.setFieldValue('organizationId', s, true)} />}
                 <TextField
                     fullWidth={true}
@@ -236,31 +234,40 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
                             checked={formik.values.isActive as boolean}
                             onChange={formik.handleChange}
                         />
-                    } label={<span style={{display: 'flex'}}>Status <Tooltip title={"Only active facilities may accept new offers. If facility is inactive, it would be shown in catalog until all art objects would be sold or canceled."}><HelpOutlineIcon color={"info"}/></Tooltip></span>} />
+                    } label={<span style={{display: 'flex'}}>Status <Tooltip title={
+                        "Only active facilities may accept new offers. If facility is inactive," +
+                        " it would be shown in catalog until all art objects would be sold or canceled."}>
+                        <HelpOutlineIcon color={"primary"}/></Tooltip></span>} />
                 </FormGroup>
-
                 <Stack
-                    direction={"row"}
+                    direction="row"
+                    justifyContent="space-between"
+                    alignItems="baseline"
                     spacing={2}
-                    divider={<Divider orientation="vertical" flexItem />}
-                    style={{ marginTop: "15px" }}
+                    style={{marginTop: "15px"}}
                 >
                     <Button size={"large"}
-                        color={"error"}
-                        variant="outlined"
-                        onClick={props.back}
+                            sx={{width: '25%'}}
+                            fullWidth
+                            color={"primary"}
+                            variant="outlined"
+                            onClick={props.back}
                     >
                         Back
                     </Button>
                     <Button size={"large"}
-                        color={"success"}
-                        variant="outlined"
-                        type="submit" form={"facility_add_edit"} disabled={formik.isSubmitting}
+                            fullWidth
+                            sx={{width: '25%'}}
+                            color={"success"}
+                            variant="outlined"
+                            type="submit"
+                            form={"facility_add_edit"}
+                            disabled={formik.isSubmitting}
                     >
                         {formik.isSubmitting ? <CircularProgress /> : "Save"}
                     </Button>
                 </Stack>
             </form>
-        </>
+        </Container>
     )
 }

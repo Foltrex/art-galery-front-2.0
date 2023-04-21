@@ -1,4 +1,4 @@
-import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography} from "@mui/material";
+import {Box, Button, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import * as React from 'react';
 import {useState} from 'react';
 import {useGetAll} from '../../../api/AccountApi';
@@ -28,8 +28,6 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
     const navigate = useNavigate();
     const {authStore} = useRootStore();
     const canCreateUser = authStore.account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(authStore.account);
-    const showOrganizationColumn = authStore.account.accountType === AccountEnum.SYSTEM || isCreatorOrAdmin(authStore.account);
-
 
     const [sort, setSort] = useState<string>();
 
@@ -58,16 +56,6 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
 
     return (
         <div>
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between'
-            }}>
-                <Typography variant='h4' align='left'>
-                    <b>Representatives</b>
-                </Typography>
-            </Box>
-
             <Box sx={{ display: 'flex', gap: '20px' }}>
                 <TypeFilter onChange={(text) => setUsername(text)} placeholder={"Lastname/Firstname"} />
 

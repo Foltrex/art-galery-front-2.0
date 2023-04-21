@@ -21,9 +21,7 @@ const TableRow = <S extends IdentifiableRecord>({
                 {number}
             </TableCell>
 
-            {columns.map((column, columnIndex) => {                
-                console.log(column.render)
-                console.log((item as any)[column.key])
+            {columns.map((column, columnIndex) => {
                 return (
                 <TableCell key={columnIndex}
                            align='center'
