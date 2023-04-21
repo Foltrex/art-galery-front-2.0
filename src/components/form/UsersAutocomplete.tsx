@@ -8,7 +8,7 @@ import {Account} from "../../entities/account";
 
 export default function UsersAutocomplete({userType, onChange}:{
     userType?:AccountEnum,
-    onChange:(userId:string) => void
+    onChange:(userId?:string) => void
 }) {
     const [name, setName] = useState("");
     const users = useGetAll({page: 0, size: 999999, usertype: userType, name: name}, {retry: false, enabled: !!name});
@@ -17,7 +17,7 @@ export default function UsersAutocomplete({userType, onChange}:{
         reactAt={2}
         mapFunction={r => r.content}
         queryResult={users}
-        onChange={(v) => setName(name)}
+        onChange={(v) => onChange(v ? v.id : undefined)}
         label={"Users"}
         noOptionsText={"Nothing found"}
         renderOption={(option) => {return (option.firstName ? option.firstName + " " : "") + (option.lastName || "")}}
