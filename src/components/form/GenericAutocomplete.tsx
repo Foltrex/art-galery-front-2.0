@@ -13,14 +13,14 @@ interface State<T> {
 }
 
 export default function GenericAutocomplete<T, E>({renderOption, reactAt, queryResult, mapFunction, searchChanged, onChange, label, noOptionsText} : {
-    renderOption:(v:T) => string,
-    mapFunction:(e:E) => T[]
-    queryResult: UseQueryResult<E>
-    searchChanged:(v:string) => void
-    label: string
-    noOptionsText:string
-    onChange: (v?:T) => void
-    reactAt:number
+    renderOption:(v:T) => string,//data which is shown instead of option, let's say toString for objects
+    mapFunction:(e:E) => T[]//function which transforms react-query result into array of objects. Mostly should be r => r
+    queryResult: UseQueryResult<E>//react-query result
+    searchChanged:(v:string) => void//text-field search changed, parameter which should be used to update react-query result
+    label: string//dropdown label
+    noOptionsText:string//shown in case if no options available
+    onChange: (v?:T) => void//called in moment when user select apropriate option from the list
+    reactAt:number//amount of characters needed to trigger searchChanged. If reactAt = 3, and user enter "ab", searchChanged would be ignored (becase "ab".length < 3)
 }) {
     const [state, setState] = useState<State<T>>({value: null, optionSelected:false, text: '', lastUpdate: new Date().getTime(), triggerUpdate: false});
 
