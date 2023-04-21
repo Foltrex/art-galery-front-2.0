@@ -21,7 +21,10 @@ const TableRow = <S extends IdentifiableRecord>({
                 {number}
             </TableCell>
 
-            {columns.map((column, columnIndex) => (
+            {columns.map((column, columnIndex) => {                
+                console.log(column.render)
+                console.log((item as any)[column.key])
+                return (
                 <TableCell key={columnIndex}
                            align='center'
                            colSpan={column.colspan}
@@ -36,7 +39,7 @@ const TableRow = <S extends IdentifiableRecord>({
                         : (item as any)[column.key]
                     }
                 </TableCell>
-            ))}
+            )})}
 
         </MuiTableRow>
     );

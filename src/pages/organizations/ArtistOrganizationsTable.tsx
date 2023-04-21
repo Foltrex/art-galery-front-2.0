@@ -15,11 +15,13 @@ import { Organization } from '../../entities/organization';
 import { TokenService } from '../../services/TokenService';
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import { OrganizationStatus } from './components/OrganizationStatus';
+import { Facility } from '../../entities/facility';
+import { IPage } from '../../hooks/react-query';
 
 const Statuses: Array<{ label: string, value: string }> = [
-    {label: 'All', value: ''},
-    {label: 'Active', value: 'ACTIVE'},
-    {label: 'Inactive', value: 'INACTIVE'},
+    { label: 'All', value: '' },
+    { label: 'Active', value: 'ACTIVE' },
+    { label: 'Inactive', value: 'INACTIVE' },
 ];
 
 interface IArtistOrganizationsTableProps {
@@ -27,18 +29,18 @@ interface IArtistOrganizationsTableProps {
 
 const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTableProps> = (props) => {
     const navigate = useNavigate();
-    const {authStore} = useRootStore();
+    const { authStore } = useRootStore();
     const account = authStore.account;
 
     const [status, setStatus] = React.useState(Statuses[0].value);
     const [searchText, setSearchText] = React.useState<string>();
 
     const [openProposalModal, setOpenProposalModal] = React.useState(false);
-    
+
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
-    const {data} = useGetAllOrganizations({
+    var { data, isSuccess } = useGetAllOrganizations({
         page: pageNumber,
         sort: 'name,asc',
         size: rowsPerPage,
@@ -46,10 +48,45 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         status: status,
     });
 
+    const [selectedAll, setSelectedAll] = React.useState(false);
+    const [checkedOrganizations, setCheckedOrganizations] = React.useState<{
+        organizationId: string,
+        selected: boolean
+    }[]>();
+    const [checkedFacilities, setCheckedFacilities] = React.useState<{
+        facilitiyId: string,
+        selected: boolean
+    }[]>();
+
+    React.useEffect(() => {
+        if (isSuccess && data) {
+            const facilities = data.content.flatMap(organization => organization.facilities);
+            const checkedF = facilities.map(f => {
+                facilitiyId: f.id;
+                selected: false
+            })
+            setCheckedFacilities(checkedF)
+        }
+    }, [isSuccess, data]);
+
+    var facilityContent: Facility[] = [];
+    if (data?.content) {
+        facilityContent = data.content.flatMap(organization => {
+            const facilities = organization.facilities;
+            facilities.forEach(facility => facility.organization = organization);
+            return facilities;
+        })
+    }
+
+    const facilityPage = {
+        ...data!,
+        content: facilityContent
+    }
+
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
-    }    
-    
+    }
+
     const handleChangeSearchFilter = (e: React.ChangeEvent<HTMLInputElement>) => {
         setStatus(e.target.value);
     }
@@ -61,7 +98,7 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
     const handleEdit = (data: Organization) => {
         navigate(`${data.id}`)
     }
-    
+
     const columns = getColumns(
         () => setOpenProposalModal(true),
         handleEdit,
@@ -107,23 +144,23 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
             {data && data.content
                 ? <Table
                     columns={columns}
-                    page={data}
+                    page={facilityPage}
                     onPageChange={setPageNumber}
                     onRowsPerPageChange={setRowsPerPage}
                     groupBy={['organizationId']}
                 />
                 : <SkeletonTable
                     columns={columns}
-                    rowsPerPage={rowsPerPage}/>
+                    rowsPerPage={rowsPerPage} />
             }
         </>
     );
 };
 
 function getColumns(setOpenProposalModal: () => void,
-                    onEdit: (data: Organization) => void,
-                    onDelete: (data: Organization) => void,
-                    account: Account): IColumnType<Organization>[] {
+    onEdit: (data: Organization) => void,
+    onDelete: (data: Organization) => void,
+    account: Account): IColumnType<Facility>[] {
     const accountType = TokenService.getCurrentAccountType();
     const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
     const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
@@ -138,59 +175,65 @@ function getColumns(setOpenProposalModal: () => void,
         {
             key: 'organizationId',
             title: 'Organization',
-            render: (organization) => organization?.name,
+            render: (facility) => facility?.organization.name,
             minWidth: 50,
-            groupBy: (organization) => organization.id
+            groupBy: (facility) => facility.organization.id
         },
         {
-            key: 'city',
-            title: 'City',
-            minWidth: 150,
-            render: (organization) => organization.facilities
-        },
-        {
-            key: 'address',
-            title: 'Address',
-            minWidth: 150,
-            render: (organization) => organization?.address?.name
-        },
-        {
-            key: 'status',
-            title: 'Status',
-            minWidth: 150,
-            render: (organization) => {
-                return <OrganizationStatus organization={organization}/>
-            }
-        },
-        {
-            key: 'actions',
-            title: 'Actions',
-            minWidth: 150,
-            render: (organization) => {
-                if (accountType === AccountEnum.SYSTEM ||
-                    (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR)) {
-                    return (
-                        <div>
-                            <IconButton
-                                disableRipple
-                                aria-label='edit'
-                                onClick={() => onEdit(organization)}
-                            >
-                                <ModeOutlinedIcon/>
-                            </IconButton>
-                            <IconButton
-                                disableRipple
-                                aria-label='delete'
-                                onClick={() => onDelete(organization)}
-                            >
-                                <DeleteOutline/>
-                            </IconButton>
-                            {' '}
-                        </div>
-                    )
-                }
-            }
+            key: 'facility',
+            title: 'Facilities',
+            minWidth: 100,
+            groupBy: organization => organization.id
         }
+        // {
+        //     key: 'city',
+        //     title: 'City',
+        //     minWidth: 150,
+        //     render: (organization) => organization.facilities
+        // },
+        // {
+        //     key: 'address',
+        //     title: 'Address',
+        //     minWidth: 150,
+        //     render: (organization) => organization?.address?.name
+        // },
+        // {
+        //     key: 'status',
+        //     title: 'Status',
+        //     minWidth: 150,
+        //     render: (organization) => {
+        //         return <OrganizationStatus organization={organization}/>
+        //     }
+        // },
+        // {
+        //     key: 'actions',
+        //     title: 'Actions',
+        //     minWidth: 150,
+        //     render: (organization) => {
+        //         if (accountType === AccountEnum.SYSTEM ||
+        //             (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR)) {
+        //             return (
+        //                 <div>
+        //                     <IconButton
+        //                         disableRipple
+        //                         aria-label='edit'
+        //                         onClick={() => onEdit(organization)}
+        //                     >
+        //                         <ModeOutlinedIcon/>
+        //                     </IconButton>
+        //                     <IconButton
+        //                         disableRipple
+        //                         aria-label='delete'
+        //                         onClick={() => onDelete(organization)}
+        //                     >
+        //                         <DeleteOutline/>
+        //                     </IconButton>
+        //                     {' '}
+        //                 </div>
+        //             )
+        //         }
+        //     }
+        // }
         // {
         //     key: 'address',
         //     title: 'Address',
