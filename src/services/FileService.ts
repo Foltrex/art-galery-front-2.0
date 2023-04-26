@@ -1,21 +1,11 @@
 import {File as FileEntity} from "../entities/file";
 import naclUtil from 'tweetnacl-util';
 import {AccountEnum} from "../entities/enums/AccountEnum";
-import { EntityFile } from "../entities/entityFile";
+import {EntityFile} from "../entities/entityFile";
 
 export class FileService {
     static createImageLinkForAccountType(artId: string, accountType: AccountEnum) {
-        switch (accountType) {
-            case AccountEnum.ARTIST: {
-                return process.env.REACT_APP_PUBLIC_URL + `/arts/artist/${artId}`;
-            }
-            case AccountEnum.REPRESENTATIVE: {
-                return process.env.REACT_APP_PUBLIC_URL + `/arts/representative/${artId}`;
-            }
-            default: {
-                throw new Error('Invalid account type for image\'s url creating')
-            }
-        }
+        return process.env.REACT_APP_PUBLIC_URL + `/gallery/${artId}`;
     }
 
     static async toFile(artId: string | undefined, file: File): Promise<FileEntity> {

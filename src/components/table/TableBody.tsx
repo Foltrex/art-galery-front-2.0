@@ -155,13 +155,14 @@ function GroupRow<S extends IdentifiableRecord> ({bucket, columns, level, clazz}
 			bucketsContent.push(<GroupRow key={b.id} bucket={b} columns={columns} level={level + 1} clazz={childClazz}/>)
 		}
 	}
+	const groupColumns = columns.filter(c => !c.groupBy);
 	return <>
-		<TableRow key={bucket.id} number={null} clazz={clazz} columns={[buildGroupColumn(bucket.column, toggle, level, columns.length)]} item={({
+		<TableRow key={bucket.id} number={null} clazz={clazz} columns={[buildGroupColumn(bucket.column, toggle, level, groupColumns.length)]} item={({
 			id: "r" + Math.random(),
 			content: mainContent
 		})}/>
 		{isShown && bucket.content?.map((item) => {
-			return <TableRow key={item.item.id} clazz={childClazz} number={item.index} columns={columns} item={item.item} />
+			return <TableRow key={item.item.id} clazz={childClazz} number={item.index} columns={groupColumns} item={item.item} />
 		})}
 		{bucketsContent}
 	</>
