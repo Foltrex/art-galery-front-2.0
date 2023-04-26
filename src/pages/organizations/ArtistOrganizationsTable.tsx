@@ -1,7 +1,7 @@
 import {Box, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {TypeFilter} from '../../components/form/TypeFilter';
 import {useGetAllOrganizations} from '../../api/OrganizationApi';
 import SkeletonTable from '../../components/table/SkeletonTable';
@@ -42,6 +42,7 @@ const ArtistOrganizationsTable = () => {
     const [selection, setSelection] = useState<Selection>({all:false, organizations:{}, facilities:{}})
     const [status, setStatus] = React.useState(Statuses[0].value);
     const [searchText, setSearchText] = React.useState<string>();
+    const navigate = useNavigate();
 
     // const [showActiveFacilities, setShowActiveFacilities] = React.useState<boolean>();
 
@@ -148,11 +149,7 @@ const ArtistOrganizationsTable = () => {
     }
 
     const handleProposeClick = () => {
-        const hasSelectedFacilities = () => {
-            return !!checkedFacilities.find(f => f.selected);
-        }
-
-        if (hasSelectedFacilities()) {
+        if (somethingSelected(selection)) {
             navigate('#');
         } else {
             Bubble.error('It is necessary to choose at least one facility');
