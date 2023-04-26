@@ -12,6 +12,10 @@ export class PrepareDataUtil {
                 return "green"
         }
     }
+
+    static getFacilityStatusColor = (isActive: boolean) => {
+        return isActive ? 'green' : 'red';
+    }
 }
 
 export function isQueryError(query:UseQueryResult) {

@@ -74,15 +74,15 @@ function prepareSidebar(account:Account) {
         case AccountEnum.ARTIST:
             return [
                 {
-                    text: 'Organizations',
+                    text: 'Organizations&facilities.',
                     icon: <HomeOutlined />,
                     link: '/organizations'
                 },
-                {
-                    text: 'Facilities',
-                    icon: <MapsHomeWorkOutlined/>,
-                    link: '/facilities'
-                },
+                // {
+                //     text: 'Facilities',
+                //     icon: <MapsHomeWorkOutlined/>,
+                //     link: '/facilities'
+                // },
                 {
                     text: 'Gallery',
                     icon: <CropOriginalOutlined/>,

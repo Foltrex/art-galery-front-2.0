@@ -188,7 +188,6 @@ function TableBody<S extends IdentifiableRecord>({
 			result.push(<GroupRow bucket={buckets[key]} columns={columns} level={0}/>);
 		}
 
-		console.log(result)
 		return result;
 	}, [groupBy, content, columns]);
 
