@@ -186,7 +186,7 @@ function TableBody<S extends IdentifiableRecord>({
 		const buckets = prepareBuckets<S>(columns, content.map((c, i) => ({item: c, index: i + 1 + number * size})), groupBy, 0);
 
 		for(let key in buckets) {
-			result.push(<GroupRow bucket={buckets[key]} columns={columns} level={0}/>);
+			result.push(<GroupRow key={key} bucket={buckets[key]} columns={columns} level={0}/>);
 		}
 
 		return result;

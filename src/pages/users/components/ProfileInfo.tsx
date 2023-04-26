@@ -65,8 +65,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
         try {
             await mutationDelete.mutateAsync(props.account!.id);
             if (props.account.id === authStore.account.id) {
-                AuthService.logout()
-                navigate("/auth/signin")
+                AuthService.logout(authStore, navigate)
             } else {
                 if (props.back) {
                     props.back();

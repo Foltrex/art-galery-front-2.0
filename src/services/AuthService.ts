@@ -1,5 +1,7 @@
 import {Cookies} from "react-cookie"
 import {TokenService} from "./TokenService";
+import {NavigateFunction} from "react-router-dom";
+import {AuthStore} from "../stores/authStore";
 
 const cookies = new Cookies()
 
@@ -38,9 +40,12 @@ export class AuthService {
         return localStorage.getItem("remember_me") === "true";
     }
 
-    static logout() {
+    static logout(authStore: AuthStore, navigate: NavigateFunction) {
+        //@ts-ignore
+        authStore.setAccount(null)
         cookies.remove("token", {path: "/"})
         localStorage.removeItem("remember_me")
+        navigate("/auth/signin")
     }
 
 }

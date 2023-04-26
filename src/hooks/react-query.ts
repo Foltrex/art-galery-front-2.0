@@ -158,10 +158,9 @@ export const useGenericMutation = <T, S = T | undefined>(
                 } else {
                     console.log(err);
                 }
-
                 queryClient.setQueryData([url!, params], context);
             },
-            onSettled: () => queryClient.invalidateQueries()
+            onSuccess: () => queryClient.invalidateQueries()
         }
     );
 };

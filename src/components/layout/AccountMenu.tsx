@@ -1,14 +1,14 @@
-import {Login, Logout, Mail, Settings} from '@mui/icons-material';
+import {Login, Logout, Mail} from '@mui/icons-material';
 import {
-    Avatar,
-    Badge,
-    CircularProgress,
-    Divider,
-    IconButton,
-    ListItemIcon,
-    Menu,
-    MenuItem,
-    Tooltip
+	Avatar,
+	Badge,
+	CircularProgress,
+	Divider,
+	IconButton,
+	ListItemIcon,
+	Menu,
+	MenuItem,
+	Tooltip
 } from '@mui/material';
 import * as React from 'react';
 import {useCookies} from 'react-cookie';
@@ -17,6 +17,7 @@ import {useNavigate} from 'react-router-dom';
 import {AuthService} from '../../services/AuthService';
 import {TokenService} from '../../services/TokenService';
 import LetterAvatar from '../ui/LetterAvatar';
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
 interface IAccountMenuProps {
 }
@@ -24,6 +25,7 @@ interface IAccountMenuProps {
 const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 	const [cookies] = useCookies(['token']);
 	const [isLogin] = React.useState<boolean | null>(cookies.token);
+	const {authStore} = useRootStore();
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const openAccountMenu = !!anchorEl;
 
@@ -57,8 +59,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 			return (
 				<MenuItem
 					onClick={() => {
-						AuthService.logout()
-						navigate("/auth/signin")
+						AuthService.logout(authStore, navigate)
 					}}
 				>
 					<ListItemIcon>
