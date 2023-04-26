@@ -17,6 +17,7 @@ import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
 import { OrganizationStatus } from './components/OrganizationStatus';
 import { Facility } from '../../entities/facility';
 import { IPage } from '../../hooks/react-query';
+import FacilityStatus from './components/FacilityStatus';
 
 const Statuses: Array<{ label: string, value: string }> = [
     { label: 'All', value: '' },
@@ -48,40 +49,37 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         status: status,
     });
 
-    const [selectedAll, setSelectedAll] = React.useState(false);
-    const [checkedOrganizations, setCheckedOrganizations] = React.useState<{
-        organizationId: string,
-        selected: boolean
-    }[]>();
-    const [checkedFacilities, setCheckedFacilities] = React.useState<{
-        facilitiyId: string,
-        selected: boolean
-    }[]>();
-
-    React.useEffect(() => {
-        if (isSuccess && data) {
-            // const facilities = data.content.flatMap(organization => organization.facilities);
-            // const checkedF = facilities.map(f => {
-            //     facilitiyId: f.id;
-            //     selected: false
-            // })
-            // setCheckedFacilities(checkedF)
+    const facilityContent = React.useMemo(() => {
+        if (!!data) {
+            return data.content.flatMap(organization => organization.facilities)
+        } else {
+            return [];
         }
-    }, [isSuccess, data]);
+    }, [data]);
 
-    var facilityContent: Facility[] = [];
-    if (data?.content) {
-        facilityContent = data.content.flatMap(organization => {
-            const facilities = organization.facilities;
-            // facilities.forEach(facility => facility.organization = organization);
-            return facilities;
-        })
-    }
 
     const facilityPage = {
         ...data!,
         content: facilityContent
     }
+    
+    const [selectedAll, setSelectedAll] = React.useState(false);
+    const [checkedOrganizations, setCheckedOrganizations] = React.useState<Map<string, boolean>>();
+    const [checkedFacilities, setCheckedFacilities] = React.useState<Map<string, boolean>>();
+
+    React.useEffect(() => {
+        const checkedF = new Map<string, boolean>(
+            facilityContent.map((facility) => [facility.id, false])
+        )
+        setCheckedFacilities(checkedF)
+
+        const organizations = data?.content ?? [];
+        const checkedO = new Map<string, boolean>(
+            organizations.map((organization) => [organization.id, false])
+        )
+        setCheckedOrganizations(checkedO);
+    }, [isSuccess, data]);
+
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
@@ -99,10 +97,26 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         navigate(`${data.id}`)
     }
 
+
+    const handleFacilityCheckClick = (facility: Facility) => {
+        // setCheckedFacilities(() => )
+        // checkedFacilities
+        // setCheckedFacilities()
+    }
+
+    const handleOrganizaitonsCheckClick = () => {
+
+    }
+
+    const handleAllCheckClick = () => {
+
+    }
+
     const columns = getColumns(
         () => setOpenProposalModal(true),
         handleEdit,
         handleDelete,
+        handleFacilityCheckClick,
         account);
 
     return (
@@ -160,7 +174,9 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
 function getColumns(setOpenProposalModal: () => void,
     onEdit: (data: Organization) => void,
     onDelete: (data: Organization) => void,
-    account: Account): IColumnType<Facility>[] {
+    onSelect: (facility: Facility) => void,
+    account: Account
+): IColumnType<Facility>[] {
     const accountType = TokenService.getCurrentAccountType();
     const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
     const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
@@ -170,7 +186,7 @@ function getColumns(setOpenProposalModal: () => void,
             key: '',
             title: <Checkbox />,
             minWidth: 10,
-            render: () => <Checkbox />
+            render: facility => <Checkbox onClick={() => onSelect(facility)} />
         },
         {
             key: 'organizationId',
@@ -183,84 +199,28 @@ function getColumns(setOpenProposalModal: () => void,
             key: 'facility',
             title: 'Facilities',
             minWidth: 100,
-            groupBy: organization => organization.id
+            render: facility => facility.name
+        },
+        {
+            key: 'city',
+            title: 'City',
+            minWidth: 150,
+            render: (facility) => facility.address?.city.name
+        },
+        {
+            key: 'address',
+            title: 'Address',
+            minWidth: 150,
+            render: (facility) => facility.address?.name
+        },
+        {
+            key: 'status',
+            title: 'Status',
+            minWidth: 150,
+            render: (facility) => {
+                return <FacilityStatus facility={facility} />
+            }
         }
-        // {
-        //     key: 'city',
-        //     title: 'City',
-        //     minWidth: 150,
-        //     render: (organization) => organization.facilities
-        // },
-        // {
-        //     key: 'address',
-        //     title: 'Address',
-        //     minWidth: 150,
-        //     render: (organization) => organization?.address?.name
-        // },
-        // {
-        //     key: 'status',
-        //     title: 'Status',
-        //     minWidth: 150,
-        //     render: (organization) => {
-        //         return <OrganizationStatus organization={organization}/>
-        //     }
-        // },
-        // {
-        //     key: 'actions',
-        //     title: 'Actions',
-        //     minWidth: 150,
-        //     render: (organization) => {
-        //         if (accountType === AccountEnum.SYSTEM ||
-        //             (organizationId === organization.id && organizationRole === OrganizationRoleEnum.CREATOR)) {
-        //             return (
-        //                 <div>
-        //                     <IconButton
-        //                         disableRipple
-        //                         aria-label='edit'
-        //                         onClick={() => onEdit(organization)}
-        //                     >
-        //                         <ModeOutlinedIcon/>
-        //                     </IconButton>
-        //                     <IconButton
-        //                         disableRipple
-        //                         aria-label='delete'
-        //                         onClick={() => onDelete(organization)}
-        //                     >
-        //                         <DeleteOutline/>
-        //                     </IconButton>
-        //                     {' '}
-        //                 </div>
-        //             )
-        //         }
-        //     }
-        // }
-        // {
-        //     key: 'address',
-        //     title: 'Address',
-        //     minWidth: 150,
-        //     render: (organization) => {
-        //         const address = organization.address;
-        //         const city = address?.city;
-        //         return address ? (city ? city.name + ', ' : '') + address.fullName: '';
-        //     }
-        // },
-        // {
-        //     key: 'controls',
-        //     title: '',
-        //     render: (organization) => {
-        //         if(accountType === AccountEnum.ARTIST) {
-        //             return <Tooltip title={'Propose'}>
-        //                 <IconButton onClick={setOpenProposalModal}>
-        //                     <AssignmentReturnedIcon/>
-        //                 </IconButton>
-        //             </Tooltip>
-        //         } else if(accountType === AccountEnum.SYSTEM || (accountType === AccountEnum.REPRESENTATIVE)) {
-        //             return <div>EDIT</div>
-        //         } else {
-        //             return <div/>
-        //         }
-        //     }
-        // }
     ];
 }
 
