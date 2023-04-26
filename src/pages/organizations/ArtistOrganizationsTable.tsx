@@ -18,6 +18,7 @@ import { OrganizationStatus } from './components/OrganizationStatus';
 import { Facility } from '../../entities/facility';
 import { IPage } from '../../hooks/react-query';
 import FacilityStatus from './components/FacilityStatus';
+import Bubble from '../../components/bubble/Bubble';
 
 const Statuses: Array<{ label: string, value: string }> = [
     { label: 'All', value: '' },
@@ -25,21 +26,20 @@ const Statuses: Array<{ label: string, value: string }> = [
     { label: 'Inactive', value: 'INACTIVE' },
 ];
 
-interface IArtistOrganizationsTableProps {
-}
-
 type SelectedUnit = {
     id: string | number;
     selected: boolean;
 }
 
-const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTableProps> = (props) => {
+const ArtistOrganizationsTable = () => {
     const navigate = useNavigate();
     const { authStore } = useRootStore();
     const account = authStore.account;
 
     const [status, setStatus] = React.useState(Statuses[0].value);
     const [searchText, setSearchText] = React.useState<string>();
+
+    // const [showActiveFacilities, setShowActiveFacilities] = React.useState<boolean>();
 
     const [openProposalModal, setOpenProposalModal] = React.useState(false);
 
@@ -51,16 +51,27 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         sort: 'name,asc',
         size: rowsPerPage,
         name: searchText,
-        status: status,
+        status: 'ACTIVE',
     });
 
     const facilityContent = React.useMemo(() => {
         if (!!data) {
-            return data.content.flatMap(organization => organization.facilities)
+            return data.content
+                .flatMap(organization => organization.facilities)
+                .filter(facility => {
+                    switch (status) {
+                        case 'ACTIVE':
+                            return facility.isActive;
+                        case 'INACTIVE':
+                            return !facility.isActive;
+                        default:
+                            return true;
+                    }
+                })
         } else {
             return [];
         }
-    }, [data]);
+    }, [data, status]);
 
 
     const facilityPage = {
@@ -161,6 +172,18 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         setCheckedOrganizations(newCheckedOrganizations);
     }
 
+    const handleProposeClick = () => {
+        const hasSelectedFacilities = () => {
+            return !!checkedFacilities.find(f => f.selected);
+        }
+
+        if (hasSelectedFacilities()) {
+            navigate('#');
+        } else {
+            Bubble.error('It is necessary to choose at least one facility');
+        }
+    }
+
     const columns = getColumns(
         () => setOpenProposalModal(true),
         handleEdit,
@@ -205,6 +228,13 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
                 <FormControl style={{ marginLeft: "auto" }}>
                     <Link to={"/organizations/new"}>
                         <Button variant="text" size={"large"}>New Organization</Button>
+                    </Link>
+                </FormControl>
+                <FormControl>
+                    <Link onClick={handleProposeClick} to={'#'}>
+                        <Button variant="text" size={"large"}>
+                            PROPOSE
+                        </Button>
                     </Link>
                 </FormControl>
             </Box>
