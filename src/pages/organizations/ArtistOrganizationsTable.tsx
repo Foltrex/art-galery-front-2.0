@@ -1,22 +1,13 @@
-import { Box, FormControl, RadioGroup, FormControlLabel, Radio, Button, IconButton, Checkbox } from '@mui/material';
+import {Box, Button, Checkbox, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 import * as React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { TypeFilter } from '../../components/form/TypeFilter';
-import { useGetAllOrganizations } from '../../api/OrganizationApi';
+import {useEffect, useState} from 'react';
+import {Link} from 'react-router-dom';
+import {TypeFilter} from '../../components/form/TypeFilter';
+import {useGetAllOrganizations} from '../../api/OrganizationApi';
 import SkeletonTable from '../../components/table/SkeletonTable';
-import { useRootStore } from '../../stores/provider/RootStoreProvider';
-import { DeleteOutline } from '@mui/icons-material';
-import Table, { IColumnType } from '../../components/table/Table';
-import { Account } from '../../entities/account';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
-import { MetadataEnum } from '../../entities/enums/MetadataEnum';
-import { OrganizationRoleEnum } from '../../entities/enums/organizationRoleEnum';
-import { Organization } from '../../entities/organization';
-import { TokenService } from '../../services/TokenService';
-import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
-import { OrganizationStatus } from './components/OrganizationStatus';
-import { Facility } from '../../entities/facility';
-import { IPage } from '../../hooks/react-query';
+import Table, {IColumnType} from '../../components/table/Table';
+import {Organization} from '../../entities/organization';
+import {Facility} from '../../entities/facility';
 import FacilityStatus from './components/FacilityStatus';
 
 const Statuses: Array<{ label: string, value: string }> = [
@@ -32,12 +23,25 @@ type SelectedUnit = {
     id: string | number;
     selected: boolean;
 }
+interface Selection {
+    all: boolean,
+    organizations:Record<string, boolean>,
+    facilities:Record<string, boolean>,
+}
+function somethingSelected(selection: Selection) {
+    if(selection.all) {
+        return true;
+    }
+    for(let k in selection.facilities) {
+        if(selection.facilities[k]) {
+            return true;
+        }
+    }
+    return false;
+}
 
 const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTableProps> = (props) => {
-    const navigate = useNavigate();
-    const { authStore } = useRootStore();
-    const account = authStore.account;
-
+    const [selection, setSelection] = useState<Selection>({all:false, organizations:{}, facilities:{}})
     const [status, setStatus] = React.useState(Statuses[0].value);
     const [searchText, setSearchText] = React.useState<string>();
 
@@ -46,7 +50,7 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
-    var { data, isSuccess } = useGetAllOrganizations({
+    var { data, isSuccess, isLoading } = useGetAllOrganizations({
         page: pageNumber,
         sort: 'name,asc',
         size: rowsPerPage,
@@ -67,25 +71,6 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         ...data!,
         content: facilityContent
     }
-    
-    const [isAllSelected, setAllSelected] = React.useState(false);
-    const [checkedFacilities, setCheckedFacilities] = React.useState<SelectedUnit[]>([]);
-    const [checkedOrganizations, setCheckedOrganizations] = React.useState<SelectedUnit[]>([]);
-
-    React.useEffect(() => {
-        const checkedF = facilityContent.map((facility): SelectedUnit => ({
-            id: facility.id,
-            selected: false
-        }));
-        setCheckedFacilities(checkedF)
-
-        const organizations = data?.content ?? [];
-        const checkedO = organizations.map((organization): SelectedUnit => ({
-            id: organization.id, 
-            selected: false
-        }))
-        setCheckedOrganizations(checkedO);
-    }, [isSuccess, data]);
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
@@ -95,83 +80,69 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         setStatus(e.target.value);
     }
 
-    const handleDelete = async (data: Organization) => {
-        alert(data.name)
-    }
+    useEffect(() => {
+        if(somethingSelected(selection)) {
+            setSelection({all: false, organizations: {}, facilities: {}})
+        }
+    }, [isLoading])
 
-    const handleEdit = (data: Organization) => {
-        navigate(`${data.id}`)
-    }
-
-
-    const handleFacilityCheckClick = (facility: Facility) => {
-        const currentSeletedFacility = checkedFacilities.find(f => f.id === facility.id)!;
-        let newCheckedFacilities = checkedFacilities
-            .filter(f => f.id !== facility.id);
-
-        newCheckedFacilities.push({
-            id: currentSeletedFacility.id,
-            selected: !currentSeletedFacility.selected
-        });
-        setCheckedFacilities(newCheckedFacilities);
+    const handleFacilityCheckClick = (updatedFacility: Facility) => {
+        setSelection(facilityContent.reduce((selection, facility) => {
+            if(!selection.facilities[facility.id]) {
+                selection.all = false;
+                if(facility.organizationId === updatedFacility.organizationId) {
+                    selection.organizations[facility.organizationId as string] = false;
+                }
+            }
+            return selection;
+        }, {
+            all: true,
+            organizations: {
+                ...selection.organizations,
+                [updatedFacility.organizationId as string]: true
+            },
+            facilities: {
+                ...selection.facilities,
+                [updatedFacility.id]: !selection.facilities[updatedFacility.id]
+            }
+        } as Selection))
     }
 
 
     const handleOrganizaitonsCheckClick = (organizationId: string) => {
-        const organizationFacilities: Facility[] = facilityContent.filter(facility => {
-            return facility.organizationId === organizationId;
-        })
-
-        const currentSelectedOrganization = checkedOrganizations.find(o => o.id === organizationId)!;
-        let newCheckedOrganizations = checkedOrganizations.filter(o => o.id !== organizationId);
-        newCheckedOrganizations.push({
-            id: currentSelectedOrganization.id,
-            selected: !currentSelectedOrganization.selected
-        })
-
-        const currentSeletedOrganizationFacilities = checkedFacilities
-            .filter(f => {
-                return !!organizationFacilities.find(orgF => orgF.id === f.id);
-            })
-            .map(f => ({...f, selected: !currentSelectedOrganization.selected}));
-
-        let newSelectedFacilities = checkedFacilities.filter(f => {
-            return !currentSeletedOrganizationFacilities.find(orgF => f.id === orgF.id);
-        });
-        newSelectedFacilities.push(...currentSeletedOrganizationFacilities)
-        
-
-        setCheckedOrganizations(newCheckedOrganizations);
-        setCheckedFacilities(newSelectedFacilities);
+        setSelection(facilityContent.reduce((selection, facility) => {
+            if(facility.organizationId === organizationId) {
+                selection.facilities[facility.id] = selection.organizations[organizationId];
+            }
+            if(!selection.facilities[facility.id]) {
+                selection.all = false;
+            }
+            return selection;
+        }, {
+            all: true,
+            organizations: {
+                ...selection.organizations,
+                [organizationId]: !selection.organizations[organizationId]
+            },
+            facilities: {}
+        } as Selection));
     }
 
     const handleAllCheckClick = () => {
-        setAllSelected(!isAllSelected);
-
-        const newCheckedFacilities = checkedFacilities.map(facility => ({
-            ...facility,
-            selected: !isAllSelected
-        }));
-        setCheckedFacilities(newCheckedFacilities);
-
-        const newCheckedOrganizations = checkedOrganizations.map(organization => ({
-            ...organization,
-            selected: !isAllSelected
-        }));
-        setCheckedOrganizations(newCheckedOrganizations);
+        setSelection(facilityContent.reduce((selection, f) => {
+            selection.facilities[f.id] = selection.all;
+            selection.organizations[f.organizationId as string] = selection.all;
+            return selection;
+        }, {all: !selection.all, facilities: {}, organizations:{}} as Selection));
     }
 
     const columns = getColumns(
         () => setOpenProposalModal(true),
-        handleEdit,
-        handleDelete,
         handleAllCheckClick,
-        handleFacilityCheckClick,
         handleOrganizaitonsCheckClick,
-        isAllSelected,
-        checkedFacilities,
-        checkedOrganizations,
-        account);
+        handleFacilityCheckClick,
+        selection
+    );
 
     return (
         <>
@@ -225,39 +196,21 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
     );
 };
 
-function getColumns(setOpenProposalModal: () => void,
-    onEdit: (data: Organization) => void,
-    onDelete: (data: Organization) => void,
+function getColumns(
+    setOpenProposalModal: () => void,
     onSelectAll: () => void,
-    onSelectFacility: (facility: Facility) => void,
     onSelectOrganization: (organizationId: string) => void,
-    isAllSelected: boolean,
-    checkedFacilities: SelectedUnit[],
-    checkedOrganizations: SelectedUnit[],
-    account: Account
+    onSelectFacility: (facility: Facility) => void,
+    selection: Selection,
 ): IColumnType<Facility>[] {
-    const accountType = TokenService.getCurrentAccountType();
-    const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
-    const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
-    
-    const defineSelectedFacility = (facility: Facility): boolean => {
-        const currentSelected = checkedFacilities.find(f => f.id === facility.id);
-        return currentSelected?.selected ?? false;
-    } 
-
-    const defineSelectedOrganization = (facility: Facility): boolean => {
-        const currentSelected = checkedOrganizations.find(o => o.id === facility.organizationId);
-        return currentSelected?.selected ?? false;
-    } 
-
-
+    console.log(selection);
     return [
         {
             key: '',
-            title: <Checkbox checked={isAllSelected} onClick={onSelectAll}/>,
+            title: <Checkbox checked={selection.all || false} onClick={onSelectAll}/>,
             minWidth: 10,
             render: facility => <Checkbox 
-                checked={defineSelectedFacility(facility)}
+                checked={selection.facilities[facility.id] || false}
                 onClick={() => onSelectFacility(facility)} 
             />
         },
@@ -269,7 +222,7 @@ function getColumns(setOpenProposalModal: () => void,
                     <>
                         {facility?.organizationName}
                         <Checkbox
-                            checked={defineSelectedOrganization(facility)}
+                            checked={selection.organizations[facility.organizationId as string] || false}
                             onClick={() => onSelectOrganization(facility.organizationId!)}
                         />
                     </>
