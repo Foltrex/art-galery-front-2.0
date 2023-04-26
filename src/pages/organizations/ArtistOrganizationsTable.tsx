@@ -68,10 +68,7 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         content: facilityContent
     }
     
-    const [selectedAll, setSelectedAll] = React.useState(false);
-
-    // const [checkedOrganizations, setCheckedOrganizations] = React.useState<Map<string, boolean>>(new Map());
-
+    const [isAllSelected, setAllSelected] = React.useState(false);
     const [checkedFacilities, setCheckedFacilities] = React.useState<SelectedUnit[]>([]);
     const [checkedOrganizations, setCheckedOrganizations] = React.useState<SelectedUnit[]>([]);
 
@@ -131,8 +128,6 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
             id: currentSelectedOrganization.id,
             selected: !currentSelectedOrganization.selected
         })
-        // checkedOrganizations.set(organizationId, !checkedOrganizations.get(organizationId));
-        // setCheckedOrganizations(checkedOrganizations);
 
         const currentSeletedOrganizationFacilities = checkedFacilities
             .filter(f => {
@@ -146,23 +141,36 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         newSelectedFacilities.push(...currentSeletedOrganizationFacilities)
         
 
-        setCheckedFacilities(checkedFacilities);
-
-
+        setCheckedOrganizations(newCheckedOrganizations);
+        setCheckedFacilities(newSelectedFacilities);
     }
 
     const handleAllCheckClick = () => {
+        setAllSelected(!isAllSelected);
 
+        const newCheckedFacilities = checkedFacilities.map(facility => ({
+            ...facility,
+            selected: !isAllSelected
+        }));
+        setCheckedFacilities(newCheckedFacilities);
+
+        const newCheckedOrganizations = checkedOrganizations.map(organization => ({
+            ...organization,
+            selected: !isAllSelected
+        }));
+        setCheckedOrganizations(newCheckedOrganizations);
     }
 
     const columns = getColumns(
         () => setOpenProposalModal(true),
         handleEdit,
         handleDelete,
+        handleAllCheckClick,
         handleFacilityCheckClick,
-        // handleOrganizaitonsCheckClick,
-        // checkedFacilities,
-        // checkedOrganizations,
+        handleOrganizaitonsCheckClick,
+        isAllSelected,
+        checkedFacilities,
+        checkedOrganizations,
         account);
 
     return (
@@ -220,25 +228,36 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
 function getColumns(setOpenProposalModal: () => void,
     onEdit: (data: Organization) => void,
     onDelete: (data: Organization) => void,
+    onSelectAll: () => void,
     onSelectFacility: (facility: Facility) => void,
-    // onSelectOrganization: (organizationId: string) => void,
-    // checkedFacilities: Map<string, boolean>,
-    // checkedOrganizations: Map<string, boolean>,
+    onSelectOrganization: (organizationId: string) => void,
+    isAllSelected: boolean,
+    checkedFacilities: SelectedUnit[],
+    checkedOrganizations: SelectedUnit[],
     account: Account
 ): IColumnType<Facility>[] {
     const accountType = TokenService.getCurrentAccountType();
     const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
     const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
     
+    const defineSelectedFacility = (facility: Facility): boolean => {
+        const currentSelected = checkedFacilities.find(f => f.id === facility.id);
+        return currentSelected?.selected ?? false;
+    } 
+
+    const defineSelectedOrganization = (facility: Facility): boolean => {
+        const currentSelected = checkedOrganizations.find(o => o.id === facility.organizationId);
+        return currentSelected?.selected ?? false;
+    } 
+
 
     return [
         {
             key: '',
-            title: <Checkbox />,
+            title: <Checkbox checked={isAllSelected} onClick={onSelectAll}/>,
             minWidth: 10,
             render: facility => <Checkbox 
-                // checked={checkedFacilities.get(facility.id)}
-                disabled={!facility.isActive}
+                checked={defineSelectedFacility(facility)}
                 onClick={() => onSelectFacility(facility)} 
             />
         },
@@ -249,10 +268,10 @@ function getColumns(setOpenProposalModal: () => void,
                 return (
                     <>
                         {facility?.organizationName}
-                        {/* <Checkbox 
-                            checked={checkedOrganizations.get(facility.organizationId!)}
+                        <Checkbox
+                            checked={defineSelectedOrganization(facility)}
                             onClick={() => onSelectOrganization(facility.organizationId!)}
-                        /> */}
+                        />
                     </>
                 )
             },
