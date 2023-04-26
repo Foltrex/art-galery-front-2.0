@@ -28,6 +28,11 @@ const Statuses: Array<{ label: string, value: string }> = [
 interface IArtistOrganizationsTableProps {
 }
 
+type SelectedUnit = {
+    id: string | number;
+    selected: boolean;
+}
+
 const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTableProps> = (props) => {
     const navigate = useNavigate();
     const { authStore } = useRootStore();
@@ -64,22 +69,26 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
     }
     
     const [selectedAll, setSelectedAll] = React.useState(false);
-    const [checkedOrganizations, setCheckedOrganizations] = React.useState<Map<string, boolean>>();
-    const [checkedFacilities, setCheckedFacilities] = React.useState<Map<string, boolean>>();
+
+    // const [checkedOrganizations, setCheckedOrganizations] = React.useState<Map<string, boolean>>(new Map());
+
+    const [checkedFacilities, setCheckedFacilities] = React.useState<SelectedUnit[]>([]);
+    const [checkedOrganizations, setCheckedOrganizations] = React.useState<SelectedUnit[]>([]);
 
     React.useEffect(() => {
-        const checkedF = new Map<string, boolean>(
-            facilityContent.map((facility) => [facility.id, false])
-        )
+        const checkedF = facilityContent.map((facility): SelectedUnit => ({
+            id: facility.id,
+            selected: false
+        }));
         setCheckedFacilities(checkedF)
 
         const organizations = data?.content ?? [];
-        const checkedO = new Map<string, boolean>(
-            organizations.map((organization) => [organization.id, false])
-        )
+        const checkedO = organizations.map((organization): SelectedUnit => ({
+            id: organization.id, 
+            selected: false
+        }))
         setCheckedOrganizations(checkedO);
     }, [isSuccess, data]);
-
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);
@@ -99,12 +108,46 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
 
 
     const handleFacilityCheckClick = (facility: Facility) => {
-        // setCheckedFacilities(() => )
-        // checkedFacilities
-        // setCheckedFacilities()
+        const currentSeletedFacility = checkedFacilities.find(f => f.id === facility.id)!;
+        let newCheckedFacilities = checkedFacilities
+            .filter(f => f.id !== facility.id);
+
+        newCheckedFacilities.push({
+            id: currentSeletedFacility.id,
+            selected: !currentSeletedFacility.selected
+        });
+        setCheckedFacilities(newCheckedFacilities);
     }
 
-    const handleOrganizaitonsCheckClick = () => {
+
+    const handleOrganizaitonsCheckClick = (organizationId: string) => {
+        const organizationFacilities: Facility[] = facilityContent.filter(facility => {
+            return facility.organizationId === organizationId;
+        })
+
+        const currentSelectedOrganization = checkedOrganizations.find(o => o.id === organizationId)!;
+        let newCheckedOrganizations = checkedOrganizations.filter(o => o.id !== organizationId);
+        newCheckedOrganizations.push({
+            id: currentSelectedOrganization.id,
+            selected: !currentSelectedOrganization.selected
+        })
+        // checkedOrganizations.set(organizationId, !checkedOrganizations.get(organizationId));
+        // setCheckedOrganizations(checkedOrganizations);
+
+        const currentSeletedOrganizationFacilities = checkedFacilities
+            .filter(f => {
+                return !!organizationFacilities.find(orgF => orgF.id === f.id);
+            })
+            .map(f => ({...f, selected: !currentSelectedOrganization.selected}));
+
+        let newSelectedFacilities = checkedFacilities.filter(f => {
+            return !currentSeletedOrganizationFacilities.find(orgF => f.id === orgF.id);
+        });
+        newSelectedFacilities.push(...currentSeletedOrganizationFacilities)
+        
+
+        setCheckedFacilities(checkedFacilities);
+
 
     }
 
@@ -117,6 +160,9 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
         handleEdit,
         handleDelete,
         handleFacilityCheckClick,
+        // handleOrganizaitonsCheckClick,
+        // checkedFacilities,
+        // checkedOrganizations,
         account);
 
     return (
@@ -174,24 +220,42 @@ const ArtistOrganizationsTable: React.FunctionComponent<IArtistOrganizationsTabl
 function getColumns(setOpenProposalModal: () => void,
     onEdit: (data: Organization) => void,
     onDelete: (data: Organization) => void,
-    onSelect: (facility: Facility) => void,
+    onSelectFacility: (facility: Facility) => void,
+    // onSelectOrganization: (organizationId: string) => void,
+    // checkedFacilities: Map<string, boolean>,
+    // checkedOrganizations: Map<string, boolean>,
     account: Account
 ): IColumnType<Facility>[] {
     const accountType = TokenService.getCurrentAccountType();
     const organizationRole = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ROLE)?.value || ''
     const organizationId = account.metadata.find(item => item.key === MetadataEnum.ORGANIZATION_ID)?.value || ''
+    
 
     return [
         {
             key: '',
             title: <Checkbox />,
             minWidth: 10,
-            render: facility => <Checkbox onClick={() => onSelect(facility)} />
+            render: facility => <Checkbox 
+                // checked={checkedFacilities.get(facility.id)}
+                disabled={!facility.isActive}
+                onClick={() => onSelectFacility(facility)} 
+            />
         },
         {
             key: 'organizationId',
             title: 'Organization',
-            render: (facility) => facility?.organizationName,
+            render: (facility) => {
+                return (
+                    <>
+                        {facility?.organizationName}
+                        {/* <Checkbox 
+                            checked={checkedOrganizations.get(facility.organizationId!)}
+                            onClick={() => onSelectOrganization(facility.organizationId!)}
+                        /> */}
+                    </>
+                )
+            },
             minWidth: 50,
             groupBy: (facility) => facility.organizationId
         },
