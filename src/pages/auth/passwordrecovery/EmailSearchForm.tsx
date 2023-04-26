@@ -14,7 +14,7 @@ interface IFormEmailValues {
 const EmailSearchForm = () => {
     const navigate = useNavigate();
     const [emailSearch, setEmailSearch] = useState('');
-    const {data, isFetched, isLoading} = useGetAll({email: emailSearch});
+    const {data, isFetched, isLoading} = useGetAll({email: emailSearch}, {enabled: !emailSearch});
     const mutationSendPasswordRecoveryCode = useSendPasswordRecoveryCode();
 
     const initialValues: IFormEmailValues = {

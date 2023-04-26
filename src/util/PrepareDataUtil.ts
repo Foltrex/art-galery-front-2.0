@@ -1,6 +1,7 @@
 import {OrganizationStatusEnum} from "../entities/enums/organizationStatusEnum";
 import {UseQueryResult} from "react-query/types/react/types";
 import {AxiosError} from "axios/index";
+import {FILE_SERVICE} from "../http/axios";
 
 export class PrepareDataUtil {
 
@@ -45,4 +46,9 @@ export function getErrorMessage(e:any):string|undefined {
     const error = e.response?.data?.error;
     const message = e.response?.data?.message || e.message || '[no error message]';
     return error + "\n " + message
+}
+
+export function buildImageUrl(fileId:string) {
+    console.log(process.env);
+    return process.env.REACT_APP_API_URL + FILE_SERVICE + '/files/' + fileId + '/data'
 }

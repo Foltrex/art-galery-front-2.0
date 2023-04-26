@@ -1,8 +1,7 @@
 import './App.css';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/routes/PrivateRoute';
-import ArtistArt from './pages/art/artist/ArtistArt';
-import Arts from './pages/arts';
+import Gallery from './pages/arts/Gallery';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
@@ -20,8 +19,9 @@ import {EditUserPage} from "./pages/users/EditUserPage";
 import {AddUserPage} from "./pages/users/AddUserPage";
 import ProfilePage from './pages/users/ProfilePage';
 import {ErrorsRoute} from './pages/error/ErrorsRoute';
-import ArtCreation from './pages/art/artist/ArtCreation';
 import OrganizationsRoute from './pages/organizations/OrganizationsRoute';
+import {EditArt} from "./pages/arts/EditArt";
+import {CreateArt} from "./pages/arts/CreateArt";
 
 function App() {
     return (
@@ -67,9 +67,9 @@ function App() {
                     <Route path='/proposals' element={<Proposals/>}/>
 
                     <Route path='/gallery'>
-                        <Route index element={<Arts />} />
-                        <Route path=':id' element={<ArtistArt />} />
-                        <Route path='new' element={<ArtCreation />} />
+                        <Route index element={<Gallery />} />
+                        <Route path=':id' element={<EditArt />} />
+                        <Route path='new' element={<CreateArt />} />
                     </Route>
                 </Route>
                 <Route path={"*"} element={<Error404/>}/>

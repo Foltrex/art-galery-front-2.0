@@ -5,25 +5,21 @@ import {Avatar} from "@mui/material";
 import {Account} from "../../../entities/account";
 import {TokenService} from "../../../services/TokenService";
 import Loading from "../../../components/ui/Loading";
-import {axiosApi, FILE_SERVICE, USER_SERVICE} from "../../../http/axios";
+import {axiosApi, USER_SERVICE} from "../../../http/axios";
 import {AuthService} from "../../../services/AuthService";
 import {MetadataEnum} from "../../../entities/enums/MetadataEnum";
+import {buildImageUrl} from "../../../util/PrepareDataUtil";
 
 const ProfileImage = (props: { account: Account }) => {
 
     const fileInput = useRef<HTMLInputElement>(null);
-    const [image, setImage] = useState<string>('');
+    const [image, setImage] = useState<string>();
     const accountId = TokenService.getCurrentAccountId();
 
     useEffect(() => {
         const imageId = props.account.metadata.find(item => item.key === MetadataEnum.ACCOUNT_IMAGE)?.value || '';
         if (imageId !== "") {
-            const url = `${FILE_SERVICE}/files/${imageId}/data`;
-            axiosApi.get<ArrayBuffer>(url, {responseType: 'arraybuffer'})
-                .then(response => {
-                    const image = FileService.toImage(response.data);
-                    setImage(image)
-                })
+            setImage(buildImageUrl(imageId))
         } else {
             setImage("empty")
         }
@@ -37,7 +33,7 @@ const ProfileImage = (props: { account: Account }) => {
         const currentImage = await FileService.toBase64fromBlob(currentFile);
 
         if (currentFile !== undefined) {
-            const fileEntity = await FileService.toFile(undefined, currentFile);
+            const fileEntity = await FileService.toEntityFile('', currentFile);
             await axiosApi.patch(`${USER_SERVICE}/accounts/${accountId}/account-image`, fileEntity, {
                 headers: {
                     'Authorization': `Bearer ${AuthService.getToken()}`,
@@ -49,7 +45,7 @@ const ProfileImage = (props: { account: Account }) => {
     }
 
     const Content = () => {
-        if (image === '') {
+        if (!image) {
             return <Loading/>
         } else {
             return (

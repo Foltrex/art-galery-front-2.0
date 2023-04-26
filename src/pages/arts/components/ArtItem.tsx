@@ -1,13 +1,14 @@
-import { Card, IconButton, ImageListItem, ImageListItemBar, Tooltip } from "@mui/material";
-import { useGetAccountById } from "../../api/AccountApi";
-import { useGetLastArtInfoByArtId } from "../../api/ArtInfoApi";
-import EmptyArt from '../../assets/images/empty-art.svg';
-import { Art } from "../../entities/art";
-import { useGetArtListItemImageByArtId } from "../../hooks/useGetArtListItemImageByArtId";
-import { FileService } from "../../services/FileService";
-import { TokenService } from "../../services/TokenService";
-import { useRootStore } from "../../stores/provider/RootStoreProvider";
-import LetterAvatar from "./LetterAvatar";
+import {Card, IconButton, ImageListItem, ImageListItemBar, Tooltip} from "@mui/material";
+import {useGetAccountById} from "../../../api/AccountApi";
+import {useGetLastArtInfoByArtId} from "../../../api/ArtInfoApi";
+import EmptyArt from '../../../assets/images/empty-art.svg';
+import {Art} from "../../../entities/art";
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import LetterAvatar from "../../../components/ui/LetterAvatar";
+import {useNavigate} from "react-router-dom";
+import {useGetAllEntityFilesByEntityId} from "../../../api/FileApi";
+import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
+import {buildImageUrl} from "../../../util/PrepareDataUtil";
 
 interface IArtItemProps {
     art: Art;
@@ -15,20 +16,13 @@ interface IArtItemProps {
 }
 
 const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
-    // const { data: files } = useGetAllEntityFilesByEntityId(art.id);
+    const navigate = useNavigate();
 
-    // let fileIds: string[] = [];
-    // if (files) {
-    //     files.forEach(file => {
-    //         if (file.id && file.type === EntityFileTypeEnum.ORIGINAL) {
-    //             fileIds.push(file.id);
-    //         }
-    //     })
-    // }
-
-    const { data: image } = useGetArtListItemImageByArtId(art.id);
-    // const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
-    // const images = imagesData?.map(data => FileService.toImage(data));
+    const { data: files = [] } = useGetAllEntityFilesByEntityId(art.id);
+    const images = files
+        .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
+        .map(fileEntity => buildImageUrl(fileEntity.id!))
+    const image = images.length && images.length > 0 ? images[0] : null;
 
     const { data: artInfo } = useGetLastArtInfoByArtId(art.id);
 
@@ -39,12 +33,6 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
     } else {
         facilityName = 'Available';
     }
-
-
-    const artLink = FileService.createImageLinkForAccountType(
-        art.id!,
-        TokenService.getCurrentAccountType()
-    );
 
     const { authStore } = useRootStore();
     const { data: account } = useGetAccountById(art.artistAccountId) ?? authStore.account;
@@ -73,29 +61,16 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
                     }
                 />
 
-                {image
-                    ? <img
-                        src={image}
+                {<img src={image ? image : EmptyArt}
                         alt={art.name}
                         loading='lazy'
                         style={{
                             cursor: 'pointer',
+                            objectFit: image ? undefined : 'scale-down',
                             height: '100%',
                             width: 'auto'
                         }}
-                        onClick={() => window.location.href = artLink}
-                    />
-                    : <img
-                        src={EmptyArt}
-                        alt={art.name}
-                        loading='lazy'
-                        style={{
-                            cursor: 'pointer',
-                            objectFit: 'scale-down',
-                            height: '100%',
-                            width: 'auto'
-                        }}
-                        onClick={() => window.location.href = artLink}
+                        onClick={() => navigate('/gallery/' + art.id)}
                     />
                 }
                 <ImageListItemBar

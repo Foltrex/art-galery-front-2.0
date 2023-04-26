@@ -5,7 +5,7 @@ import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useGetAllArts} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
-import InfiniteArtList from './InfiniteArtList';
+import InfiniteArtList from './components/InfiniteArtList';
 import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
 import {TypeFilter} from "../../components/form/TypeFilter";
@@ -40,6 +40,7 @@ const Arts = () => {
     );
 
     const {data: infinteData, isSuccess, fetchNextPage} = useGetAllArts({
+        sort: 'dateCreation,desc',
         searchText: artSearch,
         artistId: accountType === AccountEnum.ARTIST ? authStore.account.id : artistId,
         cityId: artStatus === exhibited.value ? cityId : undefined

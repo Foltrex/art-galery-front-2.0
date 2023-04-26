@@ -16,18 +16,19 @@ import {useFormik} from "formik";
 import * as React from "react";
 import {ChangeEvent, useRef, useState} from "react";
 import * as yup from "yup";
-import {useUploadFile} from "../../../api/FileApi";
+import {useGetAllEntityFilesByEntityId, useUploadFile} from "../../../api/FileApi";
 import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import MapDialog from "../../../components/map/MapDialog";
 import ImageSlider from "../../../components/ui/ImageSlider";
 import {Address} from "../../../entities/address";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
 import {Facility} from "../../../entities/facility";
-import {useGetImagesForEntityId} from "../../../hooks/useGetImagesForEntityId";
 import {FileService} from "../../../services/FileService";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {findOrganizationId} from "../../../util/MetadataUtil";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
+import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
+import {buildImageUrl} from "../../../util/PrepareDataUtil";
 
 interface ImageFrameProps {
     showBorder?: boolean;
@@ -69,7 +70,11 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     const fileInput = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<File[]>([]);
 
-    const facilityImages = useGetImagesForEntityId(props.data?.id)
+    const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(props.data?.id);
+    const facilityImages:string[] = fileEntities
+        .filter(fileEntity => fileEntity.id && fileEntity.type === EntityFileTypeEnum.ORIGINAL)
+        .map(fileEntity => buildImageUrl(fileEntity.id!));
+
 
     // TODO: BUG WITH: const [images, setImages] = useState<string[]>(facilityImages);
     // const [images, setImages] = useState<string[]>([]);

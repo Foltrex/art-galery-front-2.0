@@ -1,7 +1,9 @@
 import {Card, ImageListItem, Skeleton, Typography} from '@mui/material';
 import * as React from 'react';
 import {Art} from '../../../entities/art';
-import {useGetArtListItemImageByArtId} from '../../../hooks/useGetArtListItemImageByArtId';
+import {useGetAllEntityFilesByEntityId} from "../../../api/FileApi";
+import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
+import {buildImageUrl} from "../../../util/PrepareDataUtil";
 
 interface IArtCardProps {
     art: Art;
@@ -9,17 +11,15 @@ interface IArtCardProps {
 }
 
 const ArtCard: React.FunctionComponent<IArtCardProps> = ({art, onPropose}) => {
-    const [openProposalDialog, setOpenProposalDialog] = React.useState(false);
 
-    const {
-        data: image,
-        isFetched: isImageFetched,
-        isLoading: isImageLoading
-    } = useGetArtListItemImageByArtId(art.id);
-
+    const { isLoading, data: files = [] } = useGetAllEntityFilesByEntityId(art.id);
+    const images = files
+        .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
+        .map(fileEntity => buildImageUrl(fileEntity.id!))
+    const image = images.length && images.length > 0 ? images[0] : null;
 
     const renderImage = () => {
-        if (isImageFetched && image) {
+        if (image) {
             return (
                 <img
                     src={image}
@@ -32,7 +32,7 @@ const ArtCard: React.FunctionComponent<IArtCardProps> = ({art, onPropose}) => {
             );
         }
 
-        if (isImageLoading) {
+        if (isLoading) {
             return (
                 <Skeleton
                     width='100%'

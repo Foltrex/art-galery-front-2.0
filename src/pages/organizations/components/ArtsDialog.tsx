@@ -28,7 +28,7 @@ const ArtsDialog: React.FunctionComponent<IProposalDialogProps> = ({open, onClos
 
     const token = TokenService.getCurrentDecodedToken();
 
-    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({artistId: token.id});
+    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({sort: 'dateCreation,desc', artistId: token.id});
 
     return (
         <>

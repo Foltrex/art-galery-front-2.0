@@ -13,7 +13,7 @@ export const useGetArtById = (id?: string) => {
     );
 }
 
-export const useGetAllArts = (params?: { searchText?: string, artistName?: string, artistId?: string, cityId?: string}) => {
+export const useGetAllArts = (params?: { sort:string, searchText?: string, artistName?: string, artistId?: string, cityId?: string}) => {
     return useLoadMore<Art>(`${ART_SERVICE}/arts/`, {
         size: ART_PAGE_SIZE,
         ...params

@@ -1,11 +1,10 @@
-import { Close } from '@mui/icons-material';
-import { Dialog, DialogContent, DialogTitle, Grid, IconButton, Skeleton, Stack } from '@mui/material';
-import { Box } from '@mui/system';
+import {Close} from '@mui/icons-material';
+import {Dialog, DialogContent, DialogTitle, Grid, IconButton, Skeleton, Stack} from '@mui/material';
+import {Box} from '@mui/system';
 import * as React from 'react';
-import { useGetAllFileInfosByArtId, useGetAllFileStreamByIds } from '../../api/FileApi';
 import ImageSlider from '../../components/ui/ImageSlider';
-import { Proposal } from '../../entities/proposal';
-import { FileService } from '../../services/FileService';
+import {Proposal} from '../../entities/proposal';
+import {FileService} from '../../services/FileService';
 
 interface IProposalInfoProps {
 	proposal: Proposal;
@@ -15,18 +14,8 @@ interface IProposalInfoProps {
 
 const ProposalInfo: React.FunctionComponent<IProposalInfoProps> = ({ proposal, open, onClose }) => {
 	const art = proposal?.art;
-	const { data: files } = useGetAllFileInfosByArtId(art?.id);
-
-	let fileIds: string[] = [];
-	if (files) {
-		files.forEach(file => {
-			if (file.id) {
-				fileIds.push(file.id);
-			}
-		})
-	}
-
-	const { data: imagesData } = useGetAllFileStreamByIds(fileIds);
+	//@todo load images data from art entity
+	const { data: imagesData } = {data: []};
 	const images = imagesData?.map(data => FileService.toImage(data));
 
 	const renderContent = () => {

@@ -98,7 +98,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                                 backgroundSize: 'contain',
                                 backgroundRepeat: 'no-repeat',
                             }}
-                            alt={slides[currentIndex]}
+                            alt={'img'}
                         />
                         <LeftArrowButton onClick={handleLeftArrowClick}>
                             &#8249;

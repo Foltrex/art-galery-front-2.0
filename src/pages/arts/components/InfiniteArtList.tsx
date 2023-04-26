@@ -1,9 +1,9 @@
-import { ImageList } from '@mui/material';
+import {ImageList} from '@mui/material';
 import * as React from 'react';
-import { InfiniteData } from 'react-query';
-import { Art } from '../../entities/art';
-import { IPage } from '../../hooks/react-query';
-import ArtItem from '../../components/ui/ArtItem';
+import {InfiniteData} from 'react-query';
+import {Art} from '../../../entities/art';
+import {IPage} from '../../../hooks/react-query';
+import ArtItem from './ArtItem';
 
 interface IInfiniteArtListProps {
     infinteData: InfiniteData<IPage<Art>>;

@@ -8,12 +8,14 @@ import {Art} from '../../../entities/art';
 import {ArtSize} from '../../../entities/art-size';
 import {ArtStyle} from '../../../entities/art-style';
 import {useRootStore} from '../../../stores/provider/RootStoreProvider';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
+import {useNavigate} from "react-router-dom";
 
 interface IArtFormProps {
 	art?: Art;
 	onSubmit: (art: Art) => Promise<void>;
+	onDelete: () => void
 }
 
 interface FormValues {
@@ -23,9 +25,9 @@ interface FormValues {
 	size: ArtSize;
 }
 
-const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
+const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete}) => {
 	const [selectedStyles, setSelectedStyles] = useState<ArtStyle[]>(art?.artStyles ?? []);
-
+	const navigate = useNavigate();
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
 	const account = authStore.account;
@@ -150,8 +152,19 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit }) => {
 					helperText={formik.errors.description}
 					sx={{ lineHeight: 'normal' }} />
 				<div>
-					<Button type={"submit"} color={"success"}
-							variant="outlined">Save</Button>
+					<Stack direction={"row"} gap={'10px'}>
+
+						<Button color={"primary"}
+								variant="outlined"
+								onClick={() => navigate("/gallery")}
+						>
+							Back
+						</Button>
+						<Button type={"button"} color={"error"} variant={"outlined"}
+								onClick={onDelete}>Delete</Button>
+						<Button type={"submit"} color={"success"}
+								variant="outlined">Save</Button>
+					</Stack>
 				</div>
 			</Stack>
 		</form>
