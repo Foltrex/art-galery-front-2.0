@@ -6,11 +6,12 @@ import {Facility} from "../../../entities/facility";
 import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 
-const FacilityNew = (props:{back: () => void, onSubmit: (facility:Facility) => void}) => {
+const FacilityNew = (props:{back: () => void, organizationId?: string, onSubmit: (facility:Facility) => void}) => {
     return <FacilityFormAbstract back={props.back} data={{
         id: '',
         name: '',
-        isActive: false,
+        organizationId: props.organizationId || '',
+        isActive: true,
     } as Facility} onSubmit={(facility) => {
         return axiosApi.post<Facility>(`${ART_SERVICE}/facilities`, facility)
             .then(response => {

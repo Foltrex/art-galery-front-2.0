@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { TokenService } from '../../services/TokenService';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
+import {TokenService} from '../../services/TokenService';
+import {AccountEnum} from '../../entities/enums/AccountEnum';
 import ArtistOrganizationsTable from './ArtistOrganizationsTable';
-import OrganizationGrid from '.';
+import OrganizationGrid from './OrganizationsGrid';
 
 interface IOrganizationsRouteProps {
 }

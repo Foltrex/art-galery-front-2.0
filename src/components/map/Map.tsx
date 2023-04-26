@@ -1,59 +1,95 @@
-import L from "leaflet";
+import React from 'react';
 import "leaflet/dist/leaflet.css";
-import {useEffect} from "react";
-import {MapContainer, Marker, TileLayer, useMap} from "react-leaflet";
+import {GeoPosition, GoogleAddress, GooglePlace} from "../../entities/GeoPosition";
+import GoogleMapReact from 'google-map-react';
+import Bubble from "../bubble/Bubble";
 
-const icon = L.icon({
-    iconUrl: "./images/placeholder.png",
-    iconSize: [38, 38],
-});
+const defaultPostion = {lat: 41.64267979147652, lng: 41.62999547636612};
 
-const position = {lat: 39, lng: 34};
-
-function ResetCenterView(props: { selectPosition: any; }) {
-    const {selectPosition} = props;
-    const map = useMap();
-
-    useEffect(() => {
-        if (selectPosition) {
-            map.setView(
-                L.latLng(selectPosition?.lat, selectPosition?.lon),
-                10,
-                {
-                    animate: true
-                }
-            )
-        }
-    }, [selectPosition]);
-
-    return null;
+interface MapPropsInner {
+    selectedPosition?: GeoPosition,
+    onClick?: (places: GooglePlace[]) => void,//if onCLick not provided, search lookup is not done
+    setViewBox: (v: any) => void
 }
 
-export default function Map(props: { selectPosition: any; }) {
-    const {selectPosition} = props;
+function gmGetter() {
+    //@ts-ignore
+    return google?.maps;
+}
 
-    const locationSelection = {
-        lat: selectPosition?.lat,
-        lng: selectPosition?.lon
+function gmLoader(resolve: (maps: any) => void) {
+    if (gmGetter()) {
+        resolve(gmGetter())
+    } else {
+        const interval = setInterval(() => {
+            if (gmGetter()) {
+                resolve(gmGetter())
+                clearInterval(interval);
+            }
+        }, 500);
+    }
+}
+
+const AnyReactComponent = ({text}: { lat: number, lng: number, text: string }) => <div>{text}</div>;
+
+const Map = ({selectedPosition, setViewBox, onClick}: MapPropsInner) => {
+    const renderMarkers = (map: any, maps: any) => {
+        if (!selectedPosition) {
+            return null;
+        }
+        return new maps.Marker({
+            position: {lat: selectedPosition.lat, lng: selectedPosition.lng},
+            map,
+            title: 'Hello World!'
+        });
+    };
+
+    function updateBounds(map: any) {
+        setViewBox(map.getBounds())
     }
 
-    return (
-        <MapContainer
-            center={position}
-            zoom={2}
-            style={{width: "100%", height: "100%"}}
+    return <div style={{height: '100vh', width: '100%'}}>
+        <GoogleMapReact
+            yesIWantToUseGoogleMapApiInternals={true}
+            googleMapLoader={() => new Promise(gmLoader)}
+            defaultCenter={defaultPostion}
+            defaultZoom={17}
+            center={selectedPosition ? {lat: selectedPosition.lat, lng: selectedPosition.lng} : undefined}
+            onGoogleApiLoaded={({map, maps}) => {
+                renderMarkers(map, maps);
+                var geocoder = new maps.Geocoder();
+                map.addListener("bounds_changed", () => {
+                    updateBounds(map);
+                });
+                map.addListener("click", (a: any, b: any, c: any, d: any, e: any) => {
+                    if(!onClick) {
+                        return;
+                    }
+                    geocoder.geocode({
+                        'latLng': a.latLng,
+                        bounds: map.getBounds(),
+                    }, function (results: any, status: any) {
+                        if (status === maps.GeocoderStatus.OK) {
+                            const res = ((results || []) as GooglePlace[])
+                                .sort((v1, v2) => v2.address_components.length - v1.address_components.length)
+                                .filter((r) => new GoogleAddress(r).route);
+                            if (!res.length) {
+                                Bubble.warning("No any viable address found in selected area");
+                                onClick([]);
+                            } else {
+                                onClick(res);
+                            }
+                        } else {
+                            Bubble.error("Failed to detect address, status is " + status);
+                        }
+                    });
+                });
+                updateBounds(map);
+            }}
         >
-            <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://api.maptiler.com/maps/basic/256/{z}/{x}/{y}.png?key=H1V9i7jNhJI9fWgWdvVR"
-            />
-            {selectPosition && (
-                <Marker
-                    position={locationSelection}
-                    icon={icon}>
-                </Marker>
-            )}
-            <ResetCenterView selectPosition={selectPosition}/>
-        </MapContainer>
-    );
+        </GoogleMapReact>
+    </div>
 }
+
+
+export default Map;

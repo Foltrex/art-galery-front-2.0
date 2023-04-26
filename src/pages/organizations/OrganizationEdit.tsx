@@ -28,7 +28,7 @@ const OrganizationEdit = () => {
             Bubble.error("Failed to load organization data. Error message is " + getErrorMessage(org.error));
             return null;
         }
-    }, [isError]);
+    }, [isError, org]);
 
     if(errorComponent) {
         return errorComponent;

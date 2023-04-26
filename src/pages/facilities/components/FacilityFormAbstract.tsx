@@ -183,19 +183,19 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
             )
         }
     }
-console.log(formik)
+
     return (
         <Container maxWidth='lg'>
             {renderImageSlider()}
             <form onSubmit={formik.handleSubmit} id="facility_add_edit" noValidate>
-                <MapDialog
-                    open={openMap}
+                {openMap && <MapDialog
+                    open={true}
                     onClose={() => setOpenMap(false)}
                     setFieldValue={(value: Address) => {
                         formik.setFieldValue('address', value)
                     }}
                     address={formik.values.address as Address}
-                />
+                />}
                 <TextField
                     fullWidth={true}
                     margin="normal"
@@ -232,7 +232,7 @@ console.log(formik)
                         <Switch
                             name={"Status"}
                             checked={formik.values.isActive as boolean}
-                            onChange={formik.handleChange}
+                            onChange={() => formik.setFieldValue('isActive', !formik.values.isActive, false)}
                         />
                     } label={<span style={{display: 'flex'}}>Status <Tooltip title={
                         "Only active facilities may accept new offers. If facility is inactive," +

@@ -1,5 +1,5 @@
 import * as React from "react";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useRef, useState} from "react";
 import {FormControl, OutlinedInput} from "@mui/material";
 
 interface TypeFilterProps {
@@ -8,10 +8,12 @@ interface TypeFilterProps {
     placeholder?: string,
     label?: string
     inputProps?: any
+    autoFocus?: boolean
 }
 
-export const TypeFilter: React.FC<TypeFilterProps> = ({style, inputProps, onChange, label, placeholder}) => {
+export const TypeFilter: React.FC<TypeFilterProps> = ({style, autoFocus, inputProps, onChange, label, placeholder}) => {
     const [state, setState] = useState({text: '', lastUpdate: new Date().getTime(), triggerUpdate: false});
+    const inputRef = useRef();
 
     useEffect(() => {
         const interval = setInterval(function () {
@@ -20,8 +22,10 @@ export const TypeFilter: React.FC<TypeFilterProps> = ({style, inputProps, onChan
                 onChange(state.text);
             }
         }, 500);
-        return () => clearInterval(interval);
-    })
+        return () => {
+            clearInterval(interval);
+        }
+    }, [state])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setState({text: e.target.value, lastUpdate: new Date().getTime(), triggerUpdate: true});
@@ -29,6 +33,7 @@ export const TypeFilter: React.FC<TypeFilterProps> = ({style, inputProps, onChan
 
     return <FormControl style={style}>
         <OutlinedInput {...inputProps}
+                       inputRef={inputRef}
                        value={state.text}
                        size={"small"}
                        label={label}

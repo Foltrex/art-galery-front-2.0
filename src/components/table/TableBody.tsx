@@ -30,7 +30,7 @@ const UNKNOWN = "[unknown]";
 function prepareBuckets<S extends IdentifiableRecord>(columns:IColumnType<S>[], data:{item: S, index: number}[], groupBy:string[], index:number) {
 	const group = groupBy[index];
 	const buckets:Record<string, Bucket<S>> = {};
-	const lastIteration = index == groupBy.length - 1;
+	const lastIteration = index === groupBy.length - 1;
 	data.forEach(item => {
 		let column:IColumnType<S>|undefined = undefined;
 		for(let i = 0; i < columns.length; i++) {
@@ -187,10 +187,8 @@ function TableBody<S extends IdentifiableRecord>({
 		for(let key in buckets) {
 			result.push(<GroupRow bucket={buckets[key]} columns={columns} level={0}/>);
 		}
-
-		console.log(result)
 		return result;
-	}, [groupBy, content, columns]);
+	}, [groupBy, content, columns, number, size]);
 
 	return (
 		<MuiTableBody>

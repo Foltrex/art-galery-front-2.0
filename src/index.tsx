@@ -9,8 +9,8 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
 import Bubble from "./components/bubble/Bubble";
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import {LocalizationProvider} from '@mui/x-date-pickers';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
@@ -26,7 +26,7 @@ const queryClient = new QueryClient({
 }});
 
 root.render(
-    <React.StrictMode>
+   // <React.StrictMode>
         <ErrorBoundary>
             <CookiesProvider>
                 <QueryClientProvider client={queryClient}>
@@ -41,7 +41,7 @@ root.render(
             </CookiesProvider>
             <Bubble />
         </ErrorBoundary>
-    </React.StrictMode>
+   // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

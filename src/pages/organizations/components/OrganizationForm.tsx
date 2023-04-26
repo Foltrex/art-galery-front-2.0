@@ -86,29 +86,29 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
     return (
         <div>
             {
-                data.id && <OrganizationFacilitiesDialog
-                    open={openOrganizationFacilitiesDialog}
+                data.id && openOrganizationFacilitiesDialog && <OrganizationFacilitiesDialog
+                    open={true}
                     onClose={() => setOpenOrganizationFacilitiesDialog(false)}
                     organizationId={data.id}
                 />
             }
             {
-                data.id && <OrganizationUsersDialog
-                    open={openOrganizationUsersDialog}
+                data.id && openOrganizationUsersDialog && <OrganizationUsersDialog
+                    open={true}
                     organizationId={data.id}
                     onClose={() => setOpenOrganizationUsersDialog(false)}
                 />
             }
             <Container maxWidth='lg'>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
-                    <MapDialog
-                        open={openMap}
+                    {openMap && <MapDialog
+                        open={true}
                         onClose={() => setOpenMap(false)}
                         setFieldValue={(value: Address) => {
                             formik.setFieldValue('address', value)
                         }}
                         address={formik.values.address as Address}
-                    />
+                    />}
                     <TextField
                         margin="normal"
                         required

@@ -19,7 +19,9 @@ const OrganizationFacilitiesDialog = ({open, onClose, organizationId}: IOrganiza
     return (
         <Dialog open={open} onClose={onClose} maxWidth={"lg"} fullWidth>
             <DialogContent>
-                {mode === Mode.NEW && <FacilityNew back={() => setMode(Mode.LIST)} onSubmit={() => setMode(Mode.LIST)} />}
+                {mode === Mode.NEW && <FacilityNew back={() => setMode(Mode.LIST)}
+                                                   organizationId={organizationId}
+                                                   onSubmit={() => setMode(Mode.LIST)} />}
                 {mode === Mode.EDIT && <FacilityEdit back={() => setMode(Mode.LIST)}
                                                      facilityId={facilityId}
                                                      onSubmit={() => setMode(Mode.LIST)} />}

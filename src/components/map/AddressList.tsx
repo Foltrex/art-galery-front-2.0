@@ -1,16 +1,19 @@
-import {Divider, ListItemIcon} from "@mui/material";
+import {Divider, ListItemButton, ListItemIcon} from "@mui/material";
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import {GeoPosition} from "./SearchBox";
 import Loading from "../ui/Loading";
+import {GoogleSearchAddress, GoogleSearchPlace} from "../../entities/GeoPosition";
+import {memo} from "react";
 
-export default function AddressList(props: { listPlace: GeoPosition[], setSelectPosition: any, isLoading: boolean }) {
-
+interface AddressListProps {
+    listPlace: GoogleSearchPlace[],
+    setSelectedPosition: (p:GoogleSearchPlace) => void,
+    isLoading: boolean
+}
+export default memo(function AddressList(props:AddressListProps) {
     if (props.isLoading) {
         return <div style={{marginTop: "10px"}}><Loading/></div>
     }
-
     return (
         <List
             component="nav"
@@ -26,10 +29,9 @@ export default function AddressList(props: { listPlace: GeoPosition[], setSelect
             {props.listPlace.map((item) => {
                 return (
                     <div key={item?.place_id}>
-                        <ListItem
-                            button
+                        <ListItemButton
                             onClick={() => {
-                                props.setSelectPosition(item);
+                                props.setSelectedPosition(item);
                             }}
                         >
                             <ListItemIcon>
@@ -39,12 +41,30 @@ export default function AddressList(props: { listPlace: GeoPosition[], setSelect
                                     style={{width: 32, height: 32}}
                                 />
                             </ListItemIcon>
-                            <ListItemText primary={item?.display_name}/>
-                        </ListItem>
+                            <ListItemText primary={new GoogleSearchAddress(item).toString()}/>
+                        </ListItemButton>
                         <Divider/>
                     </div>
                 );
             })}
         </List>
     );
+}, propsAreEqual)
+function propsAreEqual(p:AddressListProps, n:AddressListProps) {
+    if(p.isLoading !== n.isLoading) {
+        return false;
+    }
+    if(p.listPlace?.length !== n.listPlace?.length) {
+        return false;
+    }
+    const map = p.listPlace.reduce((p, n) => {
+        p[n.place_id] = true;
+        return p;
+    }, {} as Record<string, boolean>)
+    for(let i = 0; i < n.listPlace.length; i++) {
+        if(!map[n.listPlace[i].place_id]) {
+            return false;
+        }
+    }
+    return true;
 }

@@ -79,11 +79,6 @@ function prepareSidebar(account:Account) {
                     link: '/organizations'
                 },
                 {
-                    text: 'Facilities',
-                    icon: <MapsHomeWorkOutlined/>,
-                    link: '/facilities'
-                },
-                {
                     text: 'Gallery',
                     icon: <CropOriginalOutlined/>,
                     link: '/gallery'

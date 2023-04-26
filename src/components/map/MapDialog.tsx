@@ -1,17 +1,12 @@
 import * as React from 'react';
 import {useEffect, useState} from 'react';
-import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import {TransitionProps} from '@mui/material/transitions';
 import Map from "./Map";
-import SearchBox, {GeoPosition} from "./SearchBox";
+import SearchBox from "./SearchBox";
 import {Address} from "../../entities/address";
+import {GeoPosition, GoogleAddress, GooglePlace} from "../../entities/GeoPosition";
 
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
@@ -30,7 +25,9 @@ interface IMapDialogProps {
 }
 
 export default function MapDialog(props: IMapDialogProps) {
-    const [selectPosition, setSelectPosition] = useState<GeoPosition | null>(null);
+    const [selectPosition, setSelectPosition] = useState<GeoPosition>();
+    const [viewBox, setViewBox] = useState<any>();
+    const [mapPlaces, setMapPlaces] = useState<{time:number, places: GooglePlace[]}>();
 
     useEffect(() => {
         if (props.address && props.address.city) {
@@ -38,7 +35,7 @@ export default function MapDialog(props: IMapDialogProps) {
                 place_id: 1,
                 display_name: props.address.name,
                 lat: props.address.city.latitude,
-                lon: props.address.city.longitude,
+                lng: props.address.city.longitude,
                 address: {
                     city: props.address.city.name,
                 }
@@ -48,16 +45,45 @@ export default function MapDialog(props: IMapDialogProps) {
     }, [props.address])
 
 
-    const save = () => {
-        const address = {
-            name: selectPosition?.display_name,
-            city: {
-                name: selectPosition?.address.city,
-                latitude: selectPosition?.lat,
-                longitude: selectPosition?.lon,
+    function transformPosition(place: GooglePlace) {
+        const address = new GoogleAddress(place);
+        /*const position:GeoPosition = {
+            place_id: 1,
+            display_name: address.toString(),
+            lat: place.geometry.location.lat,
+            lng: place.geometry.location.lng,
+            address: {
+                city: address.city,
+                route: address.route,
+                street: address.route,
+                house_number: address.house_number,
+                village: "",
+                place: "",
+                natural: "",
+                city_district: "",
+                state: address.state,
+                country: address.country,
+                postcode: address.zip,
+                region: address.state,
             }
-        } as Address
-        props.setFieldValue(address);
+        }*/
+        const loc = place.geometry.location
+        const obj:Address = {
+            name: address.toString(),
+            city: {
+                id: "",
+                name: address.city!,
+                latitude: typeof loc.lat === 'function'
+                    //@ts-ignore
+                    ? loc.lat()
+                    : loc.lat,
+                longitude: typeof loc.lng === 'function'
+                    //@ts-ignore
+                    ? loc.lng()
+                    : loc.lng,
+            }
+        };
+        props.setFieldValue(obj);
         props.onClose()
     }
 
@@ -68,38 +94,18 @@ export default function MapDialog(props: IMapDialogProps) {
             onClose={props.onClose}
             TransitionComponent={Transition}
         >
-            <AppBar sx={{position: 'relative'}}>
-                <Toolbar>
-                    <IconButton
-                        edge="start"
-                        color="inherit"
-                        onClick={props.onClose}
-                        aria-label="close"
-                    >
-                        <CloseIcon/>
-                    </IconButton>
-                    <Typography sx={{ml: 2, flex: 1}} variant="h6" component="div">
-                        Search address
-                    </Typography>
-                    <Button autoFocus color="inherit"
-                            onClick={() => save()}>
-                        Save and close
-                    </Button>
-                </Toolbar>
-            </AppBar>
             <div
                 style={{
                     display: "flex",
                     flexDirection: "row",
-                    width: "100vw",
                     height: "100vh",
                 }}
             >
-                <div style={{width: "50vw", height: "100%"}}>
-                    <Map selectPosition={selectPosition}/>
+                <div style={{flexBasis: '600px'}}>
+                    <SearchBox viewBox={viewBox} onClose={props.onClose} mapPlaces={mapPlaces} setSelectedPosition={transformPosition}/>
                 </div>
-                <div style={{width: "50vw"}}>
-                    <SearchBox selectPosition={selectPosition} setSelectPosition={setSelectPosition}/>
+                <div style={{height: "100%", flexGrow: 1}}>
+                    <Map selectedPosition={selectPosition} setViewBox={setViewBox} onClick={(places) => setMapPlaces({time:new Date().getTime(), places:places})}/>
                 </div>
             </div>
         </Dialog>

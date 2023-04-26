@@ -10,7 +10,6 @@ import Facilities from './pages/facilities';
 import UserRoute from './pages/users/UserRoute';
 import Proposals from './pages/proposals';
 import {BrowserRouter, Route, Routes,} from "react-router-dom";
-import Organizations from './pages/organizations';
 import OrganizationNew from "./pages/organizations/OrganizationNew";
 import OrganizationEdit from './pages/organizations/OrganizationEdit';
 import ErrorPage from "./pages/error/ErrorPage";
@@ -22,7 +21,6 @@ import {AddUserPage} from "./pages/users/AddUserPage";
 import ProfilePage from './pages/users/ProfilePage';
 import {ErrorsRoute} from './pages/error/ErrorsRoute';
 import ArtCreation from './pages/art/artist/ArtCreation';
-import { QueryClient, useQueryClient } from 'react-query';
 import OrganizationsRoute from './pages/organizations/OrganizationsRoute';
 
 function App() {

@@ -87,14 +87,14 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
             <Divider/>
             <DialogContent style={{paddingTop: "0px"}}>
                 <form onSubmit={formik.handleSubmit} id="form" noValidate>
-                    <MapDialog
-                        open={openMap}
+                    {openMap && <MapDialog
+                        open={true}
                         onClose={() => setOpenMap(false)}
                         setFieldValue={(value: Address) => {
                             formik.setFieldValue('address', value)
                         }}
                         address={formik.values.address as Address}
-                    />
+                    />}
                     <TextField
                         margin="normal"
                         required
