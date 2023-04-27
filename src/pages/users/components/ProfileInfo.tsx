@@ -31,10 +31,9 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
 
         }
 
-        // WHY IS IT HERE?
-        // if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
-        //     return false;
-        // }
+        if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
+            return false;
+        }
         const bossRole = find(MetadataEnum.ORGANIZATION_ROLE, authStore.account);
         console.log(bossRole === OrganizationRoleEnum.CREATOR);
         

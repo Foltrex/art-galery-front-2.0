@@ -21,3 +21,7 @@ export function isCreatorOrAdmin(account:Account) {
 export function findOrganizationId(account:Account) {
     return find(MetadataEnum.ORGANIZATION_ID, account);
 }
+
+export function findFacilityId(account:Account) {
+    return find(MetadataEnum.FACILITY_ID, account);
+}
