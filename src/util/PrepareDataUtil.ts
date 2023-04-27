@@ -49,6 +49,5 @@ export function getErrorMessage(e:any):string|undefined {
 }
 
 export function buildImageUrl(fileId:string) {
-    console.log(process.env);
     return process.env.REACT_APP_API_URL + FILE_SERVICE + '/files/' + fileId + '/data'
 }
