@@ -39,12 +39,12 @@ function prepareRenders(account:Account, metadata:Record<string, string>, onChan
             edit: (v) => <FacilitiesDropdown value={v} onChange={s => onChange(MetadataEnum.FACILITY_ID, s)} />
         },
         [MetadataEnum.ORGANIZATION_ROLE]: {
-            label: () => "Organization Role",
+            label: () => "Role",
             view: () => <AccountRole account={account}/>,
             edit: (v) => <OrganizationRoleDropdown value={v} onChange={s => onChange(MetadataEnum.ORGANIZATION_ROLE, s)}/>
         },
         [MetadataEnum.DESCRIPTION]: {
-            label: () => "Profile Description",
+            label: () => "Description",
             view: () => <div>{metadata[MetadataEnum.DESCRIPTION]}</div>,
             edit: (v) => <TextField fullWidth multiline minRows={5} type={"textarea"} value={v} onChange={e => onChange(MetadataEnum.DESCRIPTION, e.target.value)}/>
         },
