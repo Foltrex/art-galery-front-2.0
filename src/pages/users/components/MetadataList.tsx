@@ -61,7 +61,7 @@ const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:bool
     const {data: facility} = useGetFacilityById(metadata[MetadataEnum.FACILITY_ID]);
     const {data: city} = useGetCityById(metadata[MetadataEnum.CITY_ID]);
 
-    const renders = useMemo(() => prepareRenders(props.account, metadata, props.onChange, org, facility, city), [props.account, metadata, org, facility, city]);
+    const renders = useMemo(() => prepareRenders(props.account, metadata, props.onChange, org, facility, city), [props.account, metadata, props.onChange, org, facility, city]);
 
     return (
         <>
@@ -72,9 +72,7 @@ const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:bool
                 }
                 const value = metadata[key];
                 return <tr key={key}>
-                    <td className={"label"}>
-                        <strong>{render.label()}</strong>
-                    </td>
+                    <td className={"label"}>{render.label()}</td>
                     <td>{props.canEdit ? render.edit(value) : render.view(value)}</td>
                 </tr>
             })}

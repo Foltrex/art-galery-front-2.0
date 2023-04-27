@@ -96,7 +96,7 @@ const ArtistOrganizationsTable = () => {
         if(somethingSelected(selection)) {
             setSelection({all: false, organizations: {}, facilities: {}})
         }
-    }, [isLoading])
+    }, [isLoading, selection])
 
     const handleFacilityCheckClick = (updatedFacility: Facility) => {
         setSelection(facilityContent.reduce((selection, facility) => {

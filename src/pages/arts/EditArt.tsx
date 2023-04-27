@@ -1,6 +1,6 @@
 import ArtistFormAbstract from "./components/ArtistFormAbstract";
 import {useNavigate, useParams} from "react-router-dom";
-import {useGetArtById, useSaveArt} from "../../api/ArtApi";
+import {useGetArtById} from "../../api/ArtApi";
 import Loading from "../../components/ui/Loading";
 import Error404 from "../error/Error404";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
@@ -9,9 +9,8 @@ import Bubble from "../../components/bubble/Bubble";
 
 export const EditArt = () => {
     const navigate = useNavigate();
-    const {id: artId} = useParams();
-    const mutationSaveArt = useSaveArt();
-    const {isLoading, data} = useGetArtById(artId!);
+    const {id} = useParams()
+    const {isLoading, data} = useGetArtById(id!);
     const {authStore} = useRootStore();
     if (isLoading) {
         return <Loading/>

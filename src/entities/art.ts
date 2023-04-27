@@ -1,5 +1,7 @@
-import { ArtSize } from "./art-size";
-import { ArtStyle } from "./art-style";
+import {ArtSize} from "./art-size";
+import {ArtStyle} from "./art-style";
+import {EntityFile} from "./entityFile";
+import {ArtInfo} from "./artInfo";
 
 export interface Art {
     id?: string;
@@ -8,5 +10,7 @@ export interface Art {
     artistAccountId: string;
     artStyles: ArtStyle[];
     artSize: ArtSize;
-    dateCreation: Date; 
+    dateCreation: Date;
+    files?: EntityFile[]
+    artInfos?: ArtInfo[]
 }

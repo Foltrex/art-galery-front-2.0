@@ -1,5 +1,4 @@
-import AddIcon from '@mui/icons-material/Add';
-import {Box, Container, FormControl, FormControlLabel, IconButton, Radio, RadioGroup, Tooltip} from '@mui/material';
+import {Box, Button, Container, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
@@ -74,11 +73,9 @@ const Arts = () => {
                     {artStatus === exhibited.value && <CityDropdown onChange={setCityId}/>}
 
                     {accountType === AccountEnum.ARTIST &&
-                        <Tooltip title='Add New Art'>
-                            <IconButton onClick={() => navigate('/gallery/new')}>
-                                <AddIcon fontSize='large'/>
-                            </IconButton>
-                        </Tooltip>
+                            <Button style={{marginLeft: "auto"}} variant={'text'} onClick={() => navigate('/gallery/new')}>
+                                New art
+                            </Button>
                     }
                 </Box>
 

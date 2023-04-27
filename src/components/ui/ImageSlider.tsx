@@ -11,6 +11,7 @@ interface IImageSliderProps {
     handleMakeMainClick?: (number: number) => void;
     showLoadMore?: boolean;
     showMakeMain?: boolean;
+    canEdit?: boolean;
     styles?: CSSProperties
 }
 const style:CSSProperties = {
@@ -40,6 +41,7 @@ const RightArrowButton = styled('div')({
 const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
     slides,
     onDelete,
+    canEdit,
     onImageAdd,
     handleMakeMainClick,
     showLoadMore = true,
@@ -113,7 +115,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
 
             {slides && <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh' }}>
                 {slides.map((_, index) => (
-                    <img
+                    <img key={index}
                         src={slides[index]}
                         alt={"img"}
                         onClick={() => handleDotClick(index)}
@@ -126,7 +128,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
             }
 
             <Stack direction='column' sx={{ px: 30 }} gap={2}>
-                {showMakeMain &&
+                {showMakeMain && canEdit &&
                     <Button
                         onClick={() => {
                             if (handleMakeMainClick) {
@@ -140,7 +142,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                     </Button>
                 }
 
-                {showLoadMore &&
+                {showLoadMore && canEdit &&
                     <Button
                         variant='outlined'
                         sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
@@ -162,7 +164,7 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                         src={slides[currentIndex]} alt={"img"} />
 
                     <Box sx={{ position: 'absolute', bottom: '15px', display: 'flex', gap: 10}}>
-                        {onDelete && <Button
+                        {onDelete && canEdit && <Button
                             color='error'
                             variant='contained'
                             startIcon={<Delete />}

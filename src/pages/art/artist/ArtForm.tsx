@@ -1,11 +1,10 @@
-import {Button, FormControl, InputLabel, MenuItem, Select, Stack, TextField} from '@mui/material';
+import {Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField} from '@mui/material';
 import {DatePicker} from '@mui/x-date-pickers';
-import dayjs, {Dayjs} from 'dayjs';
+import dayjs from 'dayjs';
 import {FormikHelpers, useFormik} from 'formik';
 import * as yup from 'yup';
 import {useGetAllArtSizes} from '../../../api/ArtSizeApi';
 import {Art} from '../../../entities/art';
-import {ArtSize} from '../../../entities/art-size';
 import {ArtStyle} from '../../../entities/art-style';
 import {useRootStore} from '../../../stores/provider/RootStoreProvider';
 import React, {useState} from 'react';
@@ -13,19 +12,14 @@ import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
 import {useNavigate} from "react-router-dom";
 
 interface IArtFormProps {
-	art?: Art;
+	art: Art;
 	onSubmit: (art: Art) => Promise<void>;
 	onDelete: () => void
+	canEdit: boolean,
+	switchMode: (edit:boolean, art?:Art) => void
 }
 
-interface FormValues {
-	artName: string;
-	description: string;
-	creationDate: Dayjs;
-	size: ArtSize;
-}
-
-const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete}) => {
+const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete, canEdit, switchMode}) => {
 	const [selectedStyles, setSelectedStyles] = useState<ArtStyle[]>(art?.artStyles ?? []);
 	const navigate = useNavigate();
 	const rootStore = useRootStore();
@@ -35,32 +29,25 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 	
 	const { data: artSizeItems = []} = useGetAllArtSizes();
 
-	const validationSchema = yup.object({});
+	const validationSchema = yup.object({
+		artSize: yup.object({id: yup.string().required("Size is required field")}),
+	});
 
 
-	const initialValues: FormValues = {
-		artName: art?.name ?? '',
-		description: art?.description ?? '',
-		creationDate: dayjs(),
-		size:  artSizeItems[0] || artSizeItems[0]
-	}
-
-	const onSaveArt = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
+	const onSaveArt = async (values: Art, { setSubmitting }: FormikHelpers<Art>) => {
 		setSubmitting(true);
-		
-		const creationDateJS = formik.values.creationDate;
 		try {
 			const artEntity: Art = {
 				id: art?.id,
-				name: values.artName,
+				name: values.name,
 				description: values.description,
 				artistAccountId: account.id,
-				dateCreation: creationDateJS.toDate(),
+				dateCreation: formik.values.dateCreation,
 				artStyles: selectedStyles,
-				artSize: values.size
+				artSize: values.artSize
 			};
 
-			onSubmit(artEntity);
+			await onSubmit(artEntity);
 		} catch (e) {
 			console.log(e);
 		} finally {
@@ -68,14 +55,14 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 		}
 	}
 
-	const formik = useFormik({
-		initialValues: initialValues,
+	const formik = useFormik<Art>({
+		initialValues: art,
 		validationSchema: validationSchema,
 		validateOnChange: false,
 		onSubmit: onSaveArt,
 	});
 
-
+	console.log(formik);
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
@@ -83,11 +70,11 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 				<TextField
 					size='small'
 					label='Art title'
-					name='artName'
-					value={formik.values.artName}
+					name='name'
+					value={formik.values.name}
 					onChange={formik.handleChange}
-					error={!!formik.errors.artName}
-					helperText={formik.errors.artName}
+					error={!!formik.errors.name}
+					helperText={formik.errors.name}
 					sx={{ fontSize: '2em', lineHeight: 'normal', flexGrow: 1 }} />
 				<TextField
 					size='small'
@@ -100,7 +87,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 
 				<FormControl size='small'>
-					<ArtStyleDropdown value={selectedStyles} onChange={(ids) => setSelectedStyles(ids)} />
+					<ArtStyleDropdown value={formik.values.artStyles} onChange={(ids) => formik.setFieldValue('artStyles', ids)} />
 				</FormControl>
 
 
@@ -108,8 +95,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 					label={'Date Created'}
 					sx={{ lineHeight: 'normal' }}
 					disableFuture
-					value={formik.values.creationDate}
-					onChange={formik.handleChange}
+					value={dayjs(formik.values.dateCreation)}
+					onChange={(date) => {formik.setFieldValue('dateCreation', date ? date.toDate() : undefined, false)}}
 					views={['month', 'year']}
 					slotProps={{ textField: { size: 'small' } }}
 				/>
@@ -119,16 +106,16 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 					<Select
 						label={'Size'}
 						labelId='size-select'
-						name='size'
-						value={formik.values.size?.id}
+						name='artSize'
+						value={formik.values.artSize?.id}
 						onChange={e => {
 							const size =  artSizeItems.find(
 								s => s.id === e.target.value
 							);
-							formik.setFieldValue('size', size);
+							console.log(size);
+							formik.setFieldValue('artSize', size);
 						}}
-						error={!!formik.errors.size}
-						// helperText={formik.errors.name}
+						error={!!formik.errors.artSize?.id}
 						sx={{ lineHeight: 'normal' }}
 					>
 						{artSizeItems.map(s => (
@@ -140,8 +127,12 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 							</MenuItem>
 						))}
 					</Select>
+					<FormHelperText error={!!formik.errors.artSize?.id}>{formik.errors.artSize?.id}</FormHelperText>
 				</FormControl>
 				<TextField
+					minRows={5}
+					type={"textarea"}
+					multiline
 					name='description'
 					value={formik.values.description}
 					onChange={formik.handleChange}
@@ -164,6 +155,11 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 								onClick={onDelete}>Delete</Button>
 						<Button type={"submit"} color={"success"}
 								variant="outlined">Save</Button>
+						{account.id === art?.artistAccountId &&
+							<Button type={"button"} variant={"outlined"} onClick={() => switchMode(!canEdit, canEdit ? formik.values : undefined)} style={{marginLeft: "auto"}}>
+								{canEdit ? 'View' : 'Edit'}
+							</Button>
+						}
 					</Stack>
 				</div>
 			</Stack>

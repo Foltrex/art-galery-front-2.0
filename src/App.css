@@ -52,23 +52,24 @@
 .MuiFormControl-marginDense {
   margin-top: 0 !important;
 }
-.profile-table {
+.account-table {
   margin: 0 auto;
 }
-.profile-table tr {
+.view-table td.label {
+  font-weight: bold;
+}
+.view-table tr {
   vertical-align: top;
 }
-.profile-table tr td {
-  padding: 0 10px 10px;
+.view-table tr td {
+  padding: 0 10px 5px;
+  line-height: 37px;
 }
-.profile-table td.label {
-  padding-top: 8px
-}
-.profile-table tr td:first-child {
+.view-table tr td:first-child {
   max-width: 200px;
   text-align: right;
 }
-.profile-table tr td:last-child {
+.view-table tr td:last-child {
   min-width: 300px;
   text-align: left;
 }

@@ -7,6 +7,7 @@ import {useGetAllArtStyles} from "../../api/ArtStyleApi";
 
 const sx = { lineHeight: 'normal' }
 const boxSx = { display: 'flex', flexWrap: 'wrap', gap: 0.5 };
+const labelStyle = {background: 'white', padding: '0px 6px', left: '-5px'};
 
 export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: (v:ArtStyle[]) => void}) => {
 
@@ -37,7 +38,7 @@ export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: 
     }, [selectedStylesMap, artStyleItems]);
 
     return <FormControl>
-        <InputLabel size={"small"}>Art Style</InputLabel>
+        <InputLabel style={labelStyle} size={"small"}>Art Style</InputLabel>
         <Select
             labelId="style-select"
             multiple

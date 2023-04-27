@@ -1,14 +1,13 @@
 import {Card, IconButton, ImageListItem, ImageListItemBar, Tooltip} from "@mui/material";
 import {useGetAccountById} from "../../../api/AccountApi";
-import {useGetLastArtInfoByArtId} from "../../../api/ArtInfoApi";
 import EmptyArt from '../../../assets/images/empty-art.svg';
 import {Art} from "../../../entities/art";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import LetterAvatar from "../../../components/ui/LetterAvatar";
 import {useNavigate} from "react-router-dom";
-import {useGetAllEntityFilesByEntityId} from "../../../api/FileApi";
 import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
 import {buildImageUrl} from "../../../util/PrepareDataUtil";
+import {useMemo} from "react";
 
 interface IArtItemProps {
     art: Art;
@@ -18,13 +17,24 @@ interface IArtItemProps {
 const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
     const navigate = useNavigate();
 
-    const { data: files = [] } = useGetAllEntityFilesByEntityId(art.id);
-    const images = files
-        .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
-        .map(fileEntity => buildImageUrl(fileEntity.id!))
-    const image = images.length && images.length > 0 ? images[0] : null;
+    const image = useMemo(() => {
+        const images = (art.files || [])
+            .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
+            .map(fileEntity => buildImageUrl(fileEntity.id!))
+        return images.length && images.length > 0 ? images[0] : null;
+    }, [art.files])
 
-    const { data: artInfo } = useGetLastArtInfoByArtId(art.id);
+    const artInfo = useMemo(() => {
+        if(!art.artInfos) {
+            return undefined;
+        }
+        for(let i = 0; i < art.artInfos.length; i++) {
+            if(!art.artInfos[i].expositionDateEnd) {
+                return art.artInfos[i];
+            }
+        }
+        return undefined;
+    }, [art.artInfos]);
 
     let facilityName = ''
     if (artInfo?.facility) {

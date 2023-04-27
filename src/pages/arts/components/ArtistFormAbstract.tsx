@@ -2,14 +2,14 @@ import {Box, Grid, IconButton} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
 import {ChangeEvent, useMemo, useRef, useState} from "react";
-import ArtistArtForm from '../../art/artist/AristArtForm';
-import ArtistArtInfo from '../../art/artist/ArtistArtInfo';
+import ArtForm from '../../art/artist/ArtForm';
+import ArtistArtInfo from '../../art/artist/ArtInfo';
 import {useDeleteArtFile, useGetAllEntityFilesByEntityId, useNewSaveFile, useUploadFile} from "../../../api/FileApi";
 import DeleteModal from "../../../components/modal/DeleteModal";
 import ImageSlider from "../../../components/ui/ImageSlider";
 import {FileService} from "../../../services/FileService";
 import {useDeleteArt, useSaveArt} from "../../../api/ArtApi";
-import {Art as ArtEntity} from '../../../entities/art';
+import {Art, Art as ArtEntity} from '../../../entities/art';
 import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
 import Bubble from "../../../components/bubble/Bubble";
 import {buildImageUrl, getErrorMessage} from "../../../util/PrepareDataUtil";
@@ -24,6 +24,8 @@ interface Props {
 
 const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
     const navigate = useNavigate();
+    const [forceCanEdit, setForceCanEdit] = useState<boolean>()
+    const [tempArt, setTempArt] = useState<Art>()
 
     const fileInput = useRef<HTMLInputElement>(null);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
@@ -161,6 +163,11 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
                 .filter(file => !deleted[file.id!])
                 .map(file => buildImageUrl(file.id!)))
     }, [tempImages, originalFileEntities, deleted])
+
+    if(forceCanEdit !== undefined) {
+        canEdit = forceCanEdit;
+    }
+
     return (
         <Grid container
               spacing={0}
@@ -175,6 +182,7 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
 
                     {imagesToShow && imagesToShow.length > 0
                         ? <ImageSlider
+                            canEdit={canEdit}
                             onDelete={onDeleteFile}
                             slides={imagesToShow}
                             handleMakeMainClick={handleMakeMainClick}
@@ -191,7 +199,7 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
                         >
                             <IconButton
                                 size='large'
-                                onClick={() => fileInput.current?.click()}
+                                onClick={() => {canEdit && fileInput.current?.click()}}
                                 sx={{
                                     position: 'absolute',
                                     top: '50%',
@@ -213,11 +221,16 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
             </Grid>
             <Grid item sm={6}>
                 {canEdit
-                    ? <ArtistArtForm
-                        art={art}
+                    ? <ArtForm
+                        canEdit={canEdit}
+                        switchMode={(canEdit, art) => {
+                            setForceCanEdit(canEdit);
+                            art && setTempArt(art)
+                        }}
+                        art={tempArt || art}
                         onDelete={() => setOpenDeleteModal(true)}
                         onSubmit={handleSubmit}/>
-                    : <ArtistArtInfo art={art}/>
+                    : <ArtistArtInfo art={tempArt || art} canEdit={canEdit} switchMode={(canEdit) => setForceCanEdit(canEdit)}/>
                 }
             </Grid>
             {canEdit && openDeleteModal && <DeleteModal
