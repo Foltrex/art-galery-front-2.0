@@ -194,13 +194,8 @@ const ArtistOrganizationsTable = () => {
                     </RadioGroup>
                 </FormControl>
                 <FormControl style={{ marginLeft: "auto" }}>
-                    <Link to={"/organizations/new"}>
-                        <Button variant="text" size={"large"}>New Organization</Button>
-                    </Link>
-                </FormControl>
-                <FormControl>
                     <Link onClick={handleProposeClick} to={'#'}>
-                        <Button variant="text" size={"large"}>
+                        <Button variant="outlined" size={"large"} sx={{color: '#43a047', borderColor: '#43a047'}}>
                             PROPOSE
                         </Button>
                     </Link>

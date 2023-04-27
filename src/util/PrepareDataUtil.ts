@@ -45,7 +45,8 @@ export function getErrorMessage(e:any):string|undefined {
     // }
     const error = e.response?.data?.error;
     const message = e.response?.data?.message || e.message || '[no error message]';
-    return error + "\n " + message
+    const errors = e.response?.data?.errors;
+    return error + "\n " + message + "\n " + errors;
 }
 
 export function buildImageUrl(fileId:string) {

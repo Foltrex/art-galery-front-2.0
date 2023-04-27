@@ -58,7 +58,14 @@ const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
         <Autocomplete
             size='small'
             value={optValue}
-            renderInput={(params) => <TextField {...params} error={!!error} helperText={error} />}
+            renderInput={(params) => (
+                <TextField 
+                    {...params} 
+                    error={!!error} 
+                    helperText={error} 
+                    placeholder='City' 
+                />
+            )}
             options={cityOptions}
             onChange={(event, option) => {
                 onChange(option?.id)

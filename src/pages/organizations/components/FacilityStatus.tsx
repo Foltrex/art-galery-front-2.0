@@ -7,7 +7,7 @@ interface IFacilityStatusProps {
 }
 
 const FacilityStatus: React.FunctionComponent<IFacilityStatusProps> = ({facility}) => {
-  if (!facility || !facility.isActive) {
+  if (!facility) {
 	return null;
   }
  

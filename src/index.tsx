@@ -1,4 +1,4 @@
-import {createTheme, ThemeProvider} from '@mui/material';
+import {createTheme, PaletteColorOptions, ThemeProvider} from '@mui/material';
 import React from 'react';
 import {CookiesProvider} from 'react-cookie';
 import ReactDOM from 'react-dom/client';
@@ -11,12 +11,31 @@ import {RootStoreProvider} from "./stores/provider/RootStoreProvider";
 import Bubble from "./components/bubble/Bubble";
 import {LocalizationProvider} from '@mui/x-date-pickers';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
+import { green } from '@mui/material/colors';
+
+declare module '@mui/material/styles' {
+    interface CustomPalette {
+      apple: string;
+    }
+    interface Palette extends CustomPalette {}
+    interface PaletteOptions extends CustomPalette {}
+  }
+  
+  declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+      apple: true;
+    }
+  }
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-const defaultMaterialTheme = createTheme();
+const defaultMaterialTheme = createTheme({
+    palette: {
+        apple: green[600]
+    }
+});
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
