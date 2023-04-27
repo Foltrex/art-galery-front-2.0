@@ -26,20 +26,24 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
     const navigate = useNavigate();
 
     const isBoss = useMemo(() => {
+        //person 1 - current logged user
+        //person 2 - user who is shown in form
+
+        //check, if both persons are representative
         if (authStore.account.accountType !== AccountEnum.REPRESENTATIVE || props.account.accountType !== AccountEnum.REPRESENTATIVE) {
             return false;
-
         }
-
+        //check if both persons belong to same organization
         if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
             return false;
         }
+        //if current person is organization creator, he can edit any user
         const bossRole = find(MetadataEnum.ORGANIZATION_ROLE, authStore.account);
-        console.log(bossRole === OrganizationRoleEnum.CREATOR);
-        
         if (bossRole === OrganizationRoleEnum.CREATOR) {
             return true;
         }
+        //if current user is moderator, and current user in form is member, can edit as well.
+        //so, moderator can edit only members
         const workerRole = find(MetadataEnum.ORGANIZATION_ROLE, props.account);
         return bossRole === OrganizationRoleEnum.MODERATOR && workerRole === OrganizationRoleEnum.MEMBER;
     }, [authStore.account, props.account])
@@ -47,7 +51,6 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
     const canEdit = authStore.account.accountType === AccountEnum.SYSTEM
         || authStore.account.id === props.account.id
         || isBoss
-    
 
     const validationSchema = yup.object().shape({
         email: yup.string().nullable().required("Email is required field"),
