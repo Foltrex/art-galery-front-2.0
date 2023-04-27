@@ -28,11 +28,16 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
     const isBoss = useMemo(() => {
         if (authStore.account.accountType !== AccountEnum.REPRESENTATIVE || props.account.accountType !== AccountEnum.REPRESENTATIVE) {
             return false;
+
         }
-        if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
-            return false;
-        }
+
+        // WHY IS IT HERE?
+        // if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
+        //     return false;
+        // }
         const bossRole = find(MetadataEnum.ORGANIZATION_ROLE, authStore.account);
+        console.log(bossRole === OrganizationRoleEnum.CREATOR);
+        
         if (bossRole === OrganizationRoleEnum.CREATOR) {
             return true;
         }
@@ -43,6 +48,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
     const canEdit = authStore.account.accountType === AccountEnum.SYSTEM
         || authStore.account.id === props.account.id
         || isBoss
+    
 
     const validationSchema = yup.object().shape({
         email: yup.string().nullable().required("Email is required field"),

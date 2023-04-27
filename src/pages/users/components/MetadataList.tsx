@@ -63,7 +63,6 @@ const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:bool
 
     const renders = useMemo(() => prepareRenders(props.account, metadata, props.onChange, org, facility, city), [props.account, metadata, org, facility, city]);
 
-
     return (
         <>
             {properties.map(key => {

@@ -79,7 +79,13 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
                         ))}
                     </Select>
                 </FormControl>
-                {canCreateUser && <FormControl size='small' style={{marginLeft: 'auto'}}><Button variant={"text"} onClick={() => navigate("/users/new")}>New User</Button></FormControl>}
+                {canCreateUser && 
+                    <FormControl size='small' style={{marginLeft: 'auto'}}>
+                        <Button variant={"text"} onClick={() => navigate("/users/new")}>
+                            New User
+                        </Button>
+                    </FormControl>
+                }
             </Box>
 
             <UserGrid
