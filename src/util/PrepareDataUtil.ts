@@ -43,7 +43,7 @@ export function getErrorMessage(e:any):string|undefined {
     // "code":"NotEmpty"}],
     // "path":"/accounts/b3fc0646-bbeb-477f-974d-6af91f5033f7"
     // }
-    const error = e.response?.data?.error;
+    const error = e.response?.data?.error ?? '';
     const message = e.response?.data?.message || e.message || '[no error message]';
     const errors = e.response?.data?.errors ?? '';
     return error + "\n " + message + "\n " + errors;
