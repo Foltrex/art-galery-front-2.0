@@ -5,9 +5,8 @@ import {FormikHelpers, useFormik} from 'formik';
 import * as yup from 'yup';
 import {useGetAllArtSizes} from '../../../api/ArtSizeApi';
 import {Art} from '../../../entities/art';
-import {ArtStyle} from '../../../entities/art-style';
 import {useRootStore} from '../../../stores/provider/RootStoreProvider';
-import React, {useState} from 'react';
+import React from 'react';
 import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
 import {useNavigate} from "react-router-dom";
 
@@ -20,7 +19,6 @@ interface IArtFormProps {
 }
 
 const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete, canEdit, switchMode}) => {
-	const [selectedStyles, setSelectedStyles] = useState<ArtStyle[]>(art?.artStyles ?? []);
 	const navigate = useNavigate();
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
@@ -43,7 +41,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 				description: values.description,
 				artistAccountId: account.id,
 				dateCreation: formik.values.dateCreation,
-				artStyles: selectedStyles,
+				artStyles: formik.values.artStyles,
 				artSize: values.artSize
 			};
 
@@ -61,8 +59,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 		validateOnChange: false,
 		onSubmit: onSaveArt,
 	});
-
-	console.log(formik);
 
 	return (
 		<form onSubmit={formik.handleSubmit}>

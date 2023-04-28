@@ -70,7 +70,7 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
     const fileInput = useRef<HTMLInputElement>(null);
     const [files, setFiles] = useState<File[]>([]);
 
-    const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(props.data?.id);
+    const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(0, props.data?.id);
     const facilityImages:string[] = fileEntities
         .filter(fileEntity => fileEntity.id && fileEntity.type === EntityFileTypeEnum.ORIGINAL)
         .map(fileEntity => buildImageUrl(fileEntity.id!));

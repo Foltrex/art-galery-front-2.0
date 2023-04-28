@@ -5,7 +5,7 @@ import {useMemo} from 'react';
 import dayjs from 'dayjs';
 import {useGetAccountById} from '../../../api/AccountApi';
 import {Art as ArtEntity} from '../../../entities/art';
-import ArtExhibitionHistory from '../ArtExhibitionHistory';
+import ArtExhibitionHistory from './ArtExhibitionHistory';
 import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 

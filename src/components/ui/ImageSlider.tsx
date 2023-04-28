@@ -6,7 +6,7 @@ import {CSSProperties, useState} from "react";
 
 interface IImageSliderProps {
     slides?: string[];
-    onDelete?: (index: number) => void;
+    onDelete?: (index: number) => Promise<boolean>;
     onImageAdd?: () => void;
     handleMakeMainClick?: (number: number) => void;
     showLoadMore?: boolean;
@@ -73,7 +73,11 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
 
     const handleDeleteImageClick = () => {
         if (onDelete) {
-            onDelete(currentIndex);
+            onDelete(currentIndex).then(r => {
+                if(r) {
+                    setCurrentIndex(0);
+                }
+            });
         }
 
         setShowModal(false)

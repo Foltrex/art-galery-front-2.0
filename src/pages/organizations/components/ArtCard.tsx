@@ -12,7 +12,7 @@ interface IArtCardProps {
 
 const ArtCard: React.FunctionComponent<IArtCardProps> = ({art, onPropose}) => {
 
-    const { isLoading, data: files = [] } = useGetAllEntityFilesByEntityId(art.id);
+    const { isLoading, data: files = [] } = useGetAllEntityFilesByEntityId(0, art.id);
     const images = files
         .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
         .map(fileEntity => buildImageUrl(fileEntity.id!))

@@ -2,9 +2,9 @@ import {Box, Grid, IconButton} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 
 import {ChangeEvent, useMemo, useRef, useState} from "react";
-import ArtForm from '../../art/artist/ArtForm';
-import ArtistArtInfo from '../../art/artist/ArtInfo';
-import {useDeleteArtFile, useGetAllEntityFilesByEntityId, useNewSaveFile, useUploadFile} from "../../../api/FileApi";
+import ArtForm from './ArtForm';
+import ArtistArtInfo from './ArtInfo';
+import {uploadArtFile, useDeleteArtFile, useGetAllEntityFilesByEntityId, useNewSaveFile,} from "../../../api/FileApi";
 import DeleteModal from "../../../components/modal/DeleteModal";
 import ImageSlider from "../../../components/ui/ImageSlider";
 import {FileService} from "../../../services/FileService";
@@ -26,13 +26,13 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
     const navigate = useNavigate();
     const [forceCanEdit, setForceCanEdit] = useState<boolean>()
     const [tempArt, setTempArt] = useState<Art>()
+    const [fileKey, setFileKey] = useState(0);
 
     const fileInput = useRef<HTMLInputElement>(null);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [tempImages, setTempImages] = useState<EntityFile[]>([]);
-    const [deleted, setDeleted] = useState<Record<string, boolean>>({})
 
-    const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(art?.id);
+    const {data: fileEntities = []} = useGetAllEntityFilesByEntityId(fileKey, art?.id);
     const originalFileEntities = fileEntities.filter(fileEntity => fileEntity.type === EntityFileTypeEnum.ORIGINAL);
 
     const mutationDeleteArt = useDeleteArt();
@@ -49,18 +49,24 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
     const mutationDeleteFile = useDeleteArtFile();
 
     const onDeleteFile = async (index: number) => {
-        const file = fileEntities?.at(index);
-        if(!file) {
-            return;
+        if(tempImages[index]) {
+            tempImages.splice(index, 1);
+            setTempImages([...tempImages]);
+            return new Promise<boolean>(r => r(true));
+        } else {
+            index = index - tempImages.length;
         }
-        mutationDeleteFile.mutateAsync(file.id!).then(() => {
-            setDeleted({...deleted, [file.id!]: true})
-            Bubble.success("Media file removed")
+        const file = fileEntities[index] as EntityFile;
+        return mutationDeleteFile.mutateAsync(file.id!).then(() => {
+            Bubble.success("Media file removed");
+            setFileKey(fileKey + 1);
+            return true;
         }).catch(e => {
             Bubble.error({
                 message: 'Failed to delete media file. Error message is ' + getErrorMessage(e),
                 duration: 999999
             })
+            return false;
         })
     }
 
@@ -79,16 +85,6 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
 
     const mutationSaveArt = useSaveArt();
 
-    // const useUpdateFile
-
-    const mutationSaveImage = useUploadFile();
-
-    const onSubmitFile = (art: ArtEntity, file: EntityFile) => {
-        file = {...file};
-        const commaIndex = file.data.indexOf(",");
-        file.data = commaIndex > -1 ? file.data.substring(commaIndex + 1) : file.data;
-        return mutationSaveImage.mutateAsync(file).then(response => response.data)
-    }
 
     const handleSubmit = async (art: ArtEntity) => {
         let savedArt: ArtEntity;
@@ -99,7 +95,7 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
                 savedArt = art;
                 let existingIsPrimary = false;
                 for (let i = 0; i < originalFileEntities.length; i++) {
-                    if (originalFileEntities[i].isPrimary && !deleted[originalFileEntities[i].id!]) {
+                    if (originalFileEntities[i].isPrimary) {
                         existingIsPrimary = true;
                         break;
                     }
@@ -120,7 +116,12 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
                 tempImages.forEach((image) => {
                     image.entityId = art.id;
                 })
-                return Promise.all(tempImages.map(file => onSubmitFile(art, file)));
+                return Promise.all(tempImages.map(file => {
+                    file = {...file};
+                    const commaIndex = file.data.indexOf(",");
+                    file.data = commaIndex > -1 ? file.data.substring(commaIndex + 1) : file.data;
+                    return uploadArtFile(art.id!, file).then(response => response.data)
+                }));
             }).then((files) => {
                 onSubmitSuccess(savedArt, files);
             }).catch((e) => {
@@ -160,9 +161,8 @@ const ArtistFormAbstract = ({art, canEdit, onSubmitSuccess}: Props) => {
         return tempImages
             .map(image => image.data)
             .concat(originalFileEntities
-                .filter(file => !deleted[file.id!])
                 .map(file => buildImageUrl(file.id!)))
-    }, [tempImages, originalFileEntities, deleted])
+    }, [tempImages, originalFileEntities])
 
     if(forceCanEdit !== undefined) {
         canEdit = forceCanEdit;

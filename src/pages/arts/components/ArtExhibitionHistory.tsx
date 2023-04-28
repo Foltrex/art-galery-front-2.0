@@ -14,9 +14,9 @@ import {
     Typography
 } from '@mui/material';
 import * as React from 'react';
-import {useGetArtInfosByArtId} from '../../api/ArtInfoApi';
-import LetterAvatar from '../../components/ui/LetterAvatar';
-import {Art} from '../../entities/art';
+import {useGetArtInfosByArtId} from '../../../api/ArtInfoApi';
+import LetterAvatar from '../../../components/ui/LetterAvatar';
+import {Art} from '../../../entities/art';
 
 interface IArtExhibitionHistoryProps {
 	art: Art;
