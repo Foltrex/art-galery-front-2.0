@@ -10,14 +10,15 @@ interface ICityDropdownProps {
     onChange: (cityId?:string) => void;
     disabled?: boolean;
     style?: React.CSSProperties;
+    placeholder?: string;
 }
 
 const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
-
     value,
     onChange ,
     error ,
-    disabled = false
+    disabled = false,
+    placeholder
 }) => {
 
     const { data: cities } = useGetAllCities();
@@ -63,6 +64,7 @@ const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
                     {...params} 
                     error={!!error} 
                     helperText={error} 
+                    placeholder={placeholder}
                 />
             )}
             options={cityOptions}

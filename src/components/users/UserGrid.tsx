@@ -156,7 +156,7 @@ function getColumns(
         },
     ];
 
-    if(account.accountType !== AccountEnum.REPRESENTATIVE || isCreatorOrAdmin(account)) {
+    if(account.accountType === AccountEnum.SYSTEM) {
         columns.push({
             key: 'organization',
             title: 'Organization',
