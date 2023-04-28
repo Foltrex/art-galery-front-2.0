@@ -172,33 +172,6 @@ function getColumns(setOpenProposalModal: () => void,
                 }
             }
         }
-        // {
-        //     key: 'address',
-        //     title: 'Address',
-        //     minWidth: 150,
-        //     render: (organization) => {
-        //         const address = organization.address;
-        //         const city = address?.city;
-        //         return address ? (city ? city.name + ', ' : '') + address.fullName: '';
-        //     }
-        // },
-        // {
-        //     key: 'controls',
-        //     title: '',
-        //     render: (organization) => {
-        //         if(accountType === AccountEnum.ARTIST) {
-        //             return <Tooltip title={'Propose'}>
-        //                 <IconButton onClick={setOpenProposalModal}>
-        //                     <AssignmentReturnedIcon/>
-        //                 </IconButton>
-        //             </Tooltip>
-        //         } else if(accountType === AccountEnum.SYSTEM || (accountType === AccountEnum.REPRESENTATIVE)) {
-        //             return <div>EDIT</div>
-        //         } else {
-        //             return <div/>
-        //         }
-        //     }
-        // }
     ];
 }
 

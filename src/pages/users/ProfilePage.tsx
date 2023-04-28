@@ -9,11 +9,11 @@ import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 
 const ProfilePage = observer(() => {
-    console.log('profile page mount')
     const {authStore} = useRootStore();
     const account = authStore.account;
-    return <AbstractUserPage account={account}  onSubmit={(account:Account) =>
-        updateUser(account)
+    return <AbstractUserPage
+        account={account}
+        onSubmit={(account:Account) => updateUser(account)
             .then((response) => {
                 authStore.setAccount(response.data)
                 return true

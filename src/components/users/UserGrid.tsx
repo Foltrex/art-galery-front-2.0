@@ -7,7 +7,7 @@ import DeleteModal from "../modal/DeleteModal";
 
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import {IconButton, styled, Typography} from "@mui/material";
+import {Avatar, IconButton, Stack, styled, Typography} from "@mui/material";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {find, findOrganizationId, isCreatorOrAdmin} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
@@ -16,6 +16,8 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useDeleteAccountById} from "../../api/AccountApi";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {buildImageUrl} from "../../util/PrepareDataUtil";
 
 const Circle = styled('span')({
     height: 10,
@@ -33,9 +35,10 @@ export interface IUserGridProps {
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onPageNumberChange: (page: number) => void;
     applySort: (key:string, direction:string|undefined) => void;
+    editUser?: (userId:string) => void
 }
 
-export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
+export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, editUser, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
     const [user, setUser] = useState<Account>();
     const {authStore} = useRootStore();
     const navigate = useNavigate();
@@ -62,8 +65,8 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
 
 
     const columns = useMemo(
-        () => getColumns(applySort, authStore.account, navigate, handleDelete, organizations),
-        [applySort, authStore.account, organizations, navigate]);
+        () => getColumns(applySort, authStore.account, navigate, handleDelete, organizations, editUser),
+        [applySort, authStore.account, navigate, handleDelete, organizations, editUser]);
 
     return <>
         {data
@@ -90,14 +93,31 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, rowsPerPage
     </>
 }
 
+function AccountImage ({account}:{account:Account}) {
+    const image = useMemo(() => {
+        const image = find(MetadataEnum.ACCOUNT_IMAGE, account);
+        if(!image) {
+            return '';
+        }
+        return buildImageUrl(image);
+    }, [account])
+    return <Stack alignItems={"center"}>{image ? <Avatar src={image} alt={'ava'}/> : null}</Stack>
+}
+
 function getColumns(
-    applySort:(key:string, direction:string|undefined) => void, 
-    account:Account, 
-    navigate: NavigateFunction, 
+    applySort: (key: string, direction: (string | undefined)) => void,
+    account: Account,
+    navigate: NavigateFunction,
     onDelete: (account: Account) => void,
-    organizations?:Record<string, Organization>,
-):IColumnType<Account>[] {
+    organizations?: Record<string, Organization>,
+    editUser?: ((userId: string) => void)
+    ):IColumnType<Account>[] {
     const columns:IColumnType<Account>[] = [
+        {
+            key: 'avatar',
+            title: 'Profile image',
+            render: (a) => <AccountImage account={a}/>
+        },
         {
             key: 'firstName',
             title: 'First Name',
@@ -168,7 +188,7 @@ function getColumns(
                         <IconButton
                             disableRipple
                             aria-label='edit'
-                            onClick={() => {navigate("/users/" + account.id)}}
+                            onClick={() => {editUser ? editUser(account.id) : navigate("/users/" + account.id)}}
                         >
                             <ModeOutlinedIcon />
                         </IconButton>

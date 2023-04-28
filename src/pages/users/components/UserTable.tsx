@@ -14,6 +14,8 @@ import {UserGrid} from "../../../components/users/UserGrid";
 
 interface IUserTableProps {
     organizationId?: string;
+    editUser?: (userId:string) => void
+    newUser?: () => void
 }
 
 const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
@@ -81,7 +83,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
                 </FormControl>
                 {canCreateUser && 
                     <FormControl size='small' style={{marginLeft: 'auto'}}>
-                        <Button variant={"text"} onClick={() => navigate("/users/new")}>
+                        <Button variant={"text"} onClick={() => {props.newUser ? props.newUser() : navigate("/users/new")}}>
                             New User
                         </Button>
                     </FormControl>
@@ -91,6 +93,7 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
             <UserGrid
                 organizationId={organizationId}
                 data={data}
+                editUser={props.editUser}
                 rowsPerPage={rowsPerPage}
                 onRowsPerPageChange={setRowsPerPage}
                 onPageNumberChange={setPageNumber}

@@ -1,11 +1,9 @@
-import React, {useMemo, useState} from 'react';
+import React, {useState} from 'react';
 import {Account} from "../../../entities/account";
 import {Button, TextField} from "@mui/material";
 import MetadataList, {prepareAccountProperties} from "./MetadataList";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
-import {find, findOrganizationId} from "../../../util/MetadataUtil";
 import {MetadataEnum} from "../../../entities/enums/MetadataEnum";
-import {OrganizationRoleEnum} from "../../../entities/enums/organizationRoleEnum";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import {Form, Formik} from "formik";
 import * as yup from "yup";
@@ -17,40 +15,15 @@ import {useDeleteAccountById} from "../../../api/AccountApi";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from "../../../services/AuthService";
 import {getErrorMessage} from "../../../util/PrepareDataUtil";
+import {Metadata} from "../../../entities/metadata";
 
 
-const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promise<boolean>, back?: () => void }) => {
-    const {authStore} = useRootStore();
+const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: Account, uploadedImage?:Metadata|null, onSubmit: (a: Account) => Promise<boolean>, back?: () => void }) => {
     const [showResetPassword, setShowResetPassword] = useState(false);
     const [showDeleteAccount, setShowDeleteAccount] = useState(false);
     const navigate = useNavigate();
+    const {authStore} = useRootStore();
 
-    const isBoss = useMemo(() => {
-        //person 1 - current logged user
-        //person 2 - user who is shown in form
-
-        //check, if both persons are representative
-        if (authStore.account.accountType !== AccountEnum.REPRESENTATIVE || props.account.accountType !== AccountEnum.REPRESENTATIVE) {
-            return false;
-        }
-        //check if both persons belong to same organization
-        if (findOrganizationId(authStore.account) !== findOrganizationId(props.account)) {
-            return false;
-        }
-        //if current person is organization creator, he can edit any user
-        const bossRole = find(MetadataEnum.ORGANIZATION_ROLE, authStore.account);
-        if (bossRole === OrganizationRoleEnum.CREATOR) {
-            return true;
-        }
-        //if current user is moderator, and current user in form is member, can edit as well.
-        //so, moderator can edit only members
-        const workerRole = find(MetadataEnum.ORGANIZATION_ROLE, props.account);
-        return bossRole === OrganizationRoleEnum.MODERATOR && workerRole === OrganizationRoleEnum.MEMBER;
-    }, [authStore.account, props.account])
-
-    const canEdit = authStore.account.accountType === AccountEnum.SYSTEM
-        || authStore.account.id === props.account.id
-        || isBoss
 
     const validationSchema = yup.object().shape({
         email: yup.string().nullable().required("Email is required field"),
@@ -103,7 +76,24 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                 }, {} as Record<string, number>);
 
                 values = {...values};
-                values.metadata = values.metadata.filter(m => metadataMap[m.key]);
+                values.metadata = values.metadata.filter(m => {
+                    return metadataMap[m.key]
+                });
+                let imagePresent = false;
+                for(let i = 0; i < values.metadata.length; i++) {
+                    if(values.metadata[i].key === MetadataEnum.ACCOUNT_IMAGE) {
+                        imagePresent = true;
+                        if(props.uploadedImage === null) {
+                            values.metadata.splice(1, 0);
+                        } else if(props.uploadedImage) {
+                            values.metadata[i] = props.uploadedImage;
+                        }
+                    }
+                }
+                if(!imagePresent && props.uploadedImage) {
+                    values.metadata.push(props.uploadedImage);
+                }
+
 
                 props.onSubmit(values).then((result) => {
                     if (result) {
@@ -129,15 +119,15 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                                 />
                                 : props.account?.email}</td>
                         </tr>
-                        {authStore.account.accountType === AccountEnum.SYSTEM && <tr>
+                        {authStore.account.accountType === AccountEnum.SYSTEM && !props.organizationId && <tr>
                             <td className={"label"}>User type</td>
                             <td><UserTypeDropdown value={formik.values.accountType}
                                                   onChange={e => formik.setFieldValue("accountType", e, false)}/></td>
                         </tr>}
                         <tr>
                             <td className={"label"}>Name</td>
-                            <td>{!canEdit && <span>{props.account?.firstName}&nbsp;{props.account?.lastName}</span>}
-                                {canEdit && <div>
+                            <td>{!props.canEdit && <span>{props.account?.firstName}&nbsp;{props.account?.lastName}</span>}
+                                {props.canEdit && <div>
                                     <TextField fullWidth margin="dense" size={"small"} required
                                                name={"firstName"}
                                                label={"Firstname"}
@@ -147,7 +137,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                                     />
                                 </div>}</td>
                         </tr>
-                        {canEdit && <tr>
+                        {props.canEdit && <tr>
                             <td/>
                             <td>
                                 <TextField fullWidth margin="dense" size={"small"} required
@@ -158,7 +148,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
                                 />
                             </td>
                         </tr>}
-                        <MetadataList account={formik.values} metadata={formik.values.metadata} canEdit={canEdit}
+                        <MetadataList account={formik.values} organizationId={props.organizationId} metadata={formik.values.metadata} canEdit={props.canEdit}
                                       onChange={(key, value) => {
                                           const metadata = [...formik.values.metadata];
                                           let updated = false;
@@ -187,7 +177,7 @@ const ProfileInfo = (props: { account: Account, onSubmit: (a: Account) => Promis
 
                         />}
 
-                        {canEdit && <tr>
+                        {props.canEdit && <tr>
                             <td colSpan={2} style={{textAlign: "center"}}>
                                 <div style={{display: 'flex', alignItems: 'stretch', gap: 20}}>
                                     {props.back !== undefined && <Button type={"button"} variant={"outlined"}

@@ -21,7 +21,7 @@ type PartialRecord<K extends keyof any, T> = {
     [P in K]?: T;
 };
 
-function prepareRenders(account:Account, metadata:Record<string, string>, onChange:(k:string, v?:string) => void, org?:Organization, facility?:Facility, city?:City):PartialRecord<MetadataEnum, {label: () => JSX.Element|string, view: (s:string) => JSX.Element, edit: (s:string) => JSX.Element}>  {
+function prepareRenders(account:Account, metadata:Record<string, string>, onChange:(k:string, v?:string) => void, org?:Organization, facility?:Facility, city?:City):PartialRecord<MetadataEnum, MetadataRender>  {
     return {
         [MetadataEnum.CITY_ID]: {
             label: () => "City",
@@ -50,7 +50,17 @@ function prepareRenders(account:Account, metadata:Record<string, string>, onChan
         },
     }
 }
-const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:boolean, onChange:(k:string,v?:string) => void }) => {
+
+interface MetadataListProps {
+    organizationId?:string, account:Account, metadata:Metadata[], canEdit:boolean, onChange:(k:string,v?:string) => void
+}
+interface MetadataRender {
+    label: () => (JSX.Element | string);
+    view: (s: string) => JSX.Element;
+    edit: (s: string) => JSX.Element
+}
+
+const MetadataList = (props: MetadataListProps) => {
     const metadata = useMemo(() => props.metadata.reduce((map, element) => {
         map[element.key] = element.value;
         return map
@@ -70,15 +80,29 @@ const MetadataList = (props: {account:Account, metadata:Metadata[], canEdit:bool
                 if(!render) {
                     return null;
                 }
-                const value = metadata[key];
+                let content = defineContent(props, render, key, metadata[key]);
+
                 return <tr key={key}>
                     <td className={"label"}>{render.label()}</td>
-                    <td>{props.canEdit ? render.edit(value) : render.view(value)}</td>
+                    <td>{content}</td>
                 </tr>
             })}
         </>
     );
 };
+
+function defineContent(props: MetadataListProps, render: MetadataRender, key: MetadataEnum, value:string) {
+    switch (key) {
+        case MetadataEnum.ORGANIZATION_ID:
+            if (props.organizationId) {
+                return render.view(props.organizationId);
+            } else {
+                return render.edit(value)
+            }
+        default:
+            return props.canEdit ? render.edit(value) : render.view(value)
+    }
+}
 
 export function prepareAccountProperties(account: Account) {
     switch (account.accountType) {

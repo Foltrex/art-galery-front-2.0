@@ -17,7 +17,7 @@ const DeleteModal: React.FunctionComponent<IDeleteModalProps> = ({open, onClose,
     return (
         <Dialog open={open}>
             <DialogTitle>
-                Are you sure?
+                Please confirm the following action
             </DialogTitle>
             <Divider/>
             <DialogContent>
