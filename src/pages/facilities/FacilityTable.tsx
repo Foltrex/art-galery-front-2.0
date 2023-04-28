@@ -187,9 +187,9 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 	return (
 		<>
 			<Box sx={{ display: 'flex', gap: '20px' }}>
-				<CityDropdown value={cityId} onChange={setCityId} />
+				<CityDropdown value={cityId} onChange={setCityId} placeholder='City' />
 				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
-				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} />}
+				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} placeholder='Organizations' />}
 
 				<FormControl>
 					<RadioGroup
