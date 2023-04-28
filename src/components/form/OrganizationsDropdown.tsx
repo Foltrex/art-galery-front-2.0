@@ -62,7 +62,6 @@ export const OrganizationsDropdown = ({onChange, error, value, size}:{size?:"sma
                     {...params} 
                     error={!!error} 
                     helperText={error}
-                    placeholder='Organization'
                 />
             )}
             options={organizationOptions}

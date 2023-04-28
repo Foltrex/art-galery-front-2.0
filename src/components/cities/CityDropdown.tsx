@@ -63,7 +63,6 @@ const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
                     {...params} 
                     error={!!error} 
                     helperText={error} 
-                    placeholder='City' 
                 />
             )}
             options={cityOptions}
