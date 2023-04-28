@@ -71,9 +71,9 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
         validationSchema: validationSchema,
         validateOnChange: false,
         enableReinitialize: true,
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: (values, {setSubmitting}) => {
             setSubmitting(true)
-            submit(values as Organization).then(() => {
+            return submit(values).then(() => {
                 setSubmitting(false)
             })
         },
@@ -142,7 +142,14 @@ const OrganizationForm: React.FunctionComponent<IAppProps> = ({data, submit}) =>
                                 ? OrganizationStatusEnum.INACTIVE
                                 : OrganizationStatusEnum.ACTIVE)}
                         />
-                    } label={<span style={{display: 'flex'}}>Status <Tooltip title={"Only active organizations are shown in the catalog"}><HelpOutlineIcon color={"info"}/></Tooltip></span>} />
+                    } label={<span style={{display: 'flex'}}>
+                        Status&nbsp;&nbsp;
+                        <Tooltip title={"Only active organizations are shown in the catalog." +
+                            " If organization is disabled longer then 90 days," +
+                            " it would be deleted with all related information"}>
+                            <HelpOutlineIcon color={"info"}/>
+                        </Tooltip>
+                    </span>} />
                 </form>
                 <Stack
                     direction={"row"}

@@ -73,6 +73,7 @@ export default function MapDialog(props: IMapDialogProps) {
             city: {
                 id: "",
                 name: address.city!,
+                country: address.country!,
                 latitude: typeof loc.lat === 'function'
                     //@ts-ignore
                     ? loc.lat()

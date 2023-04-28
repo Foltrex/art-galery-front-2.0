@@ -1,6 +1,5 @@
 import * as React from 'react';
 import {ChangeEvent, useState} from 'react';
-import DeleteModal from '../../components/modal/DeleteModal';
 import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, {IColumnType} from '../../components/table/Table';
 import {Organization} from "../../entities/organization";
@@ -11,7 +10,6 @@ import {Button, FormControl, FormControlLabel, IconButton, Radio, RadioGroup} fr
 import {Box} from "@mui/system";
 import {Link, useNavigate} from "react-router-dom";
 import ModeOutlinedIcon from "@mui/icons-material/ModeOutlined";
-import {DeleteOutline} from "@mui/icons-material";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
 import {Account} from "../../entities/account";
@@ -22,7 +20,6 @@ import {useGetAllOrganizations} from "../../api/OrganizationApi";
 
 const Statuses: Array<{ label: string, value: string }> = [
     {label: 'All', value: ''},
-    {label: 'New', value: 'NEW'},
     {label: 'Active', value: 'ACTIVE'},
     {label: 'Inactive', value: 'INACTIVE'},
 ];
@@ -36,7 +33,6 @@ const OrganizationGrid = () => {
     const [rowsPerPage, setRowsPerPage] = React.useState(25);
     const [pageNumber, setPageNumber] = React.useState(0);
 
-    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [openProposalModal, setOpenProposalModal] = useState(false);
 
     const [status, setStatus] = useState(Statuses[0].value);
@@ -117,16 +113,6 @@ const OrganizationGrid = () => {
                     rowsPerPage={rowsPerPage}/>
             }
 
-            {/*<ArtsDialog*/}
-            {/*    open={openProposalModal}*/}
-            {/*    onClose={() => setOpenProposalModal(false)}*/}
-            {/*/>*/}
-
-            <DeleteModal
-                open={openDeleteModal}
-                onClose={() => setOpenDeleteModal(false)}
-                onDelete={() => {
-                }}/>
         </>
     );
 };
@@ -181,14 +167,6 @@ function getColumns(setOpenProposalModal: () => void,
                             >
                                 <ModeOutlinedIcon/>
                             </IconButton>
-                            <IconButton
-                                disableRipple
-                                aria-label='delete'
-                                onClick={() => onDelete(organization)}
-                            >
-                                <DeleteOutline/>
-                            </IconButton>
-                            {' '}
                         </div>
                     )
                 }

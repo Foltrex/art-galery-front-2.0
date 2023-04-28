@@ -195,7 +195,7 @@ const ArtistOrganizationsTable = () => {
                 </FormControl>
                 <FormControl style={{ marginLeft: "auto" }}>
                     <Link onClick={handleProposeClick} to={'#'}>
-                        <Button variant="outlined" size={"large"} sx={{color: '#43a047', borderColor: '#43a047'}}>
+                        <Button variant="outlined" size={"large"} color={"success"}>
                             PROPOSE
                         </Button>
                     </Link>
