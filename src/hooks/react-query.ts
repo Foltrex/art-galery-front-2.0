@@ -64,7 +64,11 @@ export const fetch = <T>({
 }: QueryFunctionContext<QueryKeyT>): Promise<T> => {
     const [url, params] = queryKey;
     return axiosApi
-        .get<T>(url, { params: params })
+        .get<T>(url, { params: {
+            ...params,
+            //@ts-ignore
+            page: params?.page || pageParam
+        } })
         .then(response => response.data);
 };
 
@@ -131,7 +135,7 @@ export const useLoadMore = <T>(
         [url!, params],
         context => fetch({ ...context, pageParam: context.pageParam ?? 0 }),
         {
-            retry: 3,
+            retry: false,
             getNextPageParam: (page) => !page.last
                 ? page.number + 1
                 : page.number

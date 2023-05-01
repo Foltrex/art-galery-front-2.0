@@ -7,15 +7,15 @@ import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
 import {createEmptyPage} from '../../hooks/react-query';
 import {
-	Box,
-	Button,
-	Checkbox,
-	FormControl,
-	FormControlLabel,
-	IconButton,
-	Radio,
-	RadioGroup,
-	Typography
+    Box,
+    Button,
+    Checkbox,
+    FormControl,
+    FormControlLabel,
+    IconButton,
+    Radio,
+    RadioGroup,
+    Typography
 } from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
@@ -187,9 +187,9 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 	return (
 		<>
 			<Box sx={{ display: 'flex', gap: '20px' }}>
-				<CityDropdown value={cityId} onChange={setCityId} placeholder='City' />
+				<CityDropdown value={cityId} onChange={setCityId} label='City' />
 				<TypeFilter placeholder={"Facility name"} onChange={(text) => setFacilityName(text)} />
-				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} placeholder='Organizations' />}
+				{!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} label='Organizations' />}
 
 				<FormControl>
 					<RadioGroup

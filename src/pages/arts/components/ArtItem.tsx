@@ -1,8 +1,7 @@
-import {Card, IconButton, ImageListItem, ImageListItemBar, Tooltip} from "@mui/material";
+import {IconButton, ImageListItem, ImageListItemBar, Tooltip} from "@mui/material";
 import {useGetAccountById} from "../../../api/AccountApi";
 import EmptyArt from '../../../assets/images/empty-art.svg';
 import {Art} from "../../../entities/art";
-import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 import LetterAvatar from "../../../components/ui/LetterAvatar";
 import {useNavigate} from "react-router-dom";
 import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
@@ -12,15 +11,16 @@ import {useMemo} from "react";
 interface IArtItemProps {
     art: Art;
     showAuthor?: boolean;
+    imageType: EntityFileTypeEnum;
 }
 
-const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
+const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true }) => {
     const navigate = useNavigate();
 
     const image = useMemo(() => {
         const images = (art.files || [])
-            .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
-            .map(fileEntity => buildImageUrl(fileEntity.id!))
+            .filter(file => file.id && file.isPrimary && file.type === imageType)
+            .map(file => buildImageUrl(file.id!))
         return images.length && images.length > 0 ? images[0] : null;
     }, [art.files])
 
@@ -44,12 +44,10 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
         facilityName = 'Available';
     }
 
-    const { authStore } = useRootStore();
-    const { data: account } = useGetAccountById(art.artistAccountId) ?? authStore.account;
+    const {data: account} = useGetAccountById(art.artistAccountId);
 
     return (
-        <Card>
-            <ImageListItem sx={{ border: 1, borderColor: 'grey.300' }}>
+            <ImageListItem>
                 <ImageListItemBar
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'
@@ -71,23 +69,21 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, showAuthor = true }) => {
                     }
                 />
 
-                {<img src={image ? image : EmptyArt}
+                <img src={image ? image : EmptyArt}
                         alt={art.name}
                         loading='lazy'
                         style={{
                             cursor: 'pointer',
                             objectFit: image ? undefined : 'scale-down',
-                            height: '100%',
-                            width: 'auto'
+                            width: '100%'
                         }}
                         onClick={() => navigate('/gallery/' + art.id)}
                     />
-                }
+
                 <ImageListItemBar
                     title={art.name}
                 />
             </ImageListItem>
-        </Card>
     );
 }
 

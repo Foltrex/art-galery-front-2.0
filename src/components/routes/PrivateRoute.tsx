@@ -8,18 +8,18 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {observer} from "mobx-react";
 
 const PrivateRouteInternal: React.FC<PropsWithChildren> =  observer(({children}) => {
-    const {isFetching, isLoading, data, isError} = useGetAccountById(TokenService.getCurrentAccountId());
+    const {isLoading, data, isError} = useGetAccountById(TokenService.getCurrentAccountId());
     const {authStore} = useRootStore();
     useEffect(() => {
-        if(!isFetching && !isLoading) {
+        if(!isLoading) {
             data && authStore.setAccount(data);
         }
-    }, [data, isFetching, isLoading])
+    }, [data, isLoading])
     if(isError) {
         return <Navigate to='/auth/signin' />;
     }
 
-    if(isFetching || isLoading || !authStore.account) {
+    if(isLoading || !authStore.account) {
         return <div style={{display: 'flex', paddingTop: 50, flexDirection: "row", alignItems: 'center', justifyContent: 'center'}}>
             <CircularProgress />
         </div>

@@ -44,7 +44,7 @@ function prepareRenders(account:Account, metadata:Record<string, string>, onChan
             edit: (v) => <OrganizationRoleDropdown value={v} onChange={s => onChange(MetadataEnum.ORGANIZATION_ROLE, s)}/>
         },
         [MetadataEnum.DESCRIPTION]: {
-            label: () => "Description",
+            label: () => <span>About</span>,
             view: () => <div>{metadata[MetadataEnum.DESCRIPTION]}</div>,
             edit: (v) => <TextField fullWidth multiline minRows={5} type={"textarea"} value={v} onChange={e => onChange(MetadataEnum.DESCRIPTION, e.target.value)}/>
         },

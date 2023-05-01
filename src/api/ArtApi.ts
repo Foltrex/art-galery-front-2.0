@@ -2,7 +2,6 @@ import {Art} from "../entities/art"
 import {useDelete, useFetch, useLoadMore, usePost} from "../hooks/react-query"
 import {ART_SERVICE} from "../http/axios";
 
-const ART_PAGE_SIZE = 9;
 const ARITSTS_ART_PAGE_SIZE = 9;
 
 export const useGetArtById = (id?: string) => {
@@ -15,20 +14,8 @@ export const useGetArtById = (id?: string) => {
 
 export const useGetAllArts = (params?: { sort:string, searchText?: string, artistName?: string, artistId?: string, cityId?: string}) => {
     return useLoadMore<Art>(`${ART_SERVICE}/arts/`, {
-        size: ART_PAGE_SIZE,
-        ...params
+        ...params, size: ARITSTS_ART_PAGE_SIZE
     });
-}
-
-export const useGetAllArtsByArtistId = (artistId?: string, params?: object) => {
-    return useLoadMore<Art>(
-        `${ART_SERVICE}/arts/artists/${artistId}`, 
-        {
-            size: ARITSTS_ART_PAGE_SIZE, 
-            ...params,
-        },
-        { enabled: !!artistId }
-    )
 }
 
 export const useSaveArt = () => {

@@ -1,16 +1,20 @@
 import {Box, Button, Container, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 
+import * as React from 'react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useGetAllArts} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
-import InfiniteArtList from './components/InfiniteArtList';
-import LoadMoreButton from '../../components/ui/LoadMoreButton';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
 import {TypeFilter} from "../../components/form/TypeFilter";
 import CityDropdown from "../../components/cities/CityDropdown";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import UsersAutocomplete from "../../components/form/UsersAutocomplete";
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ArtItem from "./components/ArtItem";
+import Loading from "../../components/ui/Loading";
+import Masonry from '@mui/lab/Masonry';
+import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
 
 const Arts = () => {
     const navigate = useNavigate();
@@ -38,19 +42,21 @@ const Arts = () => {
             : all.value
     );
 
-    const {data: infinteData, isSuccess, fetchNextPage} = useGetAllArts({
+    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({
         sort: 'dateCreation,desc',
         searchText: artSearch,
         artistId: accountType === AccountEnum.ARTIST ? authStore.account.id : artistId,
         cityId: artStatus === exhibited.value ? cityId : undefined
     });
 
-    const lastPage = infinteData?.pages.at(-1);
-    const isNotLast = lastPage && !lastPage.last;
+    const lastPage = infiniteData?.pages.at(-1);
+    const isNotLast = !!(lastPage && !lastPage.last);
+
+    const images = infiniteData?.pages || [];
 
     return (
         <Container sx={{position: 'relative'}}>
-                <Box sx={{display: 'flex', gap: '20px'}}>
+                <Box sx={{display: 'flex', gap: '20px', marginBottom: '20px'}}>
 
                     <TypeFilter onChange={setArtSearch} placeholder={"Art description"}/>
                     {accountType !== AccountEnum.ARTIST && <UsersAutocomplete userType={AccountEnum.ARTIST} onChange={id => setArtistId(id)}/>}
@@ -80,9 +86,30 @@ const Arts = () => {
                 </Box>
 
 
-            {isSuccess && <InfiniteArtList infinteData={infinteData}/>}
+            <InfiniteScroll
+                style={{overflow: "hidden"}}
+                dataLength={images.length} //This is important field to render the next data
+                next={fetchNextPage}
+                hasMore={isNotLast}
+                loader={<Loading center={true}/>}
+                endMessage={
+                    <p style={{ textAlign: 'center' }}>
+                        <b>No more results</b>
+                    </p>
+                }
+            >
+                <Masonry
+                    columns={3} spacing={2}
+                >
+                    {images.map(page => (
+                        page.content.map(art => {
+                            return <ArtItem key={art.id} art={art} imageType={EntityFileTypeEnum.THUMBNAIL}/>
+                        })
+                    ))}
+                </Masonry>
+            </InfiniteScroll>
+            {/*isSuccess && <InfiniteArtList infinteData={infinteData}/>*/}
 
-            {isNotLast && <LoadMoreButton onClick={() => fetchNextPage()}/>}
 
             <ScrollTop/>
         </Container>

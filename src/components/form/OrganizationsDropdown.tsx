@@ -5,7 +5,7 @@ import {Organization} from "../../entities/organization";
 import {getStatus, isQueryError} from "../../util/PrepareDataUtil";
 import Bubble from "../bubble/Bubble";
 
-export const OrganizationsDropdown = ({onChange, error, value, size, placeholder}:{size?:"small"|"medium", value?:string|null, error?:any, onChange: (id:string|undefined) => void, placeholder?: string}) => {
+export const OrganizationsDropdown = ({onChange, error, value, size, label, placeholder}:{size?:"small"|"medium", value?:string|null, error?:any, onChange: (id:string|undefined) => void, label?: JSX.Element | string, placeholder?: string}) => {
 
     const org = useGetAllOrganizationList();
     const organizations = org.data;
@@ -62,6 +62,7 @@ export const OrganizationsDropdown = ({onChange, error, value, size, placeholder
                     {...params} 
                     error={!!error} 
                     helperText={error}
+                    label={label}
                     placeholder={placeholder}
                 />
             )}

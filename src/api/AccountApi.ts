@@ -1,9 +1,8 @@
-import { ART_SERVICE, axiosApi, USER_SERVICE } from "../http/axios";
-import { IPage, QueryKeyT, useDelete, useFetch, usePatch } from "../hooks/react-query";
-import { AuthService } from "../services/AuthService";
-import { Account } from "../entities/account";
-import { useRootStore } from "../stores/provider/RootStoreProvider";
-import { AxiosError } from "axios";
+import {axiosApi, USER_SERVICE} from "../http/axios";
+import {IPage, QueryKeyT, useDelete, useFetch, usePatch} from "../hooks/react-query";
+import {AuthService} from "../services/AuthService";
+import {Account} from "../entities/account";
+import {AxiosError} from "axios";
 import {UseQueryOptions} from "react-query";
 
 export const useGetAll = (
@@ -26,11 +25,8 @@ export const useGetAll = (
 }
 
 export const useGetAccountById = (id?: string) => {
-    const { authStore } = useRootStore();
-    const account = authStore.account;
-
     return useFetch<Account>(`${USER_SERVICE}/accounts/${id}`, undefined, {
-        enabled: !!id && account?.id !== id
+        enabled: !!id
     })
 }
 

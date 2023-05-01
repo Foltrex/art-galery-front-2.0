@@ -61,9 +61,9 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
             <Box sx={{ display: 'flex', gap: '20px' }}>
                 <TypeFilter onChange={(text) => setUsername(text)} placeholder={"Lastname/Firstname"} />
 
-                <CityDropdown value={cityId} onChange={setCityId} placeholder='City' />
+                <CityDropdown value={cityId} onChange={setCityId} label='City' />
 
-                {!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} placeholder='Organizations' />}
+                {!props.organizationId && <OrganizationsDropdown onChange={setOrganizationId} label='Organizations' />}
 
                 <FormControl size='small'>
                     <InputLabel id='usertype-dropdown'>Usertype</InputLabel>

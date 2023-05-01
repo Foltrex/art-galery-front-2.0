@@ -1,13 +1,13 @@
-import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material';
+import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography} from '@mui/material';
 import * as React from 'react';
-import { useDeleteProposal, useGetProposalPageByAccountId, useSaveProposal } from '../../api/ProposalApi';
+import {useDeleteProposal, useGetProposalPageByAccountId, useSaveProposal} from '../../api/ProposalApi';
 import DeleteModal from '../../components/modal/DeleteModal';
-import LoadMoreButton from '../../components/ui/LoadMoreButton';
+/*import LoadMoreButton from '../../components/ui/LoadMoreButton';*/
 import ScrollTop from '../../components/ui/ScrollTop';
-import { AccountEnum } from '../../entities/enums/AccountEnum';
-import { Proposal } from '../../entities/proposal';
-import { AuthService } from '../../services/AuthService';
-import { TokenService } from '../../services/TokenService';
+import {AccountEnum} from '../../entities/enums/AccountEnum';
+import {Proposal} from '../../entities/proposal';
+import {AuthService} from '../../services/AuthService';
+import {TokenService} from '../../services/TokenService';
 import ArtistProposalTableItem from './ArtistProposalTableItem';
 import CounterofferModal from './CounterofferModal';
 import ProposalInfo from './ProposalInfo';
@@ -137,7 +137,7 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 				</Table>
 			</TableContainer>
 
-			{ isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} /> }
+			{/* isNotLast && <LoadMoreButton onClick={() => fetchNextPage()} /> */}
 
 			<ScrollTop />
 
