@@ -1,22 +1,23 @@
 import {Close} from '@mui/icons-material';
 import {
-    Dialog,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    Divider,
-    IconButton,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Stack,
-    Typography
+	Dialog,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Divider,
+	IconButton,
+	List,
+	ListItem,
+	ListItemAvatar,
+	ListItemText,
+	Stack,
+	Typography
 } from '@mui/material';
 import * as React from 'react';
 import {useGetArtInfosByArtId} from '../../../api/ArtInfoApi';
 import LetterAvatar from '../../../components/ui/LetterAvatar';
 import {Art} from '../../../entities/art';
+import {Account} from "../../../entities/account";
 
 interface IArtExhibitionHistoryProps {
 	art: Art;
@@ -32,7 +33,10 @@ const ArtExhibitionHistory: React.FunctionComponent<IArtExhibitionHistoryProps> 
 			? artInfosHistory.map(item => (
 				<ListItem key={item.id}>
 					<ListItemAvatar>
-						<LetterAvatar name={item.facility.name} />
+						<LetterAvatar account={
+							/*@ts-ignore*/
+							({firstName: item.facility.name, lastName: '', metadata: []}) as Account
+						} />
 					</ListItemAvatar>
 					<ListItemText
 						primary={

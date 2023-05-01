@@ -1,7 +1,7 @@
 import {Art} from "./art";
-import {Artist} from "./artist";
 import {Currency} from "./currency";
 import {Facility} from "./facility";
+import {Account} from "./account";
 
 export interface Proposal {
     id?: string;
@@ -9,7 +9,7 @@ export interface Proposal {
     price: string;
     commission: number;
     currency: Currency;
-    artist: Artist;
+    artist: Account;
     organizationId: string;
     organizationName: string;
     facility: Facility;

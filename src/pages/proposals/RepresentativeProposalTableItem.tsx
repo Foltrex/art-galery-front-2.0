@@ -1,8 +1,8 @@
-import { Delete } from '@mui/icons-material';
-import { Button, IconButton, Stack, TableCell, TableRow, Typography } from '@mui/material';
+import {Delete} from '@mui/icons-material';
+import {Button, IconButton, Stack, TableCell, TableRow, Typography} from '@mui/material';
 import * as React from 'react';
 import LetterAvatar from '../../components/ui/LetterAvatar';
-import { Proposal } from '../../entities/proposal';
+import {Proposal} from '../../entities/proposal';
 
 interface IRepresentativeTableItemProps {
 	proposal: Proposal;
@@ -33,12 +33,12 @@ const RepresentativeTableItem: React.FunctionComponent<IRepresentativeTableItemP
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
-					<LetterAvatar name={artist.firstname} />
+					<LetterAvatar account={artist} />
 				</TableCell>
 				<TableCell align='left'>
 					<Stack direction='column'>
-						<strong>{artist.firstname} {artist.lastname}</strong>
-						You propose {artist.firstname} {artist.lastname} {price} {currency.label} for painting {art.name}
+						<strong>{artist.firstName} {artist.lastName}</strong>
+						You propose {artist.firstName} {artist.lastName} {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
 				<TableCell align='left'>
@@ -70,12 +70,12 @@ const RepresentativeTableItem: React.FunctionComponent<IRepresentativeTableItemP
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
-					<LetterAvatar name={artist.firstname} />
+					<LetterAvatar account={artist} />
 				</TableCell>
 				<TableCell align='left'>
 					<Stack direction='column'>
-						<strong>{artist.firstname} {artist.lastname}</strong>
-						You propose {artist.firstname} {artist.lastname} {price} {currency.label} for painting {art.name}
+						<strong>{artist.firstName} {artist.lastName}</strong>
+						You propose {artist.firstName} {artist.lastName} {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
 
@@ -120,12 +120,12 @@ const RepresentativeTableItem: React.FunctionComponent<IRepresentativeTableItemP
 		return (
 			<TableRow>
 				<TableCell align='center' sx={{ width: 10 }}>
-					<LetterAvatar name={artist.firstname} />
+					<LetterAvatar account={artist} />
 				</TableCell>
 				<TableCell align='left'>
 					<Stack direction='column'>
-						<strong>{artist.firstname} {artist.lastname}</strong>
-						You propose {artist.firstname} {artist.lastname} {price} {currency.label} for painting {art.name}
+						<strong>{artist.firstName} {artist.lastName}</strong>
+						You propose {artist.firstName} {artist.lastName} {price} {currency.label} for painting {art.name}
 					</Stack>
 				</TableCell>
 

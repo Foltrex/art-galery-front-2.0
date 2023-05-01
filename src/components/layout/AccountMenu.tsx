@@ -15,7 +15,6 @@ import {useCookies} from 'react-cookie';
 import {useNavigate} from 'react-router-dom';
 // import {useCountProposalsByAccountId} from '../../api/ProposalApi';
 import {AuthService} from '../../services/AuthService';
-import {TokenService} from '../../services/TokenService';
 import LetterAvatar from '../ui/LetterAvatar';
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 
@@ -25,13 +24,12 @@ interface IAccountMenuProps {
 const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 	const [cookies] = useCookies(['token']);
 	const [isLogin] = React.useState<boolean | null>(cookies.token);
-	const {authStore} = useRootStore();
 	const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 	const openAccountMenu = !!anchorEl;
 
-	const token = TokenService.getCurrentDecodedToken();
-	const email = token.sub;
-    const accountId = TokenService.getCurrentAccountId();
+
+	const {authStore} = useRootStore();
+	const account = authStore.account;
     // const { data: proposalsCount } = useCountProposalsByAccountId(accountId);
 
 	const navigate = useNavigate();
@@ -92,7 +90,7 @@ const AccountMenu: React.FunctionComponent<IAccountMenuProps> = () => {
 					size='small'
 					onClick={handleAccountButtonClick}
 				>
-					<LetterAvatar name={email} sx={{ width: 32, height: 32 }} />
+					<LetterAvatar account={account} sx={{ width: 32, height: 32 }} />
 				</IconButton>
 			</Tooltip>
 			<Menu

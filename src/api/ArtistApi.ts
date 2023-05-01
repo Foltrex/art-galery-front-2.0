@@ -1,6 +1,7 @@
 import {ART_SERVICE} from "../http/axios";
 import {Artist} from "../entities/artist";
 import {IPage, useFetch, usePost, useUpdate} from "../hooks/react-query";
+import {Account} from "../entities/account";
 
 export const useGetArtistById = (id?: string) => {
     return useFetch<Artist>(`${ART_SERVICE}/artists/${id}`, undefined, { enabled: !!id });
@@ -23,7 +24,8 @@ export const useGetArtists = (params:{page:number, size: number}) => {
 }
 
 export const useGetArtistByArtId = (artId?: string) => {
-    return useFetch<Artist>(
+    //todo not checked, previously was Artist
+    return useFetch<Account>(
         `${ART_SERVICE}/artists/arts/${artId}`,
         undefined,
         { enabled: !!artId }

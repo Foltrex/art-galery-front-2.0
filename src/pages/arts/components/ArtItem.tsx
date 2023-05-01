@@ -61,7 +61,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
                                 // navigate(`/artists/${art.artist.id}`)
                             }}>
                                 <LetterAvatar
-                                    name={account?.firstName + ' ' + account?.lastName}
+                                    account={account}
                                     sx={{ w: 28, h: 28, mr: 1 }}
                                 />
                             </IconButton>
