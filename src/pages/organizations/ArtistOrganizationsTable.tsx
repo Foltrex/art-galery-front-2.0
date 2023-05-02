@@ -142,7 +142,7 @@ const ArtistOrganizationsTable = () => {
                 ...selection.organizations,
                 [organizationId]: !selection.organizations[organizationId]
             },
-            facilities: {}
+            facilities: {...selection.facilities}
         } as Selection));
     }
 
