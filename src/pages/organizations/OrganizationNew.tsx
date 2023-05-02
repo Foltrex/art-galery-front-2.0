@@ -4,9 +4,11 @@ import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnu
 import {useNavigate} from "react-router-dom";
 import Bubble from "../../components/bubble/Bubble";
 import {getErrorMessage} from "../../util/PrepareDataUtil";
+import { useCreateOrganization } from "../../api/OrganizationApi";
 
 const OrganizationNew = () => {
     const navigate = useNavigate()
+    const mutationAddOrganization = useCreateOrganization();
 
     return <OrganizationForm
         data={{
@@ -17,7 +19,7 @@ const OrganizationNew = () => {
             facilities: []
         }}
         submit={(organization) => {
-            return axiosApi.post(`${ART_SERVICE}/organizations`, organization)
+            return mutationAddOrganization.mutateAsync(organization)
                 .then(response => {
                     Bubble.success("Organization created successfully")
                     navigate(`/organizations/${response.data.id}`)
