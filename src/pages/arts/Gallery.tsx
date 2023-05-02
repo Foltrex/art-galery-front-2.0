@@ -99,7 +99,7 @@ const Arts = () => {
                 }
             >
                 <Masonry
-                    columns={3} spacing={2}
+                    columns={{sx: 1, sm: 2, md: 3, lg: 4}} spacing={2}
                 >
                     {images.map(page => (
                         page.content.map(art => {

@@ -39,10 +39,16 @@ function somethingSelected(selection: Selection) {
 }
 
 const ArtistOrganizationsTable = () => {
-    const [selection, setSelection] = useState<Selection>({all:false, organizations:{}, facilities:{}})
+    const [selection, ssetSelection] = useState<Selection>({all:false, organizations:{}, facilities:{}})
     const [status, setStatus] = React.useState(Statuses[0].value);
     const [searchText, setSearchText] = React.useState<string>();
     const navigate = useNavigate();
+
+
+    function setSelection(s:any) {
+        console.log('setSelection');
+        ssetSelection(s)
+    }
 
     // const [showActiveFacilities, setShowActiveFacilities] = React.useState<boolean>();
 
@@ -93,7 +99,7 @@ const ArtistOrganizationsTable = () => {
     }
 
     useEffect(() => {
-        if(somethingSelected(selection)) {
+        if (isLoading && somethingSelected(selection)) {
             setSelection({all: false, organizations: {}, facilities: {}})
         }
     }, [isLoading, selection])
@@ -225,7 +231,6 @@ function getColumns(
     onSelectFacility: (facility: Facility) => void,
     selection: Selection,
 ): IColumnType<Facility>[] {
-    console.log(selection);
     return [
         {
             key: '',
