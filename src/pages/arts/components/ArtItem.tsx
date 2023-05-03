@@ -13,7 +13,7 @@ interface IArtItemProps {
     showAuthor?: boolean;
     imageType: EntityFileTypeEnum;
 }
-
+const style = {marginBottom: '20px'};
 const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true }) => {
     const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
     const {data: account} = useGetAccountById(art.artistAccountId);
 
     return (
-            <ImageListItem>
+            <ImageListItem style={style}>
                 <ImageListItemBar
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'

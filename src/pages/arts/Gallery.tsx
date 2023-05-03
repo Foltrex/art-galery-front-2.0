@@ -13,7 +13,7 @@ import UsersAutocomplete from "../../components/form/UsersAutocomplete";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ArtItem from "./components/ArtItem";
 import Loading from "../../components/ui/Loading";
-import Masonry from '@mui/lab/Masonry';
+import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
 
 const Arts = () => {
@@ -98,8 +98,12 @@ const Arts = () => {
                     </p>
                 }
             >
+                <ResponsiveMasonry
+                    columnsCountBreakPoints={{350: 1, 750: 2, 900: 3}}
+                >
                 <Masonry
-                    columns={{sx: 1, sm: 2, md: 3, lg: 4}} spacing={2}
+                    style={{gap: '20px'}}
+                    //columns={{sx: 1, sm: 2, md: 3, lg: 4}} spacing={2}
                 >
                     {images.map(page => (
                         page.content.map(art => {
@@ -107,6 +111,7 @@ const Arts = () => {
                         })
                     ))}
                 </Masonry>
+                </ResponsiveMasonry>
             </InfiniteScroll>
             {/*isSuccess && <InfiniteArtList infinteData={infinteData}/>*/}
 
