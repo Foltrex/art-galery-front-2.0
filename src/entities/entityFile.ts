@@ -6,7 +6,7 @@ export interface EntityFile {
     originalId?: string;
     isPrimary: boolean;
     type?: EntityFileTypeEnum;
-    creationDate?: Date;
+    creationDate: string;
     mimeType: string;
     data: string
 }

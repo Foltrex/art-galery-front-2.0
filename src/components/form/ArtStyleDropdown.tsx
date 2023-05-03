@@ -1,9 +1,11 @@
 import {Box, Chip, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
 import * as React from "react";
-import {useMemo} from "react";
+import {useEffect, useMemo} from "react";
 import {ArtStyle} from "../../entities/art-style";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import {useGetAllArtStyles} from "../../api/ArtStyleApi";
+import Bubble from "../bubble/Bubble";
+import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 const sx = { lineHeight: 'normal' }
 const boxSx = { display: 'flex', flexWrap: 'wrap', gap: 0.5 };
@@ -11,7 +13,7 @@ const labelStyle = {background: 'white', padding: '0px 6px', left: '-5px'};
 
 export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: (v:ArtStyle[]) => void}) => {
 
-    const { data: artStyleItems = []} = useGetAllArtStyles();
+    const { data: artStyleItems = [], error, isError} = useGetAllArtStyles();
 
     const handleStyleSelect = (e: SelectChangeEvent<number[]>) => {
         const ids = e.target.value as number[];
@@ -36,6 +38,12 @@ export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: 
     const shownStyles = useMemo(() => {
         return artStyleItems.filter(s => !selectedStylesMap[s.id])
     }, [selectedStylesMap, artStyleItems]);
+
+    useEffect(() => {
+        if(isError) {
+            Bubble.error({message: "Failed to load style types, error is " + getErrorMessage(error)})
+        }
+    }, [isError, error])
 
     return <FormControl>
         <InputLabel style={labelStyle} size={"small"}>Art Style</InputLabel>

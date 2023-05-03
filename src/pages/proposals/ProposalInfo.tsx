@@ -2,7 +2,6 @@ import {Close} from '@mui/icons-material';
 import {Dialog, DialogContent, DialogTitle, Grid, IconButton, Skeleton, Stack} from '@mui/material';
 import {Box} from '@mui/system';
 import * as React from 'react';
-import ImageSlider from '../../components/ui/ImageSlider';
 import {Proposal} from '../../entities/proposal';
 import {FileService} from '../../services/FileService';
 
@@ -16,7 +15,7 @@ const ProposalInfo: React.FunctionComponent<IProposalInfoProps> = ({ proposal, o
 	const art = proposal?.art;
 	//@todo load images data from art entity
 	const { data: imagesData } = {data: []};
-	const images = imagesData?.map(data => FileService.toImage(data));
+	const images = imagesData?.map(data => ({src: FileService.toImage(data), group: 0}));
 
 	const renderContent = () => {
 		return (
@@ -24,7 +23,7 @@ const ProposalInfo: React.FunctionComponent<IProposalInfoProps> = ({ proposal, o
 			<Grid item xs={7}>
 				<Box component='div' sx={{ width: 'auto', height: 380, mb: 2 }}>
 					{images && images.at(0)
-						? <ImageSlider slides={images}/>
+						? <div/> // <ImageSlider slides={images}/>
 						: <div style={{ background: '#E8EDF0', width: '100%', height: '100%' }} />
 					}
 				</Box>

@@ -1,14 +1,16 @@
 import {Button, FormControl, FormHelperText, InputLabel, MenuItem, Select, Stack, TextField} from '@mui/material';
 import {DatePicker} from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import {FormikHelpers, useFormik} from 'formik';
+import {useFormik} from 'formik';
 import * as yup from 'yup';
 import {useGetAllArtSizes} from '../../../api/ArtSizeApi';
 import {Art} from '../../../entities/art';
 import {useRootStore} from '../../../stores/provider/RootStoreProvider';
-import React from 'react';
+import React, {useState} from 'react';
 import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
 import {useNavigate} from "react-router-dom";
+import Bubble from "../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../util/PrepareDataUtil";
 
 interface IArtFormProps {
 	art: Art;
@@ -23,6 +25,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
 	const account = authStore.account;
+	const [submitting, setSubmitting] = useState(false);
 
 	
 	const { data: artSizeItems = []} = useGetAllArtSizes();
@@ -32,25 +35,32 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 	});
 
 
-	const onSaveArt = async (values: Art, { setSubmitting }: FormikHelpers<Art>) => {
-		setSubmitting(true);
-		try {
-			const artEntity: Art = {
-				id: art?.id,
-				name: values.name,
-				description: values.description,
-				artistAccountId: account.id,
-				dateCreation: formik.values.dateCreation,
-				artStyles: formik.values.artStyles,
-				artSize: values.artSize
-			};
-
-			await onSubmit(artEntity);
-		} catch (e) {
-			console.log(e);
-		} finally {
-			setSubmitting(false);
+	const onSaveArt = async (values: Art) => {
+		if(submitting) {
+			return;
 		}
+		console.log("submit starts")
+		setSubmitting(true);
+		const artEntity: Art = {
+			id: art?.id,
+			name: values.name,
+			description: values.description,
+			artistAccountId: account.id,
+			dateCreation: formik.values.dateCreation,
+			artStyles: formik.values.artStyles,
+			artSize: values.artSize
+		};
+
+		return onSubmit(artEntity).then(r => {
+			console.log("submit reset")
+			setSubmitting(false);
+			return r;
+		}).catch((e) => {
+			console.log("submit reset error")
+			Bubble.error("Failes to save art, error message is " + getErrorMessage(e));
+			setSubmitting(false);
+		});
+
 	}
 
 	const formik = useFormik<Art>({

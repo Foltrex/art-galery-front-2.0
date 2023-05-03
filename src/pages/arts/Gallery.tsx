@@ -1,7 +1,7 @@
 import {Box, Button, Container, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 
 import * as React from 'react';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useGetAllArts} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
@@ -15,6 +15,8 @@ import ArtItem from "./components/ArtItem";
 import Loading from "../../components/ui/Loading";
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
+import Bubble from "../../components/bubble/Bubble";
+import {getErrorMessage} from "../../util/PrepareDataUtil";
 
 const Arts = () => {
     const navigate = useNavigate();
@@ -42,7 +44,7 @@ const Arts = () => {
             : all.value
     );
 
-    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({
+    const {data: infiniteData, isSuccess, fetchNextPage, isError, error} = useGetAllArts({
         sort: 'dateCreation,desc',
         searchText: artSearch,
         artistId: accountType === AccountEnum.ARTIST ? authStore.account.id : artistId,
@@ -53,6 +55,12 @@ const Arts = () => {
     const isNotLast = !!(lastPage && !lastPage.last);
 
     const images = infiniteData?.pages || [];
+
+    useEffect(() => {
+        if(isError) {
+            Bubble.error({message: "Failed to load gallery. Error message is " + getErrorMessage(error)});
+        }
+    }, [isError, error]);
 
     return (
         <Container sx={{position: 'relative'}}>

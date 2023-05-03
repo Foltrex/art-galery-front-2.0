@@ -1,20 +1,30 @@
-import {Button, Modal, Stack} from "@mui/material";
+import {Button, IconButton, Modal, Stack, Tooltip} from "@mui/material";
 import {Box, styled} from "@mui/system";
-import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
-import {CSSProperties, useState} from "react";
+import {ChangeEvent, CSSProperties, useRef, useState} from "react";
+import DeleteModal from "../modal/DeleteModal";
+import {FileService} from "../../services/FileService";
+import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
+import {EntityFile} from "../../entities/entityFile";
+import {Add} from "@mui/icons-material";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import FilterOutlinedIcon from '@mui/icons-material/FilterOutlined';
 
 interface IImageSliderProps {
-    slides?: string[];
-    onDelete?: (index: number) => Promise<boolean>;
-    onImageAdd?: () => void;
-    handleMakeMainClick?: (number: number) => void;
-    showLoadMore?: boolean;
-    showMakeMain?: boolean;
+    image: string
+    onImageAdd?: (file:EntityFile) => void;
+    goLeft: () => void;
+    goRight: () => void;
+
+    makeMain?: () => void;
+    onDelete?: () => void;
     canEdit?: boolean;
-    styles?: CSSProperties
+    styles?: CSSProperties,
+    children: React.ReactNode
 }
-const style:CSSProperties = {
+
+const style: CSSProperties = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -38,49 +48,44 @@ const RightArrowButton = styled('div')({
     right: 0,
 });
 
-const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
-    slides,
-    onDelete,
-    canEdit,
-    onImageAdd,
-    handleMakeMainClick,
-    showLoadMore = true,
-    showMakeMain = true,
-    styles
-}) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+export function Slide({selected, src, onClick}: { src: string, onClick: () => void, selected: boolean }) {
+    return <div style={selected ? {opacity: 0.5} : undefined}><img style={{display: "block"}}
+                src={src}
+                alt={"img"}
+                onClick={onClick}
+                height='50px'
+    /></div>
+}
+
+function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, makeMain,
+                         onDelete, styles}: IImageSliderProps) {
+
+
+    const fileInput = useRef<HTMLInputElement>(null);
     const [showModal, setShowModal] = useState(false);
-
-    const handleLeftArrowClick = () => {
-        const isFirstSlide = currentIndex === 0;
-        const newIndex = isFirstSlide ? slides!.length - 1 : currentIndex - 1;
-        setCurrentIndex(newIndex);
-    }
-
-    const handleRightArrowClick = () => {
-        const isLastSlide = currentIndex === slides!.length - 1;
-        const newIndex = isLastSlide ? 0 : currentIndex + 1;
-        setCurrentIndex(newIndex);
-    }
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const handleImageClick = () => {
         setShowModal(true);
     }
-
-    const handleDotClick = (slideIndex: number) => {
-        setCurrentIndex(slideIndex);
+    const confirmDelete = () => {
+        setShowDeleteModal(true)
     }
 
-    const handleDeleteImageClick = () => {
-        if (onDelete) {
-            onDelete(currentIndex).then(r => {
-                if(r) {
-                    setCurrentIndex(0);
-                }
-            });
-        }
 
-        setShowModal(false)
+    const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const fileList = e.target.files!;
+        const file = fileList[0];
+        return FileService.toBase64fromBlob(file)
+            .then(image => {
+                onImageAdd && onImageAdd({
+                    isPrimary: false,
+                    type: EntityFileTypeEnum.ORIGINAL,
+                    creationDate: new Date().toJSON(),
+                    mimeType: file.type,
+                    data: image
+                });
+            });
     }
 
     return (
@@ -89,12 +94,34 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
             position: 'relative',
             ...styles
         }}>
-
-            <div style={{ background: 'white', width: '100%', height: '100%', textAlign: "center", position: 'relative' }}>
-                {slides && (
+            {!image && <Box
+                component='div'
+                style={{
+                    background: '#E8EDF0',
+                    width: '100%',
+                    height: '100%',
+                    position: 'relative'
+                }}
+            >
+                <IconButton
+                    size='large'
+                    onClick={() => {canEdit && fileInput.current?.click()}}
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)'
+                    }}
+                >
+                    <Add fontSize='large'/>
+                </IconButton>
+            </Box>}
+            <div
+                style={{background: 'white', width: '100%', height: '100%', textAlign: "center", position: 'relative'}}>
+                {!!image && (
                     <>
                         <img
-                            src={slides[currentIndex]}
+                            src={image}
                             onClick={handleImageClick}
                             style={{
                                 maxWidth: '100%',
@@ -106,10 +133,10 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                             }}
                             alt={'img'}
                         />
-                        <LeftArrowButton onClick={handleLeftArrowClick}>
+                        <LeftArrowButton onClick={goLeft}>
                             &#8249;
                         </LeftArrowButton>
-                        <RightArrowButton onClick={handleRightArrowClick}>
+                        <RightArrowButton onClick={goRight}>
                             &#8250;
                         </RightArrowButton>
                     </>
@@ -117,68 +144,56 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                 }
             </div>
 
-            {slides && <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh' }}>
-                {slides.map((_, index) => (
-                    <img key={index}
-                        src={slides[index]}
-                        alt={"img"}
-                        onClick={() => handleDotClick(index)}
-                        width='50px'
-                        height='50px'
-                        style={{ marginRight: '10px', cursor: 'pointer' }}
-                    />
-                ))}
+            <div
+                style={{display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh', gap: '20px'}}>
+                {children}
             </div>
-            }
-
-            <Stack direction='column' sx={{ px: 30 }} gap={2}>
-                {showMakeMain && canEdit &&
-                    <Button
-                        onClick={() => {
-                            if (handleMakeMainClick) {
-                                handleMakeMainClick(currentIndex)
-                            }
-                        }}
-                        variant='outlined'
-                        sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
-                    >
-                        Make this image main
-                    </Button>
+            <input
+                type='file'
+                ref={fileInput}
+                onChange={handleFileInputChange}
+                style={{display: 'none'}}
+            />
+            <Stack direction="row" spacing={1} alignItems={"center"} justifyContent={"center"}>
+                {makeMain && canEdit && image &&
+                    <Tooltip title={"Make image primary. Primary images shown in a list"}>
+                        <IconButton onClick={() => {makeMain && makeMain()}} color="primary">
+                            <FilterOutlinedIcon/>
+                        </IconButton>
+                    </Tooltip>
                 }
 
-                {showLoadMore && canEdit &&
-                    <Button
-                        variant='outlined'
-                        sx={{ p: 1.5, color: 'black', borderColor: 'black' }}
-                        onClick={onImageAdd}
-                    >
-                        Load More
-                    </Button>
+                {onImageAdd && canEdit &&
+                    <Tooltip title={"Upload more images"}>
+                        <IconButton onClick={() => fileInput!.current!.click()} color="primary">
+                            <UploadFileIcon />
+                        </IconButton>
+                    </Tooltip>
+                }
+                {onDelete && canEdit &&
+                    <Tooltip title={"Delete current image"}>
+                        <IconButton onClick={confirmDelete} color="error">
+                            <DeleteOutlineIcon color={"error"}/>
+                        </IconButton>
+                    </Tooltip>
                 }
             </Stack>
 
-            {slides && <Modal
-                open={showModal}
+            {image && showModal && <Modal
+                open={true}
                 onClose={() => setShowModal(false)}
-                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
             >
                 <>
                     <img
-                        style={{ maxWidth: '100%', maxHeight: '100%' }}
-                        src={slides[currentIndex]} alt={"img"} />
+                        style={{maxWidth: '100%', maxHeight: '100%'}}
+                        src={image} alt={"img"}/>
 
-                    <Box sx={{ position: 'absolute', bottom: '15px', display: 'flex', gap: 10}}>
-                        {onDelete && canEdit && <Button
-                            color='error'
-                            variant='contained'
-                            startIcon={<Delete />}
-                            onClick={handleDeleteImageClick}>
-                            Delete
-                        </Button>}
+                    <Box sx={{position: 'absolute', bottom: '15px', display: 'flex', gap: 10}}>
                         <Button
                             color='info'
                             variant='contained'
-                            startIcon={<Close />}
+                            startIcon={<Close/>}
                             onClick={() => setShowModal(false)}>
                             Close
                         </Button>
@@ -186,8 +201,15 @@ const ImageSlider: React.FunctionComponent<IImageSliderProps> = ({
                 </>
             </Modal>
             }
+
+            {image && showDeleteModal && <DeleteModal
+                open={true}
+                onClose={() => setShowDeleteModal(false)}
+                onDelete={() => onDelete && onDelete()}
+                contextText={"Please confirm your intention to delete following image"}
+            />}
         </div>
     );
-};
+}
 
 export default ImageSlider;

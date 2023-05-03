@@ -14,12 +14,11 @@ import {
 } from "@mui/material";
 import {useFormik} from "formik";
 import * as React from "react";
-import {ChangeEvent, useRef, useState} from "react";
+import {ChangeEvent, useMemo, useRef, useState} from "react";
 import * as yup from "yup";
 import {useGetAllEntityFilesByEntityId, useUploadFile} from "../../../api/FileApi";
 import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import MapDialog from "../../../components/map/MapDialog";
-import ImageSlider from "../../../components/ui/ImageSlider";
 import {Address} from "../../../entities/address";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
 import {Facility} from "../../../entities/facility";
@@ -156,18 +155,19 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
             }
         });
     }
-    
+
+    const slides = useMemo(() => {
+        return facilityImages
+            .map(f => ({src: f, group: 0}))
+            .concat(images
+                .map(f => ({src: f, group: 1})));
+    }, [facilityImages, images])
+
     const renderImageSlider = () => {
-        if (facilityImages.length > 0) {
+        if (slides.length > 0) {
             return (
                 <ImageFrame showBorder={false} sx={{ mb: 10 }}>
-                    <ImageSlider slides={facilityImages} showLoadMore={false} showMakeMain={false} />
-                </ImageFrame>
-            );
-        } else if (images.length > 0) {
-            return (
-                <ImageFrame showBorder={false} sx={{ mb: 10 }}>
-                    <ImageSlider slides={images} showLoadMore={false} showMakeMain={false} />
+                    {/*<ImageSlider slides={slides} showLoadMore={false} showMakeMain={false} />*/}
                 </ImageFrame>
             );
         } else {

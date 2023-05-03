@@ -14,7 +14,7 @@ export class FileService {
                     originalId: undefined,
                     isPrimary: true,
                     type: EntityFileTypeEnum.ORIGINAL,
-                    creationDate: new Date(),
+                    creationDate: new Date().toJSON(),
                     mimeType: file.type,
                     data: encodedBase64Image
                 };
