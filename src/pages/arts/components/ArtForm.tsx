@@ -9,26 +9,30 @@ import {useRootStore} from '../../../stores/provider/RootStoreProvider';
 import React, {useState} from 'react';
 import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
 import {useNavigate} from "react-router-dom";
-import Bubble from "../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../components/error/ResponseError";
+import {EntityFile} from "../../../entities/entityFile";
+
 
 interface IArtFormProps {
 	art: Art;
 	onSubmit: (art: Art) => Promise<void>;
 	onDelete: () => void
 	canEdit: boolean,
+	files: EntityFile[],
 	switchMode: (edit:boolean, art?:Art) => void
 }
 
-const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete, canEdit, switchMode}) => {
+const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDelete, files, canEdit, switchMode}) => {
 	const navigate = useNavigate();
 	const rootStore = useRootStore();
 	const { authStore } = rootStore;
 	const account = authStore.account;
 	const [submitting, setSubmitting] = useState(false);
 
-	
-	const { data: artSizeItems = []} = useGetAllArtSizes();
+	//@todo replace with dropdown
+	const { data: artSizeItems = []} = useGetAllArtSizes((e) => {
+		getErrorMessage("Failed to load sizes property for arts object", e);
+	});
 
 	const validationSchema = yup.object({
 		artSize: yup.object({id: yup.string().required("Size is required field")}),
@@ -39,7 +43,6 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 		if(submitting) {
 			return;
 		}
-		console.log("submit starts")
 		setSubmitting(true);
 		const artEntity: Art = {
 			id: art?.id,
@@ -48,16 +51,14 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 			artistAccountId: account.id,
 			dateCreation: formik.values.dateCreation,
 			artStyles: formik.values.artStyles,
-			artSize: values.artSize
+			artSize: values.artSize,
+			files: files
 		};
 
 		return onSubmit(artEntity).then(r => {
-			console.log("submit reset")
 			setSubmitting(false);
 			return r;
-		}).catch((e) => {
-			console.log("submit reset error")
-			Bubble.error("Failes to save art, error message is " + getErrorMessage(e));
+		}).catch(() => {
 			setSubmitting(false);
 		});
 

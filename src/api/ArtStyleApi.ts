@@ -1,7 +1,9 @@
-import { ArtStyle } from "../entities/art-style";
-import { useFetch } from "../hooks/react-query";
-import { ART_SERVICE } from "../http/axios";
+import {ArtStyle} from "../entities/art-style";
+import {useFetch} from "../hooks/react-query";
+import {AxiosError} from "axios/index";
 
-export const useGetAllArtStyles = () => {
-    return useFetch<ArtStyle[]>(`${ART_SERVICE}/art-styles`);
+export const useGetAllArtStyles = (showError:(error:AxiosError) => void) => {
+    return useFetch<ArtStyle[]>('art-styles','GET:art-styles',
+        {},
+        showError);
 }

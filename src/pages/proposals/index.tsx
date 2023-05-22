@@ -25,12 +25,12 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 	const [proposal, setProposal] = React.useState<Proposal>();
 
 	const token = TokenService.decode(AuthService.getToken());
-	const { data, isSuccess, fetchNextPage } = useGetProposalPageByAccountId(token.id);
+	const { data, isSuccess, fetchNextPage } = useGetProposalPageByAccountId(token.id, () => {});
 
 	const lastPage = data?.pages.at(-1);
 	const isNotLast = lastPage && !lastPage.last;
 
-	const mutationDeleteProposal = useDeleteProposal();
+	const mutationDeleteProposal = useDeleteProposal(() => {});
 
 	const onDeleteProposal = async (proposal: Proposal) => {
 		try {
@@ -76,7 +76,7 @@ const RepresentativeProposals: React.FunctionComponent<IRepresentativeProposalsP
 
 
 
-	const mutationSaveProposal = useSaveProposal();
+	const mutationSaveProposal = useSaveProposal(() => {});
 
 	const onSaveProposal = async (proposal: Proposal) => {
 		try {

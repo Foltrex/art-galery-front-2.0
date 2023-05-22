@@ -10,6 +10,8 @@ import {Organization} from '../../entities/organization';
 import {Facility} from '../../entities/facility';
 import FacilityStatus from './components/FacilityStatus';
 import Bubble from '../../components/bubble/Bubble';
+import {getErrorMessage} from "../../components/error/ResponseError";
+
 
 const Statuses: Array<{ label: string, value: string }> = [
     { label: 'All', value: '' },
@@ -63,6 +65,8 @@ const ArtistOrganizationsTable = () => {
         size: rowsPerPage,
         name: searchText,
         status: 'ACTIVE',
+    }, (error) => {
+        getErrorMessage("Failed to load organizations", error);
     });
 
     const facilityContent = React.useMemo(() => {

@@ -1,7 +1,11 @@
 import {OrganizationStatusEnum} from "../entities/enums/organizationStatusEnum";
-import {UseQueryResult} from "react-query/types/react/types";
+import {UseMutationResult, UseQueryResult} from "react-query/types/react/types";
 import {AxiosError} from "axios/index";
-import {FILE_SERVICE} from "../http/axios";
+import {EntityFile} from "../entities/entityFile";
+import {FileService} from "../services/FileService";
+import React from "react";
+import {AxiosResponse} from "axios";
+import {FileInfo} from "../entities/FileInfo";
 
 export class PrepareDataUtil {
 
@@ -26,29 +30,33 @@ export function getStatus(query:UseQueryResult) {
     return ((query.error) as AxiosError)?.response?.status
 }
 
-export function getErrorMessage(e:any):string|undefined {
-    //{
-    // "timestamp":"2023-04-13T09:14:43.817+00:00",
-    // "status":400,
-    // "error":"Bad Request",
-    // "message":"Validation failed for object='accountDto'. Error count: 1",
-    // "errors":[{"codes":["NotEmpty.accountDto.lastName","NotEmpty.lastName","NotEmpty.java.lang.String","NotEmpty"],
-    // "arguments":[{"codes":["accountDto.lastName","lastName"],
-    // "arguments":null,"defaultMessage":"lastName","code":"lastName"}],
-    // "defaultMessage":"must not be empty",
-    // "objectName":"accountDto",
-    // "field":"lastName",
-    // "rejectedValue":null,
-    // "bindingFailure":false,
-    // "code":"NotEmpty"}],
-    // "path":"/accounts/b3fc0646-bbeb-477f-974d-6af91f5033f7"
-    // }
-    const error = e.response?.data?.error ?? '';
-    const message = e.response?.data?.message || e.message || '[no error message]';
-    const errors = e.response?.data?.errors ?? '';
-    return error + "\n " + message + "\n " + errors;
+export function buildImageUrl(fileId:string) {
+    return process.env.REACT_APP_API_URL + 'files/' + fileId + '/data'
 }
 
-export function buildImageUrl(fileId:string) {
-    return process.env.REACT_APP_API_URL + FILE_SERVICE + '/files/' + fileId + '/data'
+
+export function compareFiles(a: EntityFile, b: EntityFile) {
+    if (a.isPrimary) {
+        return -1;
+    }
+    if (b.isPrimary) {
+        return 1;
+    }
+    return new Date(a.creationDate).getTime() > new Date(b.creationDate).getTime() ? 1 : -1;
+}
+
+export function uploadTempFile(e: React.ChangeEvent<HTMLInputElement>, saveFile: UseMutationResult<AxiosResponse<FileInfo, any>, AxiosError<unknown, any>, FileInfo, unknown>) {
+    const fileList = e.target.files!;
+    const file = fileList[0];
+    return FileService
+        .toBase64fromBlob(file)
+        .then(image => {
+            return saveFile.mutateAsync({
+                id: '',
+                directory: '',
+                createdAt: new Date(),
+                mimeType: file.type,
+                data: image
+            });
+        });
 }

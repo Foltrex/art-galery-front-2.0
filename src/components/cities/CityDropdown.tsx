@@ -3,6 +3,8 @@ import * as React from 'react';
 import {useMemo} from 'react';
 import {useGetAllCities} from "../../api/CityApi";
 import {City} from "../../entities/city";
+import {getErrorMessage} from "../error/ResponseError";
+
 
 interface ICityDropdownProps {
     value?: string;
@@ -23,7 +25,9 @@ const CityDropdown: React.FunctionComponent<ICityDropdownProps> = ({
     placeholder
 }) => {
 
-    const { data: cities } = useGetAllCities();
+    const { data: cities } = useGetAllCities((error) => {
+        getErrorMessage("Failed to load list of cities", error);
+    });
     const cityOptions = useMemo(() => {
         if(!cities) {
             return [];

@@ -3,15 +3,14 @@ import {Button, Dialog, DialogActions, DialogContent} from "@mui/material";
 import {observer} from "mobx-react";
 import UserTable from "../../users/components/UserTable";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
-import {updateUser, useGetAccountById} from "../../../api/AccountApi";
+import {useGetAccountById, useUpdateUser} from "../../../api/AccountApi";
 import Loading from "../../../components/ui/Loading";
 import {AbstractUserPage} from "../../users/components/AbstractUserPage";
 import {Account} from "../../../entities/account";
-import Bubble from "../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
 import {MetadataEnum} from "../../../entities/enums/MetadataEnum";
 import {useRegisterUser} from "../../../api/AuthApi";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 interface IOrganizationFacilitiesDialogProps {
     open: boolean;
@@ -25,7 +24,12 @@ enum Mode {
 
 const EditUserComponent = ({userId, goBack, organizationId}:{organizationId:string, userId:string, goBack:() => void}) => {
     const {authStore} = useRootStore();
-    const {data} = useGetAccountById(userId);
+    const {data} = useGetAccountById(userId, (error) => {
+        getErrorMessage("Failed to load account details", error);
+    });
+    const updateUser = useUpdateUser(userId, (error) => {
+        getErrorMessage("Failed to create new organization", error);
+    });
     if(!data) {
         return <Loading />
     }
@@ -34,7 +38,7 @@ const EditUserComponent = ({userId, goBack, organizationId}:{organizationId:stri
         account={data}
         organizationId={organizationId}
         onSubmit={(account:Account) =>
-        updateUser(account)
+        updateUser.mutateAsync(account)
             .then((response) => {
                 if(response.data.id === authStore.account.id) {
                     authStore.setAccount(response.data);
@@ -43,7 +47,7 @@ const EditUserComponent = ({userId, goBack, organizationId}:{organizationId:stri
                 return true
             })
             .catch((error:any) => {
-                Bubble.error({message: "Failed to update account information. Error message is: " + getErrorMessage(error), duration: 999999});
+                getErrorMessage("Failed to update account information", error);
                 return false
             })
     }/>
@@ -62,20 +66,21 @@ const AddUserComponent = ({userId, goBack, organizationId}:{organizationId:strin
             value: organizationId
         }]
     }
-    const metationRegisterUser = useRegisterUser();
+    const mutationRegisterUser = useRegisterUser((error) => {
+        getErrorMessage("Failed to create new account", error)
+    });
 
     return <AbstractUserPage
         account={data}
         organizationId={organizationId}
         back={() => goBack()}
         onSubmit={(account: Account) =>
-            metationRegisterUser.mutateAsync(account)
+            mutationRegisterUser.mutateAsync(account)
                 .then(_ => {
                     goBack()
                     return true
                 })
-                .catch((error: any) => {
-                    Bubble.error({ message: "Failed to create new account. Error message is: " + getErrorMessage(error), duration: 999999 });
+                .catch(() => {
                     return false;
                 })
             //     .then()
@@ -89,7 +94,10 @@ const OrganizationUsersDialog = observer(({open, onClose, organizationId}: IOrga
     const [userId, setUserId] = useState('');
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth={"lg"} fullWidth>
+        <Dialog open={open} onClose={(e, reason) => {
+            if(reason !== 'backdropClick')
+                onClose();
+        }} maxWidth={"lg"} fullWidth>
             <DialogContent>
                 {mode === Mode.NEW && <AddUserComponent
                     userId={userId}

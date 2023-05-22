@@ -1,12 +1,12 @@
 import {
-	Button,
-	Dialog,
-	DialogActions,
-	DialogContent,
-	DialogTitle,
-	Divider,
-	InputAdornment,
-	TextField
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    InputAdornment,
+    TextField
 } from '@mui/material';
 import {Box} from '@mui/system';
 import {FormikHelpers, useFormik} from 'formik';
@@ -14,14 +14,14 @@ import * as React from 'react';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import * as yup from 'yup';
-import {useGetArtistByArtId} from '../../api/ArtistApi';
 import {useGetAllCurrencies, useSaveCurrency} from '../../api/CurrencyApi';
-import {useGetFacilityByAccountId} from '../../api/FacilityApi';
 import {useSaveProposal} from '../../api/ProposalApi';
 import {Art} from '../../entities/art';
 import {Currency} from '../../entities/currency';
 import {Proposal} from '../../entities/proposal';
 import {TokenService} from '../../services/TokenService';
+import {useGetAccountById} from "../../api/AccountApi";
+import {Facility} from "../../entities/facility";
 
 interface FormValues {
 	money: string;
@@ -38,9 +38,9 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	const navigate = useNavigate();
 
 	const accountId = TokenService.getCurrentAccountId();
-	const { data: facility } = useGetFacilityByAccountId(accountId);
-	const { data: currencies } = useGetAllCurrencies();
-	const { data: artist } = useGetArtistByArtId(art.id);
+	const { data: facility } = {data: {} as Facility};// useGetFacilityByAccountId(accountId);
+	const { data: currencies } = useGetAllCurrencies(() => {});
+	const { data: artist } = useGetAccountById(art.id, () => {});
 
 	const [proposalObj, setProposal] = useState({ facility: facility } as Proposal);
 	const [currentCurrency, setCurrentCurrency] = useState<Currency>();
@@ -71,9 +71,9 @@ const ProposalDialog: React.FunctionComponent<IProposalDialogProps> = ({ art, op
 	})
 	
 	// const { data: artist } = useGetArtistByArtId(art.id);
-	const mutationSaveProposal = useSaveProposal();
+	const mutationSaveProposal = useSaveProposal(() => {});
 
-	const mutationSaveCurrency = useSaveCurrency();
+	const mutationSaveCurrency = useSaveCurrency(() => {});
 	
 	const onSaveProposal = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
 		setSubmitting(true);

@@ -5,13 +5,17 @@ import {useGetAll} from "../../api/AccountApi";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {IPage} from "../../hooks/react-query";
 import {Account} from "../../entities/account";
+import {getErrorMessage} from "../error/ResponseError";
+
 
 export default function UsersAutocomplete({userType, onChange}:{
     userType?:AccountEnum,
     onChange:(userId?:string) => void
 }) {
     const [name, setName] = useState("");
-    const users = useGetAll({page: 0, size: 999999, usertype: userType, name: name}, {retry: false, enabled: !!name});
+    const users = useGetAll({page: 0, size: 999999, usertype: userType, name: name}, (e) => {
+        getErrorMessage("Failed to list of users", e);
+    }, {retry: false, enabled: !!name});
 
     return <GenericAutocomplete<Account, IPage<Account>>
         reactAt={2}

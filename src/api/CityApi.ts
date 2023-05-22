@@ -1,12 +1,12 @@
 import {City} from "../entities/city";
 import {useFetch} from "../hooks/react-query";
-import {ART_SERVICE} from "../http/axios";
+import {AxiosError} from "axios";
 
 
-export const useGetAllCities = () => {
-    return useFetch<City[]>(`${ART_SERVICE}/cities/list`);
+export const useGetAllCities = (showError:(errror:AxiosError) => void) => {
+    return useFetch<City[]>('cities/list', 'GET:cities', {}, showError);
 }
 
-export const useGetCityById = (id:string) => {
-    return useFetch<City>(`${ART_SERVICE}/cities/${id}`, undefined, {enabled: !!id});
+export const useGetCityById = (id:string, showError:(errror:AxiosError) => void) => {
+    return useFetch<City>('cities/' + id, 'GET:cities/id', {}, showError, {enabled: !!id});
 }

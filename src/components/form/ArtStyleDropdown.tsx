@@ -4,8 +4,8 @@ import {useEffect, useMemo} from "react";
 import {ArtStyle} from "../../entities/art-style";
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import {useGetAllArtStyles} from "../../api/ArtStyleApi";
-import Bubble from "../bubble/Bubble";
-import {getErrorMessage} from "../../util/PrepareDataUtil";
+import {getErrorMessage} from "../error/ResponseError";
+
 
 const sx = { lineHeight: 'normal' }
 const boxSx = { display: 'flex', flexWrap: 'wrap', gap: 0.5 };
@@ -13,7 +13,9 @@ const labelStyle = {background: 'white', padding: '0px 6px', left: '-5px'};
 
 export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: (v:ArtStyle[]) => void}) => {
 
-    const { data: artStyleItems = [], error, isError} = useGetAllArtStyles();
+    const { data: artStyleItems = [], error, isError} = useGetAllArtStyles((error) => {
+        getErrorMessage("Failed to load for art styles list", error)
+    });
 
     const handleStyleSelect = (e: SelectChangeEvent<number[]>) => {
         const ids = e.target.value as number[];
@@ -41,7 +43,7 @@ export const ArtStyleDropdown = ({value, onChange}:{value:ArtStyle[], onChange: 
 
     useEffect(() => {
         if(isError) {
-            Bubble.error({message: "Failed to load style types, error is " + getErrorMessage(error)})
+            getErrorMessage("Failed to load style types", error)
         }
     }, [isError, error])
 

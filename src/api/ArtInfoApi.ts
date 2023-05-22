@@ -1,20 +1,14 @@
-import { ArtInfo } from "../entities/artInfo"
-import { useFetch } from "../hooks/react-query"
-import { ART_SERVICE } from "../http/axios"
+import {ArtInfo} from "../entities/artInfo"
+import {useFetch} from "../hooks/react-query"
+import {AxiosError} from "axios/index";
 
 
-export const useGetLastArtInfoByArtId = (artId?: string) => {
-    return useFetch<ArtInfo>(
-        `${ART_SERVICE}/art-infos/last/arts/${artId}`,
-        undefined,
-        { enabled: !!artId }
-    );
-}
-
-export const useGetArtInfosByArtId = (artId?: string) => {
+export const useGetArtInfosByArtId = (artId: string|undefined, showError:(error:AxiosError) => void) => {
     return useFetch<ArtInfo[]>(
-        `${ART_SERVICE}/art-infos/arts/${artId}`,
-        undefined,
+        `art-infos/arts/${artId}`,
+        'GET:art-infos/arts/id',
+        {},
+        showError,
         { enabled: !!artId }
     );
 }

@@ -83,6 +83,8 @@ export default class Bubble extends React.Component<BubbleContainerProps, Bubble
             <div style={{position: "fixed", bottom: 10, right: 10, zIndex: 100000, width: 350}}>
                 {this.state.snackbars.map((snackbar) => {
                     return <BubbleItem key={snackbar.id}
+                                       actions={snackbar.actions}
+                                       noIcon={snackbar.noIcon}
                                        message={snackbar.message}
                                        duration={snackbar.duration === undefined ? 6000 : snackbar.duration}
                                        close={() => this.close(snackbar.id as number)}

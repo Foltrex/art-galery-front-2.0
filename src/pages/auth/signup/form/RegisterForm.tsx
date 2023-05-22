@@ -10,8 +10,7 @@ import {AccountEnum} from "../../../../entities/enums/AccountEnum";
 import {AuthService} from "../../../../services/AuthService";
 import RegisterFormBottom from './RegisterFormBottom';
 import {Help} from "@mui/icons-material";
-import Bubble from "../../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../../components/error/ResponseError";
 
 interface IRegisterFormValues {
     email: string,
@@ -29,7 +28,9 @@ const buttonStyle = {
 
 const RegisterForm = () => {
     const navigate = useNavigate();
-    const mutationRegister = useRegister();
+    const mutationRegister = useRegister((error) => {
+        getErrorMessage("Failed to register new user", error);
+    });
     const [accountType, setAccountType] = useState<string>("");
 
     const initialValues: IRegisterFormValues = {
@@ -72,14 +73,9 @@ const RegisterForm = () => {
 
 
     const submit = async (values: IRegisterFormValues) => {
-        try {
-            const response = await mutationRegister.mutateAsync(values)
-            AuthService.setToken(response.data.token);
-            navigate('/');
-        } catch (error: any) {
-            console.log(getErrorMessage(error))
-            Bubble.error({message: "Failed to register account. Error message is: " + getErrorMessage(error), duration: 999999});
-        }
+        const response = await mutationRegister.mutateAsync(values)
+        AuthService.setToken(response.data.token);
+        navigate('/');
     }
 
     const SwitchAccountTypeForm = () => {

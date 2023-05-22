@@ -1,27 +1,25 @@
 import {Button, IconButton, Modal, Stack, Tooltip} from "@mui/material";
 import {Box, styled} from "@mui/system";
 import Close from "@mui/icons-material/Close";
-import {ChangeEvent, CSSProperties, useRef, useState} from "react";
+import * as React from "react";
+import {CSSProperties, useRef, useState} from "react";
 import DeleteModal from "../modal/DeleteModal";
-import {FileService} from "../../services/FileService";
 import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
 import {EntityFile} from "../../entities/entityFile";
 import {Add} from "@mui/icons-material";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import FilterOutlinedIcon from '@mui/icons-material/FilterOutlined';
+import {useSaveTempFile} from "../../api/FileApi";
+import {buildImageUrl, uploadTempFile} from "../../util/PrepareDataUtil";
+import {getErrorMessage} from "../error/ResponseError";
 
 interface IImageSliderProps {
-    image: string
-    onImageAdd?: (file:EntityFile) => void;
-    goLeft: () => void;
-    goRight: () => void;
-
-    makeMain?: () => void;
-    onDelete?: () => void;
-    canEdit?: boolean;
+    setCurrentIndex: (index:number) => void;
+    currentIndex: number
+    setSlides?: (files:EntityFile[]) => void
+    slides: EntityFile[];
     styles?: CSSProperties,
-    children: React.ReactNode
 }
 
 const style: CSSProperties = {
@@ -50,20 +48,25 @@ const RightArrowButton = styled('div')({
 
 export function Slide({selected, src, onClick}: { src: string, onClick: () => void, selected: boolean }) {
     return <div style={selected ? {opacity: 0.5} : undefined}><img style={{display: "block"}}
-                src={src}
-                alt={"img"}
-                onClick={onClick}
-                height='50px'
+                                                                   src={src}
+                                                                   alt={"img"}
+                                                                   onClick={onClick}
+                                                                   height='50px'
     /></div>
 }
 
-function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, makeMain,
-                         onDelete, styles}: IImageSliderProps) {
+function ImageSlider({  styles,
+                         currentIndex, setCurrentIndex,
+                         slides, setSlides
+                     }: IImageSliderProps) {
 
 
     const fileInput = useRef<HTMLInputElement>(null);
     const [showModal, setShowModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const saveFile = useSaveTempFile((e) => {
+        getErrorMessage("Failed to upload file", e);
+    });
 
     const handleImageClick = () => {
         setShowModal(true);
@@ -72,21 +75,27 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
         setShowDeleteModal(true)
     }
 
-
-    const handleFileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const fileList = e.target.files!;
-        const file = fileList[0];
-        return FileService.toBase64fromBlob(file)
-            .then(image => {
-                onImageAdd && onImageAdd({
-                    isPrimary: false,
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        return uploadTempFile(e, saveFile).then(response => {
+                setSlides && setSlides([...slides, {
+                    id: response.data.id,
+                    creationDate: response.data.createdAt + "",
+                    isPrimary: slides.length === 0,
                     type: EntityFileTypeEnum.ORIGINAL,
-                    creationDate: new Date().toJSON(),
-                    mimeType: file.type,
-                    data: image
-                });
+                    entityId: undefined,
+                    originalId: undefined
+                }]);
             });
     }
+
+    const thumbs = slides
+        .filter(slide => slide.type === EntityFileTypeEnum.THUMBNAIL)
+        .reduce((map, slide) => {
+            map[slide.originalId!] = slide;
+            return map;
+        }, {} as Record<string, EntityFile>)
+
+    const currentFile = slides[currentIndex];
 
     return (
         <div style={{
@@ -94,7 +103,7 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
             position: 'relative',
             ...styles
         }}>
-            {!image && <Box
+            {!currentFile && <Box
                 component='div'
                 style={{
                     background: '#E8EDF0',
@@ -105,7 +114,9 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
             >
                 <IconButton
                     size='large'
-                    onClick={() => {canEdit && fileInput.current?.click()}}
+                    onClick={() => {
+                        setSlides && fileInput.current?.click()
+                    }}
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -116,37 +127,65 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
                     <Add fontSize='large'/>
                 </IconButton>
             </Box>}
-            <div
+            {!!currentFile && (<div
                 style={{background: 'white', width: '100%', height: '100%', textAlign: "center", position: 'relative'}}>
-                {!!image && (
-                    <>
-                        <img
-                            src={image}
-                            onClick={handleImageClick}
-                            style={{
-                                maxWidth: '100%',
-                                height: '100%',
-                                width: 'auto',
-                                backgroundPosition: 'center',
-                                backgroundSize: 'contain',
-                                backgroundRepeat: 'no-repeat',
-                            }}
-                            alt={'img'}
-                        />
-                        <LeftArrowButton onClick={goLeft}>
-                            &#8249;
-                        </LeftArrowButton>
-                        <RightArrowButton onClick={goRight}>
-                            &#8250;
-                        </RightArrowButton>
-                    </>
-                )
-                }
-            </div>
-
+                <img
+                    src={buildImageUrl(currentFile.id!)}
+                    onClick={handleImageClick}
+                    style={{
+                        maxWidth: '100%',
+                        height: '100%',
+                        width: 'auto',
+                        backgroundPosition: 'center',
+                        backgroundSize: 'contain',
+                        backgroundRepeat: 'no-repeat',
+                    }}
+                    alt={'img'}
+                />
+                <LeftArrowButton onClick={() => {
+                    if(currentIndex > 0) {
+                        setCurrentIndex(currentIndex - 1)
+                    }
+                }}>
+                    &#8249;
+                </LeftArrowButton>
+                <RightArrowButton onClick={() => {
+                    if(currentIndex < slides.length - 1) {
+                        setCurrentIndex(currentIndex + 1)
+                    }
+                }}>
+                    &#8250;
+                </RightArrowButton>
+            </div>)}
             <div
                 style={{display: 'flex', justifyContent: 'center', marginTop: '2vh', marginBottom: '2vh', gap: '20px'}}>
-                {children}
+                {slides.map((file, i, array) => {
+                    if(file.type === EntityFileTypeEnum.ORIGINAL && thumbs[file.id!]) {
+                        return null;
+                    }
+                    let index = -1;
+                    if(file.type === EntityFileTypeEnum.ORIGINAL) {
+                        index = i;
+                    } else {
+                        for(let i = 0; i < array.length; i++) {
+                            if(array[i].id === file.originalId) {
+                                index = i;
+                                break;
+                            }
+                        }
+                    }
+                    if(index === -1) {
+                        return null;
+                    }
+                    return (
+                    <Stack direction={"column"} alignItems={"center"}>
+                        <Slide key={index}
+                               selected={index !== currentIndex}
+                               src={buildImageUrl(file.id!)}
+                               onClick={() => setCurrentIndex(index)}/>
+                        {file.isPrimary ? "*" : undefined}
+                    </Stack>
+                )}).filter(v => v)}
             </div>
             <input
                 type='file'
@@ -155,22 +194,32 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
                 style={{display: 'none'}}
             />
             <Stack direction="row" spacing={1} alignItems={"center"} justifyContent={"center"}>
-                {makeMain && canEdit && image &&
-                    <Tooltip title={"Make image primary. Primary images shown in a list"}>
-                        <IconButton onClick={() => {makeMain && makeMain()}} color="primary">
+                {setSlides && currentFile &&
+                    <Tooltip title={"Make image primary. Primary image shown in a list"}>
+                        <IconButton onClick={() => {
+                            if(currentFile.isPrimary) {
+                                return;
+                            }
+                            const images:EntityFile[] = [];
+                            slides.forEach((f) => {
+                                const isPrimary = f.id === currentFile.id || f.originalId === currentFile.id;
+                                images.push({...f, isPrimary: isPrimary});
+                            })
+                            setSlides(images);
+                        }} color="primary">
                             <FilterOutlinedIcon/>
                         </IconButton>
                     </Tooltip>
                 }
 
-                {onImageAdd && canEdit &&
+                {setSlides && currentFile &&
                     <Tooltip title={"Upload more images"}>
                         <IconButton onClick={() => fileInput!.current!.click()} color="primary">
-                            <UploadFileIcon />
+                            <UploadFileIcon/>
                         </IconButton>
                     </Tooltip>
                 }
-                {onDelete && canEdit &&
+                {setSlides && currentFile &&
                     <Tooltip title={"Delete current image"}>
                         <IconButton onClick={confirmDelete} color="error">
                             <DeleteOutlineIcon color={"error"}/>
@@ -179,7 +228,7 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
                 }
             </Stack>
 
-            {image && showModal && <Modal
+            {currentFile && showModal && <Modal
                 open={true}
                 onClose={() => setShowModal(false)}
                 style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}
@@ -187,7 +236,7 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
                 <>
                     <img
                         style={{maxWidth: '100%', maxHeight: '100%'}}
-                        src={image} alt={"img"}/>
+                        src={buildImageUrl(currentFile.id!)} alt={"img"}/>
 
                     <Box sx={{position: 'absolute', bottom: '15px', display: 'flex', gap: 10}}>
                         <Button
@@ -202,11 +251,16 @@ function ImageSlider({children, image, goLeft, goRight, canEdit, onImageAdd, mak
             </Modal>
             }
 
-            {image && showDeleteModal && <DeleteModal
+            {currentFile && showDeleteModal && <DeleteModal
                 open={true}
                 onClose={() => setShowDeleteModal(false)}
-                onDelete={() => onDelete && onDelete()}
-                contextText={"Please confirm your intention to delete following image"}
+                onDelete={() => {
+                    if(setSlides && currentFile) {
+                        setSlides(slides.filter(s => s.id !== currentFile.id));
+                        setCurrentIndex(currentIndex > 0 ? currentIndex - 1 : 0);
+                    }
+                }}
+                contextText={"You are about to delete image. Please confirm it was done by purpose. Take a note, image will be deleted only after data submit"}
             />}
         </div>
     );

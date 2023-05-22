@@ -7,8 +7,7 @@ import {useNavigate} from "react-router-dom";
 import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
-import Bubble from "../../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../../components/error/ResponseError";
 
 interface ILoginFormValues {
     email: string,
@@ -17,7 +16,10 @@ interface ILoginFormValues {
 
 const LoginForm = () => {
     const navigate = useNavigate();
-    const mutationLogin = useLogin();
+    const mutationLogin = useLogin((error) => {
+        getErrorMessage("Failed to perform login action. Most probably service unavailable or in maintenance." +
+            " Please try again after couple minutes", error);
+    });
     const [rememberMe, setRememberMe] = useState<boolean>(true)
 
     const initialValues: ILoginFormValues = {
@@ -37,15 +39,10 @@ const LoginForm = () => {
 
 
     const submit = async (values: ILoginFormValues) => {
-        try {
-            const response = await mutationLogin.mutateAsync(values);
-            AuthService.setToken(response.data.token);
-            AuthService.setRememberMe(rememberMe)
-            navigate('/');
-        } catch (error: any) {
-            console.log(getErrorMessage(error))
-            Bubble.error({message: "Login error. Error message: " + getErrorMessage(error), duration: 999999})
-        }
+        const response = await mutationLogin.mutateAsync(values);
+        AuthService.setToken(response.data.token);
+        AuthService.setRememberMe(rememberMe)
+        navigate('/');
     }
 
     return (

@@ -1,7 +1,6 @@
-import {Card, ImageListItem, Skeleton, Typography} from '@mui/material';
+import {Card, ImageListItem, Typography} from '@mui/material';
 import * as React from 'react';
 import {Art} from '../../../entities/art';
-import {useGetAllEntityFilesByEntityId} from "../../../api/FileApi";
 import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
 import {buildImageUrl} from "../../../util/PrepareDataUtil";
 
@@ -12,7 +11,8 @@ interface IArtCardProps {
 
 const ArtCard: React.FunctionComponent<IArtCardProps> = ({art, onPropose}) => {
 
-    const { isLoading, data: files = [] } = useGetAllEntityFilesByEntityId(0, art.id);
+    const files = art.files || [];
+
     const images = files
         .filter(file => file.id && file.isPrimary && file.type === EntityFileTypeEnum.ORIGINAL)
         .map(fileEntity => buildImageUrl(fileEntity.id!))
@@ -28,15 +28,6 @@ const ArtCard: React.FunctionComponent<IArtCardProps> = ({art, onPropose}) => {
                         width: 'auto',
                         height: '100%',
                     }}
-                />
-            );
-        }
-
-        if (isLoading) {
-            return (
-                <Skeleton
-                    width='100%'
-                    height='100%'
                 />
             );
         }

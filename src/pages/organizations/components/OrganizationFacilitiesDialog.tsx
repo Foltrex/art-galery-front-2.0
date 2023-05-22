@@ -17,7 +17,10 @@ const OrganizationFacilitiesDialog = ({open, onClose, organizationId}: IOrganiza
     const [facilityId, setFacilityId] = useState('');
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth={"lg"} fullWidth>
+        <Dialog open={open} onClose={(e, reason) => {
+            if(reason !== 'backdropClick')
+                onClose();
+        }} maxWidth={"lg"} fullWidth>
             <DialogContent>
                 {mode === Mode.NEW && <FacilityNew back={() => setMode(Mode.LIST)}
                                                    organizationId={organizationId}

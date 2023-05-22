@@ -6,6 +6,8 @@ import {useFormik} from "formik";
 import {useGetAll} from "../../../api/AccountApi";
 import {useSendPasswordRecoveryCode} from "../../../api/AuthApi";
 import Bubble from "../../../components/bubble/Bubble";
+import {getErrorMessage} from "../../../components/error/ResponseError";
+
 
 interface IFormEmailValues {
     email: string,
@@ -14,8 +16,12 @@ interface IFormEmailValues {
 const EmailSearchForm = () => {
     const navigate = useNavigate();
     const [emailSearch, setEmailSearch] = useState('');
-    const {data, isFetched, isLoading} = useGetAll({email: emailSearch}, {enabled: !emailSearch});
-    const mutationSendPasswordRecoveryCode = useSendPasswordRecoveryCode();
+    const {data, isFetched, isLoading} = useGetAll({email: emailSearch}, (error) => {
+        getErrorMessage("Failed to perform search routine for account with such email. Most probably service unavailable or in maintenance.lgdfgd Please try again after couple minutes", error);
+    }, {enabled: !emailSearch});
+    const mutationSendPasswordRecoveryCode = useSendPasswordRecoveryCode((error) => {
+        getErrorMessage("Failed to send password recovery code. Most probably service unavailable or in maintenance. Please try again after couple minutes", error);
+    });
 
     const initialValues: IFormEmailValues = {
         email: '',
@@ -57,10 +63,6 @@ const EmailSearchForm = () => {
                         }).toString()
                     });
                     Bubble.success("Message with confirmation code was sent to provided email")
-                })
-                .catch(error => {
-                    console.log(error.response.data.message)
-                    Bubble.error(error.response.data.message);
                 })
         }
     }, [isFetched, data])

@@ -1,64 +1,45 @@
 import {Facility} from "../entities/facility";
-import {IPage, useDelete, useFetch, usePost} from "../hooks/react-query";
-import {ART_SERVICE} from "../http/axios";
+import {IPage, useDelete, useFetch, usePost, useUpdate} from "../hooks/react-query";
+import {AxiosError} from "axios";
 
 
-export const useGetAllFacilities = (page: number = 0, size: number = 25, sort:string, cityId?: string, facilityName?: string, isActive?: boolean | null, organizationId?:string) => {
+export const useGetAllFacilities = (params: {page: number, size: number, sort:string, cityId?: string, facilityName?: string, isActive?: boolean | null, organizationId?:string}, showError:(errror:AxiosError) => void) => {
     return useFetch<IPage<Facility>>(
-        `${ART_SERVICE}/facilities`,
+        'facilities',
+        'GET:facilities',
         {
-            page,
-            size,
-            cityId,
-            facilityName,
-            isActive,
-            organizationId,
-            sort
-        }
+            page: params.page || 0,
+            size: params.size || 25,
+            cityId: params.cityId,
+            facilityName: params.facilityName,
+            isActive: params.isActive,
+            organizationId: params.organizationId,
+            sort: params.sort
+        },
+        showError
     );
 }
 
-
-export const useGetFacilitiesPageByAccountId = (accountId: string, page?: number, size?: number) => {
-    return useFetch<IPage<Facility>>(
-        `${ART_SERVICE}/facilities/page/accounts/${accountId}`,
-        {
-            page: page,
-            size: size
-        }
-    )
-}
-
-export const useGetAllFacilitiesByAccountId = (accountId?: string) => {
-    return useFetch<Facility[]>(
-        `${ART_SERVICE}/facilities/list/accounts/${accountId}`,
-        undefined,
-        { enabled: !!accountId }
-    );
-}
-
-export const useGetFacilityByAccountId = (accountId?: string) => {
+export const useGetFacilityById = (id: string|undefined, showError:(errror:AxiosError) => void) => {
     return useFetch<Facility>(
-        `${ART_SERVICE}/facilities/accounts/${accountId}`,
+        'facilities/' + id,
+        'GET:facilities/id',
         undefined,
-        { enabled: !!accountId }
-    );
-}
-
-export const useGetFacilityById = (id?: string) => {
-    return useFetch<Facility>(
-        `${ART_SERVICE}/facilities/${id}`,
-        undefined,
+        showError,
         { enabled: !!id }
     );
 }
 
 
-export const useSaveFacility = () => {
-    return usePost<Facility>(`${ART_SERVICE}/facilities`);
+export const useSaveFacility = (showError:(errror:AxiosError) => void) => {
+    return usePost<Facility>('facilities', {}, ['GET:facilities', 'GET:facilities/id'], showError);
+}
+
+export const useUpdateFacility = (facilityId:string|undefined, showError:(errror:AxiosError) => void) => {
+    return useUpdate<Facility>('facilities/' + facilityId, {}, ['GET:facilities', 'GET:facilities/id'], showError);
 }
 
 
-export const useDeleteFacility = () => {
-    return useDelete(`${ART_SERVICE}/facilities`);
+export const useDeleteFacility = (showError:(errror:AxiosError) => void) => {
+    return useDelete('facilities', {}, ['GET:facilities', 'GET:facilities/id'], showError);
 }

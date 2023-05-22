@@ -1,7 +1,7 @@
 import {Box, Button, Container, FormControl, FormControlLabel, Radio, RadioGroup} from '@mui/material';
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useGetAllArts} from '../../api/ArtApi';
 import ScrollTop from '../../components/ui/ScrollTop';
@@ -15,10 +15,10 @@ import ArtItem from "./components/ArtItem";
 import Loading from "../../components/ui/Loading";
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
-import Bubble from "../../components/bubble/Bubble";
-import {getErrorMessage} from "../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../components/error/ResponseError";
 
-const Arts = () => {
+
+const Gallery = () => {
     const navigate = useNavigate();
     const {authStore} = useRootStore();
 
@@ -49,18 +49,12 @@ const Arts = () => {
         searchText: artSearch,
         artistId: accountType === AccountEnum.ARTIST ? authStore.account.id : artistId,
         cityId: artStatus === exhibited.value ? cityId : undefined
-    });
+    }, () => {getErrorMessage("Failed to load gallery", error)});
 
     const lastPage = infiniteData?.pages.at(-1);
     const isNotLast = !!(lastPage && !lastPage.last);
 
     const images = infiniteData?.pages || [];
-
-    useEffect(() => {
-        if(isError) {
-            Bubble.error({message: "Failed to load gallery. Error message is " + getErrorMessage(error)});
-        }
-    }, [isError, error]);
 
     return (
         <Container sx={{position: 'relative'}}>
@@ -129,4 +123,4 @@ const Arts = () => {
     );
 };
 
-export default Arts;
+export default Gallery;

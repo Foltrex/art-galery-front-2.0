@@ -19,6 +19,7 @@ import * as yup from "yup";
 import {Organization} from "../../../entities/organization";
 import {OrganizationStatusEnum} from "../../../entities/enums/organizationStatusEnum";
 import {useUpdateOrganizationById} from '../../../api/OrganizationApi';
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 interface IOrganizationEditDialogProps {
     open: boolean;
@@ -55,16 +56,24 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
         initialValues: initialValues,
         validationSchema: validationSchema,
         validateOnChange: false,
-        onSubmit: async (values, {setSubmitting}) => {
+        onSubmit: (values, {setSubmitting}) => {
             setSubmitting(true)
-            await submit(values)
-            setSubmitting(false)
+            return submit(values).then((r) => {
+                setSubmitting(false)
+                return r;
+            }).catch(e => {
+                setSubmitting(false);
+                return e;
+            })
         },
     });
 
-    const mutationUpdateOrganization = useUpdateOrganizationById(organization.id);
+    const mutationUpdateOrganization = useUpdateOrganizationById(
+        organization.id,
+        (error) => getErrorMessage("Failed to update organization", error)
+    );
 
-    const submit = async (values: IFormValues) => {
+    const submit = (values: IFormValues) => {
         const updatedOrganization = {
             id: organization.id,
             name: values.name,
@@ -72,7 +81,7 @@ function OrganizationEditDialog({open, onClose, organization}: IOrganizationEdit
             status: values.isActive ? OrganizationStatusEnum.ACTIVE : OrganizationStatusEnum.INACTIVE,
         } as Organization;
 
-        await mutationUpdateOrganization.mutateAsync(updatedOrganization)
+        return mutationUpdateOrganization.mutateAsync(updatedOrganization)
             .then(() => {
                 organization.name = updatedOrganization.name;
                 organization.address = updatedOrganization.address;

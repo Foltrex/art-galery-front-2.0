@@ -6,9 +6,13 @@ import {useCookies} from "react-cookie";
 import {TokenService} from "../../services/TokenService";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {observer} from "mobx-react";
+import {getErrorMessage} from "../error/ResponseError";
+
 
 const PrivateRouteInternal: React.FC<PropsWithChildren> =  observer(({children}) => {
-    const {isLoading, data, isError} = useGetAccountById(TokenService.getCurrentAccountId());
+    const {isLoading, data, isError} = useGetAccountById(TokenService.getCurrentAccountId(), (e) => {
+        getErrorMessage("Failed to load account details", e);
+    });
     const {authStore} = useRootStore();
     useEffect(() => {
         if(!isLoading) {

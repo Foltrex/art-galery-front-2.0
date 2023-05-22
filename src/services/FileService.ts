@@ -41,7 +41,14 @@ export class FileService {
         return new Promise<string>((resolve, reject) => {
             const reader: FileReader = new FileReader();
             reader.readAsDataURL(blob);
-            reader.onload = () => resolve(reader.result as string);
+            reader.onload = () => {
+                let res = (reader.result as string)
+                const index = res.indexOf(";base64,");
+                if(index > -1) {
+                    res = res.substring(index + 8);
+                }
+                resolve(res);
+            }
             reader.onerror = (error) => reject(error);
         });
     }

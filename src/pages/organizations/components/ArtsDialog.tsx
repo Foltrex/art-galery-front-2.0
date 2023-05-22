@@ -7,6 +7,8 @@ import ProposalDialog from '../../../components/ui/ProposalDialog';
 import {Art} from '../../../entities/art';
 import {TokenService} from '../../../services/TokenService';
 import ArtCard from './ArtCard';
+import {getErrorMessage} from "../../../components/error/ResponseError";
+
 
 interface IProposalDialogProps {
     open: boolean;
@@ -28,7 +30,11 @@ const ArtsDialog: React.FunctionComponent<IProposalDialogProps> = ({open, onClos
 
     const token = TokenService.getCurrentDecodedToken();
 
-    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts({sort: 'dateCreation,desc', artistId: token.id});
+    const {data: infiniteData, isSuccess, fetchNextPage} = useGetAllArts(
+        {sort: 'dateCreation,desc', artistId: token.id},
+        (error) => {
+            getErrorMessage( "Failed to load list of arts", error);
+        });
 
     return (
         <>

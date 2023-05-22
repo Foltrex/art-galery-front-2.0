@@ -11,6 +11,8 @@ import IconButton from '@mui/material/IconButton';
 export interface BubbleProps {
     id?: number;//auto assignable
     message: any;
+    actions?: any[];
+    noIcon?: boolean;
     duration?: number;//0 for infinite, 6000 default value
     variant?: 'success' | 'warning' | 'error' | 'info';//auto assignable
     close?: () => void;//callback which is called after popup is closed (manually of by timeout)
@@ -93,17 +95,17 @@ class BubbleItem extends React.Component<BubbleProps, BubbleState> {
                 Icon = InfoIcon;
 
         }
-
         return <SnackbarContent
             style={styles[variant]}
             aria-describedby="client-snackbar"
             message={
                 <span id="client-snackbar" style={messageStyle}>
-                        <Icon style={iconStyle}/>
+                        {!this.props.noIcon && <Icon style={iconStyle}/>}
                     <div style={{overflowWrap: "anywhere"}}>{this.props.message}</div>
                     </span>
             }
             action={[
+                ...(this.props.actions || []),
                 <IconButton key="close" aria-label="close" color="inherit" onClick={this.close}>
                     <CloseIcon style={iconStyle}/>
                 </IconButton>,

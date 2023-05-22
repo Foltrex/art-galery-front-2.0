@@ -11,6 +11,7 @@ import {isCreatorOrAdmin} from "../../../util/MetadataUtil";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
 import {TokenService} from "../../../services/TokenService";
 import {UserGrid} from "../../../components/users/UserGrid";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 interface IUserTableProps {
     organizationId?: string;
@@ -44,6 +45,8 @@ const UserTable: React.FunctionComponent<IUserTableProps> = (props) => {
         cityId: cityId,
         organizationId: organizationId,
         sort
+    }, (e) => {
+        getErrorMessage("Failed to load list of users", e)
     });
 
     const loggedUserAccountType = TokenService.getCurrentAccountType();

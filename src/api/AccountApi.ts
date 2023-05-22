@@ -1,6 +1,4 @@
-import {axiosApi, USER_SERVICE} from "../http/axios";
-import {IPage, QueryKeyT, useDelete, useFetch, usePatch} from "../hooks/react-query";
-import {AuthService} from "../services/AuthService";
+import {IPage, QueryKeyT, useDelete, useFetch, usePatch, useUpdate} from "../hooks/react-query";
 import {Account} from "../entities/account";
 import {AxiosError} from "axios";
 import {UseQueryOptions} from "react-query";
@@ -17,61 +15,26 @@ export const useGetAll = (
         cityId?: string
         sort?: string
     },
+    showError: (error:AxiosError) => void,
     config?: UseQueryOptions<IPage<Account>, Error, IPage<Account>, QueryKeyT>
 ) => {
-    return useFetch<IPage<Account>>(`${USER_SERVICE}/accounts`, filter, config || {
-        retry: false
-    });
+    return useFetch<IPage<Account>>(`accounts`, 'GET:accounts', filter, showError, config || {retry: false});
 }
 
-export const useGetAccountById = (id?: string) => {
-    return useFetch<Account>(`${USER_SERVICE}/accounts/${id}`, undefined, {
+export const useGetAccountById = (id: string|undefined, showError: (error:AxiosError) => void) => {
+    return useFetch<Account>(`accounts/${id}`, 'GET:accounts/id', {}, showError, {
         enabled: !!id
-    })
-}
-
-export const useUpdateAccountImageById = (id: string) => {
-    return usePatch(`${USER_SERVICE}/accounts/${id}/account-image`, undefined, {
-        headers: {
-            'Authorization': `Bearer ${AuthService.getToken()}`,
-        }
-    },
-    );
-}
-
-export const useUpdateAccountPasswordById = (id: string) => {
-    return usePatch(`${USER_SERVICE}/accounts/${id}/password`, undefined, {
-        headers: {
-            'Authorization': `Bearer ${AuthService.getToken()}`,
-        }
     });
 }
 
-export const useDeleteAccountById = (errorMessageMapper?: (e: AxiosError) => string) => {
-    return useDelete(
-        `${USER_SERVICE}/accounts`,
-        undefined,
-        {
-            headers: {
-                'Authorization': `Bearer ${AuthService.getToken()}`,
-            }
-        },
-        errorMessageMapper
-    );
+export const useUpdateAccountPasswordById = (id: string, showError: (error:AxiosError) => void) => {
+    return usePatch(`accounts/${id}/password`, {}, ['GET:accounts', 'GET:accounts/id'], showError);
 }
 
-export const updateUser = (account: Account) => {
-    return axiosApi.put<Account>(`${USER_SERVICE}/accounts/${account.id}`, account, {
-        headers: {
-            'Authorization': `Bearer ${AuthService.getToken()}`,
-        }
-    });
+export const useDeleteAccountById = (showError: (e: AxiosError) => void) => {
+    return useDelete(`accounts`, {}, ['GET:accounts', 'GET:accounts/id'], showError);
 }
 
-// export const createUser = (account:Account) => {
-//     return axiosApi.post<Account>(`${ART_SERVICE}/accounts/`, account, {
-//         // headers: {
-//         //     'Authorization': `Bearer ${AuthService.getToken()}`,
-//         // }
-//     });
-// }
+export const useUpdateUser = (accountId:string, showError: (error:AxiosError) => void) => {
+    return useUpdate<Account>(`accounts/${accountId}`, {}, ["GET:accounts", 'GET:accounts/id'], showError);
+}

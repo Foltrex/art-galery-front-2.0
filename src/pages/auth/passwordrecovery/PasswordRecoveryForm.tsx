@@ -6,7 +6,7 @@ import {useFormik} from "formik";
 import {usePasswordRecovery} from "../../../api/AuthApi";
 import PasswordTextField from "../../../components/form/PasswordTextField";
 import Bubble from "../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 
 interface IPasswordRecoveryFormValues {
@@ -17,7 +17,9 @@ interface IPasswordRecoveryFormValues {
 
 const PasswordRecoveryForm = () => {
     const navigate = useNavigate();
-    const mutationPasswordRecovery = usePasswordRecovery();
+    const mutationPasswordRecovery = usePasswordRecovery((error) => {
+        getErrorMessage("Failed to recover password. Most probably service unavailable or in maintenance. Please try again after couple minutes", error)
+    });
     const location = useLocation()
     const queryParams = new URLSearchParams(location.search)
     const value = queryParams.get("email")!;
@@ -56,8 +58,7 @@ const PasswordRecoveryForm = () => {
                 navigate('/auth/signin');
             })
             .catch(error => {
-                console.log(getErrorMessage(error))
-                Bubble.error({message: "Failed to reset your password, error message is" + getErrorMessage(error), duration: 999999})
+                getErrorMessage('Failed to reset your password', error)
             })
     }
 

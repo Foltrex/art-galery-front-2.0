@@ -14,9 +14,26 @@ import DeleteModal from "../../../components/modal/DeleteModal";
 import {useDeleteAccountById} from "../../../api/AccountApi";
 import {useNavigate} from "react-router-dom";
 import {AuthService} from "../../../services/AuthService";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
-import {Metadata} from "../../../entities/metadata";
 
+import {Metadata} from "../../../entities/metadata";
+import {getErrorMessage} from "../../../components/error/ResponseError";
+
+function fixMetadata(account:Account) {
+
+    const existing = account.metadata.reduce((prev, current) => {
+        prev[current.key] = current;
+        return prev;
+    }, {} as Record<string, Metadata>);
+
+    const newMetadata:Metadata[] = [];
+    const keys = prepareAccountProperties(account);
+    for(let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        const meta = existing[key] ? existing[key] : {key: key, value: ''};
+        newMetadata.push(meta);
+    }
+    account.metadata = newMetadata;
+}
 
 const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: Account, uploadedImage?:Metadata|null, onSubmit: (a: Account) => Promise<boolean>, back?: () => void }) => {
     const [showResetPassword, setShowResetPassword] = useState(false);
@@ -32,19 +49,22 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
         metadata: yup.array().of(
             yup.object().shape({
                 key: yup.string().required(),
-                value: yup.string().when('key', (key, field) =>
-                    key === MetadataEnum.ORGANIZATION_ID || key === MetadataEnum.FACILITY_ID
-                        ? field.required()
-                        : field
-                )
+                value: yup.string().nullable().when('key', (key, field) => {
+                    if (key === MetadataEnum.ORGANIZATION_ID) {
+                        return field.required("Organization is required field")
+                    }
+                    if (key === MetadataEnum.FACILITY_ID) {
+                        return field.required("Facility is required field");
+                    }
+                    return field;
+                })
             })
         )
     })
 
-    const mutationDelete = useDeleteAccountById();
+    const mutationDelete = useDeleteAccountById((error) => getErrorMessage("Failed to delete account", error));
     const onDelete = async () => {
-        try {
-            await mutationDelete.mutateAsync(props.account!.id);
+        return mutationDelete.mutateAsync(props.account!.id).then(() => {
             if (props.account.id === authStore.account.id) {
                 AuthService.logout(authStore, navigate)
             } else {
@@ -54,10 +74,7 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
                     navigate("/")
                 }
             }
-        } catch (e) {
-            // add push notification
-            Bubble.error("Failed to delete account. Error message is " + getErrorMessage(e));
-        }
+        })
     }
 
     const canEditEmail = !props.account.id || authStore.account.accountType === AccountEnum.SYSTEM;
@@ -70,40 +87,20 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
             validationSchema={validationSchema}
             onSubmit={async (values, {setSubmitting}) => {
                 setSubmitting(true)
-                const metadataMap = prepareAccountProperties(values).reduce((prev, current) => {
-                    prev[current] = 1;
-                    return prev;
-                }, {} as Record<string, number>);
-
-                values = {...values};
-                values.metadata = values.metadata.filter(m => {
-                    return metadataMap[m.key]
-                });
-                let imagePresent = false;
-                for(let i = 0; i < values.metadata.length; i++) {
-                    if(values.metadata[i].key === MetadataEnum.ACCOUNT_IMAGE) {
-                        imagePresent = true;
-                        if(props.uploadedImage === null) {
-                            values.metadata.splice(1, 0);
-                        } else if(props.uploadedImage) {
-                            values.metadata[i] = props.uploadedImage;
-                        }
-                    }
-                }
-                if(!imagePresent && props.uploadedImage) {
+                fixMetadata(values);
+                values.metadata = [...values.metadata.filter(m => m.key !== MetadataEnum.ACCOUNT_IMAGE)];
+                if(props.uploadedImage) {
                     values.metadata.push(props.uploadedImage);
                 }
-
-
                 props.onSubmit(values).then((result) => {
                     if (result) {
-                        Bubble.success("Account was updated");
+                        Bubble.success(props.account.id ? "Account was updated" : "Account was created. Please check provided email address.");
                     }
                     setSubmitting(false)
                 })
             }}
         >
-            {formik => (
+            {formik => {console.log(formik);return (
                 <Form noValidate>
                     <table className={"view-table account-table"}>
                         <tbody>
@@ -148,7 +145,9 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
                                 />
                             </td>
                         </tr>}
-                        <MetadataList account={formik.values} organizationId={props.organizationId} metadata={formik.values.metadata} canEdit={props.canEdit}
+                        <MetadataList formik={formik}
+                                      organizationId={props.organizationId}
+                                      canEdit={props.canEdit}
                                       onChange={(key, value) => {
                                           const metadata = [...formik.values.metadata];
                                           let updated = false;
@@ -162,7 +161,9 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
                                           if (!updated) {
                                               metadata.push({key: key, value: value || ''})
                                           }
-                                          formik.setFieldValue('metadata', metadata, false);
+                                          const values = {...formik.values, metadata: metadata}
+                                          fixMetadata(values);
+                                          formik.setValues(values, true);
                                       }}/>
                         {showResetPassword &&
                             <ChangePasswordDialog open={true} onClose={() => setShowResetPassword(false)}/>}
@@ -202,7 +203,7 @@ const ProfileInfo = (props: {canEdit:boolean, organizationId?:string, account: A
                         </tr>}
                         </tbody>
                     </table>
-                </Form>)}
+                </Form>)}}
         </Formik>
     );
 };

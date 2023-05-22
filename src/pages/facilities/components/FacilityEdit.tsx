@@ -1,28 +1,32 @@
 import * as React from 'react';
-import {ART_SERVICE, axiosApi} from "../../../http/axios";
 import {FacilityFormAbstract} from "./FacilityFormAbstract";
 import Bubble from "../../../components/bubble/Bubble";
 import {Facility} from "../../../entities/facility";
-import {useGetFacilityById} from "../../../api/FacilityApi";
+import {useGetFacilityById, useUpdateFacility} from "../../../api/FacilityApi";
 import Loading from "../../../components/ui/Loading";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 
 const FacilityEdit = (props:{facilityId: string, onSubmit: (facility:Facility) => void, back:() => void}) => {
-    const {data, isLoading, isFetching} = useGetFacilityById(props.facilityId);
+    const {data, isLoading, isFetching} = useGetFacilityById(props.facilityId, (error) => {
+        getErrorMessage("Failed to load facility details", error);
+    });
+    const updateFacility = useUpdateFacility(props.facilityId, (errror) => {
+        getErrorMessage("Failed to update new facility", errror)
+    });
     if(isLoading || isFetching || !data) {
         return <Loading />
     }
+
     return <FacilityFormAbstract data={data} back={props.back} onSubmit={(facility) => {
-        return axiosApi.put(`${ART_SERVICE}/facilities/${facility.id!}`, facility)
-            .then(() => {
+        return updateFacility.mutateAsync(facility)
+            .then((facility) => {
                 Bubble.success("Facility updated")
-                props.onSubmit(facility);
-                return true;
+                props.onSubmit(facility.data);
+                return facility.data;
             })
-            .catch(error => {
-                Bubble.error({message: "Failed to update facility. Error is: " + getErrorMessage(error), duration: 999999})
-                return false
+            .catch(() => {
+                return null
             });
     }}/>
 };

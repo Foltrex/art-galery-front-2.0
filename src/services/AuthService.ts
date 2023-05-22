@@ -2,6 +2,7 @@ import {Cookies} from "react-cookie"
 import {TokenService} from "./TokenService";
 import {NavigateFunction} from "react-router-dom";
 import {AuthStore} from "../stores/authStore";
+import {axiosApi} from "../http/axios";
 
 const cookies = new Cookies()
 
@@ -21,6 +22,7 @@ export class AuthService {
 
     static setToken(token: string) {
         const decoded = TokenService.decode(token)
+        axiosApi.defaults.headers.common['Authorization'] = 'Bearer ' + token;
         cookies.set("token", token, {
             path: "/",
             sameSite: "strict",
@@ -46,6 +48,7 @@ export class AuthService {
         cookies.remove("token", {path: "/"})
         localStorage.removeItem("remember_me")
         navigate("/auth/signin")
+        delete(axiosApi.defaults.headers.common['Authorization']);
     }
 
 }

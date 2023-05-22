@@ -6,7 +6,8 @@ import {useUpdateAccountPasswordById} from "../../../api/AccountApi";
 import {TokenService} from "../../../services/TokenService";
 import PasswordTextField from "../../../components/form/PasswordTextField";
 import Bubble from "../../../components/bubble/Bubble";
-import {getErrorMessage} from "../../../util/PrepareDataUtil";
+import {getErrorMessage} from "../../../components/error/ResponseError";
+
 
 interface IChangePasswordDialogProps {
     open: boolean;
@@ -19,7 +20,10 @@ interface IFormValues {
 }
 
 const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
-    const mutationUpdateAccountPassword = useUpdateAccountPasswordById(TokenService.getCurrentAccountId());
+    const mutationUpdateAccountPassword = useUpdateAccountPasswordById(
+        TokenService.getCurrentAccountId(),
+        (error) => getErrorMessage("Failed to change password", error)
+    );
 
     const initialValues: IFormValues = {
         oldPassword: '',
@@ -52,13 +56,9 @@ const ChangePasswordDialog = ({open, onClose}: IChangePasswordDialogProps) => {
     });
 
     const submit = async (values: IFormValues) => {
-        try {
-            await mutationUpdateAccountPassword.mutateAsync(values)
+        return mutationUpdateAccountPassword.mutateAsync(values).then(() => {
             Bubble.success("Password changed successfully!");
-        } catch (error: any) {
-            console.log(getErrorMessage(error))
-            Bubble.error({message: "Failed to change password. Error message is: " + getErrorMessage(error), duration: 999999});
-        }
+        })
     }
 
     return (

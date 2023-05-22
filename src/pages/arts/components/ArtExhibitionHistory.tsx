@@ -1,17 +1,17 @@
 import {Close} from '@mui/icons-material';
 import {
-	Dialog,
-	DialogContent,
-	DialogContentText,
-	DialogTitle,
-	Divider,
-	IconButton,
-	List,
-	ListItem,
-	ListItemAvatar,
-	ListItemText,
-	Stack,
-	Typography
+    Dialog,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    IconButton,
+    List,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Stack,
+    Typography
 } from '@mui/material';
 import * as React from 'react';
 import {useGetArtInfosByArtId} from '../../../api/ArtInfoApi';
@@ -26,7 +26,7 @@ interface IArtExhibitionHistoryProps {
 }
 
 const ArtExhibitionHistory: React.FunctionComponent<IArtExhibitionHistoryProps> = ({ art, open, onClose }) => {
-	const { data: artInfosHistory } = useGetArtInfosByArtId(art.id);
+	const { data: artInfosHistory } = useGetArtInfosByArtId(art.id, () => {});
 
 	const renderArtHistory = () => {
 		return artInfosHistory && artInfosHistory.length > 0

@@ -1,4 +1,5 @@
 import {Address} from "./address";
+import {EntityFile} from "./entityFile";
 
 export interface Facility {
     id: string,
@@ -6,5 +7,6 @@ export interface Facility {
     isActive: boolean,
     address: Address,
     organizationId?:string,
-    organizationName?:string
+    organizationName?:string,
+    images: EntityFile[]
 }

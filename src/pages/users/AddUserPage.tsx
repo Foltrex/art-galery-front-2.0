@@ -1,14 +1,13 @@
-import { AbstractUserPage } from "./components/AbstractUserPage";
+import {AbstractUserPage} from "./components/AbstractUserPage";
 // import {createUser} from "../../api/AccountApi";
-import { useNavigate } from "react-router-dom";
-import { Account } from "../../entities/account";
-import { getErrorMessage } from "../../util/PrepareDataUtil";
-import Bubble from "../../components/bubble/Bubble";
-import { AccountEnum } from "../../entities/enums/AccountEnum";
-import { useRegisterUser } from "../../api/AuthApi";
-import { MetadataEnum } from "../../entities/enums/MetadataEnum";
-import { useRootStore } from "../../stores/provider/RootStoreProvider";
-import { findFacilityId, findOrganizationId } from "../../util/MetadataUtil";
+import {useNavigate} from "react-router-dom";
+import {Account} from "../../entities/account";
+import {AccountEnum} from "../../entities/enums/AccountEnum";
+import {useRegisterUser} from "../../api/AuthApi";
+import {MetadataEnum} from "../../entities/enums/MetadataEnum";
+import {useRootStore} from "../../stores/provider/RootStoreProvider";
+import {findFacilityId, findOrganizationId} from "../../util/MetadataUtil";
+import {getErrorMessage} from "../../components/error/ResponseError";
 
 export const AddUserPage = () => {
     const navigate = useNavigate();
@@ -25,10 +24,13 @@ export const AddUserPage = () => {
         metadata: []
     }
 
+    let organizationId = undefined;
     if (account.accountType === AccountEnum.REPRESENTATIVE) {
+        organizationId = findOrganizationId(account)!
+
         data.metadata.push({
             key: MetadataEnum.ORGANIZATION_ID,
-            value: findOrganizationId(account)!
+            value: organizationId
         });
 
         data.metadata.push({
@@ -37,19 +39,20 @@ export const AddUserPage = () => {
         })
     }
 
-    const metationRegisterUser = useRegisterUser();
+    const mutationRegisterUser = useRegisterUser((error) =>
+        getErrorMessage("Failed to create new account", error));
 
     return <AbstractUserPage
         account={data}
+        organizationId={organizationId}
         back={() => navigate("/users")}
         onSubmit={(account: Account) =>
-            metationRegisterUser.mutateAsync(account)
+            mutationRegisterUser.mutateAsync(account)
                 .then(_ => {
                     navigate("/users");
                     return true
                 })
-                .catch((error: any) => {
-                    Bubble.error({ message: "Failed to create new account. Error message is: " + getErrorMessage(error), duration: 999999 });
+                .catch(() => {
                     return false;
                 })
             //     .then()

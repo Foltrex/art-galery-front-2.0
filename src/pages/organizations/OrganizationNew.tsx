@@ -1,14 +1,16 @@
 import OrganizationForm from "./components/OrganizationForm";
-import {ART_SERVICE, axiosApi} from "../../http/axios";
 import {OrganizationStatusEnum} from "../../entities/enums/organizationStatusEnum";
 import {useNavigate} from "react-router-dom";
 import Bubble from "../../components/bubble/Bubble";
-import {getErrorMessage} from "../../util/PrepareDataUtil";
-import { useCreateOrganization } from "../../api/OrganizationApi";
+
+import {useCreateOrganization} from "../../api/OrganizationApi";
+import {getErrorMessage} from "../../components/error/ResponseError";
 
 const OrganizationNew = () => {
     const navigate = useNavigate()
-    const mutationAddOrganization = useCreateOrganization();
+    const mutationAddOrganization = useCreateOrganization((error) => {
+        getErrorMessage("Failed to create new organization", error);
+    });
 
     return <OrganizationForm
         data={{
@@ -26,8 +28,7 @@ const OrganizationNew = () => {
                     return true;
                 })
                 .catch(error => {
-                    console.log(getErrorMessage(error))
-                    Bubble.error({message: "Failed to create new organization. Error message: " + getErrorMessage(error), duration: 999999})
+                    getErrorMessage("Failed to create new organization", error);
                     return false;
                 });}
         }/>;

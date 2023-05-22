@@ -1,9 +1,12 @@
-import { useGetAllArtStyles } from '../../api/ArtStyleApi';
-import Filter, { FilterElement } from '../ui/filter/Filter';
+import {useGetAllArtStyles} from '../../api/ArtStyleApi';
+import Filter, {FilterElement} from '../ui/filter/Filter';
+import {getErrorMessage} from "../error/ResponseError";
 
 
 const ArtStyleFilter = () => {
-  const { data = [] } = useGetAllArtStyles();
+  const { data = [] } = useGetAllArtStyles((error) => {
+    getErrorMessage("Failed to load for art styles list", error)
+  });
   const content = data.map(item => ({
     label: item.label
   } as FilterElement));

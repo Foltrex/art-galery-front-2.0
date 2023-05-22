@@ -7,6 +7,4 @@ export interface EntityFile {
     isPrimary: boolean;
     type?: EntityFileTypeEnum;
     creationDate: string;
-    mimeType: string;
-    data: string
 }

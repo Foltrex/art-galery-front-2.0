@@ -8,6 +8,8 @@ import {Art as ArtEntity} from '../../../entities/art';
 import ArtExhibitionHistory from './ArtExhibitionHistory';
 import {useNavigate} from "react-router-dom";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import {getErrorMessage} from "../../../components/error/ResponseError";
+
 
 interface IArtInfoProps {
     art: ArtEntity;
@@ -20,7 +22,9 @@ const ArtInfo: React.FunctionComponent<IArtInfoProps> = ({art,canEdit, switchMod
     const navigate = useNavigate();
     const {authStore} = useRootStore();
     const account = authStore.account;
-    const {data: artist} = useGetAccountById(art.artistAccountId)
+    const {data: artist} = useGetAccountById(art.artistAccountId, (e) => {
+        getErrorMessage("Failed to load artist profile information", e);
+    })
 
     const artStyle = useMemo(() => {
         return art.artStyles && art.artStyles

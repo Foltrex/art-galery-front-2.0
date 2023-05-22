@@ -2,19 +2,14 @@ import {Autocomplete, TextField} from "@mui/material";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {useMemo} from "react";
 import {Organization} from "../../entities/organization";
-import {getStatus, isQueryError} from "../../util/PrepareDataUtil";
-import Bubble from "../bubble/Bubble";
+import {getErrorMessage} from "../error/ResponseError";
 
 export const OrganizationsDropdown = ({onChange, error, value, size, label, placeholder}:{size?:"small"|"medium", value?:string|null, error?:any, onChange: (id:string|undefined) => void, label?: JSX.Element | string, placeholder?: string}) => {
 
-    const org = useGetAllOrganizationList();
+    const org = useGetAllOrganizationList((e) => {
+        getErrorMessage("Failed to load organizations list", e)
+    });
     const organizations = org.data;
-    const isError = isQueryError(org);
-    useMemo(() => {
-        if(isError) {
-            Bubble.error("Failed initialize organizations dropdown. Status code: " + getStatus(org))
-        }
-    }, [isError])
 
     const organizationOptions = useMemo(() => {
         if(!organizations) {

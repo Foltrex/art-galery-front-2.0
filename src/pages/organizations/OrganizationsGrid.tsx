@@ -17,6 +17,8 @@ import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import Loading from "../../components/ui/Loading";
 import {TypeFilter} from "../../components/form/TypeFilter";
 import {useGetAllOrganizations} from "../../api/OrganizationApi";
+import {getErrorMessage} from "../../components/error/ResponseError";
+
 
 const Statuses: Array<{ label: string, value: string }> = [
     {label: 'All', value: ''},
@@ -44,7 +46,7 @@ const OrganizationGrid = () => {
         size: rowsPerPage,
         name: searchText,
         status: status,
-    });
+    }, (error) => getErrorMessage("Failed to load organizations list", error));
 
     const handleSearch = (searchText: string) => {
         setSearchText(searchText);

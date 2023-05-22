@@ -16,9 +16,10 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import {ART_SERVICE, axiosApi} from "../../http/axios";
+import {axiosApi} from "../../http/axios";
 import Bubble from "../../components/bubble/Bubble";
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import {getErrorMessage} from "../../components/error/ResponseError";
 
 
 const ShortText = ({text}:{text?:string}) => {
@@ -46,7 +47,7 @@ export const ErrorsRoute = () => {
     const [error, setError] = useState<UiError>();
     const alterStatus = (uiError:UiError) => {
         uiError.status = uiError.status === 'OPEN' ? 'FIXED' : (uiError.status === 'FIXED' ? 'NOT_REPRODUCIBLE' : 'OPEN');
-        axiosApi.put(ART_SERVICE + "/errors/" + uiError.id, uiError)
+        axiosApi.put("errors/" + uiError.id, uiError)
             .then(() => setUpdate(!update))
             .catch(() => {
                 Bubble.error("Failed to update record");
@@ -58,6 +59,8 @@ export const ErrorsRoute = () => {
         status: status,
         sort: 'createdAt,desc',
         update
+    }, (error) => {
+        getErrorMessage("Failed to load errors list", error);
     });
 
     const columns: IColumnType<UiError>[] = [

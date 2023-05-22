@@ -9,7 +9,7 @@ import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {Avatar, IconButton, Stack, styled, Typography} from "@mui/material";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
-import {find, findOrganizationId, isCreatorOrAdmin} from "../../util/MetadataUtil";
+import {find, findOrganizationId} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
 import {Organization} from "../../entities/organization";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
@@ -18,6 +18,8 @@ import {NavigateFunction, useNavigate} from "react-router-dom";
 import {useDeleteAccountById} from "../../api/AccountApi";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {buildImageUrl} from "../../util/PrepareDataUtil";
+import {OrganizationRoleEnum, roleToString} from "../../entities/enums/organizationRoleEnum";
+import {getErrorMessage} from "../error/ResponseError";
 
 const Circle = styled('span')({
     height: 10,
@@ -34,24 +36,35 @@ export interface IUserGridProps {
     organizationId?: string;
     onRowsPerPageChange: (rowsPerPage: number) => void;
     onPageNumberChange: (page: number) => void;
-    applySort: (key:string, direction:string|undefined) => void;
-    editUser?: (userId:string) => void
+    applySort: (key: string, direction: string | undefined) => void;
+    editUser?: (userId: string) => void
 }
 
-export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, editUser, rowsPerPage, onRowsPerPageChange, onPageNumberChange}) => {
+export const UserGrid: React.FC<IUserGridProps> = ({
+                                                       data,
+                                                       applySort,
+                                                       editUser,
+                                                       rowsPerPage,
+                                                       onRowsPerPageChange,
+                                                       onPageNumberChange
+                                                   }) => {
     const [user, setUser] = useState<Account>();
     const {authStore} = useRootStore();
     const navigate = useNavigate();
-    const { data: organizationsList } = useGetAllOrganizationList();
+    const {data: organizationsList} = useGetAllOrganizationList((e) => {
+        getErrorMessage("Failed to load organizations list", e);
+    });
     const organizations = useMemo(() => {
-        return organizationsList?.reduce((prev:Record<string, Organization>, current:Organization) => {
+        return organizationsList?.reduce((prev: Record<string, Organization>, current: Organization) => {
             prev[current.id] = current;
             return prev;
         }, {} as Record<string, Organization>)
     }, [organizationsList])
-    
 
-    const mutationDelete = useDeleteAccountById();
+
+    const mutationDelete = useDeleteAccountById((e) => {
+        getErrorMessage("Failed to delete account information", e);
+    });
     const onDelete = async () => {
         await mutationDelete.mutateAsync(user!.id);
     }
@@ -74,10 +87,10 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, editUser, r
                 columns={columns}
                 page={data}
                 onPageChange={onPageNumberChange}
-                onRowsPerPageChange={onRowsPerPageChange} />
+                onRowsPerPageChange={onRowsPerPageChange}/>
             : <SkeletonTable
                 columns={columns}
-                rowsPerPage={rowsPerPage} />
+                rowsPerPage={rowsPerPage}/>
         }
 
         {/* <RepresentativeForm
@@ -93,10 +106,10 @@ export const UserGrid: React.FC<IUserGridProps> = ({data, applySort, editUser, r
     </>
 }
 
-function AccountImage ({account}:{account:Account}) {
+function AccountImage({account}: { account: Account }) {
     const image = useMemo(() => {
         const image = find(MetadataEnum.ACCOUNT_IMAGE, account);
-        if(!image) {
+        if (!image) {
             return '';
         }
         return buildImageUrl(image);
@@ -111,8 +124,8 @@ function getColumns(
     onDelete: (account: Account) => void,
     organizations?: Record<string, Organization>,
     editUser?: ((userId: string) => void)
-    ):IColumnType<Account>[] {
-    const columns:IColumnType<Account>[] = [
+): IColumnType<Account>[] {
+    const columns: IColumnType<Account>[] = [
         {
             key: 'avatar',
             title: 'Profile image',
@@ -133,11 +146,14 @@ function getColumns(
             title: 'Status',
             render: (a) => {
                 return !!a.blockedSince
-                    ? <Circle sx={{backgroundColor: 'error.main'}} />
-                    : <Circle sx={{backgroundColor: 'success.main'}} />;
+                    ? <Circle sx={{backgroundColor: 'error.main'}}/>
+                    : <Circle sx={{backgroundColor: 'success.main'}}/>;
             }
         },
-        {
+    ];
+
+    if (account.accountType === AccountEnum.SYSTEM) {
+        columns.push({
             key: 'account_type',
             title: 'Account Type',
             render: (a) => {
@@ -153,19 +169,19 @@ function getColumns(
                     }
                 }
             }
-        },
-    ];
+        })
+    }
 
-    if(account.accountType === AccountEnum.SYSTEM) {
+    if (account.accountType === AccountEnum.SYSTEM) {
         columns.push({
             key: 'organization',
             title: 'Organization',
             render: account => {
-                if(!organizations) {
+                if (!organizations) {
                     return '';
                 }
                 const orgId = findOrganizationId(account);
-                if(!orgId) {
+                if (!orgId) {
                     return '';
                 }
                 return organizations[orgId]?.name
@@ -177,7 +193,7 @@ function getColumns(
         {
             key: 'role',
             title: 'Role',
-            render: (account) => find('organization_role', account) ?? 'None'
+            render: (account) => roleToString(find(MetadataEnum.ORGANIZATION_ROLE, account) as OrganizationRoleEnum)
         },
         {
             key: 'actions',
@@ -188,16 +204,18 @@ function getColumns(
                         <IconButton
                             disableRipple
                             aria-label='edit'
-                            onClick={() => {editUser ? editUser(account.id) : navigate("/users/" + account.id)}}
+                            onClick={() => {
+                                editUser ? editUser(account.id) : navigate("/users/" + account.id)
+                            }}
                         >
-                            <ModeOutlinedIcon />
+                            <ModeOutlinedIcon/>
                         </IconButton>
                         <IconButton
                             disableRipple
                             aria-label='delete'
                             onClick={() => onDelete(account)}
                         >
-                            <DeleteOutlinedIcon />
+                            <DeleteOutlinedIcon/>
                         </IconButton>
                     </>
                 );

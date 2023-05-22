@@ -2,13 +2,17 @@ import {Autocomplete, TextField} from "@mui/material";
 import {useMemo} from "react";
 import {useGetAllFacilities} from "../../api/FacilityApi";
 import {Facility} from "../../entities/facility";
+import {getErrorMessage} from "../error/ResponseError";
 
-export const FacilitiesDropdown = ({onChange, error, value}:{value?:string, error?:any, onChange: (id:string|undefined) => void}) => {
 
-    const { data: organizations } = useGetAllFacilities(0, 9999, 'name,asc');
+export const FacilitiesDropdown = ({onChange, error, value, organizationId}:{organizationId?:string, value?:string, error?:any, onChange: (id:string|undefined) => void}) => {
+
+    const { data: facilities } = useGetAllFacilities({page: 0, size: 9999,  sort: 'name,asc'}, (error) => {
+        getErrorMessage("Failed to load data for facilities dropdown. Error message is: ", error)
+    });
 
     const organizationOptions = useMemo(() => {
-        if(!organizations) {
+        if(!facilities) {
             return [];
         }
         function buildLabel(o:Facility) {
@@ -19,15 +23,18 @@ export const FacilitiesDropdown = ({onChange, error, value}:{value?:string, erro
             }
         }
         const map:Record<string, number> = {};
-        organizations.content.forEach(org => {
+        const data = organizationId
+            ? facilities.content.filter(f => f.organizationId === organizationId)
+            : facilities.content;
+        data.forEach(org => {
             if(map[org.name] === undefined) {
                 map[org.name] = 1
             } else {
                 map[org.name]++;
             }
         })
-        return organizations.content.map(o => ({label: buildLabel(o), id: o.id}));
-    }, [organizations]);
+        return data.map(o => ({label: buildLabel(o), id: o.id}));
+    }, [facilities, organizationId]);
 
     const optValue = useMemo(() => {
         if(!value || !organizationOptions) {

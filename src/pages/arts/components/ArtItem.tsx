@@ -7,13 +7,14 @@ import {useNavigate} from "react-router-dom";
 import {EntityFileTypeEnum} from "../../../entities/enums/EntityFileTypeEnum";
 import {buildImageUrl} from "../../../util/PrepareDataUtil";
 import {useMemo} from "react";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 interface IArtItemProps {
     art: Art;
     showAuthor?: boolean;
     imageType: EntityFileTypeEnum;
 }
-const style = {marginBottom: '20px'};
+const style = {marginBottom: '20px', minHeight: '15px', cursor: 'pointer',};
 const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true }) => {
     const navigate = useNavigate();
 
@@ -44,10 +45,12 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
         facilityName = 'Available';
     }
 
-    const {data: account} = useGetAccountById(art.artistAccountId);
+    const {data: account} = useGetAccountById(art.artistAccountId, (e) => {
+        getErrorMessage("Failed to load artist profile information", e);
+    });
 
     return (
-            <ImageListItem style={style}>
+            <ImageListItem style={style} onClick={() => navigate('/gallery/' + art.id)}>
                 <ImageListItemBar
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'
@@ -58,7 +61,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
                         showAuthor &&
                         <Tooltip title={account?.firstName + ' ' + account?.lastName}>
                             <IconButton onClick={() => {
-                                // navigate(`/artists/${art.artist.id}`)
+                                navigate(`/users/${art.artistAccountId}`)
                             }}>
                                 <LetterAvatar
                                     account={account}
@@ -73,11 +76,11 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
                         alt={art.name}
                         loading='lazy'
                         style={{
-                            cursor: 'pointer',
+
                             objectFit: image ? undefined : 'scale-down',
                             width: '100%'
                         }}
-                        onClick={() => navigate('/gallery/' + art.id)}
+
                     />
 
                 <ImageListItemBar

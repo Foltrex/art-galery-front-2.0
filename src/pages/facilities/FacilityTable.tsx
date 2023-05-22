@@ -6,16 +6,18 @@ import SkeletonTable from '../../components/table/SkeletonTable';
 import Table, {IColumnType} from '../../components/table/Table';
 import {Facility} from '../../entities/facility';
 import {createEmptyPage} from '../../hooks/react-query';
+import MapsHomeWorkOutlinedIcon from '@mui/icons-material/MapsHomeWorkOutlined';
 import {
-    Box,
-    Button,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
-    IconButton,
-    Radio,
-    RadioGroup,
-    Typography
+	Avatar,
+	Box,
+	Button,
+	Checkbox,
+	FormControl,
+	FormControlLabel,
+	IconButton,
+	Radio,
+	RadioGroup,
+	Typography
 } from '@mui/material';
 import {TokenService} from '../../services/TokenService';
 import {AccountEnum} from '../../entities/enums/AccountEnum';
@@ -28,6 +30,9 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
 import {OrganizationsDropdown} from "../../components/form/OrganizationsDropdown";
 import {isCreatorOrAdmin} from "../../util/MetadataUtil";
+import {getErrorMessage} from "../../components/error/ResponseError";
+import {buildImageUrl} from "../../util/PrepareDataUtil";
+
 
 interface IFacilityTableProps {
 	createNew?:() => void
@@ -38,21 +43,40 @@ interface IFacilityTableProps {
 function getColumns(handleFacilityCheckboxClick: (s: string) => void, handleDelete: (f: Facility) => void, navigate: (s: string) => void, account: Account, canEdit:boolean, edit:(s:string) => void): IColumnType<Facility>[] {
 
 
-	const result:IColumnType<Facility>[] = [
-		{
+	const result:IColumnType<Facility>[] = [];
+	if(TokenService.getCurrentAccountType() === AccountEnum.ARTIST) {
+		result.push({
 			key: 'selected',
 			title: '',
 			minWidth: 10,
-			render: (facility) => TokenService.getCurrentAccountType() === AccountEnum.ARTIST
-				?  <Checkbox onClick={() => handleFacilityCheckboxClick(facility.id)} />
-				: <></>
-		},
-		{
-			key: 'name',
-			title: 'Name',
-			minWidth: 150
-		},
-	];
+			render: (facility) => <Checkbox onClick={() => handleFacilityCheckboxClick(facility.id)} />
+		})
+	}
+	result.push({
+		key: 'image',
+		title: 'Image',
+		minWidth: 150,
+		render: (f) => {
+			if(!f.images) {
+				return null;
+			}
+			let candidate = f.images.length ? f.images[0] : null;
+			for(let i = 0; i < f.images.length; i++) {
+				if(f.images[i].isPrimary) {
+					candidate = f.images[i]
+					break;
+				}
+			}
+			return <Avatar src={candidate ? buildImageUrl(candidate.id!) : undefined} alt={"img"}>
+				<MapsHomeWorkOutlinedIcon />
+			</Avatar>;
+		}
+	});
+	result.push({
+		key: 'name',
+		title: 'Name',
+		minWidth: 150
+	});
 	if(account && (account.accountType === AccountEnum.SYSTEM || account.accountType === AccountEnum.ARTIST)) {
 		result.push({
 			key: 'organization',
@@ -132,17 +156,22 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 	const [facilityStatus, setFacilityStatus] = useState(statuses[0]);
 
 	const facilities = useGetAllFacilities(
-		pageNumber,
-		rowsPerPage,
-		'name,asc',
-		cityId,
-		facilityName,
-		facilityStatus.value,
-		organizationId,
-
+		{
+			page: pageNumber,
+			size: rowsPerPage,
+			sort: 'name,asc',
+			cityId: cityId,
+			facilityName: facilityName,
+			isActive: facilityStatus.value,
+			organizationId: organizationId,
+		}, (error) => {
+			getErrorMessage("Failed to load list of facilities", error);
+		}
 	);
 	const {data, isFetching, isSuccess } = facilities;
-	const mutationDelete = useDeleteFacility();
+	const mutationDelete = useDeleteFacility((error) => {
+		getErrorMessage("Failed to delete facility", error);
+	});
 
 	if(!account) {
 		return null;
@@ -169,12 +198,7 @@ const FacilityTable: React.FC<IFacilityTableProps> = (props) => {
 
 
 	const onDelete = async () => {
-		try {
-			await mutationDelete.mutateAsync(facility!.id);
-		} catch (e) {
-			// add push notification
-			console.log(e);
-		}
+		return mutationDelete.mutateAsync(facility!.id);
 	}
 
 

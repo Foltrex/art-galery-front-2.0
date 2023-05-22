@@ -1,23 +1,23 @@
-import { Proposal } from "../entities/proposal";
-import { useCount, useDelete, useLoadMore, usePost } from "../hooks/react-query"
-import { ART_SERVICE } from "../http/axios"
+import {Proposal} from "../entities/proposal";
+import {useCount, useDelete, useLoadMore, usePost} from "../hooks/react-query"
+import {AxiosError} from "axios";
 
 const PROPOSAL_PAGE_SIZE = 5;
 
-export const useSaveProposal = () => {
-    return usePost<Proposal>(`${ART_SERVICE}/proposals`, undefined, { retry: false });
+export const useSaveProposal = (showError:(error:AxiosError) => void) => {
+    return usePost<Proposal>('proposals', {}, ['GET:proposals'], showError, { retry: false });
 }
 
-export const useDeleteProposal = () => {
-    return useDelete(`${ART_SERVICE}/proposals`)
+export const useDeleteProposal = (showError:(error:AxiosError) => void) => {
+    return useDelete('proposals', {}, ['GET:proposals'], showError, { retry: false })
 }
 
 export const useCountProposalsByAccountId = (accountId: string) => {
-    return useCount(`${ART_SERVICE}/proposals/accounts/${accountId}`);
+    return useCount('proposals/accounts/' + accountId);
 }
 
-export const useGetProposalPageByAccountId = (accountId: string) => {
-    return useLoadMore<Proposal>(`${ART_SERVICE}/proposals/accounts/${accountId}`, {
+export const useGetProposalPageByAccountId = (accountId: string, showError:(error:AxiosError) => void) => {
+    return useLoadMore<Proposal>('proposals/accounts/' + accountId, 'GET:proposals', {
         size: PROPOSAL_PAGE_SIZE
-    })
+    }, showError)
 }

@@ -3,6 +3,8 @@ import ExpandMore from '@mui/icons-material/ExpandMore';
 import * as React from 'react';
 import {createError} from "../../api/ErrorsApi";
 import {UiError} from "../../entities/uiError";
+import {getErrorMessage} from "./ResponseError";
+
 
 export interface IErrorBoundaryProps extends React.PropsWithChildren {
 }
@@ -29,8 +31,6 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-        console.error("Uncaught error: ", error, errorInfo);
-
         this.setState({componentStack: errorInfo.componentStack, errorMessage: error.message, stackTrace: error.stack, errorName: error.name}, () => {
             createError({
                 status: 'OPEN',
@@ -39,7 +39,10 @@ export default class ErrorBoundary extends React.Component<IErrorBoundaryProps, 
                 errorMessage:error.message,
                 errorTrace: error.stack,
                 componentStack:errorInfo.componentStack
-            } as UiError)
+            } as UiError).catch((e) => {
+                getErrorMessage("Sorry, we are fucked :(. One of most basic API not work, most probably service currently unavailable or in maintenance." +
+                    " Please try again after half an hour", error);
+            })
         });
     }
 

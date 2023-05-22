@@ -3,15 +3,14 @@ import ProfileImage from "./ProfileImage";
 import ProfileInfo from "./ProfileInfo";
 import React, {useMemo, useState} from "react";
 import {Account} from "../../../entities/account";
-import {Metadata} from "../../../entities/metadata";
 import {AccountEnum} from "../../../entities/enums/AccountEnum";
-import {find, findOrganizationId} from "../../../util/MetadataUtil";
+import {find, findMetadata, findOrganizationId} from "../../../util/MetadataUtil";
 import {MetadataEnum} from "../../../entities/enums/MetadataEnum";
 import {OrganizationRoleEnum} from "../../../entities/enums/organizationRoleEnum";
 import {useRootStore} from "../../../stores/provider/RootStoreProvider";
 
 export const AbstractUserPage = ({account, onSubmit, back, organizationId}:{organizationId?:string, account:Account, onSubmit:(a:Account) => Promise<boolean>, back?:() => void}) => {
-    const [image, setImage] = useState<Metadata|null>();
+    const [image, setImage] = useState(findMetadata(MetadataEnum.ACCOUNT_IMAGE, account));
 
     const {authStore} = useRootStore();
     const isBoss = useMemo(() => {
@@ -43,7 +42,7 @@ export const AbstractUserPage = ({account, onSubmit, back, organizationId}:{orga
 
     return <Grid>
         <Grid sx={{mt: 6}}>
-            <ProfileImage canEdit={canEdit} account={account} imageUpdated={setImage}/>
+            <ProfileImage canEdit={canEdit} accountImage={image || undefined} imageUpdated={setImage}/>
         </Grid>
         <Grid sx={{textAlign: 'center', mt: 4, mx: 'auto'}}>
             <ProfileInfo canEdit={canEdit} organizationId={organizationId} account={account} onSubmit={onSubmit} back={back} uploadedImage={image}/>

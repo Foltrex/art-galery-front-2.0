@@ -1,11 +1,11 @@
 import {Autocomplete, TextField} from "@mui/material";
 import {useMemo} from "react";
-import {OrganizationRoleEnum} from "../../entities/enums/organizationRoleEnum";
+import {OrganizationRoleEnum, roleToString} from "../../entities/enums/organizationRoleEnum";
 
 export const options = [
-    {id: OrganizationRoleEnum.CREATOR, label: "Owner"},
-    {id: OrganizationRoleEnum.MODERATOR, label: "Organization Admin"},
-    {id: OrganizationRoleEnum.MEMBER, label: "Facility Admin"},
+    {id: OrganizationRoleEnum.CREATOR, label: roleToString(OrganizationRoleEnum.CREATOR)},
+    {id: OrganizationRoleEnum.MODERATOR, label: roleToString(OrganizationRoleEnum.MODERATOR)},
+    {id: OrganizationRoleEnum.MEMBER, label: roleToString(OrganizationRoleEnum.MEMBER)},
 ]
 
 export const OrganizationRoleDropdown = ({onChange, error, value}:{value?:string, error?:any, onChange: (id:string|undefined) => void}) => {

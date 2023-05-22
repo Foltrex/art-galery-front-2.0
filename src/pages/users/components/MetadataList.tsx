@@ -15,44 +15,59 @@ import CityDropdown from "../../../components/cities/CityDropdown";
 import {OrganizationsDropdown} from "../../../components/form/OrganizationsDropdown";
 import {FacilitiesDropdown} from "../../../components/form/FacilitiesDropdown";
 import {OrganizationRoleDropdown} from "../../../components/form/OrganizationRoleDropdown";
-import {Metadata} from "../../../entities/metadata";
+
+import {useRootStore} from "../../../stores/provider/RootStoreProvider";
+import {FormikProps} from "formik";
+import {getErrorMessage} from "../../../components/error/ResponseError";
 
 type PartialRecord<K extends keyof any, T> = {
     [P in K]?: T;
 };
 
-function prepareRenders(account:Account, metadata:Record<string, string>, onChange:(k:string, v?:string) => void, org?:Organization, facility?:Facility, city?:City):PartialRecord<MetadataEnum, MetadataRender>  {
+function findError(props: MetadataListProps, key: MetadataEnum) {
+    const keys = prepareAccountProperties(props.formik.values);
+    const index = keys.indexOf(key);
+    const meta = props.formik.errors?.metadata;
+    const obj = meta ? meta[index] : undefined;
+    //@ts-ignore
+    return obj ? obj.value : undefined;
+}
+
+function prepareRenders(props:MetadataListProps, metadata:Record<string, string>, org?:Organization, facility?:Facility, city?:City):PartialRecord<MetadataEnum, MetadataRender>  {
     return {
         [MetadataEnum.CITY_ID]: {
             label: () => "City",
             view: () => <span>{city?.name}</span>,
-            edit: (v) => <CityDropdown value={v} onChange={s => onChange(MetadataEnum.CITY_ID, s)} />
+            edit: (v) => <CityDropdown value={v} onChange={s => props.onChange(MetadataEnum.CITY_ID, s)} />
         },
         [MetadataEnum.ORGANIZATION_ID]: {
             label: () => "Organization",
             view: () => <span>{org?.name}</span>,
-            edit: (v) => <OrganizationsDropdown value={v} onChange={s => onChange(MetadataEnum.ORGANIZATION_ID, s)} />
+            edit: (v) => <OrganizationsDropdown value={v} error={findError(props, MetadataEnum.ORGANIZATION_ID)} onChange={s => props.onChange(MetadataEnum.ORGANIZATION_ID, s)} />
         },
         [MetadataEnum.FACILITY_ID]: {
             label: () => "Facility",
             view: () => <span>{facility?.name}</span>,
-            edit: (v) => <FacilitiesDropdown value={v} onChange={s => onChange(MetadataEnum.FACILITY_ID, s)} />
+            edit: (v) => <FacilitiesDropdown value={v} error={findError(props, MetadataEnum.FACILITY_ID)} organizationId={props.organizationId} onChange={s => props.onChange(MetadataEnum.FACILITY_ID, s)} />
         },
         [MetadataEnum.ORGANIZATION_ROLE]: {
             label: () => "Role",
-            view: () => <AccountRole account={account}/>,
-            edit: (v) => <OrganizationRoleDropdown value={v} onChange={s => onChange(MetadataEnum.ORGANIZATION_ROLE, s)}/>
+            view: () => <AccountRole account={props.formik.values}/>,
+            edit: (v) => <OrganizationRoleDropdown value={v} onChange={s => props.onChange(MetadataEnum.ORGANIZATION_ROLE, s)}/>
         },
         [MetadataEnum.DESCRIPTION]: {
             label: () => <span>About</span>,
             view: () => <div>{metadata[MetadataEnum.DESCRIPTION]}</div>,
-            edit: (v) => <TextField fullWidth multiline minRows={5} type={"textarea"} value={v} onChange={e => onChange(MetadataEnum.DESCRIPTION, e.target.value)}/>
+            edit: (v) => <TextField fullWidth multiline minRows={5} type={"textarea"} value={v} onChange={e => props.onChange(MetadataEnum.DESCRIPTION, e.target.value)}/>
         },
     }
 }
 
 interface MetadataListProps {
-    organizationId?:string, account:Account, metadata:Metadata[], canEdit:boolean, onChange:(k:string,v?:string) => void
+    formik: FormikProps<Account>
+    organizationId?:string,
+    canEdit:boolean,
+    onChange:(k:string,v?:string) => void
 }
 interface MetadataRender {
     label: () => (JSX.Element | string);
@@ -61,17 +76,26 @@ interface MetadataRender {
 }
 
 const MetadataList = (props: MetadataListProps) => {
-    const metadata = useMemo(() => props.metadata.reduce((map, element) => {
+    const currentUser = useRootStore().authStore.account;
+    const account = props.formik.values
+    const metadata = useMemo(() => account.metadata.reduce((map, element) => {
         map[element.key] = element.value;
         return map
-    }, {} as Record<string, string>), [props.metadata]);
+    }, {} as Record<string, string>), [account.metadata]);
 
-    const properties:MetadataEnum[] = useMemo(() => prepareAccountProperties(props.account), [props.account]);
-    const {data: org} = useGetOrganizationById(metadata[MetadataEnum.ORGANIZATION_ID]);
-    const {data: facility} = useGetFacilityById(metadata[MetadataEnum.FACILITY_ID]);
-    const {data: city} = useGetCityById(metadata[MetadataEnum.CITY_ID]);
+    const properties:MetadataEnum[] = useMemo(() => prepareAccountProperties(account), [account]);
+    const {data: org} = useGetOrganizationById(
+        metadata[MetadataEnum.ORGANIZATION_ID],
+        (e) => getErrorMessage("Failed to load organization data", e)
+    );
+    const {data: facility} = useGetFacilityById(metadata[MetadataEnum.FACILITY_ID], (e) => {
+        getErrorMessage("Failed to load facility information", e)
+    });
+    const {data: city} = useGetCityById(metadata[MetadataEnum.CITY_ID], (e) => {
+        getErrorMessage("Failed to load city information", e)
+    });
 
-    const renders = useMemo(() => prepareRenders(props.account, metadata, props.onChange, org, facility, city), [props.account, metadata, props.onChange, org, facility, city]);
+    const renders = useMemo(() => prepareRenders(props, metadata, org, facility, city), [props, metadata, props, org, facility, city]);
 
     return (
         <>
@@ -80,7 +104,7 @@ const MetadataList = (props: MetadataListProps) => {
                 if(!render) {
                     return null;
                 }
-                let content = defineContent(props, render, key, metadata[key]);
+                let content = defineContent(currentUser, props, render, key, metadata[key]);
 
                 return <tr key={key}>
                     <td className={"label"}>{render.label()}</td>
@@ -91,13 +115,13 @@ const MetadataList = (props: MetadataListProps) => {
     );
 };
 
-function defineContent(props: MetadataListProps, render: MetadataRender, key: MetadataEnum, value:string) {
+function defineContent(currentUser: Account, props: MetadataListProps, render: MetadataRender, key: MetadataEnum, value:string) {
     switch (key) {
         case MetadataEnum.ORGANIZATION_ID:
-            if (props.organizationId) {
-                return render.view(props.organizationId);
-            } else {
+            if (currentUser.accountType === AccountEnum.SYSTEM) {
                 return render.edit(value)
+            } else {
+                return render.view(value);
             }
         default:
             return props.canEdit ? render.edit(value) : render.view(value)

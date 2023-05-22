@@ -76,11 +76,9 @@ export default function GenericAutocomplete<T, E>({renderOption, reactAt, queryR
                 if(e === 'reset') {
                     return;
                 }
-                console.log(newInputValue);
                 setState({value: null, text: newInputValue, lastUpdate: new Date().getTime(), triggerUpdate: true, optionSelected: false });
             }}
             renderInput={(params) => {
-                console.log(params, state.text);
                 return (
                 <TextField {...params} inputProps={{...params.inputProps, value: state.text}} label={label} fullWidth size={"small"} />
             )}}

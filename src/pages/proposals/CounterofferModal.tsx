@@ -1,12 +1,24 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, InputAdornment, TextField } from '@mui/material';
-import { FormikHelpers, useFormik } from 'formik';
-import { title } from 'process';
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Divider,
+    InputAdornment,
+    TextField
+} from '@mui/material';
+import {FormikHelpers, useFormik} from 'formik';
+import {title} from 'process';
 import React from 'react';
 import * as yup from 'yup';
-import { useGetAllCurrencies } from '../../api/CurrencyApi';
-import { useSaveProposal } from '../../api/ProposalApi';
-import { Currency } from '../../entities/currency';
-import { Proposal } from '../../entities/proposal';
+import {useGetAllCurrencies} from '../../api/CurrencyApi';
+import {useSaveProposal} from '../../api/ProposalApi';
+import {Currency} from '../../entities/currency';
+import {Proposal} from '../../entities/proposal';
+import {getErrorMessage} from "../../components/error/ResponseError";
+
 
 interface FormValues {
 	money: string;
@@ -20,7 +32,9 @@ interface ICounterofferModalProps {
 }
 
 const CounterofferModal: React.FunctionComponent<ICounterofferModalProps> = ({open, onClose, proposal}) => {
-	const { data: currencies } = useGetAllCurrencies();
+	const { data: currencies } = useGetAllCurrencies((e) => {
+        getErrorMessage("Failed to load currencies", e)
+    });
 	const [currentCurrency, setCurrentCurrency] = React.useState<Currency>();
 
     React.useEffect(() => {
@@ -45,7 +59,7 @@ const CounterofferModal: React.FunctionComponent<ICounterofferModalProps> = ({op
 	})
 	
 
-	const mutationSaveProposal = useSaveProposal();
+	const mutationSaveProposal = useSaveProposal(() => {});
 
     console.log(proposal)
     const onSubmit = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
