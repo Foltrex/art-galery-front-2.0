@@ -7,7 +7,18 @@ import DeleteModal from "../modal/DeleteModal";
 
 import ModeOutlinedIcon from '@mui/icons-material/ModeOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import {Avatar, IconButton, Stack, styled, Typography} from "@mui/material";
+import {
+    Avatar,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    IconButton,
+    Stack,
+    styled,
+    Typography
+} from "@mui/material";
 import {AccountEnum} from "../../entities/enums/AccountEnum";
 import {find, findOrganizationId} from "../../util/MetadataUtil";
 import {IPage} from "../../hooks/react-query";
@@ -15,11 +26,13 @@ import {Organization} from "../../entities/organization";
 import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {useGetAllOrganizationList} from "../../api/OrganizationApi";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import {useDeleteAccountById} from "../../api/AccountApi";
+import {impersonateAction, useDeleteAccountById} from "../../api/AccountApi";
 import {MetadataEnum} from "../../entities/enums/MetadataEnum";
 import {buildImageUrl} from "../../util/PrepareDataUtil";
 import {OrganizationRoleEnum, roleToString} from "../../entities/enums/organizationRoleEnum";
 import {getErrorMessage} from "../error/ResponseError";
+import LoginIcon from '@mui/icons-material/Login';
+import {AuthService} from "../../services/AuthService";
 
 const Circle = styled('span')({
     height: 10,
@@ -49,6 +62,7 @@ export const UserGrid: React.FC<IUserGridProps> = ({
                                                        onPageNumberChange
                                                    }) => {
     const [user, setUser] = useState<Account>();
+    const [impersonate, setImpersonate] = useState<Account>();
     const {authStore} = useRootStore();
     const navigate = useNavigate();
     const {data: organizationsList} = useGetAllOrganizationList((e) => {
@@ -60,7 +74,6 @@ export const UserGrid: React.FC<IUserGridProps> = ({
             return prev;
         }, {} as Record<string, Organization>)
     }, [organizationsList])
-
 
     const mutationDelete = useDeleteAccountById((e) => {
         getErrorMessage("Failed to delete account information", e);
@@ -78,8 +91,8 @@ export const UserGrid: React.FC<IUserGridProps> = ({
 
 
     const columns = useMemo(
-        () => getColumns(applySort, authStore.account, navigate, handleDelete, organizations, editUser),
-        [applySort, authStore.account, navigate, handleDelete, organizations, editUser]);
+        () => getColumns(applySort, authStore.account, navigate, handleDelete, setImpersonate, organizations, editUser),
+        [applySort, authStore.account, navigate, handleDelete, setImpersonate, organizations, editUser]);
 
     return <>
         {data
@@ -92,11 +105,30 @@ export const UserGrid: React.FC<IUserGridProps> = ({
                 columns={columns}
                 rowsPerPage={rowsPerPage}/>
         }
-
-        {/* <RepresentativeForm
-            open={openEditForm}
-            onClose={() => setOpenEditForm(false)}
-            representative={representative} /> */}
+        {impersonate && <Dialog
+            open={true}
+            onClose={() => setImpersonate(undefined)}>
+            <DialogTitle>Impersonate</DialogTitle>
+            <DialogContent>You are about to impersonate <strong>{impersonate.firstName} {impersonate.lastName}</strong>.
+                &nbsp;Current session will be replaced with the new one, and you will act as selected person.
+                &nbsp;Please confirm your intentions.</DialogContent>
+            <DialogActions>
+                <Button variant={"outlined"} color={"error"} onClick={() => setImpersonate(undefined)}>Cancel</Button>
+                <Button variant={"outlined"} color={"success"} onClick={() =>
+                    impersonateAction({username:impersonate?.email}, (e) => {
+                        return getErrorMessage("Failed to impersonate", e)
+                    })
+                    .then((e) => {
+                        if(!e) {
+                            return;
+                        }
+                        AuthService.setToken(e.data.token);
+                        console.log(e);
+                        document.location.reload()
+                    })
+                }>Confirm</Button>
+            </DialogActions>
+        </Dialog>}
         <DeleteModal
             open={openDeleteModal}
             onClose={() => setOpenDeleteModal(false)}
@@ -122,6 +154,7 @@ function getColumns(
     account: Account,
     navigate: NavigateFunction,
     onDelete: (account: Account) => void,
+    setImpersonate: (account: Account) => void,
     organizations?: Record<string, Organization>,
     editUser?: ((userId: string) => void)
 ): IColumnType<Account>[] {
@@ -198,22 +231,28 @@ function getColumns(
         {
             key: 'actions',
             title: '',
-            render: (account) => {
+            render: (acc) => {
                 return (
                     <>
+                        {account.accountType === AccountEnum.SYSTEM && acc.accountType !== AccountEnum.SYSTEM && <IconButton
+                            aria-label={'Impersonate'}
+                            onClick={() => {
+                                setImpersonate(acc);
+                            }}
+                        >
+                            <LoginIcon/>
+                        </IconButton>}
                         <IconButton
-                            disableRipple
                             aria-label='edit'
                             onClick={() => {
-                                editUser ? editUser(account.id) : navigate("/users/" + account.id)
+                                editUser ? editUser(acc.id) : navigate("/users/" + acc.id)
                             }}
                         >
                             <ModeOutlinedIcon/>
                         </IconButton>
                         <IconButton
-                            disableRipple
                             aria-label='delete'
-                            onClick={() => onDelete(account)}
+                            onClick={() => onDelete(acc)}
                         >
                             <DeleteOutlinedIcon/>
                         </IconButton>

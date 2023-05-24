@@ -11,6 +11,7 @@ import {AuthService} from "../../../../services/AuthService";
 import RegisterFormBottom from './RegisterFormBottom';
 import {Help} from "@mui/icons-material";
 import {getErrorMessage} from "../../../../components/error/ResponseError";
+import {useQueryClient} from "react-query";
 
 interface IRegisterFormValues {
     email: string,
@@ -32,6 +33,8 @@ const RegisterForm = () => {
         getErrorMessage("Failed to register new user", error);
     });
     const [accountType, setAccountType] = useState<string>("");
+
+    const queryClient = useQueryClient();
 
     const initialValues: IRegisterFormValues = {
         email: '',
@@ -67,6 +70,7 @@ const RegisterForm = () => {
         onSubmit: async (values, {setSubmitting}) => {
             setSubmitting(true)
             await submit(values)
+            await queryClient.invalidateQueries();
             setSubmitting(false)
         }
     })

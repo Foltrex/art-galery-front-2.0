@@ -2,6 +2,8 @@ import {IPage, QueryKeyT, useDelete, useFetch, usePatch, useUpdate} from "../hoo
 import {Account} from "../entities/account";
 import {AxiosError} from "axios";
 import {UseQueryOptions} from "react-query";
+import {axiosApi} from "../http/axios";
+import {TAuthToken} from "../entities/types/TAuthToken";
 
 export const useGetAll = (
     filter: {
@@ -37,4 +39,7 @@ export const useDeleteAccountById = (showError: (e: AxiosError) => void) => {
 
 export const useUpdateUser = (accountId:string, showError: (error:AxiosError) => void) => {
     return useUpdate<Account>(`accounts/${accountId}`, {}, ["GET:accounts", 'GET:accounts/id'], showError);
+}
+export const impersonateAction = (params:{username:string}, showError: (error:AxiosError) => void) => {
+    return axiosApi.get<{username:string}, {data: TAuthToken}>(`auth/impersonate?username=${encodeURIComponent(params.username)}`, {}).catch(showError);
 }

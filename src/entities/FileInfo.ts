@@ -4,6 +4,7 @@ export interface FileInfo {
     mimeType:string;
     contentLength?:number;
     cacheControl?:number;
+    originalName?:string;
     directory:string;
     createdAt:Date;
 

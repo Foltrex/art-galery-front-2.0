@@ -16,7 +16,7 @@ export function getErrorMessage(message: string, error: any) {
 export function ResponseError (props:{children: any, e: any }) {
 
 
-        const e = props.e;
+        const e = props.e || {};
         const data = e.response?.data || {};
         const error = data.error;
         const status = data.status;
@@ -27,11 +27,11 @@ export function ResponseError (props:{children: any, e: any }) {
             <Typography>
                 {props.children}
             </Typography>
-            <Typography>Status:&nbsp;{[status, error].filter(v => v).join(", ")}</Typography>
-            {!!message && <Typography>
+            {props.e !== null && <Typography>Status:&nbsp;{[status, error].filter(v => v).join(", ")}</Typography>}
+            {props.e !== null && !!message && <Typography>
                 {message}
             </Typography>}
-            {!!errors && <Typography>
+            {props.e !== null && !!errors && <Typography>
                 {errors}
             </Typography>}
         </Box>

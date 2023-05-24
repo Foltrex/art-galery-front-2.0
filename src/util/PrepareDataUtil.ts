@@ -54,6 +54,7 @@ export function uploadTempFile(e: React.ChangeEvent<HTMLInputElement>, saveFile:
             return saveFile.mutateAsync({
                 id: '',
                 directory: '',
+                originalName: file.name,
                 createdAt: new Date(),
                 mimeType: file.type,
                 data: image

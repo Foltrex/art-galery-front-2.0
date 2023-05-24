@@ -15,6 +15,7 @@ import {useRootStore} from "../../stores/provider/RootStoreProvider";
 import {Account} from "../../entities/account";
 import {find, isCreatorOrAdmin} from "../../util/MetadataUtil";
 import {observer} from "mobx-react";
+import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 
 const drawerWidth = 240;
 
@@ -69,6 +70,11 @@ function prepareSidebar(account:Account) {
                 icon: <AccountCircleOutlined/>,
                 link: '/'
             })
+            result.push({
+                text: 'Support',
+                icon: <SupportAgentOutlinedIcon/>,
+                link: '/support'
+            })
             return result;
         }
         case AccountEnum.ARTIST:
@@ -88,9 +94,19 @@ function prepareSidebar(account:Account) {
                     icon: <AccountCircleOutlined/>,
                     link: '/'
                 },
+                {
+                    text: 'Support',
+                    icon: <SupportAgentOutlinedIcon/>,
+                    link: '/support'
+                }
             ]
         case AccountEnum.SYSTEM: {
             return [
+                {
+                    text: 'Support',
+                    icon: <SupportAgentOutlinedIcon/>,
+                    link: '/support'
+                },
                 {
                     text: 'Organizations',
                     icon: <HomeOutlined/>,

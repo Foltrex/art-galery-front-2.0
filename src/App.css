@@ -76,3 +76,6 @@
 .switch-control {
   padding: 8px 0 5px;
 }
+.inline-alert {
+  padding: 5px 7px 3px !important;
+}

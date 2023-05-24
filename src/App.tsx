@@ -22,6 +22,9 @@ import {ErrorsRoute} from './pages/error/ErrorsRoute';
 import OrganizationsRoute from './pages/organizations/OrganizationsRoute';
 import {EditArt} from "./pages/arts/EditArt";
 import {CreateArt} from "./pages/arts/CreateArt";
+import {ThreadList} from "./pages/support/ThreadList";
+import {NewThread} from "./pages/support/NewThread";
+import {EditThread} from "./pages/support/EditThread";
 
 function App() {
     return (
@@ -70,6 +73,11 @@ function App() {
                         <Route index element={<Gallery />} />
                         <Route path=':id' element={<EditArt />} />
                         <Route path='new' element={<CreateArt />} />
+                    </Route>
+                    <Route path='/support'>
+                        <Route index element={<ThreadList />} />
+                        <Route path=':id' element={<EditThread />} />
+                        <Route path='new' element={<NewThread />} />
                     </Route>
                 </Route>
                 <Route path={"*"} element={<Error404/>}/>

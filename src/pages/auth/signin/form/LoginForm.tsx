@@ -8,6 +8,7 @@ import {AuthService} from '../../../../services/AuthService';
 import {useLogin} from '../../../../api/AuthApi';
 import PasswordTextField from "../../../../components/form/PasswordTextField";
 import {getErrorMessage} from "../../../../components/error/ResponseError";
+import {useQueryClient} from "react-query";
 
 interface ILoginFormValues {
     email: string,
@@ -17,10 +18,15 @@ interface ILoginFormValues {
 const LoginForm = () => {
     const navigate = useNavigate();
     const mutationLogin = useLogin((error) => {
-        getErrorMessage("Failed to perform login action. Most probably service unavailable or in maintenance." +
-            " Please try again after couple minutes", error);
+        if(error.response?.status === 401 || error.response?.status === 404) {
+            getErrorMessage("Invalid credentials", null);
+        } else {
+            getErrorMessage("Failed to perform login action. Most probably service unavailable or in maintenance." +
+                " Please try again after couple minutes", error);
+        }
     });
     const [rememberMe, setRememberMe] = useState<boolean>(true)
+    const queryClient = useQueryClient();
 
     const initialValues: ILoginFormValues = {
         email: '',
@@ -40,6 +46,7 @@ const LoginForm = () => {
 
     const submit = async (values: ILoginFormValues) => {
         const response = await mutationLogin.mutateAsync(values);
+        await queryClient.invalidateQueries();
         AuthService.setToken(response.data.token);
         AuthService.setRememberMe(rememberMe)
         navigate('/');
