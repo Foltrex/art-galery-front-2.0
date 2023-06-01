@@ -11,6 +11,9 @@ import {ArtStyleDropdown} from "../../../components/form/ArtStyleDropdown";
 import {useNavigate} from "react-router-dom";
 import {getErrorMessage} from "../../../components/error/ResponseError";
 import {EntityFile} from "../../../entities/entityFile";
+import {NewProposalDialog} from "../../proposals/NewProposalDialog";
+import {createNewProp} from "../../proposals/ProposalUtils";
+import {HandshakeOutlined} from "@mui/icons-material";
 
 
 interface IArtFormProps {
@@ -28,6 +31,8 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 	const { authStore } = rootStore;
 	const account = authStore.account;
 	const [submitting, setSubmitting] = useState(false);
+	const [step, setStep] = React.useState<'cancel' | 'facility' | 'configuration'>('cancel');
+	const [proposal, setProposal] = useState([createNewProp(account).art(art).build()]);
 
 	//@todo replace with dropdown
 	const { data: artSizeItems = []} = useGetAllArtSizes((e) => {
@@ -36,6 +41,11 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 
 	const validationSchema = yup.object({
 		artSize: yup.object({id: yup.string().required("Size is required field")}),
+		price: yup.number()
+			    .typeError('Price must be a number')
+				.integer("Price should be an integer (without coins)")
+				.required("Price is required field")
+				.positive("Must be bigger then 0"),
 	});
 
 
@@ -48,6 +58,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 			id: art?.id,
 			name: values.name,
 			description: values.description,
+			price: (undefined as any) as number,
 			artistAccountId: account.id,
 			dateCreation: formik.values.dateCreation,
 			artStyles: formik.values.artStyles,
@@ -71,7 +82,7 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 		onSubmit: onSaveArt,
 	});
 
-	return (
+	return (<>
 		<form onSubmit={formik.handleSubmit}>
 			<Stack direction='column' rowGap={3}>
 				<TextField
@@ -91,6 +102,16 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 					value={`${account?.firstName} ${account?.lastName}`}
 					InputProps={{ readOnly: true }}
 					fullWidth
+					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
+
+				<TextField
+					size='small'
+					label='Price'
+					name='price'
+					value={formik.values.price}
+					onChange={formik.handleChange}
+					error={!!formik.errors.price}
+					helperText={formik.errors.price}
 					sx={{ fontSize: '2em', lineHeight: 'normal' }} />
 
 				<FormControl size='small'>
@@ -162,8 +183,13 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 								onClick={onDelete}>Delete</Button>
 						<Button type={"submit"} color={"success"}
 								variant="outlined">Save</Button>
+						{account.id === art?.artistAccountId && canEdit &&
+							<Button type={"button"} startIcon={<HandshakeOutlined/>} variant={"outlined"} onClick={() => setStep('facility')} style={{marginLeft: "auto"}}>
+								Commercial proposal
+							</Button>
+						}
 						{account.id === art?.artistAccountId &&
-							<Button type={"button"} variant={"outlined"} onClick={() => switchMode(!canEdit, canEdit ? formik.values : undefined)} style={{marginLeft: "auto"}}>
+							<Button type={"button"} variant={"outlined"} onClick={() => switchMode(!canEdit, canEdit ? formik.values : undefined)}>
 								{canEdit ? 'View' : 'Edit'}
 							</Button>
 						}
@@ -171,6 +197,28 @@ const ArtForm: React.FunctionComponent<IArtFormProps> = ({ art, onSubmit, onDele
 				</div>
 			</Stack>
 		</form>
+	{step !== 'cancel' &&
+	<NewProposalDialog proposal={proposal} step={step}
+					   allowBack={step !== "facility"}
+					   back={() => {
+						   if (step === 'configuration') {
+							   setStep('facility')
+						   }
+					   }}
+					   next={(currentStep, proposal) => {
+						   if (currentStep === 'facility') {
+							   setStep('configuration')
+						   } else if (currentStep === 'configuration') {
+							   setStep('cancel');
+							   proposal = [createNewProp(account).art(art).build()]
+						   } else if(currentStep === 'cancel') {
+							   setStep('cancel');
+							   proposal = [createNewProp(account).art(art).build()]
+						   }
+
+						   setProposal(proposal);
+					   }}/>}
+	</>
 	);
 };
 

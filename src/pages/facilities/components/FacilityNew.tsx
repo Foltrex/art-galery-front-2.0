@@ -16,6 +16,17 @@ const FacilityNew = (props:{back: () => void, organizationId?: string, onSubmit:
         name: '',
         organizationId: props.organizationId || '',
         isActive: true,
+        address: {
+            city: {
+                id: '',
+                name: '',
+                longitude: -1,
+                latitude: -1,
+                country: ''
+            },
+            name: ''
+        },
+        images: []
     } as Facility} onSubmit={(facility) => {
         return createFacility.mutateAsync(facility)
             .then(response => {

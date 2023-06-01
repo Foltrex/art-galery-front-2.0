@@ -16,6 +16,7 @@ import {Account} from "../../entities/account";
 import {find, isCreatorOrAdmin} from "../../util/MetadataUtil";
 import {observer} from "mobx-react";
 import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
+import {HandshakeOutlined} from "@mui/icons-material";
 
 const drawerWidth = 240;
 
@@ -35,7 +36,13 @@ interface ISidebarProps {
 function prepareSidebar(account:Account) {
     switch (account.accountType) {
         case AccountEnum.REPRESENTATIVE: {
-            const result = [];
+            const result = [
+                {
+                    text: 'Proposals',
+                    icon: <HandshakeOutlined />,
+                    link: '/proposals'
+                }
+            ];
             const admin = isCreatorOrAdmin(account);
             if(admin) {
                 result.push({
@@ -79,6 +86,11 @@ function prepareSidebar(account:Account) {
         }
         case AccountEnum.ARTIST:
             return [
+                {
+                    text: 'Proposals',
+                    icon: <HandshakeOutlined />,
+                    link: '/proposals'
+                },
                 {
                     text: 'Organizations',
                     icon: <HomeOutlined />,
@@ -126,6 +138,11 @@ function prepareSidebar(account:Account) {
                     text: 'Gallery',
                     icon: <CropOriginalOutlined/>,
                     link: '/gallery'
+                },
+                {
+                    text: 'Proposals',
+                    icon: <HandshakeOutlined />,
+                    link: '/proposals'
                 },
                 {
                     text: 'Errors',

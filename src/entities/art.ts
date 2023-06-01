@@ -7,6 +7,7 @@ export interface Art {
     id?: string;
     name: string;
     description: string;
+    price: number;
     artistAccountId: string;
     artStyles: ArtStyle[];
     artSize: ArtSize;

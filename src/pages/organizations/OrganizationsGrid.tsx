@@ -48,11 +48,6 @@ const OrganizationGrid = () => {
         status: status,
     }, (error) => getErrorMessage("Failed to load organizations list", error));
 
-    const handleSearch = (searchText: string) => {
-        setSearchText(searchText);
-    }
-
-
     const handleChangeSearchFilter = (e: ChangeEvent<HTMLInputElement>) => {
         setStatus(e.target.value);
     }
@@ -79,7 +74,7 @@ const OrganizationGrid = () => {
         <>
             <Box sx={{display: 'flex', gap: '20px'}}>
                 <FormControl>
-                    <TypeFilter onChange={handleSearch} placeholder={`Search by name...`}/>
+                    <TypeFilter onChange={(text) => setSearchText(text)} placeholder={`Search by name...`}/>
                 </FormControl>
                 <FormControl>
                     <RadioGroup

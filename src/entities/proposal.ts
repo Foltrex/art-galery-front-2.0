@@ -2,17 +2,18 @@ import {Art} from "./art";
 import {Currency} from "./currency";
 import {Facility} from "./facility";
 import {Account} from "./account";
+import {Organization} from "./organization";
 
 export interface Proposal {
-    id?: string;
+    id: string;
     art: Art;
-    price: string;
+    price: number;
     commission: number;
+    comment?: string;
     currency: Currency;
     artist: Account;
-    organizationId: string;
-    organizationName: string;
-    facility: Facility;
+    organization: Organization;
+    facilities: Facility[];
     artistConfirmation?: boolean;
     organizationConfirmation?: boolean;
 }

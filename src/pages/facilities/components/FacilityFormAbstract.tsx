@@ -43,8 +43,10 @@ export const FacilityFormAbstract = (props: { data: Facility, back: () => void, 
             .required()
             .min(2)
             .max(255),
-        address: yup.object()
-            .required()
+        address: yup.object().shape({
+            name: yup.string().required("Please select address")
+        })
+            .required("Please select address")
             .nullable(),
     };
     if (account.accountType === AccountEnum.SYSTEM) {

@@ -1,23 +1,27 @@
 import {Proposal} from "../entities/proposal";
-import {useCount, useDelete, useLoadMore, usePost} from "../hooks/react-query"
+import {IPage, useCount, useDelete, useFetch, usePost} from "../hooks/react-query"
 import {AxiosError} from "axios";
 
-const PROPOSAL_PAGE_SIZE = 5;
-
-export const useSaveProposal = (showError:(error:AxiosError) => void) => {
-    return usePost<Proposal>('proposals', {}, ['GET:proposals'], showError, { retry: false });
+export const useCreateProposal = (showError:(error:AxiosError) => void) => {
+    return usePost<Proposal>('proposals', {}, ['GET:proposals', 'GET:proposals/count', 'GET:proposals/id'], showError, { retry: false });
 }
 
 export const useDeleteProposal = (showError:(error:AxiosError) => void) => {
     return useDelete('proposals', {}, ['GET:proposals'], showError, { retry: false })
 }
 
-export const useCountProposalsByAccountId = (accountId: string) => {
-    return useCount('proposals/accounts/' + accountId);
+interface ProposalFilter {
+    page: number,
+    size: number,
+    accountId?: string,
+    facilityId?: string,
+    organizationId?: string
 }
 
-export const useGetProposalPageByAccountId = (accountId: string, showError:(error:AxiosError) => void) => {
-    return useLoadMore<Proposal>('proposals/accounts/' + accountId, 'GET:proposals', {
-        size: PROPOSAL_PAGE_SIZE
-    }, showError)
+export const useGetCount = (filter: ProposalFilter, showError:(error:AxiosError) => void) => {
+    return useCount('proposals', 'GET:proposals/count', filter, showError);
+}
+
+export const useGetProposals = (filter: ProposalFilter, showError:(error:AxiosError) => void) => {
+    return useFetch<{sent:IPage<Proposal>, received: IPage<Proposal>, approved: IPage<Proposal>}>('proposals/', 'GET:proposals', filter, showError)
 }

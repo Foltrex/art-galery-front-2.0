@@ -29,7 +29,7 @@ function TableHeader<T extends IdentifiableRecord>({columns}: ITableHeaderProps<
 						#
 				</TableCell>
 
-				{columns.filter(c => !c.groupBy).map((column) => (
+				{columns./*filter(c => !c.groupBy).*/map((column) => (
 					<TableCell
 						colSpan={column.colspan}
 						key={column.key}

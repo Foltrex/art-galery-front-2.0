@@ -1,13 +1,11 @@
 import './App.css';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/routes/PrivateRoute';
-import Gallery from './pages/arts/Gallery';
 import PasswordRecovery from "./pages/auth/passwordrecovery";
 import Login from './pages/auth/signin';
 import Register from './pages/auth/signup';
 import Facilities from './pages/facilities';
 import UserRoute from './pages/users/UserRoute';
-import Proposals from './pages/proposals';
 import {BrowserRouter, Route, Routes,} from "react-router-dom";
 import OrganizationNew from "./pages/organizations/OrganizationNew";
 import OrganizationEdit from './pages/organizations/OrganizationEdit';
@@ -25,6 +23,8 @@ import {CreateArt} from "./pages/arts/CreateArt";
 import {ThreadList} from "./pages/support/ThreadList";
 import {NewThread} from "./pages/support/NewThread";
 import {EditThread} from "./pages/support/EditThread";
+import ProposalsGrid from "./pages/proposals/ProposalsGrid";
+import {GalleryRoute} from "./pages/arts/GalleryRoute";
 
 function App() {
     return (
@@ -67,10 +67,12 @@ function App() {
                         <Route index element={<ErrorsRoute/>}/>
                     </Route>
 
-                    <Route path='/proposals' element={<Proposals/>}/>
+                    <Route path='/proposals'>
+                        <Route index element={<ProposalsGrid/>}/>
+                    </Route>
 
                     <Route path='/gallery'>
-                        <Route index element={<Gallery />} />
+                        <Route index element={<GalleryRoute />} />
                         <Route path=':id' element={<EditArt />} />
                         <Route path='new' element={<CreateArt />} />
                     </Route>

@@ -16,9 +16,10 @@ import Loading from "../../components/ui/Loading";
 import Masonry, {ResponsiveMasonry} from "react-responsive-masonry"
 import {EntityFileTypeEnum} from "../../entities/enums/EntityFileTypeEnum";
 import {getErrorMessage} from "../../components/error/ResponseError";
+import {Art} from "../../entities/art";
 
 
-const Gallery = () => {
+const Gallery = ({createNew, status, onClick}:{status?:'exhibited'|'free',createNew:boolean, onClick:(art:Art) => void}) => {
     const navigate = useNavigate();
     const {authStore} = useRootStore();
 
@@ -39,9 +40,10 @@ const Gallery = () => {
     const accountType = authStore.account.accountType;
 
     const [artStatus, setArtStatus] = useState(
+        status || (
         accountType === AccountEnum.ARTIST || accountType === AccountEnum.REPRESENTATIVE
             ? free.value
-            : all.value
+            : all.value)
     );
 
     const {data: infiniteData, isSuccess, fetchNextPage, isError, error} = useGetAllArts({
@@ -62,7 +64,7 @@ const Gallery = () => {
 
                     <TypeFilter onChange={setArtSearch} placeholder={"Art description"}/>
                     {accountType !== AccountEnum.ARTIST && <UsersAutocomplete userType={AccountEnum.ARTIST} onChange={id => setArtistId(id)}/>}
-                    <FormControl>
+                    {!status && <FormControl>
                         <RadioGroup
                             value={artStatus}
                             onChange={(e) => setArtStatus(e.target.value)}
@@ -76,11 +78,11 @@ const Gallery = () => {
                                     label={filter.label}/>
                             ))}
                         </RadioGroup>
-                    </FormControl>
+                    </FormControl>}
 
                     {artStatus === exhibited.value && <CityDropdown onChange={setCityId}/>}
 
-                    {accountType === AccountEnum.ARTIST &&
+                    {createNew && accountType === AccountEnum.ARTIST &&
                             <Button style={{marginLeft: "auto"}} variant={'text'} onClick={() => navigate('/gallery/new')}>
                                 New art
                             </Button>
@@ -109,7 +111,7 @@ const Gallery = () => {
                 >
                     {images.map(page => (
                         page.content.map(art => {
-                            return <ArtItem key={art.id} art={art} imageType={EntityFileTypeEnum.THUMBNAIL}/>
+                            return <ArtItem key={art.id} art={art} onClick={onClick} imageType={EntityFileTypeEnum.THUMBNAIL}/>
                         })
                     ))}
                 </Masonry>

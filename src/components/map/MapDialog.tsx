@@ -30,7 +30,7 @@ export default function MapDialog(props: IMapDialogProps) {
     const [mapPlaces, setMapPlaces] = useState<{time:number, places: GooglePlace[]}>();
 
     useEffect(() => {
-        if (props.address && props.address.city) {
+        if (props.address && props.address.city && props.address.city.latitude && props.address.city.latitude !== -1) {
             const position = {
                 place_id: 1,
                 display_name: props.address.name,
@@ -47,26 +47,6 @@ export default function MapDialog(props: IMapDialogProps) {
 
     function transformPosition(place: GooglePlace) {
         const address = new GoogleAddress(place);
-        /*const position:GeoPosition = {
-            place_id: 1,
-            display_name: address.toString(),
-            lat: place.geometry.location.lat,
-            lng: place.geometry.location.lng,
-            address: {
-                city: address.city,
-                route: address.route,
-                street: address.route,
-                house_number: address.house_number,
-                village: "",
-                place: "",
-                natural: "",
-                city_district: "",
-                state: address.state,
-                country: address.country,
-                postcode: address.zip,
-                region: address.state,
-            }
-        }*/
         const loc = place.geometry.location
         const obj:Address = {
             name: address.toString(),

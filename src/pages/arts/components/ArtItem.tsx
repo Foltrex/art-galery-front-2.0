@@ -13,9 +13,10 @@ interface IArtItemProps {
     art: Art;
     showAuthor?: boolean;
     imageType: EntityFileTypeEnum;
+    onClick: (art:Art) => void;
 }
 const style = {marginBottom: '20px', minHeight: '15px', cursor: 'pointer',};
-const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true }) => {
+const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true, onClick }) => {
     const navigate = useNavigate();
 
     const image = useMemo(() => {
@@ -50,7 +51,7 @@ const ArtItem: React.FC<IArtItemProps> = ({ art, imageType, showAuthor = true })
     });
 
     return (
-            <ImageListItem style={style} onClick={() => navigate('/gallery/' + art.id)}>
+            <ImageListItem style={style} onClick={() => onClick(art)}>
                 <ImageListItemBar
                     sx={{
                         background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7)0%, rgba(0, 0, 0, 0.7)70%, rgba(0, 0, 0, 0)100%)'

@@ -7,16 +7,18 @@ interface ITableRowProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
     item: S;
     clazz?:string
+    color?: string
 }
 
 const TableRow = <S extends IdentifiableRecord>({
 	item,
     number,
 	columns,
+	color,
     clazz,
 }: ITableRowProps<S>) => {
     return (
-        <MuiTableRow hover className={clazz}>
+        <MuiTableRow hover className={clazz} style={{backgroundColor: color}}>
             <TableCell align='center'>
                 {number}
             </TableCell>
@@ -24,7 +26,8 @@ const TableRow = <S extends IdentifiableRecord>({
             {columns.map((column, columnIndex) => {
                 return (
                 <TableCell key={columnIndex}
-                           align='center'
+                           color={color}
+                           align={column.textAlign ? column.textAlign : 'center'}
                            colSpan={column.colspan}
                            sx={{
                     whiteSpace: 'nowrap', 

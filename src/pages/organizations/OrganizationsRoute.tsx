@@ -9,7 +9,7 @@ interface IOrganizationsRouteProps {
 
 const OrganizationsRoute: React.FunctionComponent<IOrganizationsRouteProps> = (props) => {
     if (TokenService.getCurrentAccountType() === AccountEnum.ARTIST) {
-        return <ArtistOrganizationsTable />
+        return <ArtistOrganizationsTable allowProposal={true} />
     } else {
         return <OrganizationGrid />;
     }

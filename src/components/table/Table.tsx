@@ -13,6 +13,7 @@ export interface IColumnType<T extends IdentifiableRecord> {
     title: string | JSX.Element;
     minWidth?: number;
     colspan?: number;
+    textAlign?: 'left';
     render?: (item: T) => void;
     groupBy?: (item: T) => string|undefined
     sort?: (columnName:string, direction:'asc'|'desc'|undefined) => void

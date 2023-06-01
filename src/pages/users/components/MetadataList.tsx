@@ -78,10 +78,10 @@ interface MetadataRender {
 const MetadataList = (props: MetadataListProps) => {
     const currentUser = useRootStore().authStore.account;
     const account = props.formik.values
-    const metadata = useMemo(() => account.metadata.reduce((map, element) => {
+    const metadata = useMemo(() => account.metadata?.reduce((map, element) => {
         map[element.key] = element.value;
         return map
-    }, {} as Record<string, string>), [account.metadata]);
+    }, {} as Record<string, string>) || {}, [account.metadata]);
 
     const properties:MetadataEnum[] = useMemo(() => prepareAccountProperties(account), [account]);
     const {data: org} = useGetOrganizationById(
@@ -95,7 +95,7 @@ const MetadataList = (props: MetadataListProps) => {
         getErrorMessage("Failed to load city information", e)
     });
 
-    const renders = useMemo(() => prepareRenders(props, metadata, org, facility, city), [props, metadata, props, org, facility, city]);
+    const renders = useMemo(() => prepareRenders(props, metadata, org, facility, city), [props, metadata, org, facility, city]);
 
     return (
         <>

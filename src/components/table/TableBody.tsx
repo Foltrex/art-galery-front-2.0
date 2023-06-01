@@ -4,6 +4,7 @@ import {IColumnType, IdentifiableRecord} from './Table';
 import TableRow from './TableRow';
 import {ReactNode, useMemo, useState} from "react";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import {Box} from "@mui/system";
 
 interface ITableBodyProps<S extends IdentifiableRecord> {
     columns: IColumnType<S>[];
@@ -96,13 +97,12 @@ function reindexBucket<S extends IdentifiableRecord>(b:Bucket<S>, index:[number]
 	for(let bIndex in b.buckets) {
 		const child = b.buckets[bIndex];
 		reindexBucket(child, index);
-		// todo!
-		// if(child.content?.length === 1) {
-		// 	b.content = b.content.concat(child.content);
-		// 	toDelete.push(bIndex);
-		// } else {
-		// 	bucketsSize++;
-		// }
+		if(child.content?.length === 1) {
+			b.content = b.content.concat(child.content);
+			toDelete.push(bIndex);
+		} else {
+			bucketsSize++;
+		}
 	}
 	toDelete.forEach(index => delete(b.buckets[index]));
 	b.bucketsSize = bucketsSize;
@@ -122,18 +122,24 @@ function buildGroupColumn<S extends IdentifiableRecord>(column:IColumnType<S>, t
 	}
 }
 
-function GroupRow<S extends IdentifiableRecord> ({bucket, columns, level, clazz}:{
+function GroupRow<S extends IdentifiableRecord> ({bucket, columns, level, clazz, color}:{
 	bucket:Bucket<S>
 	columns: IColumnType<S>[],
 	level: number
 	clazz?: string
+	color: string
 }) {
 	const [isOpen, setIsOpen] = useState(true);
 	const [isShown, setIsShown] = useState(isOpen);
 
-	// if(bucket.content?.length === 1 && bucket.bucketsSize === 0) {
-	// 	return <TableRow key={bucket.content[0].item.id} number={bucket.content[0].index} columns={columns} item={bucket.content[0].item} />
-	// }
+	if(bucket.content?.length === 1 && bucket.bucketsSize === 0) {
+		const groupColumns = columns.map(c => c.groupBy ? {...c, render: (data:S) => <Box>
+				<TableSortLabel active={false}/>
+				&nbsp;
+				{c.render ? c.render(data) : (data as any)[c.key]}
+			</Box>} : c);
+	 	return <TableRow key={bucket.content[0].item.id} color={color} number={bucket.content[0].index} columns={groupColumns} item={bucket.content[0].item} />
+	}
 
 	let mainContent = bucket.column.render
 		? bucket.column.render(bucket.sample)
@@ -152,17 +158,17 @@ function GroupRow<S extends IdentifiableRecord> ({bucket, columns, level, clazz}
 	if(isShown) {
 		for(let bIndex in bucket.buckets) {
 			const b = bucket.buckets[bIndex];
-			bucketsContent.push(<GroupRow key={b.id} bucket={b} columns={columns} level={level + 1} clazz={childClazz}/>)
+			bucketsContent.push(<GroupRow color={color} key={b.id} bucket={b} columns={columns} level={level + 1} clazz={childClazz}/>)
 		}
 	}
-	const groupColumns = columns.filter(c => !c.groupBy);
+	const groupColumns = columns.map(c => c.groupBy ? {...c, render: () => null} : c);
 	return <>
-		<TableRow key={bucket.id} number={null} clazz={clazz} columns={[buildGroupColumn(bucket.column, toggle, level, groupColumns.length)]} item={({
+		<TableRow key={bucket.id} number={null} clazz={clazz} color={color} columns={[buildGroupColumn(bucket.column, toggle, level, groupColumns.length)]} item={({
 			id: "r" + Math.random(),
 			content: mainContent
 		})}/>
 		{isShown && bucket.content?.map((item) => {
-			return <TableRow key={item.item.id} clazz={childClazz} number={item.index} columns={groupColumns} item={item.item} />
+			return <TableRow key={item.item.id} color={color}  clazz={childClazz} number={item.index} columns={groupColumns} item={item.item} />
 		})}
 		{bucketsContent}
 	</>
@@ -185,8 +191,10 @@ function TableBody<S extends IdentifiableRecord>({
 		const result:ReactNode[] = []
 		const buckets = prepareBuckets<S>(columns, content.map((c, i) => ({item: c, index: i + 1 + number * size})), groupBy, 0);
 
+		let i = 0;
 		for(let key in buckets) {
-			result.push(<GroupRow key={key} bucket={buckets[key]} columns={columns} level={0}/>);
+			result.push(<GroupRow color={i%2 ? '#ffffff' : '#e3e3e3'} key={key} bucket={buckets[key]} columns={columns} level={0}/>);
+			i++;
 		}
 
 		return result;

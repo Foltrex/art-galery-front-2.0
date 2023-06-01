@@ -13,6 +13,7 @@ export const CreateArt = () => {
         canEdit={true}
         art={{
             name: '',
+            price: (undefined as any) as number,
             description: '',
             artistAccountId: account.id,
             artStyles: [],
